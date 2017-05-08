@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><paleta>
+	<cor codigo="C021" nome="Marmelo" hex="F4DEC2"/>
+	<cor codigo="C030" nome="Madrepérola" hex="F8E2B9"/>
+	<cor codigo="A021" nome="Crema" hex="F3E0C9"/>
+	<cor codigo="B166" nome="Areia do Deserto" hex="E3DACD"/>
+	<cor codigo="A283" nome="Bem-Casado" hex="F0E4D3"/>
+	<cor codigo="Z004" nome="Luz do Dia" hex="F7F3E0"/>
+	<cor codigo="A285" nome="Amarelo Splash" hex="F5EACE"/>
+	<cor codigo="B031" nome="Gengibre" hex="F2E7B5"/>
+	<cor codigo="G100" nome="Campo de Trigo" hex="E8DCC0"/>
+	<cor codigo="X115" nome="Flocos de Arroz" hex="EBE2CE"/>
+	<cor codigo="A155" nome="Manteiga de Carité" hex="E4E2D8"/>
+	<cor codigo="A142" nome="Manteiga de Cupuaçu" hex="EEE8D5"/>
+	<cor codigo="Z006" nome="Flan de Baunilha" hex="F8E7C4"/>
+	<cor codigo="D001" nome="Sorvete de Creme" hex="F4EAC9"/>
+	<cor codigo="Z064" nome="Bem-Me-Quer" hex="F7F2D0"/>
+	<cor codigo="A042" nome="Bem-Te-Vi" hex="EFEBBB"/>
+	<cor codigo="A295" nome="Rede de Pescador" hex="E0DECC"/>
+	<cor codigo="G062" nome="Gelo e Limão" hex="E8E7CF"/>
+	<cor codigo="A297" nome="Vinho Branco" hex="EBECCF"/>
+	<cor codigo="G060" nome="Água de Coco" hex="E7E6D0"/>
+	<cor codigo="B128" nome="Amarelo dos Andes" hex="F9D4A8"/>
+	<cor codigo="C135" nome="Cera de Abelha" hex="F8D9A0"/>
+	<cor codigo="B032" nome="Croissant" hex="EFD4AF"/>
+	<cor codigo="C166" nome="Doce de Leite" hex="D4C8B6"/>
+	<cor codigo="B283" nome="Marfim Nobre" hex="E8D5B1"/>
+	<cor codigo="Z003" nome="Bala de Goma" hex="F8EFC8"/>
+	<cor codigo="D020" nome="Pinoli" hex="F5E4BB"/>
+	<cor codigo="C038" nome="Nacho" hex="F3E2A2"/>
+	<cor codigo="C140" nome="Bege" hex="DAC79F"/>
+	<cor codigo="B288" nome="Ráfia" hex="DACFB7"/>
+	<cor codigo="B145" nome="Biscoito de Mantecal" hex="D9D3C2"/>
+	<cor codigo="B142" nome="Calça de Linho" hex="DAD0B6"/>
+	<cor codigo="B137" nome="Banana com Açúcar" hex="F8E4AF"/>
+	<cor codigo="A037" nome="Pera Doce" hex="FAE7B1"/>
+	<cor codigo="B293" nome="Abacaxi" hex="F3EDB3"/>
+	<cor codigo="B042" nome="Caldo de Cana" hex="E1DDAD"/>
+	<cor codigo="B295" nome="Planalto" hex="C8C6B2"/>
+	<cor codigo="V062" nome="Tereré" hex="CECEB0"/>
+	<cor codigo="C053" nome="Capim-Santo" hex="E7E6C0"/>
+	<cor codigo="G064" nome="Limão com Mel" hex="E5E3BF"/>
+	<cor codigo="D136" nome="Broa de Milho" hex="FFD08F"/>
+	<cor codigo="D033" nome="Grão-de-Bico" hex="FAD68C"/>
+	<cor codigo="N087" nome="Nozes" hex="E6C795"/>
+	<cor codigo="C282" nome="Linho do Oriente" hex="C1B39A"/>
+	<cor codigo="J097" nome="Palmier" hex="E3C591"/>
+	<cor codigo="C027" nome="Citrino" hex="F9E7A5"/>
+	<cor codigo="C033" nome="Pão de Queijo" hex="FAE3A4"/>
+	<cor codigo="C138" nome="Tremoço" hex="EEDA94"/>
+	<cor codigo="D139" nome="Óleo de Amêndoas" hex="C9B57D"/>
+	<cor codigo="Y121" nome="Cerrado" hex="CBBC9C"/>
+	<cor codigo="C289" nome="Sisal" hex="C9C1A5"/>
+	<cor codigo="C290" nome="Tecelagem" hex="C3B995"/>
+	<cor codigo="C291" nome="Flor de Narciso" hex="F1DF98"/>
+	<cor codigo="B025" nome="Fios de Ovos" hex="F6E39C"/>
+	<cor codigo="C293" nome="Jasmim-Amarelo" hex="F9ED9E"/>
+	<cor codigo="D040" nome="Polpa de Graviola" hex="E3DB8F"/>
+	<cor codigo="C295" nome="Quero-Quero" hex="B0AF9A"/>
+	<cor codigo="J066" nome="Grama Cortada" hex="CDC89D"/>
+	<cor codigo="D053" nome="Creme de Abacate" hex="DADAA9"/>
+	<cor codigo="B052" nome="Laranja-Lima" hex="E8E6A8"/>
+	<cor codigo="D279" nome="Flocos de Milho" hex="F7C576"/>
+	<cor codigo="D137" nome="Cacau da Bahia" hex="FFD171"/>
+	<cor codigo="D281" nome="Açúcar Orgânico" hex="E1BD82"/>
+	<cor codigo="D282" nome="Charrete" hex="B09F81"/>
+	<cor codigo="E029" nome="Seiva do Cajueiro" hex="E4C177"/>
+	<cor codigo="D027" nome="Jaca" hex="FBDE83"/>
+	<cor codigo="D028" nome="Ambrosia" hex="F9DA8A"/>
+	<cor codigo="D138" nome="Banana Flambada" hex="E8CF7C"/>
+	<cor codigo="D287" nome="Crepe de Caramelo" hex="C3AE75"/>
+	<cor codigo="D140" nome="Sândalo" hex="BBA87E"/>
+	<cor codigo="D143" nome="Calça de Sarja" hex="BCB28F"/>
+	<cor codigo="N066" nome="Salgueiro" hex="B5AB7A"/>
+	<cor codigo="D291" nome="Felicidade" hex="EED77C"/>
+	<cor codigo="C026" nome="Maracujá" hex="F8E385"/>
+	<cor codigo="D039" nome="Baba de Moça" hex="F8DF67"/>
+	<cor codigo="D042" nome="Chá de Hortelã" hex="D6D26C"/>
+	<cor codigo="D295" nome="Pântano" hex="9D9A83"/>
+	<cor codigo="D052" nome="Verdite" hex="B1B17D"/>
+	<cor codigo="Z061" nome="Acelga" hex="CBCD96"/>
+	<cor codigo="C042" nome="Raspa de Limão" hex="E1DD90"/>
+	<cor codigo="E279" nome="Luz de Vela" hex="FCC15E"/>
+	<cor codigo="E028" nome="Laranjeira" hex="FFC756"/>
+	<cor codigo="P030" nome="Açúcar Caramelizado" hex="D5A55F"/>
+	<cor codigo="E282" nome="Caravela" hex="9E8B68"/>
+	<cor codigo="E283" nome="Curry" hex="D5A952"/>
+	<cor codigo="E284" nome="Pequi" hex="F9D259"/>
+	<cor codigo="E027" nome="Girafa" hex="FFD86C"/>
+	<cor codigo="E286" nome="Vênus" hex="CFB666"/>
+	<cor codigo="E287" nome="Jasmim Dourado" hex="C2A95F"/>
+	<cor codigo="E288" nome="Bala de Mel" hex="B7A16D"/>
+	<cor codigo="L067" nome="Lugarejo" hex="9C916A"/>
+	<cor codigo="E053" nome="Oásis" hex="B3A870"/>
+	<cor codigo="E291" nome="Carambola" hex="E6CE65"/>
+	<cor codigo="D026" nome="Acácia-Mimosa" hex="FCDF76"/>
+	<cor codigo="P039" nome="Canário-da-Terra" hex="FCDA3D"/>
+	<cor codigo="E042" nome="Amarelo Citrus" hex="CFCC56"/>
+	<cor codigo="E295" nome="Selva" hex="8E8C74"/>
+	<cor codigo="E296" nome="Videira" hex="9CA15F"/>
+	<cor codigo="Z062" nome="Cheiro-Verde" hex="B8B874"/>
+	<cor codigo="E298" nome="Umbu" hex="D0D469"/>
+	<cor codigo="P279" nome="Gema Caipira" hex="F3A93A"/>
+	<cor codigo="P027" nome="Bico de Tucano" hex="FFC645"/>
+	<cor codigo="P034" nome="Açúcar Mascavo" hex="C89B4E"/>
+	<cor codigo="P282" nome="Calça Cáqui" hex="98855B"/>
+	<cor codigo="R036" nome="Mostarda Dijon" hex="CDA044"/>
+	<cor codigo="P284" nome="Girassol" hex="FCD03C"/>
+	<cor codigo="D037" nome="Lírio-Amarelo" hex="FFD652"/>
+	<cor codigo="P286" nome="Limão-Siciliano" hex="C9AD53"/>
+	<cor codigo="P138" nome="Cana-de-Açúcar" hex="BB9F46"/>
+	<cor codigo="P288" nome="Azeitona" hex="9B8346"/>
+	<cor codigo="L066" nome="Pantanal" hex="9A8E58"/>
+	<cor codigo="P290" nome="Eclipse" hex="AD9E57"/>
+	<cor codigo="P291" nome="Ouro Amarelo" hex="D6C15C"/>
+	<cor codigo="E039" nome="Pólen" hex="FDDE5C"/>
+	<cor codigo="R039" nome="Amarelo-bandeira" hex="F2CB15"/>
+	<cor codigo="P294" nome="Amarelo Pavão" hex="C8C62E"/>
+	<cor codigo="P295" nome="Capim Seco" hex="7C785C"/>
+	<cor codigo="E045" nome="Pimentão Verde" hex="93964A"/>
+	<cor codigo="Z063" nome="Kiwi" hex="A4A45B"/>
+	<cor codigo="P298" nome="Polpa de Abacate" hex="CACB4C"/>
+	<cor codigo="R137" nome="Manga" hex="FBAF29"/>
+	<cor codigo="R027" nome="Crisântemo Amarelo" hex="FFB52C"/>
+	<cor codigo="R035" nome="Quentão" hex="C4953E"/>
+	<cor codigo="R282" nome="Farda Militar" hex="876F3D"/>
+	<cor codigo="R283" nome="Ouro do Egito" hex="C79437"/>
+	<cor codigo="R026" nome="Amarelo Sol" hex="F7C224"/>
+	<cor codigo="R285" nome="Ipê-Amarelo" hex="F4C630"/>
+	<cor codigo="R286" nome="Abelha" hex="C4A43A"/>
+	<cor codigo="R041" nome="Falésia Dourada" hex="B59936"/>
+	<cor codigo="R288" nome="Olho de Tigre" hex="91763A"/>
+	<cor codigo="R053" nome="Tartaruga" hex="76713C"/>
+	<cor codigo="R290" nome="Oliva" hex="A99741"/>
+	<cor codigo="R291" nome="Colmeia" hex="C2B053"/>
+	<cor codigo="R292" nome="Quindim" hex="FAD117"/>
+	<cor codigo="R293" nome="Mostarda Americana" hex="EDBB00"/>
+	<cor codigo="R294" nome="Amarelo Iluminado" hex="CDC224"/>
+	<cor codigo="R295" nome="Jacaré" hex="656448"/>
+	<cor codigo="R296" nome="Verde Papagaio" hex="8C9133"/>
+	<cor codigo="P053" nome="Verde Mel" hex="938B4E"/>
+	<cor codigo="R298" nome="Verde Limão" hex="C5C735"/>
+</paleta>

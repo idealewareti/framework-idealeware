@@ -1,0 +1,20 @@
+<div id="popUpModal" style="display: none;" *ngIf="popUpAssortment != null">
+    <div class="mask"></div>
+    <div class="popUpModal-content">
+        <button class="btn-close-clickview" title="fechar"><img src="/assets/images/icon-close.svg" alt="Fechar"/></button>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <p *ngIf="popUpAssortment.coupon" class="text-center">
+                <label>{{popUpAssortment.coupon.name}}</label>
+            </p>
+            <img [attr.src]="mediaPath + popUpAssortment.picture" [attr.alt]="popUpAssortment.name" class="img-responsive">
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <p class="">
+               {{popUpAssortment.description}}
+            </p>
+            <!-- Newsletter -->
+            <newsletter *ngIf="popUpAssortment.registrationRequired" [popupId]="popUpAssortment.id"></newsletter>
+            <!-- /Newsletter -->
+        </div>
+    </div>
+</div>

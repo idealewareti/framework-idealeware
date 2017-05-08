@@ -1,0 +1,38 @@
+<main role="main" class="container checkout-page">
+    
+    <ul class="checkout-tabs">
+        <li class="is-ok">
+            <span class="icon"><img src="assets/images/icon-checkout-identificacao.svg" alt=""></span>
+            <span class="text">Identificação</span>
+        </li>
+        <li class="is-ok">
+            <span class="icon"><img src="assets/images/icon-checkout-pagamento.svg" alt=""></span>
+            <span class="text">Pagamento</span>
+        </li>
+        <li class="active">
+            <span class="icon"><img src="assets/images/icon-checkout-confirmacao.svg" alt=""></span>
+            <span class="text">Confirmação</span>
+        </li>
+    </ul>
+
+    <div class="checkput-finish text-center" *ngIf="order.orderNumber">
+        
+        <h2>SEU PEDIDO FOI RECEBIDO</h2>
+        <h3>Obrigado por sua Compra!</h3>
+        <br />
+        <p>
+            O número do seu pedido é: 
+            <b>#{{order.orderNumber}}</b>
+        </p>
+        <p *ngIf="isBankSlip()">
+            Clique <a [attr.href]="getBankSlipUrl()" title="Imprimir Boleto" target="_blank">visualizar o boleto de sua compra</a>.
+        </p>
+        <br />
+        <p>Você irá receber um e-mail de confirmação de pedido com detalhes de seu pedido e um link para acompanhar o progresso.</p>
+        <p>Clique <a href="javascript: window.print()" title="Imprimir copia">aqui para imprimir</a> uma cópia da confirmação de sua compra.</p>
+        <br /><br />
+        <a [routerLink]="['/']" class="btn btn-lg btn-default">Continuar Comprando</a>
+
+    </div>
+
+</main>

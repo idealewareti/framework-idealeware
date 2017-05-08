@@ -1,0 +1,137 @@
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { CartService } from "../_services/cart.service";
+import { IntelipostService } from "../_services/intelipost.service";
+import { Intelipost } from "../_models/intelipost/intelipost";
+import { IntelipostRequest } from "../_models/intelipost/intelipost-request";
+import { AppSettings } from "../app.settings";
+import { IntelipostDeliveryOption } from "../_models/intelipost/intelipost-delivery-option";
+import { Shipping } from "../_models/shipping/shipping";
+import { DeliveryInformation } from "../_models/shipping/delivery-information";
+import { Cart } from "../_models/cart/cart";
+import { CartManager } from "../_managers/cart.manager";
+import { NgProgressService } from "ngx-progressbar";
+
+declare var swal: any;
+
+@Component({
+    moduleId: module.id,
+    selector: 'shipping-calc',
+    templateUrl: '/views/shipping.component.html',
+    styleUrls: ['/styles/shipping.component.css']
+})
+export class ShippingCalcComponent implements OnInit {
+    private intelipost: Intelipost;
+    private deliveryOptions: IntelipostDeliveryOption[] = [];
+    private selected: IntelipostDeliveryOption = new IntelipostDeliveryOption();
+    @Input() zipCode: string;
+    @Input() cart: Cart;
+    @Output() cartUpdated: EventEmitter<Cart> = new EventEmitter<Cart>();
+
+    constructor(
+        private service: IntelipostService, 
+        private cartManager: CartManager,
+        private loader: NgProgressService
+    ) { }
+
+    ngOnInit() {
+        if(!this.zipCode && localStorage.getItem('customer_zipcode'))
+            this.zipCode = localStorage.getItem('customer_zipcode');
+     }
+
+    private sendRequest(): Promise<Intelipost>{
+        return new Promise((resolve, reject) => {
+            if(!this.zipCode){
+                swal({title: 'Erro!', text: 'CEP Inválido', type: 'warning', confirmButtonText: 'OK'});
+                reject(null);
+            }
+            else if(this.zipCode.length < 9){
+                swal({title: 'Erro!', text: 'CEP Inválido', type: 'warning', confirmButtonText: 'OK'});
+                reject(null);
+            }
+
+            let zipCode = Number(this.zipCode.replace('-', ''));
+            if(!this.cartManager.getCartId()){
+                swal({title: 'Erro!', text: 'Carrinho vazio', type: 'warning', confirmButtonText: 'OK'});
+            }
+            else{
+                this.loader.start();
+                
+                this.cartManager.getCart()
+                .then(cart => {
+                    if(cart.products.length == 0){
+                        swal({title: 'Erro!', text: 'Carrinho vazio', type: 'warning', confirmButtonText: 'OK'});
+                        this.loader.done();
+                        
+                        reject(null);
+
+                    }
+                    this.loader.start();
+
+                    let request = new IntelipostRequest(this.cartManager.getSessionId(), AppSettings.NAME, AppSettings.ROOT_PATH, zipCode.toString());
+                    return this.service.getShipping(request);
+                })
+                .then(response => {
+                    this.loader.done();
+                    resolve(response);
+                })
+                .catch(error => {
+                    this.loader.done();
+                    reject(error);
+                });
+            }
+        });
+    }
+
+    public calculate(event){
+        event.preventDefault();
+        this.deliveryOptions = [];
+
+        this.sendRequest()
+        .then(response => {
+            this.intelipost = response;
+            this.deliveryOptions = this.intelipost.content.delivery_options;
+        })
+        .catch(error => {
+            swal({title: 'Erro!', text:'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK'});
+            console.log(error);
+        });
+    }
+
+    public addShippingToCart(event, option: IntelipostDeliveryOption){
+        event.preventDefault();
+        this.selected = option;
+        let shipping = new Shipping();
+        shipping.shippingType = 2; // TODO
+        let delivery = new DeliveryInformation();
+        delivery.quotId = this.intelipost.content.id.toString();
+        delivery.deliveryMethodId = option.delivery_method_id.toString();
+        delivery.shippingCost = option.final_shipping_cost;
+        delivery.deliveryMethodName = option.delivery_method_name;
+        delivery.deliveryProviderName = option.logistic_provider_name;
+        delivery.deliveryEstimateBusinessDays = option.delivery_estimate_business_days;
+        
+        shipping.deliveryInformation = delivery;
+
+        this.cartManager.setShipping(shipping)
+        .then(cart => {
+            this.cart = cart;
+            this.cartUpdated.emit(this.cart);
+        })
+        .catch(error => {
+            swal({title: 'Erro!', text:'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK'});
+            console.log(error);
+        })
+
+    }
+
+    public checkOption(option: IntelipostDeliveryOption): boolean{
+        if(option.delivery_method_type == this.selected.delivery_method_type)
+            return true;
+        else return false;
+
+    }
+
+    public isMobile(): boolean{
+        return AppSettings.isMobile();
+    }
+}

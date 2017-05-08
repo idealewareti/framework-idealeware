@@ -1,0 +1,358 @@
+<main role="main" *ngIf="!isMobile()">
+
+    <banner *ngIf="id" [module]="module" [moduleId]="id" place="1"></banner>
+    <div id="layout">
+        <div class="container">
+
+            <div class="bread-crumb">
+                <bread-crump *ngIf="category.id" [category]="(getLowestCategory()) ? getLowestCategory() : categories[0].children[0]"></bread-crump>
+                <bread-crump *ngIf="categories.length != 1"></bread-crump>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-3 filter-left">
+                    <!-- Filtro -->
+                    <!--<div class="filtering-by nav" *ngIf="hasFilters()">
+                        <h3 class="title">Filtrando por</h3>
+                        <ul>
+                            <li *ngFor="let category of categories"><span class="label">{{category.name}}</span><a href="#" (click)="addFilter($event, 'category', category.id)"
+                                    class="remove" title="Remover"><i class="fa fa-times" aria-hidden="true"></i></a></li>
+                            <li *ngFor="let brand of brands"><span class="label">{{brand.name}}</span><a href="#" (click)="addFilter($event, 'brand', brand.id)"
+                                    class="remove" title="Remover"><i class="fa fa-times" aria-hidden="true"></i></a></li>
+                            <li *ngFor="let variation of variations"><span class="label">{{variation.name}}</span><a href="#" (click)="addFilter($event, 'variation', variation.id)"
+                                    class="remove" title="Remover"><i class="fa fa-times" aria-hidden="true"></i></a></li>
+                            <li *ngFor="let option of options"><span class="label">{{option.name}}</span><a href="#" (click)="addFilter($event, 'option', option.id)"
+                                    class="remove" title="Remover"><i class="fa fa-times" aria-hidden="true"></i></a></li>
+                        </ul>
+                        <div class="actions">
+                            <a href="#" (click)="clearFilter($event)" class="remove" title="Limpar tudo"> <i class="icon icon-tresh"><img src="/assets/images/icon-trash.svg" alt="Limpar tudo"></i> Limpar
+                                tudo
+                            </a>
+                        </div>
+                    </div>-->
+
+                    <!-- Categorias -->
+                    <!--<div class="category nav" *ngFor="let category of categories">
+                        <h3 class="title" style="cursor: pointer" (click)="addFilter($event, 'category', category.id)">{{category.name}}</h3>
+                        <ul>
+                            <li *ngFor="let lvl2 of category.children">
+                                <a [routerLink]="['/categoria', lvl2.id, lvl2.niceName]" (click)="addFilter($event, 'category', lvl2.id)" [attr.title]="lvl2.name">
+                                    <i [ngClass]="{'fa-square-o': !isChecked('category', lvl2.id), 'fa-check-square-o': isChecked('category', lvl2.id)}" class="fa" aria-hidden="true"></i>
+                                    {{lvl2.name}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>-->
+                    <!-- Filtrar por -->
+                    <div class="filter-by nav" *ngIf="categories.length > 0">
+                        <h3 class="title">Filtrar por</h3>
+
+                        <div class="filter-items marcas">
+                            <b class="caption">Categorias</b>
+                            <ul>
+                                <li *ngFor="let category of categories">
+                                    <a [ngClass]="{'checked': isChecked('category', category.id)}" [routerLink]="['/categoria', category.id, category.niceName]"
+                                        (click)="addFilter($event, 'category', category.id)">
+                                        <i [ngClass]="{'fa-square-o': !isChecked('category', category.id), 'fa-check-square-o': isChecked('category', category.id)}"
+                                            class="fa" aria-hidden="true"></i> {{category.name}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Filtrar por -->
+                    <div class="filter-by nav" *ngIf="brands.length > 0">
+                        <div class="filter-items marcas">
+                            <b class="caption">Marcas</b>
+                            <ul>
+                                <li *ngFor="let brand of brands">
+                                    <a [ngClass]="{'checked': isChecked('brand', brand.id)}" [routerLink]="['/marcas', brand.id, brand.niceName]" (click)="addFilter($event, 'brand', brand.id)">
+                                        <i [ngClass]="{'fa-square-o': !isChecked('brand', brand.id), 'fa-check-square-o': isChecked('brand', brand.id)}" class="fa"
+                                            aria-hidden="true"></i> {{brand.name}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Filtrar por -->
+                    <!--<div class="filter-by nav" *ngIf="variations.length > 0">
+                        <h3 class="title">Filtrar por</h3>
+
+                        <div class="filter-items marcas">
+                            <b class="caption">Variações</b>
+                            <ul>
+                                <li *ngFor="let variation of variations">
+                                    <a [ngClass]="{'checked': isChecked('variation', variation.id)}" [routerLink]="['/buscar', {variations: variation.id}]" (click)="addFilter($event, 'variation', variation.id)">
+                                        <i [ngClass]="{'fa-square-o': !isChecked('variation', variation.id), 'fa-check-square-o': isChecked('variation', variation.id)}"
+                                            class="fa" aria-hidden="true"></i> {{variation.name}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>-->
+
+                    <!-- Filtrar por -->
+                    <div class="filter-by nav" *ngIf="options.length > 0">
+                        <div class="filter-items marcas">
+                            <b class="caption">Opções</b>
+                            <ul>
+                                <li *ngFor="let option of options">
+                                    <a [ngClass]="{'checked': isChecked('option', option.id)}" [routerLink]="['/buscar', {options: option.id}]" (click)="addFilter($event, 'option', option.id)">
+                                        <i [ngClass]="{'fa-square-o': !isChecked('option', option.id), 'fa-check-square-o': isChecked('option', option.id)}" class="fa"
+                                            aria-hidden="true"></i> {{option.name}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <bannerSide *ngIf="id" [module]="module" [moduleId]="id" [place]="2"></bannerSide>
+                </div>
+
+                <div class="col-xs-9 main-content">
+                    <div class="row-order-by clearfix">
+                        <div class="order-by">
+                            <form class="form-inline" *ngIf="!loading">
+                                <label>
+                                    <select class="form-control" name="orderBy" [(ngModel)]="orderBy" (change)="changeOrdernation($event)">
+                                        <option Value="" disabled="disabled" selected="selected">Odernar por:</option>
+                                        <option Value="-actualPrice">Menores Preços</option>
+                                        <option Value="+actualPrice">Maiores Preços</option>
+                                        
+                                    </select>
+                                    {{results}} produto(s)
+                                </label>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="showcase showcase-catalog" *ngIf="!loading">
+
+                        <ul class="showcase-items list-style-none" *ngIf="products">
+                            <li class="showcase-item" *ngFor="let product of products">
+                                <product-grid-item [product]="product" showCompare="true"></product-grid-item>
+                            </li>
+
+                        </ul>
+
+                        <p *ngIf="results == 0">Nenhum produto encontrado</p>
+
+                        <!-- paginacao -->
+                        <nav class="pull-right">
+                            <ul class="pagination pagination-md">
+                                <li class="page-item">
+                                    <a class="page-link previous" [ngClass]="{'disabled': page <= 1}" href="#" aria-label="Previous" (click)="listProducts(page - 1, $event)">
+                                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                                <li *ngFor="let i of pages" class="page-item">
+                                    <a class="page-link" [ngClass]="{'active': page == i}" href="#" (click)="listProducts(i, $event)">{{i}}</a>
+                                </li>
+                                <li class="page-item" [ngClass]="{'disabled': page >= numPages}">
+                                    <a class="page-link next" href="#" aria-label="Next" If="(page + 1) < numPages" (click)="listProducts(page + 1, $event)">
+                                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link next-end" href="#" aria-label="Next End" (click)="listProducts(numPages, $event)">
+                                        <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                        <span class="sr-only">Next end</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- /paginacao -->
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<!--Mobile-->
+<main *ngIf="isMobile()" role="main" class="container">
+
+    <banner *ngIf="id" [module]="module" [moduleId]="id" [place]="1"></banner>
+
+    <h2 class="department-title" *ngIf="module == 'category'">{{category.name}}</h2>
+
+    <div class="filter-box">
+        <span class="qty-products">{{((results > 1) ? results + ' produtos' : results + ' produto')}}</span>
+        <div class="clearfix" id="filterby-title">
+            <button class="btn-filter pull-left"><img src="assets/images/icon-filter.svg" alt="" /> Filtrar por</button>
+            <div class="overflow-hidden">
+                <select class="form-control" name="orderBy" [(ngModel)]="orderBy" (change)="changeOrdernation($event)">
+                    <option value="" disabled="disabled" selected="selected">Odernar por:</option>
+                    <option value="-actualPrice">Menores Preços</option>
+                    <option value="+actualPrice">Maiores Preços</option>
+                    
+                </select>
+            </div>
+        </div>
+
+        <div id="filter" style="display: none;">
+            <div class="filter-header">
+                <div class="clearfix">
+                    <button class="btn-close pull-left"><img src="assets/images/icon-close.svg" alt="Fechar"></button>
+                    <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
+                </div>
+                <b><img src="assets/images/icon-filter.svg" alt=""> Filtrar por</b>
+            </div>
+            <ul class="lvl1">
+                <li class="lvl1-item" *ngFor="let category of filterModel.categories">
+                    <button class="lvl1-link">
+                        Categoria
+                        <span class="selected">
+                            {{category.name}}
+                        </span>
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <div class="lvl2">
+                        <div>
+                            <div class="filter-header">
+                                <div class="clearfix">
+                                    <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                    <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
+                                </div>
+                            </div>
+                            <ul class="lvl2-items">
+                                <li class="lvl2-item">
+                                    <label (click)="addFilter($event, 'category', category.id)"><input type="checkbox" [checked]="isChecked('category', category.id)" [value]="category.id" class="v-middle"> <span class="v-middle">Tudo em <strong>{{category.name}}</strong></span></label>
+                                </li>
+                                <li class="lvl2-item" *ngFor="let lvl2 of category.children">
+                                    <label (click)="addFilter($event, 'category', lvl2.id)"><input type="checkbox" [checked]="isChecked('category', lvl2.id)" [value]="lvl2.id" class="v-middle"> <span class="v-middle">{{lvl2.name}}</span></label>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </li>
+
+                <li class="lvl1-item" *ngIf="filterModel.brands.length > 0">
+                    <button class="lvl1-link">
+                        Marcas
+                        <span class="selected" *ngIf="filterModel.brands.length > 0">
+                            <span *ngFor="let selected of filterModel.brands">{{selected.name}} </span>
+                        </span>
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <div class="lvl2">
+                        <div class="filter-header">
+                            <div class="clearfix">
+                                <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
+                            </div>
+                        </div>
+                        <ul class="lvl2-items">
+                            <li class="lvl2-item" *ngFor="let brand of filterModel.brands">
+                                <label (click)="addFilter($event, 'brand', brand.id)"><input type="checkbox" [checked]="isChecked('brand', brand.id)" [value]="brand.id" class="v-middle"> <span class="v-middle">{{brand.name}}</span></label>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="lvl1-item" *ngIf="filterModel.brands.length == 0">
+                    <button class="lvl1-link">
+                        Marcas
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <div class="lvl2">
+                        <div class="filter-header">
+                            <div class="clearfix">
+                                <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
+                            </div>
+                        </div>
+                        <ul class="lvl2-items">
+                            <li class="lvl2-item" *ngFor="let brand of brands">
+                                <label (click)="addFilter($event, 'brand', brand.id)"><input type="checkbox" [checked]="isChecked('brand', brand.id)" [value]="brand.id" class="v-middle"> <span class="v-middle">{{brand.name}}</span></label>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="lvl1-item">
+                    <button class="lvl1-link">
+                        Variações
+                        <span class="selected" *ngIf="filterModel.variations.length > 0">
+                            <span *ngFor="let selected of filterModel.variations">{{selected.name}}</span>
+                        </span>
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <div class="lvl2">
+                        <div class="filter-header">
+                            <div class="clearfix">
+                                <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
+                            </div>
+                        </div>
+                        <ul class="lvl2-items">
+                            <li class="lvl2-item" *ngFor="let variation of variations">
+                                <label (click)="addFilter($event, 'variation', variation.id)"><input type="checkbox" [checked]="isChecked('variation', variation.id)" [value]="variation.id" class="v-middle"> <span class="v-middle">{{variation.name}}</span></label>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="lvl1-item">
+                    <button class="lvl1-link">
+                        Opções
+                        <span class="selected" *ngIf="filterModel.options.length > 0">
+                            <span *ngFor="let selected of filterModel.options">{{selected.name}}</span>
+                        </span>
+                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <div class="lvl2">
+                        <div class="filter-header">
+                            <div class="clearfix">
+                                <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
+                            </div>
+                        </div>
+                        <ul class="lvl2-items">
+                            <li class="lvl2-item" *ngFor="let option of options">
+                                <label (click)="addFilter($event, 'option', option.id)"><input type="checkbox" [checked]="isChecked('option', option.id)" [value]="option.id" class="v-middle"> <span class="v-middle">{{option.name}}</span></label>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Lista de produtos -->
+    <div class="showcase showcase-department" *ngIf="!loading">
+        <ul class="showcase-items list-style-none" *ngIf="products">
+            <li class="showcase-item" *ngFor="let product of products">
+                <product-grid-item [product]="product"></product-grid-item>
+            </li>
+        </ul>
+
+        <button *ngIf="page < numPages" (click)="listProducts(page + 1, $event)" class="btn btn-block btn-default btn-show-more">Ver mais produtos <i class="fa fa-angle-down" aria-hidden="true"></i></button>
+    </div>
+    <!-- Lista de produtos -->
+
+</main>
+<!--/Mobile-->
+
+<!-- Comparar produto -->
+<div id="to-compare" *ngIf="countCompare()">
+    <div class="container">
+        <div class="box-compare">
+            <a [routerLink]="['/compare', {'compare': queryCompare()}]" class="btn btn-compare">comparar</a>
+            <span class="quanty pull-right">
+                {{getCompare().length}}
+            </span>
+        </div>
+        <div class="text text-alert">
+            Você pode comparar <br/> até 3 produtos
+        </div>
+        <button type="button" (click)="closeCompare()"><span aria-hidden="true">&times;</span><span class="sr-only">Fechar</span></button>
+    </div>
+</div>
+<!-- Comparar produto -->

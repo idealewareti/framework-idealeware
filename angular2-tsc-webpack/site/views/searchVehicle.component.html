@@ -1,0 +1,49 @@
+<div id="big-sale" class="pull-left" style="width: 100%;">
+    <a href="javascript:void(0)" class="" title="Buscar">
+        <div class="col-xs-12 col-md-2">
+            <i class="fa fa-car fa-2x pull-left"></i>
+            <span class="name-sale pull-left" style="font-size:22px;">Buscar</span>
+        </div>
+        <div class="col-xs-12 col-md-2" *ngIf="vehiclesBrand.length > 0">
+            <select class="form-control" [(ngModel)]="brandId" name="brandId" (change)="getVehicle($event)">
+                    <option [selected]="true == true" [ngValue]="null" >Marcas</option>
+                    <option *ngFor="let brand of vehiclesBrand" [ngValue]="brand.id">{{brand.fipe_name}}</option>
+            </select>
+        </div>
+        <div class="col-xs-12 col-md-2" *ngIf="vehicles.length > 0">
+            <select class="form-control" [(ngModel)]="vehicleId" name="vehicleId" (change)="getVehicleYear($event)">
+                    <option [selected]="true == true" [ngValue]="null">Veículo</option>
+                    <option *ngFor="let vehicle of vehicles" [ngValue]="vehicle.id" >{{vehicle.fipe_name}}</option>
+            </select>
+        </div>
+        <div class="col-xs-12 col-md-2" *ngIf="vehicles.length < 1">
+            <select class="form-control" disabled="disabled">
+                    <option>Veículo</option>
+            </select>
+        </div>
+        <div class="col-xs-12 col-md-2" *ngIf="vehiclesYear.length > 0">
+            <select class="form-control" [(ngModel)]="vehicleYear" name="vehicleYear">
+                    <option [selected]="true == true" [ngValue]="null">Ano</option>
+                    <option *ngFor="let vehicle of vehiclesYear" [ngValue]="vehicle.name">{{vehicle.name}}</option>
+            </select>
+        </div>
+        <div class="col-xs-12 col-md-2" *ngIf="vehiclesYear.length < 1">
+            <select class="form-control" disabled="disabled">
+                    <option>Ano</option>
+            </select>
+        </div>
+        
+        <div class="col-xs-12 col-md-4">
+            <form id="form-searchVehicle" action="/buscar" method="get" (submit)="searchFor($event)">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="O que você procura?" name="q" [(ngModel)]="q" autocomplete="off">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="clearfix"></div>
+    </a>
+</div>

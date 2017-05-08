@@ -1,0 +1,7 @@
+<div class="radio" *ngFor="let payment of availablePayments()">
+    <label (click)="selectPayment(payment)">
+        <input type="radio"  name="payment-method" [attr.id]="'method_' + payment.id" [attr.value]="payment.id"> {{payment.name}}
+    </label>
+</div>
+
+    

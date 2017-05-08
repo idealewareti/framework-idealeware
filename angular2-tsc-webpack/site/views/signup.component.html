@@ -1,0 +1,194 @@
+<div class="row">
+    <div class="col-xs-12 col-md-12 col-details">
+        <div class="row">
+            <div class="alert alert-danger" role="alert" *ngIf="errorMessage() != null">{{errorMessage()}}</div>
+        </div>
+
+        <form [formGroup]="myForm" class="form-horizontal label-left" (submit)="signUp($event)">
+            <div class="row">
+                <div class="col-xs-12 col-md-12">
+                    <div class="form-group">
+                        <label for="type" class="col-sm-4 control-label">Tipo de Cadastro</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" formControlName="type" (change)="changeCustomerType()" [(ngModel)]="customer.type" required>
+                                <option value="1">Pessoa Física</option>
+                                <option value="2">Pessoa Jurídica</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <h2>Dados Cadastrais</h2>
+                    <div class="form-group">
+                        <label for="firstname_Companyname" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Nome' : 'Nome da Empresa'}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="firstname_Companyname" formControlName="firstname_Companyname" class="form-control" [(ngModel)]="customer.firstname_Companyname" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname_Tradingname" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Sobrenome' : 'Nome Fantasia'}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" formControlName="lastname_Tradingname" [(ngModel)]="customer.lastname_Tradingname" required>
+                        </div>
+                    </div>
+                    <!--CPF-->
+                    <div class="form-group" *ngIf="customer.type == 1">
+                        <label for="cpf_Cnpj" class="col-sm-4 control-label">CPF</label>
+                        <div class="col-sm-8">
+                            <input cpfMask maxlength="14" type="text" class="form-control" formControlName="cpf_Cnpj" placeholder="000.000.000-00" [(ngModel)]="customer.cpf_Cnpj" required>
+                            <div>
+                                <span *ngIf="!validCPF() && validCPF() != null" class="form-control alert-danger">CPF Inválido</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--CNPJ-->
+                    <div class="form-group" *ngIf="customer.type == 2">
+                        <label for="cpf_Cnpj" class="col-sm-4 control-label">CNPJ</label>
+                        <div class="col-sm-8">
+                            <input cnpjMask type="text" maxlength="18" class="form-control" required formControlName="cpf_Cnpj" placeholder="00.000.000/0000-00" [(ngModel)]="customer.cpf_Cnpj">
+                            <div>
+                                <span *ngIf="!validCNPJ() && validCNPJ() != null" class="form-control alert-danger">CNPJ Inválido</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--RG-->
+                    <div class="form-group">
+                        <label for="rg_Ie" class="col-sm-4 control-label">{{(customer.type == 1) ? 'RG' : 'Inscrição Estadual'}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="rg_Ie" [(ngModel)]="customer.rg_Ie" formControlName="rg_Ie">
+                        </div>
+                    </div>
+                    <div class="form-group" *ngIf="customer.type == 1">
+                        <label for="gender" class="col-sm-4 control-label">Sexo</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" formControlName="gender" [(ngModel)]="customer.gender" required>
+                                <option *ngFor="let gender of genders" [value]="gender.value">{{gender.label}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" *ngIf="customer.type == 1">
+                        <label for="birthdate" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Data de Nascimento' : 'Data de Fundação'}}</label>
+                        <div class="col-sm-8">
+                            <input type="date" class="form-control" formControlName="birthdate" placeholder="00/00/0000" maxlength="10" [(ngModel)]="customer.birthdate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="col-sm-4 control-label">Telefone</label>
+                        <div class="col-sm-8">
+                            <input phoneMask type="tel" maxlength="15" class="form-control" formControlName="phone" placeholder="(00) 00000-0000" [(ngModel)]="customer.phone" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="celPhone" class="col-sm-4 control-label">Celular</label>
+                        <div class="col-sm-8">
+                            <input phoneMask type="tel" maxlength="15" class="form-control" formControlName="celPhone" placeholder="(00) 00000-0000" [(ngModel)]="customer.celPhone" required>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <h2>Dados de Entrega</h2>
+                    <div class="form-group">
+                        <label for="zipCode" class="col-sm-3 control-label">CEP</label>
+                        <div class="col-sm-6">
+                            <input zipcodeMask (change)="getDne($event)" maxlength="9" type="text" class="form-control" formControlName="zipCode" placeholder="00000-000" required [(ngModel)]="customer.addresses[0].zipCode">
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="#" class="help-cep">
+                                Não sei<br> meu CEP
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addressType" class="col-sm-3 control-label">Tipo de Endereço</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" formControlName="addressType" [(ngModel)]="customer.addresses[0].addressType" required>
+                                <option *ngFor="let type of addressTypes" [value]="type.value">{{type.label}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addressLine1" class="col-sm-3 control-label">Endereço</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" formControlName="addressLine1" placeholder="" required [(ngModel)]="customer.addresses[0].addressLine1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="number" class="col-sm-3 control-label">Numero</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" formControlName="number" placeholder="" required [(ngModel)]="customer.addresses[0].number">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="addressLine2" class="col-sm-3 control-label">Complemento</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" formControlName="addressLine2" placeholder="" [(ngModel)]="customer.addresses[0].addressLine2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="district" class="col-sm-3 control-label">Bairro</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" formControlName="district" placeholder="" required [(ngModel)]="customer.addresses[0].district">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="state" class="col-sm-3 control-label">Estado</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" formControlName="state" required [(ngModel)]="customer.addresses[0].state">
+                                <option value="" disabled>Selecione</option>
+                                <option *ngFor="let state of states" [value]="state.value">{{state.label}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="city" class="col-sm-3 control-label">Cidade</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" formControlName="city" placeholder="" required [(ngModel)]="customer.addresses[0].city">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <h2>Dados de Acesso</h2>
+                    <div class="form-group">
+                        <label for="email" class="col-sm-3 control-label">E-mail</label>
+                        <div class="col-sm-9">
+                            <input type="email" class="form-control" formControlName="email" placeholder="seu@email.com.br" required [(ngModel)]="customer.email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-sm-3 control-label">Senha</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control" formControlName="password" required [(ngModel)]="customer.password">
+                            <span *ngIf="myForm.controls.password.invalid" class="text-danger">A senha deve ser maior do que 6 caracteres e conter no mínimo 1 letra minúscula, 1 letra maiúscula e um numero</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-sm-3 control-label"> Confirmar Senha</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control" formControlName="confirmPassword" required [(ngModel)]="confirmPassword">
+                            <span *ngIf="myForm.controls.confirmPassword.invalid" class="text-danger">Confirme a senha digitada</span>
+                            
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" checked="checked" formControlName="receivePromotionalAndNews" [(ngModel)]="customer.receivePromotionalAndNews"> Desejo receber e-mails promocionais
+                        </label>
+                    </div>
+                    <div>
+                        <div class="col-sm-12 col-md-6 col-xs-12 form-group">
+                            <a [routerLink]="['/login']" [ngClass]="{'btn-lg btn-block': isMobile()}" class="btn btn-default">Voltar</a>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-xs-12 form-group">
+                            <button type="submit" [ngClass]="{'btn-lg btn-block': isMobile()}" class="btn btn-success pull-right">Prosseguir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><paleta>
+	<cor codigo="A046" nome="Chá de Erva-Doce" hex="E6ECC6"/>
+	<cor codigo="A018" nome="Dente-de-Leão" hex="E3E5D1"/>
+	<cor codigo="D019" nome="Praia Deserta" hex="E1E0CD"/>
+	<cor codigo="B056" nome="Verde Crepom" hex="DEE2D2"/>
+	<cor codigo="A303" nome="Afrodite" hex="E1EAD5"/>
+	<cor codigo="B018" nome="Bodas de Esmeralda" hex="DEE5D1"/>
+	<cor codigo="A047" nome="Suco de Limão" hex="E4EBD2"/>
+	<cor codigo="A058" nome="Mousse de Limão" hex="DFE7D2"/>
+	<cor codigo="A274" nome="Vinho Verde" hex="E3EDD9"/>
+	<cor codigo="C018" nome="Mojito" hex="E2E9D9"/>
+	<cor codigo="B055" nome="Verde Lavado" hex="D9E1CE"/>
+	<cor codigo="Z053" nome="Citronela" hex="E7EDE1"/>
+	<cor codigo="B017" nome="Sorvete de Pistache" hex="CDE0D0"/>
+	<cor codigo="A312" nome="Verde Gélido" hex="D4E8CF"/>
+	<cor codigo="A048" nome="Chá de Menta" hex="D7E8D4"/>
+	<cor codigo="D017" nome="Batida de Coco" hex="D1E4D5"/>
+	<cor codigo="A066" nome="Limonada Suíça" hex="D4E4DA"/>
+	<cor codigo="A067" nome="Aguapé" hex="CFDED5"/>
+	<cor codigo="A069" nome="Verde Gasoso" hex="D4E3DA"/>
+	<cor codigo="A318" nome="Água-Viva" hex="D5EEE4"/>
+	<cor codigo="Z051" nome="Verde Pálido" hex="DAECE0"/>
+	<cor codigo="A064" nome="Água de Degelo" hex="C8E0D9"/>
+	<cor codigo="A321" nome="Água de Rio" hex="C6DBDA"/>
+	<cor codigo="A322" nome="Verde Aquático" hex="C7EEE5"/>
+	<cor codigo="B064" nome="Verde Sereno" hex="C5E0DC"/>
+	<cor codigo="A324" nome="Palácio de Cristal" hex="D1DEDC"/>
+	<cor codigo="F018" nome="Maresia" hex="D2E2E1"/>
+	<cor codigo="A326" nome="Marca d'Água" hex="C3E2E2"/>
+	<cor codigo="A043" nome="Margarita Frozen" hex="E4EBBA"/>
+	<cor codigo="B300" nome="Margem de Rio" hex="DADDC2"/>
+	<cor codigo="B301" nome="Castelo de Areia" hex="D8D7BF"/>
+	<cor codigo="D056" nome="Fundo do Mar" hex="BDC5B1"/>
+	<cor codigo="C057" nome="Brotinho" hex="D6E1C5"/>
+	<cor codigo="C047" nome="Fábula" hex="D4E2BF"/>
+	<cor codigo="B046" nome="Berilo" hex="E4EABF"/>
+	<cor codigo="B306" nome="Som da Mata" hex="D3E6C1"/>
+	<cor codigo="P024" nome="Regata" hex="CFDBC3"/>
+	<cor codigo="C055" nome="Verde Vítreo" hex="CDD8C2"/>
+	<cor codigo="D055" nome="Verde Urbano" hex="BFC9B4"/>
+	<cor codigo="B061" nome="Esperança" hex="D1E1D4"/>
+	<cor codigo="C058" nome="Verde Preguiça" hex="CADEC4"/>
+	<cor codigo="A049" nome="Verde Pátina" hex="C2E5C0"/>
+	<cor codigo="B313" nome="Drinque Refrescante" hex="CAEBCD"/>
+	<cor codigo="B314" nome="Igarapé" hex="C1E9D7"/>
+	<cor codigo="B315" nome="Verde Boemia" hex="B1D6C0"/>
+	<cor codigo="C061" nome="Verde Silencioso" hex="B8D1C3"/>
+	<cor codigo="C068" nome="Verde Surfe" hex="C5DFD6"/>
+	<cor codigo="B062" nome="Fruta-Pão" hex="BEE3D3"/>
+	<cor codigo="A063" nome="Manta de Bebê" hex="AEDFD2"/>
+	<cor codigo="N039" nome="Piscina Natural" hex="AFD7CD"/>
+	<cor codigo="C067" nome="Urano" hex="B9D6D1"/>
+	<cor codigo="Z052" nome="Verde Cristalino" hex="B9E7DC"/>
+	<cor codigo="D060" nome="Brisa da Montanha" hex="A5CBC7"/>
+	<cor codigo="B324" nome="Fibra Óptica" hex="B8CDCC"/>
+	<cor codigo="C069" nome="Mar Calmo" hex="BFD7D5"/>
+	<cor codigo="B326" nome="Verde Marina" hex="A9D3D2"/>
+	<cor codigo="A044" nome="Uva Moscatel" hex="DBE69F"/>
+	<cor codigo="C300" nome="Folha de Uva" hex="CCD1AE"/>
+	<cor codigo="C301" nome="Folha Seca" hex="BEC1A6"/>
+	<cor codigo="C302" nome="Capim-de-Cheiro" hex="A6AD97"/>
+	<cor codigo="D047" nome="Pimenta-Verde" hex="BFD1A3"/>
+	<cor codigo="J057" nome="Sorvete de Menta" hex="BFD2A2"/>
+	<cor codigo="B043" nome="Absinto" hex="D3E6A5"/>
+	<cor codigo="C306" nome="Colônia de Alecrim" hex="C2E2AD"/>
+	<cor codigo="C051" nome="Ervas Finas" hex="BCD3A4"/>
+	<cor codigo="H050" nome="Maçã Verde" hex="B8CDB0"/>
+	<cor codigo="N053" nome="Cashmere" hex="9FAF96"/>
+	<cor codigo="C310" nome="Verde Orgânico" hex="AAC5A6"/>
+	<cor codigo="D058" nome="Coco Verde" hex="B8D4B4"/>
+	<cor codigo="B049" nome="Folclore" hex="B0DCB1"/>
+	<cor codigo="C048" nome="Lago Frias" hex="B5E1B3"/>
+	<cor codigo="C059" nome="Rio Bonito" hex="ADE0C8"/>
+	<cor codigo="C315" nome="Água-Marinha" hex="83B99C"/>
+	<cor codigo="C316" nome="Quebra-Pedra" hex="A4C3B5"/>
+	<cor codigo="H044" nome="Verde Catamarã" hex="B2CFC5"/>
+	<cor codigo="C062" nome="Equilíbrio" hex="B0E1D2"/>
+	<cor codigo="V041" nome="Mar de Maragogi" hex="98DACA"/>
+	<cor codigo="C320" nome="Bolinha de Gude" hex="93BFB8"/>
+	<cor codigo="C321" nome="Cheiro de Mato" hex="8AAEA5"/>
+	<cor codigo="B063" nome="Mar de Bitingui" hex="95D9CD"/>
+	<cor codigo="C323" nome="Mar Mediterrâneo" hex="79B8B3"/>
+	<cor codigo="C324" nome="Alpinismo" hex="8EA7A5"/>
+	<cor codigo="C064" nome="Cerca Viva" hex="94BEBE"/>
+	<cor codigo="C326" nome="Oceano Índico" hex="90CFCD"/>
+	<cor codigo="D299" nome="Refresco de Limão" hex="D3E083"/>
+	<cor codigo="D300" nome="Folha de Louro" hex="B7BD8F"/>
+	<cor codigo="D301" nome="Erva Daninha" hex="9FA283"/>
+	<cor codigo="D302" nome="Pinheiro" hex="8C9679"/>
+	<cor codigo="D303" nome="Arbusto" hex="A7B986"/>
+	<cor codigo="D304" nome="Fruta-do-Conde" hex="AFBD86"/>
+	<cor codigo="D043" nome="Verde Paraíso" hex="C1DF93"/>
+	<cor codigo="C050" nome="Suco de Clorofila" hex="AFDF9A"/>
+	<cor codigo="D307" nome="Orquídea da Terra" hex="A5C68F"/>
+	<cor codigo="D057" nome="Alto da Colina" hex="ABC19E"/>
+	<cor codigo="E056" nome="Babosa" hex="98A68B"/>
+	<cor codigo="E058" nome="Verde Pastel" hex="9FB79C"/>
+	<cor codigo="D311" nome="Pistache" hex="A0C89A"/>
+	<cor codigo="D312" nome="Colibri" hex="99CD94"/>
+	<cor codigo="D048" nome="Salvínia" hex="9FD69F"/>
+	<cor codigo="D314" nome="Verde Campestre" hex="82D4B3"/>
+	<cor codigo="D315" nome="Ágata Verde" hex="72A88B"/>
+	<cor codigo="D316" nome="Aventurina" hex="8AAE9E"/>
+	<cor codigo="D061" nome="Creme de Menta" hex="84B1A3"/>
+	<cor codigo="D062" nome="Alto Mar" hex="80CAB6"/>
+	<cor codigo="D319" nome="Onda Verde" hex="78CFBB"/>
+	<cor codigo="D320" nome="Litoral Sul" hex="76B6AC"/>
+	<cor codigo="E060" nome="Vaso de Cerâmica" hex="79A8A1"/>
+	<cor codigo="C063" nome="Camaleão" hex="74CEC2"/>
+	<cor codigo="D323" nome="Ilha Deserta" hex="64A09C"/>
+	<cor codigo="D324" nome="Mar de Gelo" hex="72908E"/>
+	<cor codigo="D064" nome="Sete Quedas" hex="80B2B2"/>
+	<cor codigo="E068" nome="Mar Caribenho" hex="76B9B8"/>
+	<cor codigo="E299" nome="Periquito" hex="CBDA74"/>
+	<cor codigo="E300" nome="Erva-Mate" hex="9BA674"/>
+	<cor codigo="E052" nome="Verde-Garrafa" hex="939470"/>
+	<cor codigo="E302" nome="Cáctus" hex="778263"/>
+	<cor codigo="E303" nome="Tomilho" hex="93A375"/>
+	<cor codigo="D046" nome="Capim-Cidreira" hex="A2BA70"/>
+	<cor codigo="E043" nome="Verde Bucólico" hex="B5D97E"/>
+	<cor codigo="E306" nome="Vitral" hex="A8D884"/>
+	<cor codigo="E307" nome="Ervilha Torta" hex="88B06E"/>
+	<cor codigo="D051" nome="Renda Portuguesa" hex="83A26E"/>
+	<cor codigo="E055" nome="Palmeira" hex="899C78"/>
+	<cor codigo="P058" nome="Eucalipto" hex="85A485"/>
+	<cor codigo="E311" nome="Estância" hex="7FB178"/>
+	<cor codigo="D049" nome="Verde Trevo" hex="65B475"/>
+	<cor codigo="E048" nome="Turmalina Verde" hex="83C583"/>
+	<cor codigo="E314" nome="Xarope de Menta" hex="53C199"/>
+	<cor codigo="E315" nome="Cavalinha" hex="559E78"/>
+	<cor codigo="E316" nome="Agave" hex="709A88"/>
+	<cor codigo="E061" nome="Tundra" hex="6B9E8E"/>
+	<cor codigo="E318" nome="Verde Tropical" hex="58C7A6"/>
+	<cor codigo="N041" nome="Verde Nascente" hex="60C4AE"/>
+	<cor codigo="E320" nome="Quintal de Casa" hex="469A8B"/>
+	<cor codigo="Z048" nome="Jardineira" hex="528D87"/>
+	<cor codigo="D063" nome="Verde Nostalgia" hex="48C0B2"/>
+	<cor codigo="E323" nome="Tarde Tropical" hex="449B96"/>
+	<cor codigo="E324" nome="Ardósia" hex="597876"/>
+	<cor codigo="E325" nome="Barco a Vela" hex="639C9E"/>
+	<cor codigo="P068" nome="Ibiza" hex="4C9999"/>
+	<cor codigo="P299" nome="Verde Loteria" hex="B1CA52"/>
+	<cor codigo="P300" nome="Folhagem" hex="94A162"/>
+	<cor codigo="P301" nome="Orégano" hex="717852"/>
+	<cor codigo="P302" nome="Verde Exército" hex="666E57"/>
+	<cor codigo="P303" nome="Folha de Chá Verde" hex="748653"/>
+	<cor codigo="R044" nome="Hortelã" hex="80A358"/>
+	<cor codigo="P305" nome="Verde Fashion" hex="AED367"/>
+	<cor codigo="P306" nome="Verde Flúor" hex="8ACA5B"/>
+	<cor codigo="L056" nome="Verde Maritaca" hex="64AC5B"/>
+	<cor codigo="P047" nome="Grama Verde" hex="6B9458"/>
+	<cor codigo="P055" nome="Espinafre" hex="687C58"/>
+	<cor codigo="P310" nome="Esmeralda" hex="5A8263"/>
+	<cor codigo="E050" nome="Samambaia" hex="5C955C"/>
+	<cor codigo="P312" nome="Rua Arborizada" hex="469A4B"/>
+	<cor codigo="P313" nome="Serra da Bocaina" hex="6CC379"/>
+	<cor codigo="P314" nome="Bosque Encantado" hex="0CAF81"/>
+	<cor codigo="P059" nome="Ecologia" hex="30906C"/>
+	<cor codigo="E057" nome="Serra Gaúcha" hex="4F7B65"/>
+	<cor codigo="P317" nome="Salada Verde" hex="378370"/>
+	<cor codigo="P318" nome="Malaquita" hex="2DB697"/>
+	<cor codigo="P319" nome="Verde Tecnológico" hex="36B9A8"/>
+	<cor codigo="P320" nome="Passeio na Mata" hex="1C9080"/>
+	<cor codigo="P321" nome="Tempero Verde" hex="318077"/>
+	<cor codigo="E063" nome="Mundo Verde" hex="3CAFA1"/>
+	<cor codigo="P323" nome="Verde Amizade" hex="11908F"/>
+	<cor codigo="P324" nome="Pradaria" hex="3F6262"/>
+	<cor codigo="P064" nome="Voo Livre" hex="548A88"/>
+	<cor codigo="P326" nome="Pé de Serra" hex="328181"/>
+	<cor codigo="R299" nome="Verde Neon" hex="A7C643"/>
+	<cor codigo="R300" nome="Guacamole" hex="7D8D36"/>
+	<cor codigo="R054" nome="Alcaparra" hex="5E633E"/>
+	<cor codigo="R052" nome="Bonsai" hex="586040"/>
+	<cor codigo="R303" nome="Floresta Temperada" hex="5D703D"/>
+	<cor codigo="R043" nome="Verde Fortuna" hex="73A644"/>
+	<cor codigo="R305" nome="Verde Folia" hex="9FCC4B"/>
+	<cor codigo="P043" nome="Verde Brinquedo" hex="7DB044"/>
+	<cor codigo="R307" nome="Fortuna" hex="489B3F"/>
+	<cor codigo="P046" nome="Limão Taiti" hex="678945"/>
+	<cor codigo="R055" nome="Vale Verde" hex="485C40"/>
+	<cor codigo="R058" nome="Verde Colegial" hex="546A51"/>
+	<cor codigo="R049" nome="Mata Atlântica" hex="32774B"/>
+	<cor codigo="R312" nome="Verde-Bandeira" hex="38953F"/>
+	<cor codigo="R313" nome="Pau-Brasil" hex="45AC5D"/>
+	<cor codigo="R314" nome="Natureza" hex="009661"/>
+	<cor codigo="R059" nome="Mesa de Sinuca" hex="077552"/>
+	<cor codigo="R316" nome="Doce de Mamão" hex="33654A"/>
+	<cor codigo="R317" nome="Árvore da Felicidade" hex="006552"/>
+	<cor codigo="R318" nome="Campo de Futebol" hex="009175"/>
+	<cor codigo="R319" nome="Verde Ousadia" hex="00A494"/>
+	<cor codigo="R062" nome="Amazonita" hex="007564"/>
+	<cor codigo="R321" nome="Ramo de Arruda" hex="00746C"/>
+	<cor codigo="P063" nome="Mata Virgem" hex="008F88"/>
+	<cor codigo="R063" nome="Campo de Golfe" hex="008682"/>
+	<cor codigo="R324" nome="Araucária" hex="294D54"/>
+	<cor codigo="P060" nome="Camuflagem" hex="477A75"/>
+	<cor codigo="R326" nome="Floresta Úmida" hex="006566"/>
+</paleta>

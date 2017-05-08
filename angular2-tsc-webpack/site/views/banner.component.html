@@ -1,0 +1,30 @@
+<!--<div class="row">
+    <div *ngIf="!isMobile()" class="container">
+        <div id="banner-tarja">
+            <div class="tarja-slider owl-carousel owl-theme">
+                <a *ngFor="let banner of bannersTop" [href]="banner.url"><img [attr.src]="mediaPath + banner.picture" [attr.alt]="banner.name" class="img-responsive"></a>
+            </div>
+        </div>
+    </div>-->
+
+<div *ngIf="!isMobile()" class="container">
+    <div id="banner-tarja">
+        <div class="container">
+            <ul class="tarja-slider list-style-none owl-carousel owl-theme">
+                <li *ngFor="let banner of bannersTop">
+                    <img [attr.src]="mediaPath + banner.picture" [attr.alt]="banner.name" class="img-responsive">
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isMobile()" id="banner-tarja">
+    <ul class="list-style-none owl-carousel owl-theme">
+        <li *ngFor="let banner of bannersTop">
+            <a [href]="banner.url">
+                <img [attr.src]="mediaPath + banner.picture" [attr.alt]="banner.name" class="img-responsive" />
+            </a>
+        </li>
+    </ul>
+</div>
