@@ -1,0 +1,36 @@
+<div *ngIf="!isMobile()" class="discount-coupon-box">
+    <form class="discount-coupon" (submit)="getDiscountCoupon($event)">
+        <label for="coupon-code">
+                Incluir vale presente ou cupom de desconto
+            </label>
+        <div class="input-box">
+            <input type="text" name="code" [(ngModel)]="coupon.code" id="code" placeholder="Digite aqui seu código">
+            <button class="btn-send" type="submit" id="btn-coupon"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+        </div>
+    </form>
+    <span *ngIf="cart.coupons.length > 0">Cupons ativos:</span>
+    <ul class="coupon-list" *ngIf="cart.coupons.length > 0">
+        <li class="coupon-item" *ngFor="let coupon of cart.coupons">
+            <strong>* {{coupon.name}}</strong>
+            <a href="#" class="remove" (click)="deleteDiscountCoupon($event, coupon.id)">Remover</a>
+        </li>
+    </ul>
+</div>
+
+<div *ngIf="isMobile()" class="discount-coupon-box">
+    <form class="discount-coupon" (submit)="getDiscountCoupon($event)">
+        <div class="form-group">
+            <label for="coupon-code">
+                Incluir vale presente ou cupom de desconto
+            </label>
+            <input class="form-control" type="text" name="code" [(ngModel)]="coupon.code" id="code" placeholder="Digite aqui seu código">
+        </div>
+            <button class="btn btn-default" type="submit" id="btn-coupon">Adicionar Cupom</button>
+    </form>
+    <ul class="coupon-list" *ngIf="cart.coupons.length > 0">
+        <li class="coupon-item" *ngFor="let coupon of cart.coupons">
+            <strong>* {{coupon.name}}</strong>
+            <a href="#" class="remove" (click)="deleteDiscountCoupon($event, coupon.id)">Remover</a>
+        </li>
+    </ul>
+</div>

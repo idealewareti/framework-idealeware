@@ -1,0 +1,10 @@
+<div class="showcase showcase-owl destaque">
+    <h3 class="title">
+        <b>{{group.name}}</b>
+    </h3>
+    <ul [attr.id]="'group-' + group.id" class="showcase-items list-style-none owl-carousel owl-theme" *ngIf="group.products">
+        <li class="showcase-item" *ngFor="let product of group.products">
+            <product-grid-item *ngIf="product.skuBase" [product]="product" [store]="store"></product-grid-item>
+        </li>
+    </ul>
+</div>

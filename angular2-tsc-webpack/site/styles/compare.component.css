@@ -1,0 +1,64 @@
+table{
+  table-layout: fixed;
+}
+
+.thumb {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.thumb a {
+  display: block;
+  text-align: center;
+}
+.thumb a img {
+  height: 238px;
+  width: auto;
+}
+.price-box {
+  display: block;
+  height: 50px;
+}
+.price-box .regular-price {
+  font-size: 20px;
+  color: #000;
+  font-weight: 600;
+}
+.price-box .old-price {
+  display: block;
+  font-size: 15px;
+  color: #999999;
+  text-decoration: line-through;
+}
+h3.product-name {
+  height: 55px;
+  overflow: hidden;
+  margin: 15px 0 15px;
+}
+h3.product-name a {
+  font-weight: 400;
+  color: #757575;
+  font-size: 15px;
+  line-height: 18px;
+  display: block;
+}
+
+.specification{
+    display: table;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.specification dt{
+    font-weight: bold;
+    /*float: left;*/
+    /*width: 50%;*/
+    padding: 2px 2px;
+}
+
+.specification dd{
+    /*float: right;*/
+    /*width: 50%;*/
+    padding: 2px 2px;
+    /*text-align: right;*/
+}

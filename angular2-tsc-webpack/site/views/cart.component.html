@@ -1,0 +1,181 @@
+<main role="main" class="container checkout-page" *ngIf="cart && !isMobile()">
+            
+    <div class="checkout-title clearfix">
+        <span class="pull-right" *ngIf="modality > -1"><checkout-button [cart]="cart" icon="true" [text]="buttonLabel"></checkout-button></span>
+        <h2 class="page-title">MEU CARRINHO</h2>
+    </div>
+
+    <table class="table table-checkout">
+        <thead>
+            <tr>
+                <td colspan="2">{{ (getNumItemsInCart() > 1) ? 'Produtos' : 'Produto' }}</td>
+                <td class="text-center" width="120px">Quantidade</td>
+                <td class="text-center" width="150px" *ngIf="showValuesProduct">Valor Unitário</td>
+                <td class="text-center" width="150px" *ngIf="showValuesProduct">Total</td>
+                <td width="45px"></td>
+            </tr>
+        </thead>
+        <tbody *ngIf="getNumItemsInCart() > 0">
+            <tr *ngFor="let item of cart.products">
+                <td>
+                    <img *ngIf="item.sku.picture.thumbnail" [attr.src]="mediaPath + item.sku.picture.thumbnail" class="img-responsive image" [attr.alt]="item.name">
+                    <img *ngIf="!item.sku.picture.thumbnail" [attr.src]="'/assets/imagesno-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="item.name">
+                </td>
+                <td>
+                    <b class="name">{{item.name}}</b>
+                    <span class="sku">Cód. {{item.sku.code}}</span>
+                    <span class="variations" *ngFor="let variation of item.sku.variations">{{variation.name + ': ' + variation.option.name}}</span>
+                    <span class="variations" *ngIf="item.sku.feature">{{item.sku.feature}}</span>
+                </td>
+                <td class="text-center">
+                    <span class="qty-box">
+                        <input type="number" name="qty" [ngModel]="item.quantity" [attr.title]="item.quantity" (ngModelChange)="updateItem($event, item)" min="1" step="1">
+                    </span>
+                </td>
+                <td class="text-center" *ngIf="showValuesProduct">
+                    <span class="regular-price">{{item.totalUnitPrice | currencyFormat }}</span>
+                </td>
+                <td class="text-center" *ngIf="showValuesProduct"><span class="total-price">{{item.totalPrice | currencyFormat }}</span></td>
+                <td class="text-center"><a href="#" (click)="deleteItem($event, item)" class="btn-remove"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+            </tr>
+        </tbody>
+    </table>
+    <!--Serviços-->
+    <table class="table table-checkout" *ngIf="cart.services && cart.services.length > 0">
+        <thead>
+            <tr>
+                <td>Serviço(s)</td>
+                <td class="text-center">Regras</td>
+                <td class="text-center" width="120px">Quantidade</td>
+                <td class="text-center" width="150px" *ngIf="showValuesProduct">Valor Unitário</td>
+                <td class="text-center" width="150px" *ngIf="showValuesProduct">Total</td>
+                <td width="45px"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of cart.services">
+                <td>{{item.serviceType}}</td>
+                <td>{{item.rules}}</td>
+                <td class="text-center">
+                    <span class="qty-box">
+                        <input type="number" name="qty" [ngModel]="item.quantity" [attr.title]="item.quantity" (ngModelChange)="updateItemService($event, item)" min="1" step="1">
+                    </span>
+                </td>
+                <td class="text-center" *ngIf="showValuesProduct"><span class="regular-price">{{item.price | currencyFormat }}</span></td>
+                <td class="text-center" *ngIf="showValuesProduct"><span class="total-price">{{(item.price * item.quantity) | currencyFormat }}</span></td>
+                <td class="text-center"><a href="#" (click)="deleteItemService($event, item)" class="btn-remove"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="row checkout-total">
+        
+        <div class="col-xs-6 col-md-5" *ngIf="modality == 1">
+            <coupon [cart]="cart" (cartUpdated)="handleCartUpdated($event)"></coupon>
+            <shipping-calc [cart]="cart" (cartUpdated)="handleCartUpdated($event)"></shipping-calc>
+        </div>
+
+        <div class="col-xs-6 col-md-5 col-md-offset-2 col-lg-4 col-lg-offset-3">
+            <div class="total-box">
+                <table *ngIf="showValuesProduct">
+                    <tbody>
+                        <tr class="subtotal">
+                            <td class="text-left"><span>Subtotal ({{getNumItemsInCart() + ' ' + (getNumItemsInCart() > 1 ? 'itens' : 'item')}})</span></td>
+                            <td class="text-right"><strong>{{getSubTotal() | currencyFormat }}</strong></td>
+                        </tr>
+                        <tr class="descont">
+                            <td class="text-left"><span>Desconto</span></td>
+                            <td class="text-right"><strong>- {{getDiscount() | currencyFormat }}</strong></td>
+                        </tr>
+                        <tr class="services" *ngIf="getTotalService() > 0">
+                            <td class="text-left"><span>Serviços</span></td>
+                            <td class="text-right"><strong>{{getTotalService() | currencyFormat }}</strong></td>
+                        </tr>
+                        <tr class="shipping">
+                            <td class="text-left"><span>Frete</span></td>
+                            <td class="text-right"><strong>{{getShipping() | currencyFormat }}</strong></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="total">
+                            <th class="text-left"><span>Total</span></th>
+                            <th class="text-right"><strong>{{getTotal() | currencyFormat }}</strong></th>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <checkout-button *ngIf="modality > -1" icon="true" [text]="buttonLabel" [cart]="cart"></checkout-button>
+
+                <a *ngIf="modality > -1" [routerLink]="['/']" class="btn btn-block btn-md btn-default btn-back-to-buy">{{(modality == 1) ? 'CONTINUAR COMPRANDO' : 'CONTINUAR ORÇANDO'}}</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <cart-showcase></cart-showcase>
+    </div>
+
+</main>
+
+<main role="main" class="container checkout-page" *ngIf="cart && isMobile()">
+            
+    <div class="checkout-title clearfix">
+        <h2 class="page-title">MEU CARRINHO</h2>
+    </div>
+    
+    <div id="mobile-cart">
+        <ul class="mobile-cart-items">
+            <li *ngFor="let item of cart.products" class="mobile-cart-item clearfix">
+                <span class="actions pull-right">
+                    <button class="btn-remove" (click)="deleteItem($event, item)"><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">Remover do Carrinho</span></button>
+                    <span class="update-qty">
+                        <input type="number" min="1" step="1" [ngModel]="item.quantity" (ngModelChange)="updateItem($event, item)">
+                    </span>
+                </span>
+                <span class="thumb pull-left">
+                    <a [routerLink]="['/produto/' + item.sku.id]" class="link-product">
+                        <img *ngIf="item.sku.picture.thumbnail" [attr.src]="mediaPath + item.sku.picture.thumbnail" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
+                        <img *ngIf="!item.sku.picture.thumbnail" [attr.src]="'/img/no-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
+                    </a>
+                </span>
+                <span class="details overflow-hidden">
+                    <a [routerLink]="['/produto/' + item.sku.id]" class="link-product">
+                        <b>{{item.name}} {{item.sku.code}} {{item.sku.feature}}</b>
+                        <span class="variations" *ngFor="let variation of item.sku.variations">{{variation.name + ': ' + variation.option.name}}</span>
+                        <strong>
+                            <span class="regular-price">{{item.totalUnitPrice | currencyFormat }}</span>
+                        </strong>
+                    </a>
+                </span>
+            </li>
+        </ul>
+        
+        <div class="row" *ngIf="modality == 1">
+            <div class="col-md-12 col-sm-12" >
+                <coupon [cart]="cart" (cartUpdated)="handleCartUpdated($event)"></coupon>
+                <shipping-calc [cart]="cart" (cartUpdated)="handleCartUpdated($event)"></shipping-calc>
+            </div>
+
+        </div>
+
+        <div class="mobile-cart-footer">
+            <div class="mobile-cart-subtotal">
+                <strong>Subtotal: <span class="price">{{getSubTotal() |  currencyFormat }}</span></strong>
+            </div>
+            <div class="mobile-cart-subtotal">
+                <strong>Desconto: <span class="price">{{getDiscount() |  currencyFormat }}</span></strong>
+            </div>
+            <div class="mobile-cart-subtotal">
+                <strong>Frete: <span class="price">{{getShipping() |  currencyFormat }}</span></strong>
+            </div>
+            <div class="mobile-cart-subtotal">
+                <strong>Total: <span class="price">{{getTotal() |  currencyFormat }}</span></strong>
+            </div>
+            <div class="btn-actions">
+                <a [routerLink]="['/']" class="btn btn-block btn-default btn-lg btn-continue">Continuar Comprando</a>
+                <checkout-button [cart]="cart"></checkout-button>
+            </div>
+        </div>
+    </div>
+        
+</main>

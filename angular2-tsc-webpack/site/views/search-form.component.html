@@ -1,0 +1,23 @@
+<form *ngIf="!isMobile()" id="form-search" action="/buscar" method="get" (submit)="searchFor($event)" >
+    <fieldset>
+        <input id="auto-complete" type="text" placeholder="O que você procura?" name="q" [(ngModel)]="q" autocomplete="off" required>
+        <button class="button button-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+    </fieldset>
+</form>
+
+<button *ngIf="isMobile()" class="btn btn-search">
+    <img src="/assets/images/icon-search.svg" alt="Buscar" />
+</button>
+
+<div *ngIf="isMobile()" id="search-box" style="display: none;">
+    <div class="mask"></div>
+    <form id="form-search" action="/buscar" method="get" (submit)="searchFor($event)">
+        <fieldset class="clearfix">
+            <button (click)="searchFor($event)" type="submit" class="btn btn-search pull-right"><img src="/assets/images/icon-search.svg" alt="Buscar" /></button>
+            <button class="btn-close pull-left"><img src="/assets/images/icon-close.svg" alt="Fechar" /></button>
+            <div class="overflow-hidden">
+                <input id="auto-complete" type="text" placeholder="O que você procura?"name="q" [(ngModel)]="q" autocomplete="off" >
+            </div>
+        </fieldset>
+    </form>
+</div>

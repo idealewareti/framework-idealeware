@@ -1,0 +1,19 @@
+<!-- Parte principal do site -->
+<main role="main" *ngIf="showcase && !isMobile()">
+    <!-- Banner Principal -->
+    <showcase-banner [banners]="showcase.pictures"></showcase-banner>
+
+    <brand-nav></brand-nav>
+
+    <div class="container" *ngIf="showcase.groups">
+        <showcase-group *ngFor="let group of showcase.groups" [store]="store" [group]="group"></showcase-group>
+    </div>
+</main>
+
+<!-- Parte principal do site -->
+<main *ngIf="isMobile()" role="main" class="container">
+    <div id="main-banner">
+        <showcase-banner [banners]="showcase.pictures"></showcase-banner>
+    </div>
+    <showcase-group *ngFor="let group of showcase.groups" [group]="group" [store]="store"></showcase-group>
+</main>

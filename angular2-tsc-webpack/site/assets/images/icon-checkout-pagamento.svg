@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="20px" viewBox="0 0 25 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>Shape</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="0-50-Desktop-HD-Checkout" transform="translate(-643.000000, -135.000000)" fill="#757575">
+            <g id="Group-8" transform="translate(393.000000, 130.000000)">
+                <g id="Group-3" transform="translate(214.500000, 0.000000)">
+                    <g id="ic_credit_card_black_24px-(1)" transform="translate(33.000000, 0.000000)">
+                        <g id="Group">
+                            <path d="M25,5 L5,5 C3.6125,5 2.5125,6.1125 2.5125,7.5 L2.5,22.5 C2.5,23.8875 3.6125,25 5,25 L25,25 C26.3875,25 27.5,23.8875 27.5,22.5 L27.5,7.5 C27.5,6.1125 26.3875,5 25,5 Z M25,22.5 L5,22.5 L5,15 L25,15 L25,22.5 Z M25,10 L5,10 L5,7.5 L25,7.5 L25,10 Z" id="Shape"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
