@@ -1,6 +1,6 @@
-#Trabalhando com Angular 2 e Angular 4
+# Trabalhando com Angular 2 e Angular 4
 
-##O que será necessário instalar:
+## O que será necessário instalar:
 
 NodeJS
 https://nodejs.org/en/
@@ -16,7 +16,7 @@ No Visual Studio Code, aperte *Ctrl P* para abrir o prompt e digite
 `ext install Angular-BeastCode`
 
 
-##A estrutura do projeto
+## A estrutura do projeto
 
 O nosso frontend segue o seguinte padrão:
 
@@ -49,7 +49,7 @@ O nosso frontend segue o seguinte padrão:
 --/package.json					_Configurações dos pacotes do projeto_
 
 
-##Iniciando um server Node
+## Iniciando um server Node
 
 Pelo Powershell ou Prompt de Comando, entre na pasta do projeto, e execute os comandos:
 
@@ -65,7 +65,7 @@ Para baixar as dependências do projeto
 
 Para iniciar o servidor. O caminho padrão que estamos usando é: http://localhost:4200
 
-##Gerando a publicação
+## Gerando a publicação
 
 Para publicação, basta digitar no terminal
 
