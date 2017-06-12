@@ -1,0 +1,13 @@
+<div>
+    <a class="btn btn-default" href="#" (click)="getSimulation($event)" >Ver parcelas</a>
+    <div *ngIf="simulation.length > 0">
+        <div class="installment-box"  *ngFor="let method of simulation[0].paymentMethods">
+            <h4>{{method.name}}</h4>
+            <ul class="list-group">
+                <li class="list-group-item" *ngFor="let installment of method.installment">
+                    em <strong>{{installment.number}}x </strong> de <strong>{{installment.installmentPrice | currencyFormat}} </strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

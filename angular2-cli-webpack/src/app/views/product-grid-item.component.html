@@ -1,0 +1,86 @@
+<span *ngIf="!isMobile()" class="border">
+    <span class="flags">
+        <!--<span class="flag frete-gratis">Frete Grátis</span>
+        <span class="flag porcentagem porcentagem-5">5%</span>-->
+    </span>
+    <span class="thumb">
+        <a [routerLink]="[productUrl]" [attr.title]="product.name">
+            <img [attr.src]="coverImg" [attr.alt]="product.name" [attr.data-original]="coverImg" [attr.data-alternative]="alternativeImg"/>
+        </a>
+    </span>
+
+    <!--<span class="quickview">
+            <button class="btn-quickview" (click)="quickView()"><i class="icon icon-quickview"><img src="/assets/images/icon-quickview.png" alt="Espiar" /></i>Espiar</button>
+    </span>-->
+
+    <h3 class="product-name">
+        <a [routerLink]="[productUrl]" [attr.title]="product.name">
+            {{product.name}}
+        </a>
+    </h3>
+    <span class="price-box" *ngIf="price > 0">
+        <div *ngIf="promotionalPrice > 0">
+            <span class="old-price">
+                <span class="price-label">De:</span>
+                <span class="price">{{price |  currencyFormat }}</span>
+            </span>
+            <span class="regular-price">
+                <span class="price-label">Por</span>
+                <span class="price">{{promotionalPrice |  currencyFormat }}</span>
+            </span>
+        </div>
+        <div *ngIf="promotionalPrice == 0">
+            <span class="regular-price">
+                <span class="price-label"></span>
+                <span class="price">{{price |  currencyFormat }}</span>
+            </span>
+        </div>
+    </span>
+    <span class="parcelamento" *ngIf="product.installmentValue > 0 && product.installmentNumber > 1 && price > 0">
+        <strong>{{product.installmentNumber}}x </strong> de <strong>{{product.installmentValue |  currencyFormat }} </strong>
+    </span>
+    <span class="comparar" *ngIf="showCompare">
+        <a href="#" [ngClass]="{'checked': isComparing(product.id)}" (click)="addToCompare($event, product)">
+          <i [ngClass]="{'fa-square-o': !isComparing(product.id), 'fa-check-square-o': isComparing(product.id)}" class="fa" aria-hidden="true"></i> Comparar
+        </a>
+    </span>
+    <a [routerLink]="[productUrl]" class="btn btn-success btn-buy"><i class="fa fa-shopping-cart" aria-hidden="true"></i>  
+       <span *ngIf="getModality() == 1">Comprar</span>
+       <span *ngIf="getModality() == 0">Orçar</span>
+    </a>
+</span>
+
+<quickview *ngIf="!isMobile()" [product]="product"></quickview>
+
+<span *ngIf="isMobile()" class="border">
+    <span class="thumb">
+        <a [routerLink]="productUrl" [attr.title]="product.name">
+            <img [attr.src]="coverImg" [attr.alt]="product.name" />
+        </a>
+    </span>
+    
+    <h3 class="product-name">
+        <a href="#" [attr.title]="product.name">
+            {{product.name}}
+        </a>
+    </h3>
+    <span class="price-box" *ngIf="product.skuBase.promotionalPrice">
+        <span class="old-price">
+            <span class="price-label">De:</span>
+            <span class="price">{{product.skuBase.price |  currencyFormat}}</span>
+        </span>
+        <span class="regular-price">
+            <span class="price-label">Por</span>
+            <span class="price">{{product.skuBase.promotionalPrice |  currencyFormat}}</span>
+        </span>
+    </span>
+    <span class="parcelamento" *ngIf="product.skuBase.promotionalPrice && product.installmentValue > 0 && product.installmentNumber > 1">
+        <strong>{{product.installmentNumber}}x </strong> de <strong>{{product.installmentValue |  currencyFormat}}</strong>
+    </span>
+    <span class="price-box" *ngIf="!product.skuBase.promotionalPrice">
+        <span class="regular-price">
+            <span class="price-label">Por</span>
+            <span class="price">{{product.skuBase.price |  currencyFormat}}</span>
+        </span>
+    </span>
+</span>

@@ -1,0 +1,21 @@
+<div *ngIf="!isMobile()" class="image-group">
+    <div class="image" *ngIf="pictures.length > 0">
+        <img id="product-image-zoom" [attr.src]="mediaPath + coverImg.showcase" [attr.data-zoom-image]="mediaPath + coverImg.full">
+    </div>
+    <div class="image" *ngIf="pictures.length == 0">
+        <img id="product-image-zoom" src="/assets/images/no-image.jpg">
+    </div>
+    <ul *ngIf="pictures.length > 1" id="image-thumb"  class="owl-carousel owl-theme">
+        <li class="image-thumb-item" *ngFor="let picture of pictures">
+            <a href="#" [attr.data-image]="mediaPath + picture.showcase" [attr.data-zoom-image]="mediaPath + picture.full">
+                <img [attr.id]="picture.id" [attr.src]="mediaPath + picture.thumbnail" />
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div *ngIf="isMobile()" class="image-group owl-carousel owl-theme">
+    <div class="image text-center" *ngFor="let picture of pictures">
+        <img style="margin:0 auto" [attr.src]="mediaPath + picture.showcase" class="img-responsive">
+    </div>
+</div>

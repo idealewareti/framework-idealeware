@@ -1,0 +1,14 @@
+<div *ngFor="let variation of variations" class="product-variation-item">
+    <legend class="product-variation-title">{{variation.name}}:</legend>
+
+    <div class="product-variation-options">
+        <span class="product-variation-option" *ngFor="let option of getOptionsFromVariation(variation)">
+            <a *ngIf="!option.picture" href="javascript:void(0)" (click)="selectOption(variation, option, $event)" class="product-variation-choice" [ngClass]="{'product-variation-selected': isOptionSelected(option)}" [attr.title]="option.name" >
+                {{option.name}}
+            </a>
+            <a *ngIf="option.picture" href="javascript:void(0)" (click)="selectOption(variation, option, $event)" class="product-variation-choice product-variation-color" [ngClass]="{'product-variation-selected': isOptionSelected(option)}" [ngStyle]="{'background-color': option.picture}" [attr.title]="option.name">
+                
+            </a>
+        </span>
+    </div>
+</div>

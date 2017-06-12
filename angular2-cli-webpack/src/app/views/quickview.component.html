@@ -1,0 +1,69 @@
+<div [attr.id]="'quickview-' + product.id" class="quickview-box" style="display: none;">
+<div class="mask"></div>
+<div class="quickview-content scroll-bar">
+    <button class="btn-close-clickview" title="fechar"><img src="/assets/images/icon-close.svg" alt="Fechar"/></button>
+    <div class="quickview-row product-page-details">
+        <div class="col-image col-xs-4 col-md-6">
+            <div class="image-group">
+                <div class="image">
+                    <img id="product-image-zoom" [attr.src]="(product.CoverImage()) ? mediaPath + product.CoverImage().showcase : '/assets/images/no-image.jpg'" data-zoom-image="/assets/images/product4-zoom.jpg">
+                </div>
+                <ul id="image-thumb">
+                    <!--<li class="image-thumb-item">
+                        <a href="#" data-image="/assets/images/product4.jpg" data-zoom-image="/assets/images/product4-zoom.jpg">
+                            <img id="image-thumb-1" src="/assets/images/product4-thumb.jpg" />
+                        </a>
+                    </li>-->
+                </ul>
+            </div>
+        </div>
+        <div class="col-details col-xs-8 col-md-6">
+            <div class="product-name">
+                <h2>{{product.name}}</h2>
+            </div>
+            <div class="product-sku">Cód: <span>{{product.skuBase.code}}</span></div>
+
+            <div class="product-short-description">
+                <p>{{product.briefDescription}} <a [routerLink]="['/produto', product.skuBase.id, product.niceName]">Ver descrição completa</a></p>
+            </div>
+
+            <div class="product-variation">
+                <div class="product-variation-item">
+                    <legend class="product-variation-title">Selecione:</legend>
+                    <div class="product-variation-options">
+                        <span class="product-variation-option" *ngFor="let sku_choice of product.skus">
+                            <input type="radio" name="skuId" [id]="'sku_' + sku_choice.id" [value]="sku_choice.id" class="product-variation-input" [checked]="sku_choice.id == product.skuBase.id" [disabled]="!sku_choice.available">
+                            <label [attr.for]="'sku_' + sku_choice.id" class="product-variation-label" [ngClass]="{'no-stock disabled': !sku_choice.available}" (click)="open($event, sku_choice.id)">{{sku_choice.name}}</label>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <span class="price-box">
+                <div *ngIf="promotionalPrice > 0">
+                    <span class="old-price">
+                        <span class="price-label">De:</span>
+                        <span class="price">{{price |  currencyFormat }}</span>
+                    </span>
+                    <span class="regular-price">
+                        <span class="price-label">Por</span>
+                        <span class="price">{{promotionalPrice |  currencyFormat }}</span>
+                    </span>
+                </div>
+                <div *ngIf="promotionalPrice == 0">
+                    <span class="regular-price">
+                        <span class="price-label">Por</span>
+                        <span class="price">{{price |  currencyFormat }}</span>
+                    </span>
+                </div>
+            </span>
+
+            <div class="product-buy-box">
+                <span class="product-buy-button">
+                    <a [routerLink]="['/produto', product.skuBase.id, product.niceName]" class="btn btn-success btn-block btn-lg"><i class="fa fa-shopping-cart" aria-hidden="true"></i> <span>Comprar</span></a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
