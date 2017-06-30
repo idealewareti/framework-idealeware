@@ -40,7 +40,7 @@ Pasta/Arquivo            | Descrição
 /src/assets			 				 |			_Arquivos estáticos: CSS, Imagens e JS_
 
 
-## Iniciando um server Node
+## Iniciando um server Angular para desenvolvimento
 
 Pelo Powershell ou Prompt de Comando, entre na pasta do projeto, e execute os comandos:
 
@@ -53,4 +53,4 @@ Para iniciar o servidor. O caminho padrão que estamos usando é: http://localho
 ## Gerando a publicação
 
 Para publicação, basta digitar no terminal 
-> `ng build`
+> `ng build --prod`
