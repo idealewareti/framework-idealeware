@@ -15,8 +15,8 @@ import { SelfColorFamily } from "app/models/self-color/self-color-family";
 })
 export class SelfColorComponent {
     
-    private urlCores: string;
-    private families: SelfColorFamily[] = [];
+    urlCores: string;
+    families: SelfColorFamily[] = [];
 
     @Input() selfColor: SelfColor;
     @Output() colorUpdated: EventEmitter<SelfColor> = new EventEmitter<SelfColor>();

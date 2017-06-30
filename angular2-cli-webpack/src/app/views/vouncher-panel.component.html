@@ -6,17 +6,19 @@
     </form>-->
 </div>
 
-<div class="orders-box" *ngIf="coupons">
-    <table class="table-order-vouchers">
+<div class="orders-box table-responsive" *ngIf="coupons">
+    <table class="table-order-vouchers table table-striped">
         <tbody>
             <tr *ngFor="let coupon of coupons">
                 <td>
                     <span>Código do Vale-Compras</span>
                     <strong>{{coupon.code}}</strong>
+                    <span *ngIf="coupon.expired" class="label label-danger">Expirado</span>
                 </td>
                 <td>
                     <span>Validade do Cupom</span>
-                    <strong>{{coupon.endDate | date:'dd/MM/y'}}</strong>
+                    <strong *ngIf="coupon.endDate">{{coupon.endDate | date:'dd/MM/y'}}</strong>
+                    <span *ngIf="!coupon.endDate" class="text-muted">Sem data de validade</span>
                 </td>
             </tr>
             <tr *ngIf="coupons.length == 0">

@@ -1,4 +1,4 @@
-<div *ngIf="!isNewOrEdit()">
+<div>
     <h2>Meus Endereços</h2>
 
     <div class="orders-box">
@@ -16,8 +16,4 @@
             </div>
         </div>
     </div>
-</div>
-
-<div *ngIf="isNewOrEdit()">
-    <edit-address [tabId]="tabId"></edit-address>
 </div>

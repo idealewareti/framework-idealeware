@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterContentChecked } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Category } from "app/models/category/category";
 import { Brand } from "app/models/brand/brand";
@@ -8,7 +8,7 @@ import { Search } from "app/models/search/search";
 import { SearchService } from "app/services/search.service";
 import { BrandService } from "app/services/brand.service";
 import { AppSettings } from "app/app.settings";
-import { Title } from "@angular/platform-browser";
+import { Title, Meta } from "@angular/platform-browser";
 import { Filter } from "app/models/search/search-filter";
 import { ProductService } from "app/services/product.service";
 import { Variation } from "app/models/product/variation";
@@ -80,6 +80,7 @@ export class SearchComponent implements OnInit {
         private productService: ProductService,
         private storeService: StoreService,
         private titleService: Title,
+        private metaService: Meta,
     ) { }
 
     ngOnInit() {
@@ -146,6 +147,11 @@ export class SearchComponent implements OnInit {
         if (this.isMobile())
             this.filterBox();
     }
+
+    ngOnDestroy() {
+        this.metaService.removeTag("name='title'");
+        this.metaService.removeTag("name='description'");
+	}
 
     /* Paginations */
     listProducts(page: number, event = null) {
@@ -300,6 +306,10 @@ export class SearchComponent implements OnInit {
                 .then(brand => {
                     this.brand = brand;
                     AppSettings.setTitle(brand.metaTagTitle, this.titleService);
+                    this.metaService.addTags([
+                        { name: 'title', content: brand.metaTagTitle },
+                        { name: 'description', content: brand.metaTagDescription }
+                    ]);
                 })
                 .catch(error => console.log(error));
         }
@@ -310,6 +320,10 @@ export class SearchComponent implements OnInit {
             this.categoryApi.getCategory(id)
                 .then(category => {
                     AppSettings.setTitle(category.metaTagTitle, this.titleService);
+                    this.metaService.addTags([
+                        { name: 'title', content: category.metaTagTitle },
+                        { name: 'description', content: category.metaTagDescription }
+                    ]);
                     resolve(category);
                 })
                 .catch(error => reject(error));
@@ -321,6 +335,10 @@ export class SearchComponent implements OnInit {
             this.groupApi.getById(id)
             .then(group => {
                 AppSettings.setTitle(group.metaTagTitle, this.titleService);
+                this.metaService.addTags([
+                    { name: 'title', content: group.metaTagTitle },
+                    { name: 'description', content: group.metaTagDescription }
+                ]);
                 resolve(group);
             })
             .catch(error => {

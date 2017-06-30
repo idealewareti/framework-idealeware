@@ -56,7 +56,9 @@ export class CartComponent {
                 this.cart = cart;
                 this.cartReady = true;
                 setInterval(() => {
-                    this.cart = JSON.parse(localStorage.getItem('shopping_cart'));
+                    let c = new Cart(JSON.parse(localStorage.getItem('shopping_cart')));
+                    if(c.totalPurchasePrice != this.cart.totalPurchasePrice)
+                        this.cart = c;
                 }, 3000);
             })
             .catch(e => console.log(e));

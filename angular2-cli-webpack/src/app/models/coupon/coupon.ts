@@ -20,9 +20,13 @@ export class Coupon {
         let model = new Coupon();
         
         for (var k in response){
-            if(k == 'customers'){
+            if(k == 'customers' && response[k] != null){
                 model.customers = response.customers.map(c => c = new CouponCustomer(c));
             }
+            else if(k == 'startDate' && response[k] == '1901-01-01T00:00:00+00:00')
+                model[k] = null;
+            else if(k == 'endDate' && response[k] == '1901-01-01T00:00:00+00:00')
+                model[k] = null;                
             else{
                 model[k] = response[k];
             }

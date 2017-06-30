@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { Pagination } from "app/models/pagination";
 import { ModelReference } from "app/models/model-reference";
+import { AppSettings } from "app/app.settings";
 
 @Component({
     moduleId: module.id,
@@ -26,6 +27,7 @@ export class SearchPaginationComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges) {
         this.numPages = this.pagination.TotalPages;
         
+        this.createPages();
     }
 
 
@@ -74,5 +76,9 @@ export class SearchPaginationComponent implements OnInit, OnChanges {
                 this.pages.push(page);
             }
         }
+    }
+
+    isMobile(): boolean {
+        return AppSettings.isMobile();
     }
 }

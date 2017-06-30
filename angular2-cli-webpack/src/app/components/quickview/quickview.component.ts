@@ -15,6 +15,7 @@ export class QuickViewComponent implements OnInit {
     
     @Input() product: Product;
     mediaPath: string = AppSettings.MEDIA_PATH + '/products/';
+    promotionalPrice: number = 0;
     
     constructor(private parentRouter: Router) { }
 

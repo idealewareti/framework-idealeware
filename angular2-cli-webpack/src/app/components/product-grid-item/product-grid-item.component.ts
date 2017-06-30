@@ -4,6 +4,8 @@ import { Product } from 'app/models/product/product';
 import { Router } from "@angular/router";
 import { StoreService } from "app/services/store.service";
 import { Store } from "app/models/store/store";
+import { EnumStoreModality } from "app/enums/store-modality.enum";
+import { Sku } from "app/models/product/sku";
 
 declare var $: any;
 
@@ -18,6 +20,7 @@ export class ProductGridItemComponent {
     @Input() showCompare: boolean = false;
     @Input() store: Store;
 
+    sku: Sku = new Sku();
     coverImg: string;
     alternativeImg: string;
     mediaPath: string = `${AppSettings.MEDIA_PATH}/products`;
@@ -31,11 +34,22 @@ export class ProductGridItemComponent {
     }
 
     ngOnInit() {
-        this.coverImg = this.getCoverImage();
-        this.productUrl = `/produto/${this.product.skuBase.id}/${this.product.niceName}`;
-        this.price = this.product.skuBase.price;
-        this.promotionalPrice = this.product.skuBase.promotionalPrice;
-        this.alternativeImg = this.product.skuBase.alternativePicture.showcase != null ? `${AppSettings.MEDIA_PATH}/products/${this.product.skuBase.alternativePicture.showcase}` : '';
+
+        if(!this.product.skuBase.available || this.product.skuBase.stock <= 0){
+            let availables: Sku[] = this.product.skus.filter(sku => (sku.stock > 0) && (sku.available));
+            if(availables.length > 0)
+                this.sku = availables[0];
+            else
+                this.sku = this.product.skuBase;
+        }
+        else
+            this.sku = this.product.skuBase;
+
+        this.coverImg = (this.getCoverImage()['showcase']) ?`${AppSettings.MEDIA_PATH}/products/${this.getCoverImage().showcase}` : '/assets/images/no-image.jpg';
+        this.productUrl = `/produto/${this.sku.id}/${this.product.niceName}`;
+        this.price = this.sku.price;
+        this.promotionalPrice = this.sku.promotionalPrice;
+        this.alternativeImg = this.sku.alternativePicture ? `${AppSettings.MEDIA_PATH}/products/${this.sku.alternativePicture.showcase}` : '';
     }
 
     ngAfterViewChecked() {
@@ -55,7 +69,7 @@ export class ProductGridItemComponent {
     }
 
     getCoverImage() {
-       return this.product.getCoverImage();
+       return this.product.getSkuCoverImage(this.sku.id);
     }
 
     public quickView() {
@@ -151,5 +165,18 @@ export class ProductGridItemComponent {
         if(this.store)
             return this.store.modality;
         else return -1;
+    }
+
+    isBudget(): boolean{
+        if(this.store && this.store.modality == EnumStoreModality.Budget)
+            return true;
+        else return false;
+    }
+
+    isAvailable(): boolean{
+        if(this.sku.available && this.sku.stock > 0)
+            return true;
+        else 
+            return false;
     }
 }

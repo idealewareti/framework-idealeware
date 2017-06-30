@@ -3563,7 +3563,7 @@ body.checkout {
 .user-panel-page .col-details .order-step li {
   display: inline-block;
   vertical-align: top;
-  max-width: 85px;
+  max-width: 80px;
   text-align: center;
   position: relative;
   margin: 0;

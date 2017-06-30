@@ -1,5 +1,6 @@
 import { Branch } from "../branch/branch";
 import { DeliveryInformation } from "./delivery-information";
+import { EnumShippingType } from "app/enums/shipping-type.enum";
 
 export class Shipping {
 
@@ -9,7 +10,7 @@ export class Shipping {
      * @type {number}
      * @memberof Shipping
      */
-    shippingType: number = 0;
+    shippingType: EnumShippingType = 0;
     branch: Branch;
     deliveryInformation: DeliveryInformation;
     

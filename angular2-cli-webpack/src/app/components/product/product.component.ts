@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Http } from '@angular/http';
 import { AppSettings } from 'app/app.settings';
 import { Title, DomSanitizer, SafeResourceUrl, Meta } from '@angular/platform-browser';
@@ -24,9 +24,11 @@ import { Service } from "app/models/product-service/product-service";
 import { StoreService } from "app/services/store.service";
 import { Store } from "app/models/store/store";
 
+
 declare var $: any;
 declare var S: any;
 declare var swal: any;
+declare var toastr: any;
 
 @Component({
     moduleId: module.id,
@@ -58,13 +60,12 @@ export class ProductComponent {
     @Input() quantity: number = 1;
     @Input() areaSizer: number = 0;
 
-
-
     constructor(
         private route: ActivatedRoute,
         private storeService: StoreService,
         private parentRouter: Router,
         private titleService: Title,
+        private metaService: Meta,
         private service: ProductService,
         private serviceCustomer: CustomerService,
         private manager: CartManager,
@@ -92,6 +93,11 @@ export class ProductComponent {
             });
 
         $('body').addClass('product');
+    }
+
+    ngOnDestroy() {
+        this.metaService.removeTag("name='title'");
+        this.metaService.removeTag("name='description'");
     }
 
     public isMobile(): boolean {
@@ -133,11 +139,11 @@ export class ProductComponent {
 
             this.manager.purchase(this.product, this.sku, this.quantity, this.feature)
                 .then(() => {
+                    toastr['success']('Produto adicionado ao carrinho');
                     if (this.services.length > 0)
                         this.services.forEach(service => {
                             this.manager.addService(service.id, service.quantity);
                         });
-
                     this.parentRouter.navigateByUrl('/carrinho');
                 })
                 .catch(error => {
@@ -169,7 +175,7 @@ export class ProductComponent {
         this.allOptionsSelected = event;
     }
 
-    private setCurrentSku(skuId: string = null) {
+    setCurrentSku(skuId: string = null) {
         this.allOptionsSelected = true;
         return new Promise((resolve, reject) => {
             if (skuId)
@@ -184,11 +190,15 @@ export class ProductComponent {
 
     }
 
-    private getProductBySku(id) {
+    getProductBySku(id) {
         this.service.getProductBySku(id)
             .then(product => {
                 this.product = product;
                 this.setTitle(this.product, this.sku);
+                this.metaService.addTags([
+                    { name: 'title', content: this.product.metaTagTitle },
+                    { name: 'description', content: this.product.metaTagDescription }
+                ]);
                 if (product.video.videoEmbed)
                     this.videoSafeUrl = this.videoURL();
                 this.setCurrentSku(id);
@@ -362,5 +372,23 @@ export class ProductComponent {
             return true;
         else
             return false;
+    }
+
+    getTotalServices(): number{
+        if(this.services.length <= 0)
+            return 0;
+        else{
+            let total = 0;
+            this.services.forEach(service => {
+                total += service.price * service.quantity;
+            });
+            return total;
+        }
+    }
+
+    isProductAvailable(){
+        if(this.sku.available && this.sku.stock > 0)
+            return true;
+        else return false;
     }
 }

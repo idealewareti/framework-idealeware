@@ -8,6 +8,9 @@
 <button *ngIf="isMobile()" class="btn btn-search">
     <img src="/assets/images/icon-search.svg" alt="Buscar" />
 </button>
+<a *ngIf="isMobile()" class="btn btn-my-cart" [routerLink]="['/carrinho']">
+    <img src="/assets/images/icon-cart.svg" alt="Meu Carrinho" />
+</a>
 
 <div *ngIf="isMobile()" id="search-box" style="display: none;">
     <div class="mask"></div>

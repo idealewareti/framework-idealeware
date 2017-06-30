@@ -1,9 +1,9 @@
 <main role="main" class="container user-panel-page">
     <div class="container">
-        <div class="row" *ngIf="!isNewCustomer()">
+        <div class="row">
             <div class="login-form">
                 <div class="col-md-6 col-sm-12 login-new-customer form-group">
-                    <a [routerLink]="['/login/cadastro']" class="btn btn-lg btn-default btn-block">Sou um cliente novo? </a>
+                    <a [routerLink]="['/cadastrar']" class="btn btn-lg btn-default btn-block">Sou um cliente novo? </a>
                 </div>
                 <div class="col-md-6 col-sm-12 login-fields">
                     <form (submit)="submit($event)">
@@ -22,6 +22,5 @@
                 </div>
             </div>
         </div>
-        <signup-form *ngIf="isNewCustomer()"></signup-form>
     </div>
 </main>

@@ -13,12 +13,10 @@ import { ActivatedRoute,
     NavigationEnd,
     NavigationCancel,
     NavigationError } from '@angular/router';
-import { Customer } from "app/models/customer/customer";
-import { CustomerService } from 'app/services/customer.service';
-import { Order } from "app/models/order/order";
-import { OrderService } from "app/services/order.service";
 import { StoreService } from "app/services/store.service";
 import { Store } from "app/models/store/store";
+import { CustomerService } from "app/services/customer.service";
+import { Customer } from "app/models/customer/customer";
 
 //declare var $: any;
 declare var S: any;
@@ -29,9 +27,11 @@ declare var S: any;
     templateUrl: '../../views/account.component.html',
 })
 export class AccountComponent{
-    @Input() tabId: string;
     loading: boolean = true;
-    private step: string = '';
+    store: Store = new Store;
+    customer: Customer = new Customer();
+
+    path: string;
     private actual = { module: '', title : ''};
     private modules = [
         { module: 'home', title: 'Minha Conta', modality: [0,1] },
@@ -40,130 +40,58 @@ export class AccountComponent{
         { module: 'enderecos', title: 'Meus Endereços', modality: [0,1] },
         { module: 'vounchers', title: 'Meus Vales', modality: [1] }
     ];
-    private logged: boolean;
-    private customer: Customer = new Customer();
-    public store: Store = new Store(); 
-    public lastOrder: Order = null;
-    
+
     constructor(
         private service: CustomerService,
-        private orderService: OrderService,
-        private storeService: StoreService,
         private titleService: Title, 
         private route: ActivatedRoute,
-        private parentRouter: Router
+        private parentRouter: Router,
+        private storeService: StoreService,
     ){
         
         window.scrollTo(0, 0); // por causa das hash url
     }
 
     ngOnInit(){
-        this.route.params
-        .map(params => params)
-        .subscribe((params) => {
-            if(params['step'])
-                this.step = params['step'];
-            if(params['id'])
-                this.tabId = params['id'];
+        if(!this.isLogged())
+            this.parentRouter.navigateByUrl('/login');
 
-            this.getStore()
-            .then(store => {
-                return this.getCustomer();
-            })
-            .catch(() => {
-                this.parentRouter.navigateByUrl('/login');
-            });
-
-            if(this.store.modality == 1)
-                this.orderService.getOrders()
-                .then(orders => {
-                    if(orders)
-                        this.lastOrder = orders[0];
-                })
-                .catch(error => console.log(error));
-        });
-        
-        
-    }
-
-    private getCustomer() : Promise<Customer>{
-        return new Promise((resolve, reject) => {
-            if(this.logged) {
-                resolve(this.customer);
-            }
-            else{
-                this.service.getUser()
-                .then(customer => {
-                    this.customer = customer;
-                    this.logged = true;
-                    resolve(customer)
-                })
-                .catch((error) => {
-                    this.logged = false;
-                    reject(error);
-                });
-            }
-        });
-    }
-
-    public isLogged(){
-        return this.logged;
-    }
-
-    public open(event, module, id = null) {
-        event.preventDefault();
-        this.loading = true;
-        let url = `/conta/${module}`;
-        this.parentRouter.navigateByUrl(url);
-        this.step = module;
-        this.tabId = id;
-        this.loadModule()
-        .then(() => this.getCustomer);
-    }
-
-    private loadModule(){
-        return new Promise((resolve, reject) => {
-            if(this.validModule(this.step).length > 0){
-                this.actual = this.validModule(this.step)[0];
+        this.parentRouter.events.subscribe((url:any) => {
+            let path: string = url['url'];
+            if(this.validModule(this.path).length > 0){
+                this.actual = this.validModule(this.path)[0];
             }
             else{
                 this.actual = { module: 'home', title: 'Minha Conta' };
             }
-            this.setTitle(this.actual.title);
-            this.loading =  false;
-            window.scrollTo(0, 0); // por causa das hash url
-            resolve();
-        });
-    }
+            AppSettings.setTitle(this.actual.title, this.titleService);
 
-    private setTitle( newTitle: string) {
-        AppSettings.setTitle(newTitle, this.titleService);
-    }
-
-    private validModule(module: string){
-        return this.modules.filter(m => m.module == module);
-    }
-
-    public getStore():Promise<Store> {
-        return new Promise((resolve, reject) => {
-            if(this.store)
-                resolve(this.store);
-            this.storeService.getInfo()
-                .then(store => {
-                    this.store = store;
-                    this.loadModule();
-                    resolve(store);
-                })
-                .catch(error => {
-                    console.log(error);
-                    reject(error);
-                });
         });
 
+        this.storeService.getInfo()
+        .then(store => this.store = store)
+        .catch(error => console.log(error));
+
+        this.service.getUser()
+        .then(customer => this.customer = customer)
+        .catch(error => console.log(error));
+        
     }
 
     isMobile(): boolean{
         return AppSettings.isMobile();
+    }
+
+    isLogged(): boolean{
+        let accessToken: string = localStorage.getItem('auth');
+        if(accessToken)
+            return true;
+        else
+            return false;
+    }
+
+    private validModule(module: string){
+        return this.modules.filter(m => m.module == module);
     }
 
 }

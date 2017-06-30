@@ -7,7 +7,6 @@ import {RouterModule} from '@angular/router';
 import 'rxjs/Rx';
 
 /* Components */
-import {AccountComponent} from './components/account/account.component';
 import {AppComponent} from './app.component';
 import {BudgetComponent} from './components/budget/budget.component';
 import {BudgetFinishComponent} from './components/budget-finish/budget-finish.component';
@@ -19,15 +18,15 @@ import {ContactComponent} from './components/contact/contact.component';
 import {ForgetPasswordComponent} from './components/forget-password/forget-password.component';
 import {InstitutionalComponent} from './components/institutional/institutional.component';
 import {LoginComponent} from './components/login/login.component';
-import {LogoutComponent} from './components/login/logout.component';
+import {LogoutComponent} from './components/logout/logout.component';
 import {NotFoundComponent} from './components/404/404.component';
 import {ProductComponent} from './components/product/product.component';
 import {SearchComponent} from './components/search/search.component';
 import {ShowCaseComponent} from './components/showcase/showcase.component';
+import {SignUpComponent} from './components/signup/signup.component';
+
 
 /* Modules */
-import {AddressPanelListModule} from './components/account-address-panel/address-panel-list.module';
-import {AddressPanelModule} from './components/account-address-panel/address-panel.module';
 import {BannerModule} from './components/banner/banner.module';
 import {BannerSideModule} from './components/banner/banner-side.module';
 import {BrandNavModule} from './components/brand-nav/brand-nav.module';
@@ -40,10 +39,7 @@ import {GroupModule} from './components/group/group.module';
 import {InstallmentSimulationModule} from './components/product-simulation/installment-simulation.module';
 import {LoginEmbedModule} from './components/login-embed/login-embed.module';
 import {MiniCartModule} from './components/cart-mini/mini-cart.module';
-import {MyOrderPanelModule} from './components/account-orders-panel/myorder-panel.module';
-import {NewAddressModule} from './components/account-address-panel/address-edit.module';
 import {NewsLetterModule} from './components/newsletter/newsletter.module';
-import {OrderPanelModule} from './components/account-orders-panel/orders-panel.module';
 import {PaymentMundipaggModule} from './components/checkout-payment-mundipagg/payment-mundipagg.module';
 import {PaymentPagseguroModule} from './components/checkout-payment-pagseguro/payment-pagseguro.module';
 import {PopUpModule} from './components/pop-up/popup.module';
@@ -62,15 +58,12 @@ import {ServiceModule} from './components/service/service.module';
 import {ShippingCalcModule} from './components/shipping/shipping.module';
 import {ShowcaseBannerModule} from './components/showcase-banner/showcase-banner.module';
 import {ShowcaseGroupModule} from './components/showcase-group/showcase-group.module';
-import {SignUpModule} from './components/login/signup.module';
-import {UserEditModule} from './components/account-user-edit-panel/user-edit.module';
-import {VouncherPanelModule} from './components/account-vouncher-panel/vouncher-panel.module';
 
 /* Essentials */
 import {AppSettings} from './app.settings';
-import {CurrencyFormatModule} from './pipes/currency-format.module';
+import {CurrencyFormatModule} from './pipes/currency-format/currency-format.module';
 import {HttpClient} from './helpers/httpclient';
-import {OrderByModule} from './pipes/orderBy.module';
+import {OrderByModule} from './pipes/orderBy/orderBy.module';
 import {NgProgressModule} from 'ngx-progressbar';
 import {NgProgressCustomBrowserXhr} from "ngx-progressbar";
 import {routing} from './app.routes';
@@ -111,11 +104,10 @@ import {StoreService} from './services/store.service';
 
 /* Managers */
 import { CartManager } from './managers/cart.manager';
+import { CustomerManager } from './managers/customer.manager';
 
 @NgModule({
     imports: [
-        AddressPanelListModule,
-        AddressPanelModule,
         BannerModule,
         BannerSideModule,
         BrandNavModule,
@@ -134,12 +126,9 @@ import { CartManager } from './managers/cart.manager';
         InstallmentSimulationModule,
         LoginEmbedModule,
         MiniCartModule, 
-        MyOrderPanelModule,
-        NewAddressModule,
         NewsLetterModule,
         NgProgressModule,
         OrderByModule,
-        OrderPanelModule,
         PaymentMundipaggModule,
         PaymentPagseguroModule,
         PhoneMaskModule,
@@ -160,15 +149,11 @@ import { CartManager } from './managers/cart.manager';
         SelfColorModule,
         ServiceModule,
         ShippingCalcModule,
-        SignUpModule,
         ShowcaseBannerModule,
         ShowcaseGroupModule,
-        UserEditModule,
-        VouncherPanelModule,
         ZipCodeMaskModule,
     ],
     declarations: [
-        AccountComponent,
         AppComponent,
         BudgetComponent,
         BudgetFinishComponent,
@@ -185,6 +170,7 @@ import { CartManager } from './managers/cart.manager';
         ProductComponent,
         SearchComponent,
         ShowCaseComponent,
+        SignUpComponent
     ],
     providers: [
         HttpClient,
@@ -198,6 +184,7 @@ import { CartManager } from './managers/cart.manager';
         CategoryService,
         ContactService,
         CouponService,
+        CustomerManager,
         CustomerService,
         DneAddressService,
         FipeService,

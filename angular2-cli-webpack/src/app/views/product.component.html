@@ -46,7 +46,7 @@
                         </div>
                     </div>
 
-                    <div class="clearfix" *ngIf="sku.available && sku.stock > 0">
+                    <div class="clearfix" *ngIf="isProductAvailable()">
 
                         <div class="col-md-12">
                             <div class="product-price-box" *ngIf="sku.promotionalPrice > 0 && sku.price > 0">
@@ -74,6 +74,10 @@
                                     <span class="parcelamento" *ngIf="product.installmentValue > 0 && product.installmentNumber > 1">
                                         em <strong>{{product.installmentNumber}}x </strong> de <strong>{{product.installmentValue |  currencyFormat}} </strong>
                                     </span>
+                                    <span class="text-info" *ngIf="getTotalServices() > 0">
+                                        + {{getTotalServices() |  currencyFormat}}
+                                        em serviços
+                                    </span>
                                 </diV>
                             </div>
                         </div>
@@ -95,7 +99,7 @@
                                 </div>
                             </div>
 
-                            <service *ngIf="product && product.services.length > 0" [product]="product" (serviceUpdated)="handleServiceUpdated($event)"></service>
+                            <service *ngIf="product && product.services.length > 0" [product]="product" [selectedServices]="services" (serviceUpdated)="handleServiceUpdated($event)"></service>
                         </div>
 
                         <div class="col-md-6">
@@ -126,7 +130,7 @@
                         </div>
                     </div>
 
-                    <div class="product-unavaliable" *ngIf="!sku.available || sku.stock < 1">
+                    <div class="product-unavaliable" *ngIf="!isProductAvailable()">
                         <b>Produto temporariamente indisponível</b>
 
                         <form (submit)="receiveProductsAwaited($event)" class="form-inline">
@@ -262,7 +266,7 @@
                     <installment-simulation *ngIf="product.showInstallment == true" [sku]="sku" [sku]="sku"></installment-simulation>
                 </div>
 
-                <div class="product-unavaliable" *ngIf="!sku.available">
+                <div class="product-unavaliable" *ngIf="!isProductAvailable()">
                     <b>Produto temporariamente indisponível</b>
 
                     <form (submit)="receiveProductsAwaited($event)" class="form-inline">
@@ -279,7 +283,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="product-buy-content text-center" *ngIf="sku.available">
+                <div class="product-buy-content text-center" *ngIf="isProductAvailable()">
                     <div class="product-buy-box clearfix">
                         <span class="product-buy-qty pull-left">
                             <span class="product-buy-qty-label">Qtd.</span>

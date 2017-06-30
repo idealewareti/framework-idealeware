@@ -3,8 +3,7 @@ import {RouterModule} from '@angular/router';
 import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
 import { ProductGridItemComponent } from './product-grid-item.component';
-import { CurrencyFormatPipe } from "app/pipes/currency-format.pipe";
-import { CurrencyFormatModule } from "app/pipes/currency-format.module";
+import { CurrencyFormatModule } from "app/pipes/currency-format/currency-format.module";
 import { QuickViewModule } from "../quickview/quickview.module";
 
 @NgModule({

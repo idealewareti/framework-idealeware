@@ -1,5 +1,8 @@
 import { Title } from '@angular/platform-browser';
 import { AppConfig } from './app.config';
+import {environment} from './../environments/environment'
+import { Http } from "@angular/http";
+import { AppCore } from "app/app.core";
 
 export class AppSettings {
 
@@ -9,35 +12,35 @@ export class AppSettings {
     public static MEDIA_PATH = AppConfig.MEDIA_PATH;
 
     public static SELF_COLOR_PALETA = '/assets/services';
-    /* APi's */
-    public static API_AUTHENTICATE = 'https://api-pub-authenticate.idealeware.com.br:10000';
-    public static API_BANNER = 'https://api-pub-banner.idealeware.com.br:10000';
-    public static API_BRANCH = 'https://api-pub-branch.idealeware.com.br:10000';
-    public static API_BRAND = 'https://api-pub-brand.idealeware.com.br:10000';
-    public static API_BUDGET = 'https://api-pub-budget.idealeware.com.br:10000';
-    public static API_CART = 'https://api-pub-cart.idealeware.com.br:10000';
-    public static API_CARTSHOWCASE = 'https://api-pub-cartshowcase.idealeware.com.br:10000';
-    public static API_CATEGORY = 'https://api-pub-category.idealeware.com.br:10000';
-    public static API_CONTACT = 'https://api-pub-contact.idealeware.com.br:10000';
-    public static API_COUPON = 'https://api-pub-coupon.idealeware.com.br:10000';
-    public static API_CUSTOMER = 'https://api-pub-customer.idealeware.com.br:10000';
-    public static API_DNEADDRESS = 'https://api-pub-dneaddress.idealeware.com.br:10000';
-    public static API_GOOGLE = 'https://api-pub-google.idealeware.com.br:10000';
-    public static API_GROUP = 'https://api-pub-group.idealeware.com.br:10000';
-    public static API_INSTITUTIONAL = 'https://api-pub-institutional.idealeware.com.br:10000';
-    public static API_INTELIPOST = 'https://api-pub-intelipost.idealeware.com.br:10000';
-    public static API_ORDER = 'https://api-pub-order.idealeware.com.br:10000'; 
-    public static API_ORDERVALIDATION = 'https://api-pub-ordervalidation.idealeware.com.br:10000';
-    public static API_PAYMENTS = 'https://api-pub-payments.idealeware.com.br:10000';
-    public static API_POPUP = 'https://api-pub-popup.idealeware.com.br:10000';
-    public static API_PRODUCT = 'https://api-pub-product.idealeware.com.br:10000';
-    public static API_PRODUCTAWAITED = 'https://api-pub-productsawaited.idealeware.com.br:10000';
-    public static API_PRODUCTRATING = 'https://api-pub-productrating.idealeware.com.br:10000';
-    public static API_SEARCH = 'https://api-pub-search.idealeware.com.br:10000';
-    public static API_SERVICE = 'https://api-pub-service.idealeware.com.br:10000';
-    public static API_SHOWCASE = 'https://api-pub-showcase.idealeware.com.br:10000';
-    public static API_STORE = 'https://api-pub-store.idealeware.com.br:10000';
-
+   
+    public static API_AUTHENTICATE =    AppCore.getAPI(environment, 'API_AUTHENTICATE');
+    public static API_BANNER =          AppCore.getAPI(environment, 'API_BANNER');
+    public static API_BRANCH =          AppCore.getAPI(environment, 'API_BRANCH');
+    public static API_BRAND =           AppCore.getAPI(environment, 'API_BRAND');
+    public static API_BUDGET =          AppCore.getAPI(environment, 'API_BUDGET');
+    public static API_CART =            AppCore.getAPI(environment, 'API_CART');
+    public static API_CARTSHOWCASE =    AppCore.getAPI(environment, 'API_CARTSHOWCASE');
+    public static API_CATEGORY =        AppCore.getAPI(environment, 'API_CATEGORY');
+    public static API_CONTACT =         AppCore.getAPI(environment, 'API_CONTACT');
+    public static API_COUPON =          AppCore.getAPI(environment, 'API_COUPON');
+    public static API_CUSTOMER =        AppCore.getAPI(environment, 'API_CUSTOMER');
+    public static API_CUSTOMPAINT =     AppCore.getAPI(environment, 'API_CUSTOMPAINT');
+    public static API_DNEADDRESS =      AppCore.getAPI(environment, 'API_DNEADDRESS');
+    public static API_GOOGLE =          AppCore.getAPI(environment, 'API_GOOGLE');
+    public static API_GROUP =           AppCore.getAPI(environment, 'API_GROUP');
+    public static API_INSTITUTIONAL =   AppCore.getAPI(environment, 'API_INSTITUTIONAL');
+    public static API_INTELIPOST =      AppCore.getAPI(environment, 'API_INTELIPOST');
+    public static API_ORDER =           AppCore.getAPI(environment, 'API_ORDER');
+    public static API_ORDERVALIDATION = AppCore.getAPI(environment, 'API_ORDERVALIDATION');
+    public static API_PAYMENTS =        AppCore.getAPI(environment, 'API_PAYMENTS');
+    public static API_POPUP =           AppCore.getAPI(environment, 'API_POPUP');
+    public static API_PRODUCT =         AppCore.getAPI(environment, 'API_PRODUCT');
+    public static API_PRODUCTAWAITED =  AppCore.getAPI(environment, 'API_PRODUCTAWAITED');
+    public static API_PRODUCTRATING =   AppCore.getAPI(environment, 'API_PRODUCTRATING');
+    public static API_SEARCH =          AppCore.getAPI(environment, 'API_SEARCH');
+    public static API_SERVICE =         AppCore.getAPI(environment, 'API_SERVICE');
+    public static API_SHOWCASE =        AppCore.getAPI(environment, 'API_SHOWCASE');
+    public static API_STORE =           AppCore.getAPI(environment, 'API_STORE');
 
     /**
      * Consulta Fipe

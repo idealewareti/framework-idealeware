@@ -32,6 +32,7 @@
     "rxjs": "^5.1.0",
     "string": "^3.3.3",
     "sweetalert2": "^6.4.4",
+    "toastr": "^2.1.2",
     "web-animations-js": "^2.2.5",
     "zone.js": "^0.8.4"
   },

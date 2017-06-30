@@ -27,6 +27,7 @@ export class ServiceComponent {
     totalService: number = 0;
 
     @Input() product: Product = new Product();
+    @Input() selectedServices: Service[] = [];
     @Output() serviceUpdated: EventEmitter<Service> = new EventEmitter<Service>();
 
     constructor(
@@ -76,16 +77,22 @@ export class ServiceComponent {
     }
 
     addService(serviceId: string) {
-        this.loader.start();
         let serviceSelected = this.services.filter(s => s.id == serviceId)[0];
-        this.serviceUpdated.emit(serviceSelected);
-        this.loader.done();
+        if(serviceSelected.quantity == 0)
+            swal("Quantidade não informada", "A quantidade mínima de serviços deve ser maior que zero");
+        else{
+            this.loader.start();
+            this.serviceUpdated.emit(serviceSelected);
+            this.loader.done();
+        }
     }
 
     deleteService(serviceId: string, event) {
         event.preventDefault();
-        if (serviceId != null)
-            this.cartManager.deleteService(serviceId);
+        let serviceSelected = this.services.filter(s => s.id == serviceId)[0];
+        serviceSelected.quantity = 0;
+        this.serviceUpdated.emit(serviceSelected);
+        this.loader.done();
     }
 
     changeTotalService(id: string): number {
@@ -97,6 +104,12 @@ export class ServiceComponent {
 
         return (quantity * price);
 
+    }
+
+    isServiceSelected(service: Service): boolean{
+        if(this.selectedServices.findIndex(s => s.id == service.id) > -1)
+            return true;
+        else return false;
     }
 
 

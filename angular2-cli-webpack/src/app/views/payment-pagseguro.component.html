@@ -12,34 +12,32 @@
 
     <!-- Form Boleto -->
     <div class="form-payment" *ngIf="typeSelected.code == 2">
-        <form class="form-horizontal">
-            <ul class="payment-options">
-                <li *ngFor="let option of typeSelected.options">
-                    <a href="#" (click)="selectOption($event, option)" class="btn btn-default" [ngClass]="{'active': optionSelected.code == option.code}" [attr.title]="'Selecione ' + option.displayName + ' como método de pagamento'">
-                        <img *ngIf="option.images" [attr.src]="pagseguro_media + option.images.SMALL.path" [attr.alt]="option.displayName">
-                        {{option.displayName}}
-                    </a>
-                </li>
-            </ul>
-        </form>
+
+        <label *ngFor="let option of typeSelected.options" href="#" (click)="selectOption($event, option)" [ngClass]="{'active': optionSelected.code == option.code}" [attr.title]="'Selecione ' + option.displayName + ' como método de pagamento'">
+            <i class="fa" [ngClass]="{'fa-square-o': optionSelected.code != option.code, 'fa-check-square-o': optionSelected.code == option.code}"></i>
+
+            <img *ngIf="option.images" [attr.src]="pagseguro_media + option.images.SMALL.path" [attr.alt]="option.displayName">
+            {{option.displayName}}
+        </label>
+
     </div>
     <!-- Form Boleto -->
     
     <!-- Form Cartão -->
     <div class="form-payment" *ngIf="typeSelected.code == 1">
-        <form class="form-horizontal">
-            <div class="form-group">
+        <form class="form-horizontal" [formGroup]="creditCardForm">
+            <div class="form-group" [ngClass]="{'has-error': hasError('cardNumber')}">
                 <label for="n-cartao" class="col-sm-4 control-label">Nº do Cartão</label>
                 <div class="col-sm-8">
-                    <input type="text" creditCartMask class="form-control" name="creditCardNumber" [(ngModel)]="creditCard.creditCardNumber" (ngModelChange)="detectCard($event)" placeholder="0000-0000-0000-0000" maxlength="19" required>
+                    <input type="text" creditCartMask class="form-control" formControlName="cardNumber" name="creditCardNumber" [(ngModel)]="creditCard.creditCardNumber" (ngModelChange)="detectCard($event)" placeholder="0000-0000-0000-0000" maxlength="19" required>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" [ngClass]="{'has-error': hasError('installment')}">
                 <label for="n-parcelas" class="col-sm-4 control-label">Nº do Parcelas</label>
                 <div class="col-sm-8">
-                    <select class="form-control" name="installmentCount" [(ngModel)]="creditCard.installmentCount">
+                    <select class="form-control" formControlName="installment" name="installmentCount" [(ngModel)]="creditCard.installmentCount">
                         <option *ngIf="installments.length == 0" value="" disabled>Informe um cartão de crédito válido para obter as parcelas</option>
-                        <option [value]="installment.quantity" *ngFor="let installment of installments">{{installment.quantity}}x de {{installment.installmentAmount | currencyFormat}} {{(installment.interestFree) ? 'sem juros' : 'com juros'}}
+                        <option [value]="installment.quantity" *ngFor="let installment of installments" (ngModelChange)="setInstallmentValue($event)">{{installment.quantity}}x de {{installment.installmentAmount | currencyFormat}} {{(installment.interestFree) ? 'sem juros' : 'com juros'}}</option>
                     </select>
                 </div>
             </div>
@@ -47,18 +45,18 @@
                 <label class="col-sm-4 control-label" >Total à prazo</label>
                 <div class="col-sm-8">{{installments[creditCard.installmentCount - 1].totalAmount | currencyFormat}}</div>
             </div>
-            <div class="form-group">
+            <div class="form-group" [ngClass]="{'has-error': hasError('holder')}">
                 <label for="n-nome" class="col-sm-4 control-label">Seu Nome <small>(como no cartão)</small></label>
                 <div class="col-sm-8">
-                    <input type="text" [(ngModel)]="creditCard.holderName" class="form-control" name="n-nome" placeholder="" required>
+                    <input type="text" [(ngModel)]="creditCard.holderName" class="form-control" formControlName="holder" name="n-nome" placeholder="" required>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" [ngClass]="{'has-error': hasError('expMonth'), 'has-error': hasError('expYear')}">
                 <label class="col-sm-4 control-label">Vencimento</label>
                 <div class="col-sm-8">
                     <div class="row">
                         <div class="col-sm-6">
-                            <select class="form-control" [(ngModel)]="creditCard.expMonth" name="n-mes" required>
+                            <select class="form-control" [(ngModel)]="creditCard.expMonth" formControlName="expMonth" name="n-mes" required>
                                 <option value="0">Mês</option>
                                 <option value="1">01</option>
                                 <option value="2">02</option>
@@ -75,15 +73,15 @@
                             </select>
                         </div>
                         <div class="col-sm-6">
-                            <input type="text" [(ngModel)]="creditCard.expYear" class="form-control" name="n-ano" placeholder="2017" maxlength="4" required>
+                            <input type="text" [(ngModel)]="creditCard.expYear" class="form-control" formControlName="expYear" name="n-ano" placeholder="2017" maxlength="4" required>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" [ngClass]="{'has-error': hasError('cvv')}">
                 <label for="n-cod-seguranca" class="col-sm-4 control-label">Código de Segurança</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" name="n-cod-seguranca" [(ngModel)]="creditCard.securityCode" placeholder="" required>
+                    <input type="text" class="form-control" formControlName="cvv" name="n-cod-seguranca" [(ngModel)]="creditCard.securityCode" placeholder="" required>
                 </div>
             </div>
         </form>

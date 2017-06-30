@@ -9,9 +9,12 @@ import { PagseguroInstallment } from "app/models/pagseguro/pagseguro-installment
 import { PaymentSelected } from "app/models/payment/checkout-payment";
 import { Shipping } from "app/models/shipping/shipping";
 import { PaymentMethod } from "app/models/payment/payment-method";
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NgProgressService } from "ngx-progressbar";
 
 declare var PagSeguroDirectPayment: any;
-
+declare var swal: any;
+declare var toastr: any;
 
 @Component({
     moduleId: module.id,
@@ -40,6 +43,8 @@ export class PaymentPagseguroComponent implements OnInit {
     private methodType: number;
     private totalPurchasePrice: number;
 
+    creditCardForm: FormGroup;
+
     public readonly pagseguro_media = 'https://stc.pagseguro.uol.com.br';
     private regexBrands = {
         Visa: /^4[0-9]{6,}$/,
@@ -52,7 +57,25 @@ export class PaymentPagseguroComponent implements OnInit {
         Discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/
     }
     
-    constructor(private service: PaymentService) { }
+    constructor(
+        private service: PaymentService,
+        formBuilder: FormBuilder,
+        private loaderService: NgProgressService,
+
+    ) {
+        this.creditCardForm = formBuilder.group({
+            cardNumber: ['', Validators.compose([
+                Validators.required,
+                Validators.maxLength(19),
+                Validators.minLength(19)
+            ])],
+            installment: ['', Validators.required],
+            holder: ['', Validators.required],
+            expMonth: ['', Validators.required],
+            expYear: ['', Validators.required],
+            cvv: ['', Validators.required]
+        });
+    }
 
     ngOnInit() {
         this.service.createPagSeguroSession()
@@ -67,9 +90,14 @@ export class PaymentPagseguroComponent implements OnInit {
 				    for(let k in response.paymentMethods){
                         this.paymentMethods.push(new PagseguroMethod(response.paymentMethods[k]));
                     }
+
+                    if(this.paymentMethods.length == 0){
+                        swal('Erro ao obter as formas de pagamento', 'Falha ao obter as formas de pagamento do Pagseguro', 'error');
+                    }
 			    },
 			    error: response => {
-				    
+				    console.log(response);
+                    swal('Erro ao obter as formas de pagamento', 'Falha ao obter as formas de pagamento do Pagseguro', 'error');
 			    },
 			    complete: response => {
 				    
@@ -99,6 +127,11 @@ export class PaymentPagseguroComponent implements OnInit {
      selectType(method: PagseguroMethod, payment: Payment){
         this.typeSelected = method;
         this.paymentSelected = this.payment;
+
+        if(this.typeSelected.code == 2)
+            this.selectOption(null, this.typeSelected.options[0]);
+        else
+            this.selectOption(null, new PagseguroOption());
      }
      
      selectOption(event = null, option: PagseguroOption){
@@ -120,36 +153,50 @@ export class PaymentPagseguroComponent implements OnInit {
     }
 
     detectCard(event){
-        event.replace(/-/g, '');
-        if(event.length == 16){
-            this.creditCard.creditCardBrand = this.getCardBrand(this.creditCard.creditCardNumber.replace(/-/g, '')).toLowerCase();
-            if(this.creditCard.creditCardBrand){
-                let cartId = localStorage.getItem('cart_id');
-                PagSeguroDirectPayment.getInstallments({
-                    amount: this.cart.totalPurchasePrice,
-                    brand: this.creditCard.creditCardBrand,
-                    maxInstallmentNoInterest: this.payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value,
-                    success: response => {
-                        this.installments = response.installments[this.creditCard.creditCardBrand].map(i => i = new PagseguroInstallment(i));
-                        this.getMinInstallments();
-                        this.paymentMethods.forEach(m => {
-                            let option = m.options.filter(o => o.name == this.creditCard.creditCardBrand.toUpperCase())[0];
-                            if(option){
-                                let selected = new PaymentSelected(this.payment, null, option);
-                                this.paymentUpdated.emit(selected);
-                            }
-                        })
-                    },
-                    error: response => {
-                        console.log(response);
-                        this.installments = [];
-                    }
-                });
+        if(event){
+            let card = event.replace(/-/g, '');
+            if(card.length == 16){
+                this.loaderService.start();
+                toastr['info']('Identificando o cartão');
+                this.creditCard.creditCardBrand = this.getCardBrand(this.creditCard.creditCardNumber.replace(/-/g, '')).toLowerCase();
+                this.creditCard.noInterestInstallmentQuantity = Number.parseInt(this.payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
+                if(this.creditCard.creditCardBrand){
+                    toastr['success'](`Cartão ${this.creditCard.creditCardBrand} identificado`);
+                    let cartId = localStorage.getItem('cart_id');
+                    toastr['info']('Obtendo parcelas');
+                    PagSeguroDirectPayment.getInstallments({
+                        
+                        amount: this.cart.totalPurchasePrice,
+                        brand: this.creditCard.creditCardBrand,
+                        maxInstallmentNoInterest: this.creditCard.noInterestInstallmentQuantity,
+                        success: response => {
+                            this.installments = response.installments[this.creditCard.creditCardBrand].map(i => i = new PagseguroInstallment(i));
+                            this.getMinInstallments();
+                            this.paymentMethods.forEach(m => {
+                                let option = m.options.filter(o => o.name == this.creditCard.creditCardBrand.toUpperCase())[0];
+                                if(option){
+                                    let selected = new PaymentSelected(this.payment, null, option);
+                                    this.creditCardUpdated.emit(this.creditCard);
+                                    this.paymentUpdated.emit(selected);
+                                }
+                            })
+                        },
+                        error: response => {
+                            console.log(response);
+                            this.installments = [];
+                        }, 
+                        complete: response => {
+                            this.loaderService.done();
+                        }
+                    });
+                }
+                else{
+                    this.loaderService.done();
+                }
             }
-        }
-        else{
 
         }
+
     }
 
     getInstallmentFreeInterest(): number{
@@ -201,6 +248,19 @@ export class PaymentPagseguroComponent implements OnInit {
 
     public handleMethodUpdated(event: PaymentMethod){
         this.selectMethod(null, event);
+    }
+
+    hasError(key: string): boolean{
+        return (this.creditCardForm.controls[key].touched && this.creditCardForm.controls[key].invalid);
+    }
+
+    isBankSlip(): boolean{
+        return this.typeSelected.code == 2;
+    }
+
+    setInstallmentValue(event){
+        this.creditCard.installmentValue = this.installments[this.creditCard.installmentCount -1].installmentAmount;
+        this.creditCardUpdated.emit(this.creditCard);
     }
      
 }

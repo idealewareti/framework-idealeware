@@ -4,7 +4,7 @@ import { ShippingCalcComponent } from './shipping.component';
 import { RouterModule } from "@angular/router";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ZipCodeMaskModule } from "app/directives/zipcode-mask/zipcode-mask.module";
-import { CurrencyFormatModule } from "app/pipes/currency-format.module";
+import { CurrencyFormatModule } from "app/pipes/currency-format/currency-format.module";
 
 @NgModule({
     declarations: [ ShippingCalcComponent ],

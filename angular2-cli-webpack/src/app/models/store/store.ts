@@ -1,4 +1,5 @@
 import { StoreSetting } from "./storeSetting";
+import { EnumStoreModality } from "app/enums/store-modality.enum";
 
 export class Store {
     domain: string;
@@ -18,7 +19,7 @@ export class Store {
     city: string;
     state: string;
     country: string;
-    modality: number;
+    modality: EnumStoreModality;
     settings: StoreSetting[] = [];
 
     public constructor(object = null) {

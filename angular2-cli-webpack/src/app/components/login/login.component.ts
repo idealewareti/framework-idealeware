@@ -45,7 +45,7 @@ export class LoginComponent {
     ngOnInit() {
         this.step = this.route.params['value'].step;
         if (this.isNewCustomer())
-            AppSettings.setTitle('Cadastre-se', this.titleService);
+            this.parentRouter.navigateByUrl('/cadastro');
         else AppSettings.setTitle('Login', this.titleService);
 
     }

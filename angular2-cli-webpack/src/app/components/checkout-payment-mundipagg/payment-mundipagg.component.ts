@@ -116,28 +116,31 @@ export class PaymentMundipaggComponent implements OnInit {
 
     getCardBrand(cardnumber: string){
         for(let k in this.regexBrands){
-            if(this.regexBrands[k].test(cardnumber))
+            if(this.regexBrands[k].test(cardnumber.replace(/-/g, '')))
                 return k;
         }
     }
 
     detectCard(event){
-        if(event.length == 16){
-            this.creditCard.creditCardBrand = this.getCardBrand(this.creditCard.creditCardNumber);
-            if(this.creditCard.creditCardBrand){
-                let cartId = localStorage.getItem('cart_id');
-                this.creditCardUpdated.emit(this.creditCard);
-                this.service.simulateInstallments(cartId)
-                .then(payments => {
-                    this.methodSelected = payments[0].paymentMethods.filter(m => m.name == this.creditCard.creditCardBrand.toUpperCase())[0]
-                    let selected = new PaymentSelected(this.paymentSelected, this.methodSelected);
-                    this.paymentUpdated.emit(selected);
-                })
-                .catch(error => console.log(error));
+        if(event){
+            let card = event.replace(/-/g, '');
+            if(card.length == 16){
+                this.creditCard.creditCardBrand = this.getCardBrand(this.creditCard.creditCardNumber);
+                if(this.creditCard.creditCardBrand){
+                    let cartId = localStorage.getItem('cart_id');
+                    this.creditCardUpdated.emit(this.creditCard);
+                    this.service.simulateInstallments(cartId)
+                    .then(payments => {
+                        this.methodSelected = payments[0].paymentMethods.filter(m => m.name == this.creditCard.creditCardBrand.toUpperCase())[0]
+                        let selected = new PaymentSelected(this.paymentSelected, this.methodSelected);
+                        this.paymentUpdated.emit(selected);
+                    })
+                    .catch(error => console.log(error));
+                }
             }
-        }
-        else{
-            this.methodSelected.installment = [];
+            else{
+                this.methodSelected.installment = [];
+            }
         }
     }
 

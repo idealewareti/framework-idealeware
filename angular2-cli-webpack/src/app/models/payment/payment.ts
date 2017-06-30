@@ -30,7 +30,7 @@ export class Payment {
             if(k == 'paymentMethods'){
                 model.paymentMethods = response.paymentMethods.map(o => o = new PaymentMethod(o));
             }
-            else if(k == 'settings')
+            else if(k == 'settings' && response[k])
             {
                 model.settings = response.settings.map(o => o = new PaymentSetting(o));
 

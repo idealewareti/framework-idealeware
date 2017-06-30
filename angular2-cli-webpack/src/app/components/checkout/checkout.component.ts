@@ -31,11 +31,13 @@ import { PaymentSelected } from "app/models/payment/checkout-payment";
 import { AppSettings } from "app/app.settings";
 import { AppTexts } from "app/app.texts";
 import { CartManager } from "app/managers/cart.manager";
+import { EnumShippingType } from "app/enums/shipping-type.enum";
 
 declare var $: any;
 declare var S: any;
 declare var swal: any;
 declare var PagSeguroDirectPayment: any;
+declare var toastr: any;
 
 @Component({
     moduleId: module.id,
@@ -44,7 +46,7 @@ declare var PagSeguroDirectPayment: any;
 })
 export class CheckoutComponent implements OnInit {
     private cart: Cart;
-    private logged: boolean = false;
+    logged: boolean = false;
     private customer: Customer;
     private selectedAddress: CustomerAddress;
     private customer_ip = {};
@@ -147,7 +149,9 @@ export class CheckoutComponent implements OnInit {
 
     ngAfterViewChecked() { }
 
-    ngOnDestroy() { }
+    ngOnDestroy() {
+
+    }
 
     getDiscount() {
         return this.cart.totalDiscountPrice;
@@ -191,9 +195,6 @@ export class CheckoutComponent implements OnInit {
         this.shippingService.getShipping(request)
             .then(response => {
                 this.intelipost = response;
-                // this.addShippingToCart(null, response.content.delivery_options[0]);
-                this.cart.totalFreightPrice = null;
-
                 return this.cartService.addDeliveryAddress(cartId, address.id);
             })
             .then(cart => {
@@ -201,12 +202,13 @@ export class CheckoutComponent implements OnInit {
             })
             .then(cart => {
                 this.getBranches(address.zipCode);
+                this.addShippingToCart(null, this.intelipost.content.delivery_options[0]);
             })
             .catch(error => {
                 console.log(error);
                 if (error.status == 400)
                     swal({
-                        title: 'Erro ao calcular o fréte!',
+                        title: 'Erro ao calcular o frete!',
                         text: "Sem opções de entrega viável. Por favor, verifique se os códigos postais estão corretos!",
                         type: 'warning',
                         confirmButtonText: 'OK'
@@ -348,11 +350,17 @@ export class CheckoutComponent implements OnInit {
         else if (this.optionSelected.code >= 100 && this.optionSelected.code <= 199) {
             this.payWithPagseguroCreditCard(cartId);
         }
+        else{
+            swal('Não foi possível realizar o pedido', 'Nenhuma forma de pagamento selecionada', 'error');
+            $('#btn_place-order').button('reset');
+        }
     }
 
     private payWithOfflineMethod(cartId: string) {
+        toastr['info']('Aguarde, validando seu pedido...');
         this.orderService.validateOrder(cartId)
             .then(cart => {
+                toastr['success']('Pedido validado. Processando informações de pagamento..');
                 let paymentRef = this.paymentSelected.name.toLowerCase();
                 if (paymentRef == 'pagamento na loja') {
                     return this.paymentService.pickUpStoreTransaction(cartId);
@@ -362,9 +370,11 @@ export class CheckoutComponent implements OnInit {
                 }
             })
             .then(response => {
+                toastr['success']('Pagamento confirmado. Realizando pedido...');
                 return this.orderService.placeOrder(cartId);
             })
             .then(order => {
+                toastr['success']('Pedido realizado com sucesso!');
                 localStorage.removeItem('cart_id');
                 this.parentRouter.navigateByUrl(`/checkout/concluido/${order.id}`);
             })
@@ -381,15 +391,19 @@ export class CheckoutComponent implements OnInit {
     }
 
     private payWithPagseguroBankSlip(cartId: string) {
+        toastr['info']('Aguarde, validando seu pedido...');
         let hash = PagSeguroDirectPayment.getSenderHash();
         this.orderService.validateOrder(cartId)
             .then(cart => {
+                toastr['success']('Pedido validado. Processando informações de pagamento..');
                 return this.paymentService.PagseguroBankSlip(cartId, hash)
             })
             .then(response => {
+                toastr['success']('Pagamento confirmado. Realizando pedido...');
                 return this.orderService.placeOrder(cartId);
             })
             .then(order => {
+                toastr['success']('Pedido realizado com sucesso!');
                 localStorage.removeItem('cart_id');
                 this.parentRouter.navigateByUrl(`/checkout/concluido/${order.id}`);
             })
@@ -406,6 +420,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     private payWithPagseguroCreditCard(cartId: string) {
+        toastr['info']('Aguarde, validando seu pedido...');
         let hash = PagSeguroDirectPayment.getSenderHash();
         PagSeguroDirectPayment.createCardToken({
             cardNumber: this.creditCard.creditCardNumber.replace(/-/g, ''),
@@ -416,32 +431,51 @@ export class CheckoutComponent implements OnInit {
                 this.token = response.card.token
                 this.orderService.validateOrder(cartId)
                     .then(cart => {
+                        toastr['success']('Pedido validado. Processando informações de pagamento..');
                         let creditCard = new PagseguroCreditCard();
                         creditCard.creditCardToken = this.token;
                         creditCard.holderName = this.creditCard.holderName;
                         creditCard.cpf = this.customer.cpf_Cnpj;
                         creditCard.installmentQuantity = this.creditCard.installmentCount;
                         creditCard.installmentValue = this.creditCard.installmentValue;
-                        creditCard.noInterestInstallmentQuantity = this.creditCard.noInterestInstallmentQuantity;
+                        creditCard.noInterestInstallmentQuantity = Number.parseInt(this.payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
 
                         return this.paymentService.PagseguroCreditCard(cartId, hash, creditCard)
                     })
                     .then(response => {
+                        toastr['success']('Pagamento confirmado. Realizando pedido...');
                         return this.orderService.placeOrder(cartId);
                     })
                     .then(order => {
+                        toastr['success']('Pedido realizado com sucesso!');
                         localStorage.removeItem('cart_id');
                         this.parentRouter.navigateByUrl(`/checkout/concluido/${order.id}`);
                     })
                     .catch(error => {
                         console.log(error);
+                        let message = error.text().replace(/"/g, '');
                         swal({
                             title: 'Erro ao criar o pedido',
-                            text: error.text(),
+                            text: (message.split('|')[1]) ? message.split('|')[1] : message,
                             type: 'error',
                             confirmButtonText: 'OK'
+                        })
+                        .then(() => {
+                            if (error.status == (402) && message.split('|')[0] == "C003" || message.split('|')[0] == '"C003'){
+                                this.parentRouter.navigateByUrl(`/carrinho`);
+                                location.reload();
+                            }
+                            else if (error.status == (402) && message.split('|')[0] == "C05" 
+                            || message.split('|')[0] == '"C05' 
+                            || message.split('|')[0] == '"C01' 
+                            || message.split('|')[0] == 'C01'){
+                                this.parentRouter.navigateByUrl(`/`);
+                                location.reload();
+                            }
                         });
                         $('#btn_place-order').button('reset');
+
+                        
                     });
             }, error: response => {
                 console.log(response);
@@ -450,28 +484,39 @@ export class CheckoutComponent implements OnInit {
                     text: 'Verifique os dados informados',
                     type: 'error',
                     confirmButtonText: 'OK'
+                })
+                .then(() => {
+                    if(response.error && response.errors[30400]){
+                        location.reload();
+                    }
                 });
+
                 $('#btn_place-order').button('reset');
+
             }
         });
     }
 
     private payWithMundipaggBankslip(cartId: string) {
+        toastr['info']('Aguarde, validando seu pedido...');
         this.orderService.validateOrder(cartId)
             .then(cart => {
+                toastr['success']('Pedido validado. Processando informações de pagamento..');
                 return this.paymentService.bankSlipTransaction(cartId);
             })
             .then(response => {
+                toastr['success']('Pagamento confirmado. Realizando pedido...');
                 return this.orderService.placeOrder(cartId);
             })
             .then(order => {
+                toastr['success']('Pedido realizado com sucesso!');
                 localStorage.removeItem('cart_id');
                 this.parentRouter.navigateByUrl(`/checkout/concluido/${order.id}`);
             })
             .catch(error => {
                 swal({
                     title: 'Erro ao criar o pedido',
-                    text: error._body,
+                    text: error.text(),
                     type: 'error',
                     confirmButtonText: 'OK'
                 });
@@ -481,25 +526,43 @@ export class CheckoutComponent implements OnInit {
     }
 
     private payWithMundipaggCreditCard(cartId: string) {
+        toastr['info']('Aguarde, validando seu pedido...');
         this.orderService.validateOrder(cartId)
             .then(cart => {
+                toastr['success']('Pedido validado. Processando informações de pagamento..');
                 return this.paymentService.creditCardTransaction(cartId, this.creditCard);
             })
             .then(response => {
+                toastr['success']('Pagamento confirmado. Realizando pedido...');
                 return this.orderService.placeOrder(cartId);
             })
             .then(order => {
+                toastr['success']('Pedido realizado com sucesso!');
                 localStorage.removeItem('cart_id');
                 this.parentRouter.navigateByUrl(`/checkout/concluido/${order.id}`);
             })
             .catch(error => {
+                console.log(error);
+                let message = error.text().replace(/"/g, '');
                 swal({
                     title: 'Erro ao criar o pedido',
-                    text: error._body,
+                    text: (message.split('|')[1]) ? message.split('|')[1] : message,
                     type: 'error',
                     confirmButtonText: 'OK'
+                })
+                .then(() => {
+                    if (error.status == (402) && message.split('|')[0] == "C003" || message.split('|')[0] == '"C003'){
+                        this.parentRouter.navigateByUrl(`/carrinho`);
+                        location.reload();
+                    }
+                    else if (error.status == (402) && message.split('|')[0] == "C05" 
+                    || message.split('|')[0] == '"C05' 
+                    || message.split('|')[0] == '"C01' 
+                    || message.split('|')[0] == 'C01'){
+                        this.parentRouter.navigateByUrl(`/`);
+                        location.reload();
+                    }
                 });
-                console.log(error);
                 $('#btn_place-order').button('reset');
             })
     }
@@ -534,7 +597,7 @@ export class CheckoutComponent implements OnInit {
         let delivery = new DeliveryInformation();
 
         if (intelipostOption) {
-            shipping.shippingType = 2; // TODO [1: Pickup Store; 2: Delivery]
+            shipping.shippingType = EnumShippingType.Delivery;
             delivery.quotId = this.intelipost.content.id.toString();
             delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
             delivery.shippingCost = intelipostOption.final_shipping_cost;
@@ -546,7 +609,7 @@ export class CheckoutComponent implements OnInit {
             shipping.deliveryInformation = delivery;
         }
         else if (branch) {
-            shipping.shippingType = 1;
+            shipping.shippingType = EnumShippingType.PickuUpStore;
             shipping.branch = branch;
             delivery.quotId = branch.id;
             delivery.deliveryMethodId = branch.id;
@@ -715,7 +778,7 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     hasPaymentMethodSelected(cartId: string): boolean {
-        if (this.methodSelected.id || this.optionSelected.code)
+        if (this.methodSelected['id'] || this.optionSelected)
             return true;
         else return false;
     }
@@ -729,6 +792,10 @@ export class CheckoutComponent implements OnInit {
         else {
             return this.methodSelected;
         }
+    }
+
+    isMobile(){
+        return AppSettings.isMobile();
     }
 }
 

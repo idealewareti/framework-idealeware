@@ -44,10 +44,15 @@
           <i [ngClass]="{'fa-square-o': !isComparing(product.id), 'fa-check-square-o': isComparing(product.id)}" class="fa" aria-hidden="true"></i> Comparar
         </a>
     </span>
-    <a [routerLink]="[productUrl]" class="btn btn-success btn-buy"><i class="fa fa-shopping-cart" aria-hidden="true"></i>  
-       <span *ngIf="getModality() == 1">Comprar</span>
-       <span *ngIf="getModality() == 0">Orçar</span>
+    <a *ngIf="isAvailable()" [routerLink]="[productUrl]" class="btn btn-success btn-buy"><i class="fa fa-shopping-cart" aria-hidden="true"></i>  
+       <span *ngIf="!isBudget()">Comprar</span>
+       <span *ngIf="isBudget()">Orçar</span>
     </a>
+    <p *ngIf="!isAvailable()" class="text-center">
+        <a [routerLink]="[productUrl]" class="btn btn-default">
+            <i class="fa fa-times" aria-hidden="true"></i>Produto Indisponível
+        </a>
+    </p>
 </span>
 
 <quickview *ngIf="!isMobile()" [product]="product"></quickview>
@@ -64,23 +69,28 @@
             {{product.name}}
         </a>
     </h3>
-    <span class="price-box" *ngIf="product.skuBase.promotionalPrice">
+    <span class="price-box" *ngIf="sku.promotionalPrice">
         <span class="old-price">
             <span class="price-label">De:</span>
-            <span class="price">{{product.skuBase.price |  currencyFormat}}</span>
+            <span class="price">{{sku.price |  currencyFormat}}</span>
         </span>
         <span class="regular-price">
             <span class="price-label">Por</span>
-            <span class="price">{{product.skuBase.promotionalPrice |  currencyFormat}}</span>
+            <span class="price">{{sku.promotionalPrice |  currencyFormat}}</span>
         </span>
     </span>
-    <span class="parcelamento" *ngIf="product.skuBase.promotionalPrice && product.installmentValue > 0 && product.installmentNumber > 1">
+    <span class="parcelamento" *ngIf="sku.promotionalPrice && product.installmentValue > 0 && product.installmentNumber > 1">
         <strong>{{product.installmentNumber}}x </strong> de <strong>{{product.installmentValue |  currencyFormat}}</strong>
     </span>
-    <span class="price-box" *ngIf="!product.skuBase.promotionalPrice">
+    <span class="price-box" *ngIf="!sku.promotionalPrice">
         <span class="regular-price">
             <span class="price-label">Por</span>
-            <span class="price">{{product.skuBase.price |  currencyFormat}}</span>
+            <span class="price">{{sku.price |  currencyFormat}}</span>
         </span>
     </span>
+    <p *ngIf="!isAvailable()" class="text-center">
+        <a [routerLink]="[productUrl]" class="btn btn-default">
+            <i class="fa fa-times" aria-hidden="true"></i>Produto Indisponível
+        </a>
+    </p>
 </span>

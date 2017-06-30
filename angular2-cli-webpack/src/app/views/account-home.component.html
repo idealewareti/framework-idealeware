@@ -1,0 +1,59 @@
+<h2 class="title-my-account">Minha Conta</h2>
+
+<div class="orders-box" *ngIf="lastOrder && store.modality == 1">
+    <h3>Seu pedido mais recente</h3>
+    <table class="table-order-vouchers">
+        <tbody>
+            <tr>
+                <td class="col-details">
+                    <span>Nº do pedido:</span>
+                    <strong>{{lastOrder.orderNumber}}</strong>
+                    <span class="date">Realizado em: {{lastOrder.historyStatus[0].alterDate | date:'dd/MM/y'}} - {{lastOrder.historyStatus[0].alterDate | date:'H:m'}}</span>
+                </td>
+                <td class="col-status">
+                    <span>Status do Pedido</span>
+                    <strong class="status">{{lastOrder.labelStatus()}}</strong>
+                    <span *ngIf="lastOrder.status == 3" class="date">Entregue em: {{lastOrder.historyStatus[lastOrder.historyStatus.length - 1].alterDate | date:'dd/MM/y'}}</span>
+                </td>
+                <td class="col-total">
+                    <span>Valor Total</span>
+                    <strong>{{lastOrder.orderPrice | currencyFormat}}</strong>
+                </td>
+                <td class="col-actions text-center">
+                    <a [routerLink]="['/conta', 'pedidos', lastOrder.id]" class="btn btn-default btn-show-detail"><span class="visible-xs visible-sm"><i class="fa fa-eye" aria-hidden="true"></i></span><span class="visible-md visible-lg">VER DETALHES</span></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="btn btn-default btn-all-orders">VER TODOS OS PEDIDOS</button>
+</div>
+
+<div class="orders-box">
+    <div>
+        <h3>Meus Dados</h3>
+        
+        <b class="name">{{customer.firstname_Companyname}} {{customer.lastname_Tradingname}}</b>
+        <p>
+            {{(customer.type == 1) ? 'CPF' : 'CNPJ'}}: {{customer.cpf_Cnpj}} <br />
+            <span *ngIf="customer.type == 1">Sexo: {{(customer.gender == 'M') ? 'Masculino' : 'Feminino'}}</span> <br />
+            Data de Nascimento: {{customer.birthdate | date:'dd/MM/y'}} <br />
+            Telefone: {{customer.phone}}<br />
+            E-mail: {{customer.email}} <br />
+        </p>
+    </div>
+
+    <a class="btn btn-default btn-edit-account" [routerLink]="['/conta/dados-cadastrais']">EDITAR DADOS CADASTRAIS</a>
+</div>
+
+<div class="orders-box">
+    <h3>Meus Endereços</h3>
+    
+    <div class="row row-address">
+        <address-panel-list *ngFor="let address of customer.addresses" [address]="address"></address-panel-list>
+        
+    </div>
+    <div class="row">
+        <a class="btn btn-default btn-edit-account" [routerLink]="['/conta/enderecos']">EDITAR DADOS ENDEREÇOS</a>
+    </div>
+</div>

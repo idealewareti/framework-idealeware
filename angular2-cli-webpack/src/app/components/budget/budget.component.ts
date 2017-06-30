@@ -21,7 +21,7 @@ declare var swal: any;
 })
 export class BudgetComponent implements OnInit {
     private cart: Cart;
-    private logged: boolean = false;
+    logged: boolean = false;
     private customer: Customer;
     private customer_ip = {};
     private readonly mediaPath = AppSettings.MEDIA_PATH + "/products/"

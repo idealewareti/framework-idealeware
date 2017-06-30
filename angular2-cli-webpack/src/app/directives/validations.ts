@@ -8,7 +8,8 @@ export class Validations{
         let Soma;
         let Resto;
         Soma = 0;
-        if (cpf == "00000000000") return false;
+        
+        if (/^(.)\1*$/.test(cpf)) return false;
 
         for (let i = 1; i <= 9; i++)
             Soma = Soma + parseInt(cpf.substring(i - 1, i)) * (11 - i);
@@ -35,17 +36,7 @@ export class Validations{
         if (cnpj.length != 14)
             return false;
     
-        if (cnpj == "00000000000000" || 
-            cnpj == "11111111111111" || 
-            cnpj == "22222222222222" || 
-            cnpj == "33333333333333" || 
-            cnpj == "44444444444444" || 
-            cnpj == "55555555555555" || 
-            cnpj == "66666666666666" || 
-            cnpj == "77777777777777" || 
-            cnpj == "88888888888888" || 
-            cnpj == "99999999999999")
-            return false;
+        if (/^(.)\1*$/.test(cnpj)) return false;
             
         // Valida DVs
         let tamanho = cnpj.length - 2

@@ -6,13 +6,19 @@
         </div>
         <div class="panel-body">
             <p>{{serviceProduct.rules}}</p>
-                <div class="form-group">
-                    <input class="input" type="number" [(ngModel)]="serviceProduct.quantity" min="1" step="1">
-                    <strong class="service-price text-right">{{changeTotalService(serviceProduct.id) | currencyFormat}}</strong>
-                </div>
-                <button class="btn btn-default" (click)="addService(serviceProduct.id)">Adicionar serviço</button>
-
-                <!--<a href="#" class="btn-remove" (click)="addService(serviceProduct.id, serviceProduct.quantity, $event)"><i class="fa fa-plus" aria-hidden="true"></i></a>-->
+            <div class="form-group">
+                <input class="input" type="number" [(ngModel)]="serviceProduct.quantity" min="1" step="1">
+                <strong class="service-price text-right">{{changeTotalService(serviceProduct.id) | currencyFormat}}</strong>
+            </div>
+            <div  class="form-group text-center">
+                <a class="btn btn-default" (click)="addService(serviceProduct.id)">
+                    {{ !isServiceSelected(serviceProduct) ? 'Adicionar serviço' : 'Atualizar quantidade' }}
+                </a>
+            </div>
+            <div *ngIf="isServiceSelected(serviceProduct)" class="form-group text-center">
+                <a class="btn btn-danger" (click)="deleteService(serviceProduct.id, $event)">Remover Serviço</a>
+            </div>
+            <p *ngIf="isServiceSelected(serviceProduct)" class="text-success"><i class="fa fa-check" aria-hidden="true"></i> Serviço adicionado</p>
         </div>
     </div>
 </div>

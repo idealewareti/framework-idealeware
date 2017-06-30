@@ -4,7 +4,7 @@ import {ProductComponent} from './components/product/product.component';
 import {CartComponent} from  './components/cart/cart.component';
 import {CheckoutComponent} from './components/checkout/checkout.component';
 import {LoginComponent} from './components/login/login.component';
-import {LogoutComponent} from './components/login/logout.component';
+import {LogoutComponent} from './components/logout/logout.component';
 import {AccountComponent} from './components/account/account.component';
 import {SearchComponent} from './components/search/search.component';
 import { InstitutionalComponent } from './components/institutional/institutional.component';
@@ -15,6 +15,7 @@ import { BudgetFinishComponent } from "./components/budget-finish/budget-finish.
 import { NotFoundComponent } from "./components/404/404.component";
 import { ForgetPasswordComponent } from "./components/forget-password/forget-password.component";
 import { ContactComponent } from "app/components/contact/contact.component";
+import { SignUpComponent } from "app/components/signup/signup.component";
 
 const appRoutes: Routes = [
     { path: '', component: ShowCaseComponent },
@@ -27,14 +28,16 @@ const appRoutes: Routes = [
     { path: 'checkout', component: CheckoutComponent, data: { name: 'Checkout'} },
     { path: 'checkout/concluido/:id', component: CheckoutFinishComponent },
     { path: 'compare', component: CompareComponent },
-    { path: 'conta', component: AccountComponent },
-    { path: 'conta/:step', component: AccountComponent },
-    { path: 'conta/:step/:id', component: AccountComponent },
+    // { path: 'conta', component: AccountComponent },
+    // { path: 'conta/:step', component: AccountComponent },
+    // { path: 'conta/:step/:id', component: AccountComponent },
+    { path: 'conta', loadChildren: 'app/components/account/account.module#AccountModule' },
     { path: 'buscar', component: SearchComponent },
     { path: 'institucional/:id', component: InstitutionalComponent },
     { path: 'institucional/:id/:nicename', component: InstitutionalComponent },
     { path: 'login', component: LoginComponent },
     { path: 'login/:step', component: LoginComponent },
+    { path: 'cadastrar', component: SignUpComponent },
     { path: 'logout', component: LogoutComponent },
     { path: 'marcas/:id', component: SearchComponent },
     { path: 'marcas/:id/:nicename', component: SearchComponent },

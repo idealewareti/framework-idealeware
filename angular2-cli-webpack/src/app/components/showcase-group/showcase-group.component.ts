@@ -2,6 +2,7 @@ import { Component, OnInit, Input, AfterViewChecked } from '@angular/core';
 import { Group } from "app/models/group/group";
 import { AppSettings } from "app/app.settings";
 import { Store } from "app/models/store/store";
+import { ProductService } from "app/services/product.service";
 
 declare var $:any;
 
@@ -15,9 +16,15 @@ export class ShowcaseGroupComponent implements OnInit {
     @Input() group: Group;
 	@Input() store: Store;
     
-    constructor() { }
+    constructor(private productService: ProductService) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+		this.productService.getProductsFromShowcaseGroup(this.group.id)
+		.then(products => {
+			this.group.products = products;
+		})
+		.catch(error => console.log(error));
+	 }
 
     ngAfterViewChecked() {
         if(this.group.products

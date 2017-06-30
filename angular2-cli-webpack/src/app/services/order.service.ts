@@ -73,15 +73,14 @@ export class OrderService{
 
     public validateOrder(cartId: string): Promise<Cart>{
         return new Promise((resolve, reject) => {
-            // let url = `${AppSettings.API_ORDERVALIDATION}/OrderValidation/${cartId}`;
-            // this.client.post(url, null)
-            // .map(res => res.json())
-            // .subscribe(response => {
-            //     let cart = new Cart(response);
-            //     resolve(cart);
-            // }, error => reject(error));
-
-            resolve(new Cart());
+            let url = `${AppSettings.API_ORDERVALIDATION}/OrderValidation/${cartId}`;
+            this.getToken();
+            this.client.post(url, null, this.token)
+            .map(res => res.json())
+            .subscribe(response => {
+                let cart = new Cart(response);
+                resolve(cart);
+            }, error => reject(error));
         });
     }
 }

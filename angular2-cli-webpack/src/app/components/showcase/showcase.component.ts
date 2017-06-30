@@ -3,7 +3,7 @@ import {Http} from '@angular/http';
 import {ShowCase} from 'app/models/showcase/showcase';
 import {Group} from 'app/models/group/group';
 import {Product} from 'app/models/product/product';
-import {Title} from '@angular/platform-browser';
+import { Title, Meta } from '@angular/platform-browser';
 import {ShowCaseService} from 'app/services/showcase.service';
 import {GroupService} from 'app/services/group.service';
 import { ProductService } from 'app/services/product.service';
@@ -30,6 +30,7 @@ export class ShowCaseComponent {
 		private groupService: GroupService,
 		private productService: ProductService,
 		private storeService: StoreService,
+		private metaService: Meta,
 	){ }
 
 	ngOnInit(){
@@ -37,28 +38,26 @@ export class ShowCaseComponent {
 			.then(showcase => {
 				this.showcase = showcase;
 				let title = (this.showcase.metaTagTitle) ? this.showcase.metaTagTitle : this.showcase.name;
+				this.metaService.addTags([
+                    { name: 'title', content: this.showcase.metaTagTitle },
+                    { name: 'description', content: this.showcase.metaTagDescription }
+                ]);
 				AppSettings.setTitle(title, this.titleService);
-				return showcase.groups;
 			})
-			.then(groups => {
-				this.showcase.groups.forEach(group => {
-					this.productService.getProductsFromShowcaseGroup(group.id)
-					.then(products => {
-						group.products = products;
-					})
-					.catch(error => console.log(error));
-				});
-
-				return this.storeService.getInfo()
-			})
+			.catch(error => console.log(error));
+		
+		this.storeService.getInfo()
 			.then((store) => {
 				this.store = store;
 			})
 			.catch(error => console.log(error));
+			
 	}
 
 	ngOnDestroy() {
-		this.showcase = null;		
+		this.showcase = null;
+        this.metaService.removeTag("name='title'");
+        this.metaService.removeTag("name='description'");
 	}
 
 	ngAfterViewChecked() {}

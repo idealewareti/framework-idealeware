@@ -153,7 +153,7 @@
     <h2 class="department-title" *ngIf="module == 'category'">{{category.name}}</h2>
 
     <div class="filter-box">
-        <span class="qty-products">{{((results > 1) ? results + ' produtos' : results + ' produto')}}</span>
+        <span class="qty-products">{{resultsFound()}}</span>
         <div class="clearfix" id="filterby-title">
             <button class="btn-filter pull-left"><img src="assets/images/icon-filter.svg" alt="" /> Filtrar por</button>
             <div class="overflow-hidden">
@@ -302,8 +302,10 @@
                 <product-grid-item [product]="product"></product-grid-item>
             </li>
         </ul>
-
-        <button *ngIf="page < numPages" (click)="listProducts(page + 1, $event)" class="btn btn-block btn-default btn-show-more">Ver mais produtos <i class="fa fa-angle-down" aria-hidden="true"></i></button>
+        <!-- paginacao -->
+        <search-pagination *ngIf="numPages > 1" [page]="page" [pagination]="pagination" (pageChanged)="navigate($event)"></search-pagination>
+        <!-- /paginacao -->
+        
     </div>
     <!-- Lista de produtos -->
 

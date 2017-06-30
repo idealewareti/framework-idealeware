@@ -9,7 +9,7 @@ import { ActivatedRoute,
 import {NgProgressService} from 'ngx-progressbar';
 import {Institutional} from 'app/models/institutional/institutional';
 import { InstitutionalService } from 'app/services/institutional.service';
-import { Title } from "@angular/platform-browser";
+import { Title, Meta } from "@angular/platform-browser";
 import { AppSettings } from "app/app.settings";
 
 @Component({
@@ -28,7 +28,8 @@ export class InstitutionalComponent implements OnInit {
         private loader: NgProgressService,
         private parentRouter: Router,
         private route: ActivatedRoute,
-        private titleService: Title
+        private titleService: Title,
+        private metaService: Meta,
     ) {
         this.institutional = new Institutional();
      }
@@ -51,6 +52,10 @@ export class InstitutionalComponent implements OnInit {
         .then(response => {
             this.institutional = response;
             AppSettings.setTitle(this.institutional.metaTagTitle, this.titleService);
+            this.metaService.addTags([
+                { name: 'title', content: this.institutional.metaTagTitle },
+                { name: 'description', content: this.institutional.metaTagDescription }
+            ]);
             this.loader.done();
             window.scrollTo(0, 0); // por causa das hash url
 

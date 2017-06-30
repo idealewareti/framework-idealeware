@@ -3,9 +3,8 @@
         <a *ngIf="isLogged" class="btn btn-default btn-avaliations pull-right" href="javascript:void(0)" data-toggle="modal" data-target="#avaliationModal">Escrever uma Avaliação</a>
     </h3>
     <div *ngIf="!isLogged">
-        <p>Para escrever uma avaliação você precisa estar logado, 
-            <a href="#" (click)="openLoginModal($event)">clique aqui para entrar</a>
-            ou
+        <p>Para escrever uma avaliação você precisa estar logado,
+            <a href="#" (click)="openLoginModal($event)">clique aqui para entrar</a> ou
             <a [routerLink]="['/login', 'cadastro']">clique aqui para se cadastrar</a>.
         </p>
     </div>
@@ -57,44 +56,48 @@
                 <h4 class="modal-title" class="text-center">Avalie este produto</h4>
             </div>
             <div class="modal-body">
-                <form (submit)="createRating($event)" class="form-inline">
+                <form (submit)="createRating($event)" class="form-inline" [formGroup]="ratingForm">
 
-                    <div class="col-md-12 text-center">
-                        <div class="form-group box-note text-center">
-                            <span class="rating">
-                                <span class="star">
-                                    <a href="#" (click)="addStar($event, 1)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 1, 'fa-star-o':productsRatingCreate.customers.note < 1}" aria-hidden="true"></i></a>
-                                    <a href="#" (click)="addStar($event, 2)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 2, 'fa-star-o':productsRatingCreate.customers.note < 2}" aria-hidden="true"></i></a>
-                                    <a href="#" (click)="addStar($event, 3)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 3, 'fa-star-o':productsRatingCreate.customers.note < 3}" aria-hidden="true"></i></a>
-                                    <a href="#" (click)="addStar($event, 4)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 4, 'fa-star-o':productsRatingCreate.customers.note < 4}" aria-hidden="true"></i></a>
-                                    <a href="#" (click)="addStar($event, 5)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note == 5, 'fa-star-o':productsRatingCreate.customers.note != 5}" aria-hidden="ture"></i></a>
-                                </span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="form-group box-ratingTitle">
-                        <div class="col-md-12">
-                            <label for="name" class="col-md-12">Título</label>
-                            <div class="col-md-8">
-                                <input type="text" name="ratingTitle" [(ngModel)]="productsRatingCreate.customers.ratingTitle" class="form-control form-input"
-                                    placeholder="Título" required>
+                    <div id="avaliations" class="col-md-12">
+                        <div class="avaliations-list text-center">
+                            <div class="rating-box clearfix text-center">
+                                <div class="rating-stars">
+                                    <span class="star">
+                                        <a href="#" (click)="addStar($event, 1)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 1, 'fa-star-o':productsRatingCreate.customers.note < 1}" aria-hidden="true"></i></a>
+                                        <a href="#" (click)="addStar($event, 2)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 2, 'fa-star-o':productsRatingCreate.customers.note < 2}" aria-hidden="true"></i></a>
+                                        <a href="#" (click)="addStar($event, 3)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 3, 'fa-star-o':productsRatingCreate.customers.note < 3}" aria-hidden="true"></i></a>
+                                        <a href="#" (click)="addStar($event, 4)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 4, 'fa-star-o':productsRatingCreate.customers.note < 4}" aria-hidden="true"></i></a>
+                                        <a href="#" (click)="addStar($event, 5)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note == 5, 'fa-star-o':productsRatingCreate.customers.note != 5}" aria-hidden="ture"></i></a>       
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group box-comment">
+                    <div class="form-group box-ratingTitle required" [ngClass]="{'has-error': hasError('ratingTitle')}">
                         <div class="col-md-12">
-                            <label for="name" class="col-md-12">Comentario</label>
+                            <label for="name" class="col-md-12">Título</label>
                             <div class="col-md-8">
-                                <textarea name="text" maxlength="5000" cols="50" [(ngModel)]="productsRatingCreate.customers.comment" name="comment" rows="4"
-                                    placeholder="Digite aqui seu comentário..." required></textarea>
+                                <input type="text" formControlName="ratingTitle" name="ratingTitle" [(ngModel)]="productsRatingCreate.customers.ratingTitle"
+                                    class="form-control form-input" placeholder="Título" required>
+                                <span *ngIf="hasError('ratingTitle')" class="help-block">Informe o Título</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group box-comment required" [ngClass]="{'has-error': hasError('ratingComment')}">
+                        <div class="col-md-12">
+                            <label for="name" class="col-md-12">Comentário</label>
+                            <div class="col-md-8">
+                                <textarea formControlName="ratingComment" name="text" maxlength="5000" cols="50" [(ngModel)]="productsRatingCreate.customers.comment"
+                                    name="comment" rows="4" placeholder="Digite aqui seu comentário..." required></textarea>
+                                <span *ngIf="hasError('ratingComment')" class="help-block">Informe um Comentário</span>
                             </div>
                         </div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="text-center">
-                        <button type="submit" id="btn-productsrating" class="btn btn-success">Enviar avaliação</button>
+                        <button type="submit" id="btn-productsrating" class="btn btn-success" data-loading-text="Enviando...">Enviar avaliação</button>
                     </div>
                 </form>
             </div>

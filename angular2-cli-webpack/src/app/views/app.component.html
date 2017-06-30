@@ -2,15 +2,15 @@
 <!-- Header Checkout -->
 <header id="header-checkout" *ngIf="isCheckout() && store">
     <div class="container">
-        <div class="clearfix">
-            <div class="web-safe pull-right">
+        <div class="row">
+            <div class="web-safe col-md-4 col-sm-12 text-center">
                 <span><i class="fa fa-lock" aria-hidden="true"></i> Compra 100% segura</span>
             </div>
-            <div class="contact pull-left">
-                <span><i class="fa fa-phone" aria-hidden="true"></i> Televendas {{store.phone}}</span>
-            </div>
-            <div class="brand overflow-hidden text-center">
+            <div class="brand overflow-hidden text-center col-md-4" *ngIf="!isMobile()">
                 <a [routerLink]="['/']"><img [attr.src]="mediaPath + '/' + store.logo" [attr.alt]="store.companyName" class="img-responsive"></a>
+            </div>
+            <div class="contact col-md-4 col-sm-12 text-center">
+                <span><i class="fa fa-phone" aria-hidden="true"></i> Televendas {{store.phone}}</span>
             </div>
         </div>
     </div>
@@ -45,9 +45,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-mini-cart pull-right col-padding">
-                    <mini-cart>
-
-                    </mini-cart>
+                    <mini-cart></mini-cart>
                 </div>
                 <div class="col-brand pull-left col-padding">
                     <h1 id="brand" *ngIf="store">
@@ -62,7 +60,7 @@
                         <p>
                             Olá, Visitante <br/>
                             <a class="login-enter" [routerLink]="['/login']" title="Entre">Entre</a> ou <a class="about-us"
-                                [routerLink]="['/login/cadastro']" title="Cadastre-se">Cadastre-se</a>
+                                [routerLink]="['/cadastrar']" title="Cadastre-se">Cadastre-se</a>
                         </p>
                     </div>
                     <div id="welcome" *ngIf="isLoggedIn()">
@@ -139,8 +137,8 @@
         <div class="header clearfix" *ngIf="!isLoggedIn()">
             <button class="btn-close pull-right"><img src="/assets/images/icon-close.svg" alt="Fechar" /></button>
             <p>
-                <a class="login-enter" [routerLink]="['/login']" title="Entre">Entre</a> ou <a class="about-us" [routerLink]="['/login/cadastro']"
-                    title="Cadastre-se">Cadastre-se</a>
+                <a class="login-enter" [routerLink]="['/login']" title="Entre">Entre</a> ou 
+                <a class="about-us" [routerLink]="['/cadastrar']" title="Cadastre-se">Cadastre-se</a>
             </p>
         </div>
         <div class="header clearfix" *ngIf="isLoggedIn()">
@@ -268,9 +266,9 @@
 <!-- Conteúdo do rodapé -->
 
 <footer *ngIf="isMobile() && store" id="footer">
-    <newsletter></newsletter>
+    <newsletter *ngIf="!isCheckout()"></newsletter>
 
-    <div id="main-footer" class="container">
+    <div id="main-footer" class="container" *ngIf="!isCheckout()">
 
         <div class="row">
             <div class="list-footer footer-institutional" *ngFor="let institutional of institutionals">

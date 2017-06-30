@@ -37,7 +37,7 @@
                                     </div>
                                     </span>
                                     <div class="text-center">
-                                        <a href="#" class="btn btn-success btn-buy"><i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                        <a [routerLink]="[getProductUrl(product)]" class="btn btn-success btn-buy"><i class="fa fa-shopping-cart" aria-hidden="true"></i>
                                             <span *ngIf="product.skuBase.price > 0">Comprar</span>
                                             <span *ngIf="product.skuBase.price < 1">Orçar</span>
                                          </a>

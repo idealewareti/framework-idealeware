@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
 import { AppSettings } from "app/app.settings";
 
+declare var $: any;
+
 @Component({
     moduleId: module.id,
     selector: 'checkout-finish',
@@ -35,6 +37,7 @@ export class CheckoutFinishComponent implements OnInit {
                 console.log(error);
                 this.parentRouter.navigateByUrl('/');
             })
+
         });
      }
 
@@ -51,4 +54,5 @@ export class CheckoutFinishComponent implements OnInit {
         let url = this.order.payment.paymentMethods.filter(m => m.type == 2)[0].bankSlipUrl;
         return url;
     }
+    
 }

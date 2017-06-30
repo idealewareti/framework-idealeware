@@ -1,6 +1,6 @@
 <main role="main" class="container checkout-page" *ngIf="logged">
     
-    <ul class="checkout-tabs">
+    <ul class="checkout-tabs" *ngIf="!isMobile()">
         <li class="is-ok">
             <span class="icon"><img src="assets/images/icon-checkout-identificacao.svg" alt=""></span>
             <span class="text">Identificação</span>
@@ -192,7 +192,7 @@
                     </div>
                 </div>
             </div>
-            <a href="#" id="btn_place-order" ata-loading-text="Processando..." (click)="placeOrder($event)" class="btn btn-block btn-lg btn-success btn-checkout"><i class="fa fa-shopping-cart" aria-hidden="true"></i> <span>FINALIZAR COMPRA</span></a>
+            <a href="#" id="btn_place-order" data-loading-text="Processando..." (click)="placeOrder($event)" class="btn btn-block btn-lg btn-success btn-checkout"><i class="fa fa-shopping-cart" aria-hidden="true"></i> <span>FINALIZAR COMPRA</span></a>
         </div>
     </div>
 
