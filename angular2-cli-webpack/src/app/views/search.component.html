@@ -56,6 +56,13 @@
                                         <i [ngClass]="{'fa-square-o': !isChecked('category', category.id), 'fa-check-square-o': isChecked('category', category.id)}"
                                             class="fa" aria-hidden="true"></i> {{category.name}}
                                     </a>
+                                    <ul *ngIf="category.children.length > 0">
+                                        <li *ngFor="let subcategory of category.children">
+                                            <a [ngClass]="{'checked': isChecked('category', subcategory.id)}" [routerLink]="['/categoria', subcategory.id, subcategory.niceName]" (click)="addFilter($event, 'category', subcategory.id)">
+                                                <i [ngClass]="{'fa-square-o': !isChecked('category', subcategory.id), 'fa-check-square-o': isChecked('category', subcategory.id)}" class="fa" aria-hidden="true"></i> {{subcategory.name}}
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
                             </ul>
                         </div>
@@ -116,8 +123,8 @@
                             <form class="form-inline" *ngIf="!loading">
                                 <label>
                                     
-                                    <select class="form-control" name="orderBy" [(ngModel)]="sortPage" (change)="changeOrdernation($event)">
-                                        <option *ngFor="let option of orderPageOptions" [value]="option.value">{{option.label}}</option>
+                                    <select class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
+                                        <option *ngFor="let option of orderSearchOptions" [value]="option.value">{{option.label}}</option>
                                     </select>
 
                                     {{resultsFound()}}

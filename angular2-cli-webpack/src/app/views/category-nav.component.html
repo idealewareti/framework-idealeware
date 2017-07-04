@@ -5,7 +5,7 @@
         </a>
         <ul class="level2" *ngIf="category.children.length > 0">
             <li *ngFor="let sub1 of category.children" class="level2-item">
-                <a class="level2-link" [routerLink]="['/categoria', category.id, sub1.niceName, { categories: sub1.id }]" [attr.title]="sub1.name">{{sub1.name}}</a>
+                <a class="level2-link" [routerLink]="['/categoria', sub1.id, sub1.niceName]" [attr.title]="sub1.name">{{sub1.name}}</a>
             </li>
         </ul>
     </li>

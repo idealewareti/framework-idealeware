@@ -1,5 +1,4 @@
 import { EnumSort } from "app/enums/sort.enum";
-import { EnumSortPage } from "app/enums/sort-page.enum";
 
 export class Search {
     name: string;
@@ -9,7 +8,6 @@ export class Search {
     options: string[] = [];
     groups: string[] = [];
     sort: EnumSort;
-    sortPage: EnumSortPage;
 
     constructor(search = null){
         if(search) return this.createFromResponse(search);

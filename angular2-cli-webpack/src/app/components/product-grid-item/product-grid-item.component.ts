@@ -29,9 +29,7 @@ export class ProductGridItemComponent {
     promotionalPrice: number = 0;
     private alternative: boolean = false;
 
-    constructor(private parentRouter: Router) {
-
-    }
+    constructor(private parentRouter: Router) {}
 
     ngOnInit() {
 

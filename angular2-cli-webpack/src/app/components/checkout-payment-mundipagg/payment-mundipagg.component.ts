@@ -140,6 +140,8 @@ export class PaymentMundipaggComponent implements OnInit {
             }
             else{
                 this.methodSelected.installment = [];
+                this.creditCardUpdated.emit(new CreditCard());
+                this.paymentUpdated.emit(new PaymentSelected(this.paymentSelected, null, null));
             }
         }
     }

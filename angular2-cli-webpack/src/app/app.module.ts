@@ -65,7 +65,7 @@ import {CurrencyFormatModule} from './pipes/currency-format/currency-format.modu
 import {HttpClient} from './helpers/httpclient';
 import {OrderByModule} from './pipes/orderBy/orderBy.module';
 import {NgProgressModule} from 'ngx-progressbar';
-import {NgProgressCustomBrowserXhr} from "ngx-progressbar";
+import {NgProgressBrowserXhr} from "ngx-progressbar";
 import {routing} from './app.routes';
 
 /* Directives */
@@ -174,7 +174,7 @@ import { CustomerManager } from './managers/customer.manager';
     ],
     providers: [
         HttpClient,
-        { provide: BrowserXhr, useClass: NgProgressCustomBrowserXhr } ,
+        { provide: BrowserXhr, useClass: NgProgressBrowserXhr } ,
         BannerService,
         BranchService, 
         BrandService,

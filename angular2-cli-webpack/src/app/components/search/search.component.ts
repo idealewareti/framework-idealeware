@@ -10,7 +10,6 @@ import { BrandService } from "app/services/brand.service";
 import { AppSettings } from "app/app.settings";
 import { Title, Meta } from "@angular/platform-browser";
 import { Filter } from "app/models/search/search-filter";
-import { ProductService } from "app/services/product.service";
 import { Variation } from "app/models/product/variation";
 import { Group } from "app/models/group/group";
 import { VariationOption } from "app/models/product/product-variation-option";
@@ -19,7 +18,6 @@ import { Store } from "app/models/store/store";
 import { Pagination } from "app/models/pagination";
 import { SearchResult } from "app/models/search/search-result";
 import { EnumSort } from "app/enums/sort.enum";
-import { EnumSortPage } from "app/enums/sort-page.enum";
 import { GroupService } from "app/services/group.service";
 
 declare var $: any;
@@ -43,17 +41,12 @@ export class SearchComponent implements OnInit {
     private pages: number[];
     private orderSearchOptions: Object[] = [
         { label: 'Mais Relevantes', value: EnumSort.MostRelevant },
-        { label: 'Ordem Alfabética Crescente', value: EnumSort.AToZ },
-        { label: 'Ordem Alfabética Decrescente', value: EnumSort.ZToA },
-        
+        { label: 'Menores Preços', value: EnumSort.PriceLowestFirst },
+        { label: 'Maiores Preços', value: EnumSort.PriceHighestFirst },
+        { label: 'Ordem Alfabética Crescente', value: EnumSort.NameAtoZ },
+        { label: 'Ordem Alfabética Decrescente', value: EnumSort.NameZtoA },
     ];
 
-    private orderPageOptions: Object[] = [
-        { label: 'Mais Relevantes', value: -1 },
-        { label: 'Menores Preços', value: EnumSortPage.PriceLowToHogh },
-        { label: 'Maiores Preços', value: EnumSortPage.PriceHighToLow },
-        
-    ];
     private store: Store;
     pagination: Pagination;
     products: Product[] = [];
@@ -66,7 +59,7 @@ export class SearchComponent implements OnInit {
     groups: Group[] = [];
     page: number = 1;
     numPages: number = 0;
-    sortPage: EnumSortPage = -1;
+    sort: EnumSort = EnumSort.MostRelevant;
 
     private searchInput: Search;
 
@@ -77,7 +70,6 @@ export class SearchComponent implements OnInit {
         private brandApi: BrandService,
         private groupApi: GroupService,
         private service: SearchService,
-        private productService: ProductService,
         private storeService: StoreService,
         private titleService: Title,
         private metaService: Meta,
@@ -105,7 +97,7 @@ export class SearchComponent implements OnInit {
                             this.page = (Number.parseInt(params['page']) < 1) ? 1 : Number.parseInt(params['page']);
                         else this.page = 1;
                         this.products = [];
-                        return this.getProducts(params);
+                        return this.prepareSearch(params);
                     })
                     .then(results => {
                         this.loading = false;
@@ -115,14 +107,10 @@ export class SearchComponent implements OnInit {
 
                         this.getBrandsFromProducts(this.products);
                         this.getVariationsAndOptionsFromProducts(this.products);
-                        this.getCategoryFromProducts(this.products);
+                        if(this.module != 'category')
+                            this.getCategoryFromProducts(this.products);
                         this.buildFilterModel();
                     })
-                    // .then(categories => {
-                    //     this.getBrand();
-                    //     this.buildFilterModel();
-                    //     window.scrollTo(0, 0); // por causa das hash url
-                    // })
                     .catch(error => {
                         console.log(error);
                         this.loading = false;
@@ -157,7 +145,7 @@ export class SearchComponent implements OnInit {
     listProducts(page: number, event = null) {
         if(event)
             event.preventDefault();
-        this.searchInput.sortPage = this.sortPage;
+        this.searchInput.sort = this.sort;
         this.search(this.searchInput, page, this.pageSize)
         .then(result => {
             this.products = result.products;
@@ -165,8 +153,6 @@ export class SearchComponent implements OnInit {
             this.numPages = this.pagination.TotalPages;
             window.scrollTo(0, 0);
         });
-        
-
     }
 
     /* Filters */
@@ -315,7 +301,7 @@ export class SearchComponent implements OnInit {
         }
     }
 
-    private getCategory(id: string): Promise<Category> {
+    getCategory(id: string): Promise<Category> {
         return new Promise((resolve, reject) => {
             this.categoryApi.getCategory(id)
                 .then(category => {
@@ -324,10 +310,33 @@ export class SearchComponent implements OnInit {
                         { name: 'title', content: category.metaTagTitle },
                         { name: 'description', content: category.metaTagDescription }
                     ]);
+                    this.getCategoryTree(category);
                     resolve(category);
                 })
                 .catch(error => reject(error));
         })
+    }
+
+    getCategoryTree(category: Category){
+        if(category.level == 0){
+            this.categoryApi.getChildren(category.id)
+            .then(categories => {
+                category.children = categories;
+                this.categories.push(category);
+            })
+        }
+        else{
+            let parent: Category = new Category();
+            this.categoryApi.getCategory(category.parentCategoryId)
+            .then(parentCategory => {
+                parent = parentCategory;
+                return this.categoryApi.getChildren(parentCategory.id);
+            })
+            .then(categories => {
+                parent.children = categories;
+                this.categories.push(parent);
+            })
+        }
     }
 
     private getGroup(id: string): Promise<Group>{
@@ -385,7 +394,7 @@ export class SearchComponent implements OnInit {
         })
     }
 
-    private getCategoryFromProducts(products: Product[]) {
+    getCategoryFromProducts(products: Product[]) {
         this.categories = [];
         products.forEach(p => {
             p.categories.forEach(category => {
@@ -415,7 +424,7 @@ export class SearchComponent implements OnInit {
         })
     }
 
-    private getProducts(params): Promise<SearchResult> {
+    prepareSearch(params): Promise<SearchResult> {
         return new Promise((resolve, reject) => {
             this.searchInput.categories = [];
             this.searchInput.brands = [];

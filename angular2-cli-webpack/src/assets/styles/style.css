@@ -89,7 +89,7 @@ input:focus, button:focus {
 }
 
 .owl-carousel .owl-nav > div {
-  width: 15px !important;
+  /*width: 15px !important;*/
   height: 30px !important;
   background: transparent !important;
   border: 0 none;

@@ -14,6 +14,7 @@ import { CartManager } from "app/managers/cart.manager";
 //declare var $: any;
 declare var S: any;
 declare var swal: any;
+declare var toastr: any;
 
 @Component({
     moduleId: module.id,
@@ -66,6 +67,7 @@ export class LoginComponent {
                 return this.service.getUser();
             })
             .then(customer => {
+                toastr['success'](`Bem-${customer.gender == 'F' ? 'vinda' : 'vindo'}, ${customer.firstname_Companyname}`);
                 return this.cartService.setCustomerToCart()
             })
             .then(cart => {
@@ -80,6 +82,7 @@ export class LoginComponent {
                         else {
                             this.managerCart.getCart()
                                 .then(response => {
+
                                     if (response.products.length > 0)
                                         this.parentRouter.navigateByUrl(`/carrinho`);
                                     else

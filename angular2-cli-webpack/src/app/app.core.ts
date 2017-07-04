@@ -30,13 +30,13 @@ export class AppCore{
         apis['API_CONTACT'] =           'https://api-pub-contact.idealeware.com.br:10000';
         apis['API_COUPON'] =            'https://api-pub-coupon.idealeware.com.br:10000';
         apis['API_CUSTOMER'] =          'https://api-pub-customer.idealeware.com.br:10000';
-        apis['API_CUSTOMPAINT'] =       'http://192.168.10.204:7028';
+        apis['API_CUSTOMPAINT'] =       'https://api-pub-custompaint.idealeware.com.br:10000';
         apis['API_DNEADDRESS'] =        'https://api-pub-dneaddress.idealeware.com.br:10000';
         apis['API_GOOGLE'] =            'https://api-pub-google.idealeware.com.br:10000';
         apis['API_GROUP'] =             'https://api-pub-group.idealeware.com.br:10000';
         apis['API_INSTITUTIONAL'] =     'https://api-pub-institutional.idealeware.com.br:10000';
         apis['API_INTELIPOST'] =        'https://api-pub-intelipost.idealeware.com.br:10000';
-        apis['API_ORDER'] =             'https://api-pub-order-stage.idealeware.com.br:10000'; 
+        apis['API_ORDER'] =             'https://api-pub-order.idealeware.com.br:10000'; 
         apis['API_ORDERVALIDATION'] =   'https://api-pub-ordervalidation.idealeware.com.br:10000';
         apis['API_PAYMENTS'] =          'https://api-pub-payments.idealeware.com.br:10000';
         apis['API_POPUP'] =             'https://api-pub-popup.idealeware.com.br:10000';

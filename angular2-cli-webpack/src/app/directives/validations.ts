@@ -68,4 +68,10 @@ export class Validations{
             
         return true;
     }
+
+    public static strongPassword(password: string): boolean{
+        let regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+
+        return regex.test(password);
+    }
 }

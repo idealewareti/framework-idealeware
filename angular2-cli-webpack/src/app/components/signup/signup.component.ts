@@ -21,6 +21,7 @@ import { Title } from "@angular/platform-browser";
 
 declare var $: any;
 declare var swal: any;
+declare var toastr: any;
 
 @Component({
     moduleId: module.id,
@@ -58,7 +59,7 @@ export class SignUpComponent {
             cpf_Cnpj: ['', Validators.required],
             rg_Ie: [''],
             phone: ['', Validators.required],
-            celPhone: ['', Validators.required],
+            celPhone: [''],
             email: ['', Validators.required],
             password: ['', Validators.compose([
                 strongPasswordValidator(this.strongPasswordRegex)
@@ -184,7 +185,7 @@ export class SignUpComponent {
         event.preventDefault();
         if (this.customer.addresses[0] != null && this.customer.addresses[0].zipCode) {
             this.loader.start();
-
+            toastr['info']('Localizando o endereço');
             this.dneService.getAddress(this.customer.addresses[0].zipCode)
                 .then(response => {
                     this.customer.addresses[0].district = response.neighborhoods;
@@ -192,10 +193,17 @@ export class SignUpComponent {
                     this.customer.addresses[0].addressLine1 = response.street;
                     this.customer.addresses[0].state = response.state;
                     this.loader.done();
+                    if(response.street){
+                        toastr['success']('Endereço encontrado');
+                    }
+                    else{
+                        toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
+                    }
                 })
                 .catch(error => { 
                     console.log(error);
                     this.loader.done();
+                    toastr['error']('Endereço não encontrado, preencha os campos manualmente');
                 });
         }
     }

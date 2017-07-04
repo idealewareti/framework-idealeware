@@ -33,7 +33,6 @@ export class UserEditComponent implements OnInit {
         this.customer = new Customer();
         this.userEditForm = builder.group({
             rg_Ie: [''],
-            cpf_Cnpj: ['', Validators.required],
             firstname_Companyname: ['', Validators.required],
             lastname_Tradingname: ['', Validators.required],
             email: [''],
@@ -81,25 +80,45 @@ export class UserEditComponent implements OnInit {
         return Validations.validCNPJ(this.customer.cpf_Cnpj);
     }
 
+    strongPassword(): boolean{
+        if(this.customer.password)
+            return Validations.strongPassword(this.customer.password);
+        else return true;
+    }
+
+    hasError(key: string): boolean{
+        return (this.userEditForm.controls[key].touched && this.userEditForm.controls[key].invalid);
+    }
+
     public updateAccount(event){
         event.preventDefault();
-        this.service.updateCustomer(this.customer)
-            .then(customer => {
-                swal({
-                    title: 'Dados Cadastrais atualizados',
-                    text: 'Seu cadastro foi atualizado',
-                    type: 'success'
-                })
-                this.service.updateUserOnStorage(customer);
-                this.parentRouter.navigateByUrl(`/conta/home`);
-            })
-            .catch(error => {
-                swal({
-                    title: 'Erro ao atualizar o cadastro',
-                    text: error._body,
-                    type: 'error'
-                })
+        if(this.userEditForm.invalid){
+            swal({
+                title: 'Erro ao atualizar o cadastro',
+                text: 'Os campos obrigatórios não foram preenchidos',
+                type: 'warning'
             });
+        }
+        else{
+            this.service.updateCustomer(this.customer)
+                .then(customer => {
+                    swal({
+                        title: 'Dados Cadastrais atualizados',
+                        text: 'Seu cadastro foi atualizado',
+                        type: 'success'
+                    })
+                    this.service.updateUserOnStorage(customer);
+                    this.parentRouter.navigateByUrl(`/conta/home`);
+                })
+                .catch(error => {
+                    swal({
+                        title: 'Erro ao atualizar o cadastro',
+                        text: error.text(),
+                        type: 'error'
+                    })
+                });
+        }
+
     }
     
 }

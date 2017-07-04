@@ -194,6 +194,11 @@ export class PaymentPagseguroComponent implements OnInit {
                     this.loaderService.done();
                 }
             }
+            else{
+                this.installments = [];
+                this.creditCardUpdated.emit(new CreditCard());
+                this.paymentUpdated.emit(new PaymentSelected(this.payment, null, null));
+            }
 
         }
 
@@ -209,17 +214,27 @@ export class PaymentPagseguroComponent implements OnInit {
     }
 
     getMinInstallments(){
-        let installment = [];
-        this.cart.products.forEach(a => {
-            if(a.installmentLimit != 0)
-                installment.push(a.installmentLimit);    
+        // let installment = [];
+        // this.cart.products.forEach(a => {
+        //     if(a.installmentLimit != 0)
+        //         installment.push(a.installmentLimit);    
+        // });
+
+        // let min = Math.min.apply(Math,installment);
+        // let index = this.installments.findIndex(i => i.quantity == min);
+        // if(index > -1){
+        //     this.installments.splice(index + 1, this.installments.length);
+        // }
+
+        let installmentLimitMin = Number.MAX_SAFE_INTEGER;
+        this.cart.products.forEach(product => {
+            if(product.installmentLimit != 0 && product.installmentLimit < installmentLimitMin)
+                installmentLimitMin = product.installmentLimit;
         });
 
-        let min = Math.min.apply(Math,installment);
-        let index = this.installments.findIndex(i => i.quantity == min);
-        if(index > -1){
-            this.installments.splice(index + 1, this.installments.length);
-        }
+        let index = this.installments.findIndex(i => i.quantity == installmentLimitMin);
+        if(index > -1)
+            this.installments.splice(index +1, this.installments.length);
 
     }
 

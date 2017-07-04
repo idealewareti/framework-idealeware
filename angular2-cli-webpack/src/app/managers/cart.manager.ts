@@ -8,6 +8,8 @@ import { Sku } from '../models/product/sku';
 import { Shipping } from "../models/shipping/shipping";
 import { Service } from "../models/product-service/product-service";
 
+declare var toastr: any;
+
 @Injectable()
 export class CartManager {
     private cart: Cart;
@@ -149,7 +151,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.deleteItem(item)
                 .then(cart => {
-
+                    toastr['warning']('Produto removido do carrinho');
                     if (cart.products.length > 0) {
                         localStorage.setItem('shopping_cart', JSON.stringify(cart));
                         return cart;
@@ -171,6 +173,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.deleteService(serviceId)
                 .then(cart => {
+                    toastr['warning']('Serviço removido do carrinho');
                     localStorage.setItem('shopping_cart', JSON.stringify(cart));
                     resolve(cart);
                 })

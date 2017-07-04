@@ -255,17 +255,22 @@ export class CheckoutComponent implements OnInit {
     }
 
     public isCreditCard() {
-        if (this.methodType == 1) return true;
+        if (this.methodType && this.methodType == 1) return true;
         else return false;
     }
 
     public isBankSlip() {
-        if (this.methodType == 2) return true;
+        if (this.methodType && this.methodType == 2) return true;
+        else return false;
+    }
+
+    isDeliveryPayment(){
+        if(this.methodSelected && this.methodSelected.type == 3) return true;
         else return false;
     }
 
     public isOtherMethods() {
-        if (this.methodType == 99) return true;
+        if (this.methodType && this.methodType == 99) return true;
         else return false;
     }
 
@@ -382,7 +387,7 @@ export class CheckoutComponent implements OnInit {
                 console.log(error);
                 swal({
                     title: 'Erro ao criar o pedido',
-                    text: error._body,
+                    text: error.text(),
                     type: 'error',
                     confirmButtonText: 'OK'
                 });
@@ -411,7 +416,7 @@ export class CheckoutComponent implements OnInit {
                 console.log(error);
                 swal({
                     title: 'Erro ao criar o pedido',
-                    text: error._body,
+                    text: error.text(),
                     type: 'error',
                     confirmButtonText: 'OK'
                 });

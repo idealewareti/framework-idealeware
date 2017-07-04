@@ -175,7 +175,7 @@
                                         <span class="text-mutted" *ngIf="!getPaymentTypeSelected()">Nenhum selecionado</span>
                                     </td>
                                 </tr>
-                                <tr *ngIf="methodSelected.type == 3">
+                                <tr *ngIf="isDeliveryPayment()">
                                     <td class="text-left"><span>Troco para</span></td>
                                     <td class="text-right">
                                         <input type="number" name="changeFor" id="changeFor" [(ngModel)]="changeFor" currencyFormat class="form-control">
