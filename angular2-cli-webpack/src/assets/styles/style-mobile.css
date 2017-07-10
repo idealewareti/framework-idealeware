@@ -449,7 +449,7 @@ input:focus, button:focus {
 }
 
 #nav .content .lvl1 {
-  
+
   top: 61px;
   left: 0;
   bottom: 0;
@@ -585,8 +585,8 @@ main{
 }
 
 .showcase.showcase-owl .owl-stage-outer {
-  margin-left: -15px;
-  margin-right: -15px;
+  /*margin-left: -15px;
+  margin-right: -15px;*/
   display: block;
   max-width: none;
   width: auto;
@@ -635,6 +635,7 @@ main{
   width: auto;
   max-height: 200px;
   max-width: 200px;
+  margin: 0 auto;
 }
 
 .showcase .showcase-items .border .flags {
@@ -736,7 +737,7 @@ main{
   padding: 5px;
 }
 @media (min-width: 992px) {
-  
+
   .showcase.showcase-buy-together .showcase-items .showcase-item {
     max-width: 260px;
     padding: 10px 20px;
@@ -847,7 +848,7 @@ main{
   text-align: center;
 }
 @media (min-width: 992px) {
-  
+
   #newsletter #box-newsletter .form {
     float: right;
     width: 50%;
@@ -859,7 +860,7 @@ main{
   margin: 0 0 0 3px;
 }
 @media (max-width: 992px) {
-  
+
   #newsletter #box-newsletter .form .form-group {
     display: block;
     margin: 0 0 3px;
@@ -878,13 +879,13 @@ main{
   height: 50px;
 }
 @media (min-width: 992px) {
-  
+
   #newsletter #box-newsletter .form .form-group .form-input {
     width: 220px;
   }
 }
 @media (min-width: 1200px) {
-  
+
   #newsletter #box-newsletter .form .form-group .form-input {
     width: 270px;
   }
@@ -1541,13 +1542,13 @@ body.product .showcase {
 
 
 #filter {
-  
-  
+
+
   /*left: 0;
   right: 0;
   bottom: 0;*/
   background: #FAFAFA;
-  
+
 }
 
 #filter .filter-header {
@@ -1885,7 +1886,7 @@ body.checkout {
   padding: 0 10px 20px;
 }
 @media (min-width: 1200px) {
-  
+
   .checkout-steps .step .content {
     padding: 0 20px 20px;
   }
@@ -1901,7 +1902,7 @@ body.checkout {
   margin: 0 -10px;
 }
 @media (min-width: 1200px) {
-  
+
   .checkout-steps .step .content h4 {
     margin: 0 -20px;
   }
@@ -1951,7 +1952,7 @@ body.checkout {
   margin: 0 -10px;
 }
 @media (min-width: 1200px) {
-  
+
   .checkout-steps .step .content .radio,
   .checkout-steps .step .content .checkbox {
     margin: 0 -20px;
@@ -2035,7 +2036,7 @@ body.checkout {
   margin-right: 5px;
 }
 @media (min-width: 1200px) {
-  
+
   .checkout-steps .step .scroll-product-list .product-list .product-item .details {
     width: 160px;
   }
@@ -2086,7 +2087,7 @@ body.checkout {
   margin: 15px -10px 0;
 }
 @media (min-width: 1200px) {
-  
+
   .checkout-steps .step .totals-box {
     margin: 15px -20px 0;
   }
@@ -2698,13 +2699,13 @@ body.checkout {
   border: 1px solid #F2F2F2;
 }
 @media (min-width: 992px) {
-  
+
   .user-panel-page .col-details .table-order-vouchers td.col-actions {
     width: 130px;
   }
 }
 @media (max-width: 991px) {
-  
+
   .user-panel-page .col-details .table-order-vouchers td.col-details {
     width: 130px;
   }
@@ -2718,7 +2719,7 @@ body.checkout {
   display: block;
 }
 @media (min-width: 992px) {
-  
+
   .user-panel-page .col-details .table-order-vouchers td span {
     font-size: 14px;
   }
@@ -2740,7 +2741,7 @@ body.checkout {
   display: block;
 }
 @media (min-width: 992px) {
-  
+
   .user-panel-page .col-details .table-order-vouchers td strong {
     font-size: 20px;
     letter-spacing: 1.3px;
@@ -2906,7 +2907,7 @@ body.checkout {
   margin: 0 5px;
 }
 @media (min-width: 1200px) {
-  
+
   .user-panel-page .col-details .scroll-product-list .product-list .product-item .details {
     width: 160px;
   }
@@ -3025,7 +3026,7 @@ body.checkout {
   z-index: 11;
 }
 @media (min-width: 1200px) {
-  
+
   .user-panel-page .col-details .order-step li {
     margin: 0 10px;
   }
@@ -3042,7 +3043,7 @@ body.checkout {
   z-index: 9;
 }
 @media (min-width: 1200px) {
-  
+
   .user-panel-page .col-details .order-step li:before {
     left: -44px;
     width: 66px;

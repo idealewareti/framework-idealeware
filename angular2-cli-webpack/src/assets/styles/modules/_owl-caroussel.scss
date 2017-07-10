@@ -1,0 +1,45 @@
+#list-brads .owl-carousel .owl-stage-outer{
+  width: calc(100% - 80px);
+  margin: 0 auto;
+}
+.owl-carousel{
+  .owl-item img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+  }
+  .owl-nav {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 0;
+    & > div {
+      height: 30px !important;
+      background: transparent !important;
+      border: 0 none;
+      border-radius: 0;
+      text-align: center;
+      line-height: 30px !important;
+      padding: 0;
+      margin: -15px 0 0 !important;
+      font-size: 30px !important;
+      color: #757575 !important;
+      transition: 300ms all !important;
+      &:hover {
+        background: transparent !important;
+        color: #4f4f4f !important;
+      }
+
+    }
+  }
+  div.owl-prev {
+    float: left;
+  }
+  div.owl-next {
+    float: right;
+  }
+
+}

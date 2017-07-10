@@ -1,0 +1,37 @@
+.btn {
+  border-radius: 0;
+  border: 0 none;
+  text-shadow: 0 0 0 transparent;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1), 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+  &.btn-default {
+    background: #F2F2F2;
+    font-size: 16px;
+    color: #757575;
+    &:hover {
+      background: #e5e5e5;
+    }
+  }
+  &.btn-success {
+    background: #69C900;
+    font-size: 20px;
+    color: #fff;
+    &:hover {
+      background: #5cb000;
+    }
+    &.btn-no-selected {
+      background-color: #F2F2F2;
+      color: #757575;
+    }
+  }
+  &.btn-clear {
+    background: transparent;
+    border: 0 none;
+    border-radius: 0;
+    box-shadow: 0 0 0 transparent;
+    font-size: 16px;
+    color: #757575;
+    &:hover {
+      color: #4f4f4f;
+    }
+  }
+}
