@@ -1,0 +1,52 @@
+#popUpModal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 40;
+  overflow-y: auto;
+  .popUpModal-content {
+    position: relative;
+    top: 50%;
+    max-width: 90%;
+    margin: -202px auto 0 auto;
+    z-index: 50;
+    background: #FAFAFA;
+    box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.12), 0px 14px 14px 0px rgba(0, 0, 0, 0.24);
+    padding: 25px;
+    display: table;
+  }
+  .container {
+    padding: 0!important;
+  }
+}
+
+@media (min-width: 768px){
+  #popUpModal .container {
+    width: inherit !important;
+  }
+}
+
+@media (min-width: 992px) {
+  #popUpModal  #newsletter #box-newsletter{
+    .form {
+      width: inherit !important;
+    }
+    .title-newsletter {
+      text-align: inherit !important;
+      float: inherit !important;
+      width: inherit !important;
+      padding-right:inherit !important;
+    }
+    .form .form-group .form-input {
+      width: inherit !important;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  #popUpModal #newsletter #box-newsletter .form .form-group .form-input {
+    width: inherit !important;
+  }
+}

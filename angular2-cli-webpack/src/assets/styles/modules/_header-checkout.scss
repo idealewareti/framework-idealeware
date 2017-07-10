@@ -1,0 +1,24 @@
+body.checkout {
+  padding-bottom: 120px;
+}
+
+#header-checkout {
+  padding: 25px 0;
+  background: #FFFFFF;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1), 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+  .web-safe,
+  .contact {
+    padding: 7px 0 4px;
+    span {
+      font-size: 15px;
+      color: #757575;
+      line-height: 20px;
+      font-weight: 400;
+    }
+  }
+  .brand a {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 auto;
+  }
+}

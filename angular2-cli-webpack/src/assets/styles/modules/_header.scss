@@ -1,0 +1,245 @@
+
+#header {
+  position: relative;
+  z-index: 30;
+  .nav-top {
+    border: 0 none;
+    background-color: #F2F2F2;
+    padding: 7px 0;
+    min-height: auto;
+    border-radius: 0;
+    margin: 0;
+    ul {
+      margin: 0;
+    }
+    .phone {
+      font-size: 13px;
+      color: #757575;
+    }
+    .information-nav a {
+      font-size: 13px;
+    }
+  }
+
+  .header-bar {
+    padding: 20px 0;
+    .header-bar #brand,
+    .header-bar #brand h1 {
+      margin: 0;
+      padding: 0;
+    }
+
+    #welcome p {
+      font-size: 14px;
+      color: #999999;
+    }
+
+    #form-search {
+      position: relative;
+      input {
+        display: block;
+        border: 1px solid #D9D9D9;
+        width: 100%;
+        height: 48px;
+        line-height: 48px;
+        padding: 0 63px 0 15px;
+      }
+      .button {
+        background: transparent;
+        border: 0 none;
+        position: absolute;
+        right: 0;
+        color: #757575;
+        top: 0;
+        font-size: 20px;
+        padding: 10px;
+        height: 48px;
+        width: 48px;
+        &:hover {
+          color: #272727;
+        }
+      }
+    }
+    #mini-cart {
+      padding: 10px;
+      .mini-cart {
+        position: relative;
+        &:hover #header-cart {
+          visibility: visible;
+          margin-top: 10px;
+          opacity: 1;
+          height: auto;
+        }
+      }
+      .mini-cart > a {
+        text-decoration: none;
+        .name-cart {
+          font-size: 14px;
+          color: #757575;
+          padding-left: 15px;
+        }
+        i {
+          color: #757575;
+          font-size: 29px;
+        }
+        .badge-success {
+          background-color: #69C900;
+          font-size: 12px;
+          font-weight: 500;
+          color: #FFF;
+          position: absolute;
+          left: 21px;
+          top: -6px;
+          border: 2px solid #FFF;
+        }
+      }
+      #header-cart {
+        visibility: hidden;
+        margin-top: 80px;
+        opacity: 0;
+        height: 0;
+        transition: 300ms all;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: #FAFAFA;
+        box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.2), 0 14px 14px 0 rgba(0, 0, 0, 0.2);
+        width: 330px;
+        z-index: 30;
+        &:after {
+          display: block;
+          content: "";
+          position: absolute;
+          top: -10px;
+          width: 100%;
+          height: 10px;
+          z-index: 30;
+          background: transparent;
+        }
+        .header-cart-items {
+          padding: 10px 15px;
+          margin: 0;
+          list-style: none;
+          overflow-y: auto;
+          .header-cart-item {
+            border-top: 1px solid #D9D9D9;
+            padding: 10px 0;
+            &:first-child {
+              border-top: 0 none;
+            }
+            .actions {
+              margin-left: 10px;
+              .btn-remove {
+                border: 0 none;
+                background: transparent;
+                display: block;
+                width: 45px;
+                height: 25px;
+                margin-bottom: 5px;
+                color: #757575;
+                &:hover {
+                  color: #D0011B;
+                }
+              }
+              .update-qty {
+                display: block;
+                position: relative;
+                max-width: 45px;
+                input {
+                  background: #FFFFFF;
+                  border: 1px solid #D9D9D9;
+                  font-size: 12px;
+                  color: #757575;
+                  height: 25px;
+                  width: 45px;
+                  text-align: center;
+                  padding: 0 0px;
+                }
+                .btn-update {
+                  border: 0 none;
+                  background-color: transparent;
+                  width: 15px;
+                  height: 25px;
+                  position: absolute;
+                  top: 0;
+                  font-size: 12px;
+                  color: #999999;
+                  font-weight: 400;
+                  padding: 0;
+                  &.btn-update-del {
+                    left: 0;
+                  }
+                  &.btn-update-add {
+                    right: 0;
+                  }
+                  &:hover {
+                    color: #69C900;
+                  }
+                }
+              }
+            }
+
+            .thumb {
+              padding-right: 10px;
+            }
+            .details{
+              a {
+                text-decoration: none;
+                b {
+                  font-size: 12px;
+                  color: #757575;
+                  line-height: 14px;
+                  font-weight: 400;
+                  display: block;
+                  margin-bottom: 10px;
+                }
+                strong {
+                  display: block;
+                  .old-price {
+                    font-size: 11px;
+                    color: #999999;
+                    line-height: 15px;
+                    text-decoration: line-through;
+                    display: inline-block;
+                    vertical-align: top;
+                    margin-right: 5px;
+                  }
+                  .regular-price {
+                    font-size: 13px;
+                    color: #000000;
+                    line-height: 15px;
+                    display: inline-block;
+                    vertical-align: top;
+                  }
+                }
+              }
+            }
+
+          }
+        }
+
+        .header-cart-footer {
+          background-color: #fff;
+          border-top: 1px solid #D9D9D9;
+          padding: 10px 25px;
+          .header-cart-subtotal {
+            display: block;
+            text-align: center;
+            margin-bottom: 10px;
+            strong {
+              font-size: 14px;
+              color: #231F20;
+              line-height: 16px;
+              display: block;
+            }
+          }
+          .btn-actions .btn {
+            margin: 10px 0;
+          }
+        }
+
+      }
+    }
+
+  }
+}

@@ -1,0 +1,50 @@
+
+/*
+	Ranger Price
+*/
+
+.jslider .jslider-value span {
+  font-size: 12px;
+  color: #999999;
+}
+
+
+.jslider .jslider-value span:before {
+  content: 'R$ ';
+  font-size: 12px;
+  color: #999999;
+}
+
+
+.jslider .jslider-label-to,
+.jslider .jslider-label {
+  display: none !important;
+}
+
+
+.jslider .jslider-bg .v {
+  background: #999999 !important;
+}
+
+
+.jslider .jslider-bg .l {
+  background: #D9D9D9 !important;
+}
+
+
+.jslider .jslider-bg .f {
+  background: #D9D9D9;
+}
+
+
+.jslider .jslider-bg .r {
+  background: #D9D9D9;
+}
+
+
+.jslider .jslider-pointer {
+  background: #999999;
+  width: 15px;
+  height: 15px;
+  border-radius: 100%;
+}

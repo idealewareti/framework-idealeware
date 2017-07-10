@@ -1,0 +1,141 @@
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+a, button, input[type="button"], input[type="submit"] {
+  transition: 300ms all;
+}
+
+
+a {
+  color: #757575;
+  text-decoration: none;
+  &:hover {
+    color: #4f4f4f;
+    text-decoration: none;
+  }
+}
+
+input:focus, button:focus {
+  outline: none;
+}
+
+
+/*classes sem parentes*/
+
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #000;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 40;
+  transition: 300ms all;
+  cursor: pointer;
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.list-style-none {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.overflow-hidden {
+  overflow: hidden;
+  display: block;
+}
+
+
+.col-padding {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+
+.page-title {
+  font-size: 24px;
+  color: #757575;
+  font-weight: 400;
+  line-height: 28px;
+  text-transform: uppercase;
+  margin: 15px 0;
+  padding: 0;
+}
+
+
+.layout-slider {
+  margin-top: 15px;
+}
+
+
+.short-description {
+  margin-top: 25px;
+  border-top: 1px solid #D9D9D9;
+  padding-top: 25px;
+}
+
+
+.login-form{
+  margin: 0 auto;
+}
+.upselling-item .border .thumb a img {
+  /*max-width: 100%;
+  width: auto;
+  height: auto;*/
+  height: 238px;
+  width: 238px;
+}
+
+
+.form-verify-services p{
+  font-size: 15px;
+  color: #999999;
+  line-height: 18px;
+  font-weight: 300;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.product-loss-percentage{
+  margin: 15px 0px;
+}
+
+.product-services .input{
+  width: 70px;
+  display: inline-block;
+}
+
+.payment-options{
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+
+}
+
+.payment-options .btn{
+  width: 100%;
+}
+
+.forget-password{
+  max-width: 330px;
+  margin: 0 auto;
+}
+
+
+#main-nav #vehicle {
+  position: relative;
+  width: 150px;
+}
+
+
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+}

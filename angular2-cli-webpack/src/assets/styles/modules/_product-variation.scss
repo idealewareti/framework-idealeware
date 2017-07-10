@@ -1,0 +1,108 @@
+.product-variation-input:checked+label {
+  color: #757575;
+  border-color: #757575;
+}
+
+.product-variation-input:checked+label:before {
+  content: "\f00c";
+  font: 400 9px/20px FontAwesome;
+  display: block;
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 100%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  color: #757575;
+  border-radius: 100%;
+  border: 1px solid #757575;
+  background: #F3F3F3;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+
+.product-area-sizer{
+  margin: 15px 0px;
+}
+
+.product-area-sizer .label{
+  font-size: 15px;
+  color: #999999;
+  line-height: 18px;
+  font-weight: 300;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.input{
+  display: block;
+  background: #FFFFFF;
+  border: 1px solid #D9D9D9;
+  font-size: 12px;
+  color: #757575;
+  height: 33px;
+  letter-spacing: 0;
+  text-align: center;
+  padding: 0 15px;
+  width: 100px;
+}
+
+.product-variation-option .product-variation-choice {
+  background: #FFFFFF;
+  border: 1px solid #D9D9D9;
+  font-size: 13px;
+  font-weight: 300;
+  color: #999999;
+  font-weight: 15px;
+  padding: 10px 15px;
+  transition: 300ms all;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.product-variation-option .product-variation-choice:visited{
+  text-decoration: none;
+}
+
+.product-variation-option .product-variation-selected:before {
+  content: "\f00c";
+  font: 400 9px/20px FontAwesome;
+  display: block;
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 100%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  color: #757575;
+  border-radius: 100%;
+  border: 1px solid #757575;
+  background: #F3F3F3;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.product-variation-option .product-variation-choice.no-stock {
+  background: #F3F3F3;
+  border-color: #F3F3F3;
+}
+
+.product-variation-option .no-stock.product-variation-selected:before {
+  content: "\f00d";
+  font: 400 9px/20px FontAwesome;
+  display: block;
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 100%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  color: #ff0000;
+  border-radius: 100%;
+  border: 1px solid #ff0000;
+  background: #F3F3F3;
+}

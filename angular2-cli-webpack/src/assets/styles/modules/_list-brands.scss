@@ -1,0 +1,30 @@
+#list-brads {
+  margin-bottom: 25px;
+  ul {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #D9D9D9;
+    a {
+      display: block;
+      text-align: center;
+      opacity: .2;
+      -webkit-filter: grayscale(100%);
+      filter: grayscale(100%);
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: 100% auto;
+      color: transparent;
+      width: 220px;
+      height: 50px;
+      &:hover {
+        opacity: 1;
+        -webkit-filter: grayscale(0);
+        filter: grayscale(0);
+      }
+    }
+  }
+}
