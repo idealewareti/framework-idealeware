@@ -1,0 +1,40 @@
+<div class="contact-page-form">
+    <div class="page-header">
+        <h1>Fale Conosco</h1>
+    </div>
+    <div class="row">
+        <div *ngIf="messageSent" class="alert alert-success" role="alert">Sua mensagem foi enviada com sucesso!</div>
+        <form *ngIf="!messageSent" [formGroup]="contactForm" (submit)="submit($event)">
+            <div class="form-group col-md-6 required" [ngClass]="{'has-error': hasError('name')}">
+                <label for="" class="control-label">Nome</label>
+                <input id="name" name="name" formControlName="name" [(ngModel)]="contact.name" type="text" class="form-control" required>
+                <span *ngIf="hasError('name')" class="help-block">Informe seu nome</span>
+            </div>
+            <div class="form-group col-md-6 required" [ngClass]="{'has-error': hasError('email')}">
+                <label for="" class="control-label">E-mail</label>
+                <input id="email" name="email" formControlName="email" [(ngModel)]="contact.email" type="email" class="form-control" required>
+                <span *ngIf="hasError('email')" class="help-block">Informe seu e-mail</span>
+            </div>
+            <div class="form-group col-md-12 required" [ngClass]="{'has-error': hasError('title')}">
+                <label for="" class="control-label">Assunto</label>
+                <select class="form-control" id="title" name="title" formControlName="title" [(ngModel)]="contact.title">
+                    <option value="Dúvidas">Dúvidas</option>
+                    <option value="Sugestões">Sugestões</option>
+                    <option value="Reclamações">Reclamações</option>
+                    <option value="Troca/Devolução">Troca/Devolução</option>
+                    <option value="2ª Via de Nota Fiscal">2ª Via de Nota Fiscal</option>
+                    <option value="Outros">Outros</option>
+                </select>
+                <span *ngIf="hasError('title')" class="help-block">Informe o assunto</span>
+            </div>
+            <div class="form-group col-md-12 required" [ngClass]="{'has-error': hasError('message')}">
+                <label for="" class="control-label">Mensagem</label>
+                <textarea id="message" name="message" formControlName="message" [(ngModel)]="contact.message" class="form-control" name="" id="" cols="30" rows="10"></textarea>
+                <span *ngIf="hasError('message')" class="help-block">Informe a Mensagem</span>
+            </div>
+            <div class="form-group col-md-12 text-right">
+                <button type="submit" class="btn btn-lg btn-success">Enviar</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,136 @@
+<div class="col-details" *ngIf="order">
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <h2>Detalhes do Pedido #{{order.orderNumber}}</h2>
+            <p>Realizado em: {{order.historyStatus[0].alterDate | date:'dd/MM/y'}} - {{order.historyStatus[0].alterDate | date:'H:m'}}</p>
+
+            <ul class="order-step text-center" *ngIf="orderPipeline() != 0">
+                <li [ngClass]="{'active': orderPipeline() == 1, 'ok': orderPipeline() > 1}">
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                    <span>Pedido Realizado</span>
+                </li>
+                <li [ngClass]="{'active': orderPipeline() == 2, 'ok': orderPipeline() > 2}">
+                    <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+                    <span>Pagamento Aprovado</span>
+                </li>
+                <li [ngClass]="{'active': orderPipeline() == 3, 'ok': orderPipeline() > 3}">
+                    <i class="fa fa-truck" aria-hidden="true"></i>
+                    <span>Pedido na Transportadora</span>
+                </li>
+                <li [ngClass]="{'active': orderPipeline() == 4, 'ok': orderPipeline() > 4}">
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                    <span>Saiu para Entrega</span>
+                </li>
+                <li [ngClass]="{'active': orderPipeline() == 5}">
+                    <i class="fa fa-home" aria-hidden="true"></i>
+                    <span>Entrega Realizada</span>
+                </li>
+            </ul>
+            <ul class="order-step text-center" *ngIf="orderPipeline() == 0">
+                <li class="ok">
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                    <span>Pedido Realizado</span>
+                </li>
+                <li class="canceled">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                    <span>Pedido Cancelado</span>
+                </li>
+            </ul>
+
+            <div class="box-order-info border">
+                <strong>A entrega será realizada no endereço:</strong>
+
+                <b>{{order.deliveryAddress.addressName}}</b>
+                <p>
+                    {{order.deliveryAddress.addressLine1}}, {{order.deliveryAddress.addressNumer}}  {{order.deliveryAddress.addressLine2}} - {{order.deliveryAddress.district}} <br />
+                    CEP {{order.deliveryAddress.zipCode}} - {{order.deliveryAddress.city}}/{{order.deliveryAddress.state}}
+                </p>
+            </div>
+
+            <div class="box-order-info border" *ngIf="isCreditCard()">
+                <strong>Forma de Pagamento</strong>
+
+                <b>{{(order.payment.paymentMethods[0].methodName())}}</b>
+                <p>
+                    {{order.payment.paymentMethods[0].name}} <br />
+                    {{order.payment.paymentMethods[0].creditCardInstallmentCount}}x de {{order.payment.paymentMethods[0].creditCardInstallmentPrice | currencyFormat}} <br />
+                </p>
+            </div>
+
+            <div class="box-order-info border" *ngIf="isBankSlip()">
+                <strong>Forma de Pagamento</strong>
+
+                <b>{{(order.payment.paymentMethods[0].methodName())}}</b>
+                <p>
+                    {{order.payment.paymentMethods[0].name}} <br />
+                    <a *ngIf="orderPipeline() < 2" [attr.href]="order.payment.paymentMethods[0].bankSlipUrl">Clique aqui para visualizar o boleto desta compra</a><br />
+                </p>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-4">
+            <div class="border">
+                <div class="scroll-product-list scroll-bar">
+                    <ul class="product-list">
+                        <li class="product-item" *ngFor="let paint of order.paints">
+                            <span class="image">
+                                <img [attr.src]="(paint.optionPicture) ? mediaPathPaint + paint.optionPicture : '/assets/images/no-image.jpg' " alt="" class="img-responsive">
+                                <span class="color-block img-thumbnail" [ngStyle]="{'background-color': '#' + paint.colorRgb}"></span>
+                            </span>
+                            <span class="details">
+                                <b class="name">{{paint.baseName}} {{paint.colorName}} | {{paint.colorCode}}</b>
+                                <span class="sku">{{paint.variationName}}: {{paint.optionName}}</span>
+                                <span class="qty">Quantidade: {{paint.quantity}}</span>
+                                <span class="regular-price">{{paint.totalUnitPrice | currencyFormat}}</span>
+                            </span>
+                        </li>
+                        <li class="product-item" *ngFor="let product of order.products">
+                            <span class="image">
+                                <img [attr.src]="(product.sku.picture) ? mediaPath + product.sku.picture.thumbnail : '/assets/images/no-image.jpg' " alt="" class="img-responsive">
+                            </span>
+                            <span class="details">
+                                <b class="name">{{product.name}}</b>
+                                <span class="sku" *ngFor="let variation of product.sku.variations">{{variation.name}}: {{variation.option.name}}</span>
+                                <span class="qty">Quantidade: {{product.quantity}}</span>
+                                <span class="regular-price">{{product.totalUnitPrice | currencyFormat}}</span>
+                            </span>
+                        </li>
+                        <li class="product-item" *ngFor="let service of order.services">
+                            <span class="image">
+                                {{service.serviceType}}
+                            </span>
+                            <span class="details">
+                                <b class="name">{{service.rules}}</b>
+                                <span class="qty">Quantidade: {{service.quantity}}</span>
+                                <span class="regular-price">{{product.totalUnitPrice | currencyFormat}}</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="totals-box">
+                    <table class="totals">
+                        <tbody>
+                            <tr class="subtotal">
+                                <td class="text-left"><span>Subtotal ({{getNumItemsInCart()}} {{((getNumItemsInCart() > 1) ? 'itens' : 'item')}})</span></td>
+                                <td class="text-right"><strong>{{getSubTotal() | currencyFormat}}</strong></td>
+                            </tr>
+                            <tr class="descont" *ngIf="getDiscount() > 0">
+                                <td class="text-left"><span>Desconto</span></td>
+                                <td class="text-right"><strong>-{{getDiscount() | currencyFormat}}</strong></td>
+                            </tr>
+                            <tr class="shipping">
+                                <td class="text-left"><span>Frete</span></td>
+                                <td class="text-right"><strong>{{getShipping() | currencyFormat}}</strong></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total">
+                                <th class="text-left"><span>Total</span></th>
+                                <th class="text-right"><strong>{{order.orderPrice | currencyFormat}}</strong></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

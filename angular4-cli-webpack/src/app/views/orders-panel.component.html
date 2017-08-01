@@ -1,0 +1,36 @@
+<div *ngIf="showList()">
+
+    <div class="clearfix">
+        <h2 class="pull-left">Meus Pedidos</h2>
+        <!--<form class="search-orders pull-right">
+            <input type="search" name="search-orders" class="form-control">
+            <button class="btn btn-clear btn-search-orders"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+        </form>-->
+    </div>
+
+    <div class="orders-box table-responsive" *ngIf="orders">
+        <table class="table-order-vouchers">
+            <tbody>
+                <tr *ngFor="let order of orders">
+                    <td class="col-details">
+                        <span>Nº do pedido:</span>
+                        <strong>{{order.orderNumber}}</strong>
+                        <span class="date">Realizado em: {{order.historyStatus[0].alterDate | date:'dd/MM/y'}} - {{order.historyStatus[0].alterDate | date:'H:m'}}</span>
+                    </td>
+                    <td class="col-status">
+                        <span>Status de Entrega</span>
+                        <strong class="status" [ngClass]="statusClass(order)">{{order.labelStatus()}}</strong>
+                                    <span *ngIf="order.status == 3" class="date">Entregue em: {{order.historyStatus[order.historyStatus.length - 1].alterDate | date:'dd/MM/y'}}</span>
+                    </td>
+                    <td class="col-total hidden-xs">
+                        <span>Valor Total</span>
+                        <strong>{{order.orderPrice | currencyFormat}}</strong>
+                    </td>
+                    <td class="col-actions text-center">
+                        <a class="btn btn-default btn-show-detail" [routerLink]="['/conta', 'pedidos', order.id]"><span class="visible-xs visible-sm"><i class="fa fa-eye" aria-hidden="true"></i></span><span class="visible-md visible-lg">VER DETALHES</span></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

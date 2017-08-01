@@ -1,0 +1,28 @@
+<main role="main" class="container checkout-page">
+    
+    <ul class="checkout-tabs">
+        <li class="is-ok">
+            <span class="icon"><img src="assets/images/icon-checkout-identificacao.svg" alt=""></span>
+            <span class="text">Identificação</span>
+        </li>
+        <li class="active">
+            <span class="icon"><img src="assets/images/icon-checkout-confirmacao.svg" alt=""></span>
+            <span class="text">Confirmação</span>
+        </li>
+    </ul>
+
+    <div class="checkput-finish text-center">
+        
+        <h2>SEU ORÇAMENTO FOI RECEBIDO</h2>
+        <h3>Obrigado por sua Compra!</h3>
+        <br />
+       
+        <br />
+        <p>Você irá receber um e-mail de confirmação com detalhes de seu orçamento.</p>
+        <p>Clique <a href="javascript: window.print()" title="Imprimir copia">aqui para imprimir</a> uma cópia da confirmação do seu orçamento.</p>
+        <br /><br />
+        <a [routerLink]="['/']" class="btn btn-lg btn-default">Continuar na loja</a>
+
+    </div>
+
+</main>

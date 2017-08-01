@@ -1,0 +1,25 @@
+<ul class="nav navbar-nav">
+    <li class="hidden-md hidden-lg" *ngIf="!isLoggedIn">
+        <a [routerLink]="['/login']" title="Entre">Entre / Cadastrar</a>
+    </li>
+    <li class="hidden-lg hidden-md" *ngIf="isLoggedIn">
+        <a [routerLink]="['/conta/home']" title="Minha Conta">Minha Conta</a>
+    </li>
+    <li class="hidden-lg hidden-md" *ngIf="isLoggedIn">
+        <a [routerLink]="['/conta/pedidos']" title="Meus Pedidos">Meus Pedidos</a>
+    </li>
+    <li role="separator" class="divider hidden-md hidden-lg"></li>
+    <li *ngFor="let category of categories" [ngClass]="{'dropdown': category.children.length > 0}">
+        <a [routerLink]="['/categoria/' + category.id + '/' + category.niceName]" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <span *ngIf="category.picture" class="icon hidden-xs"><img [attr.src]="mediaPath + category.picture" [attr.alt]="category.name"></span>
+            {{category.name}}
+            <span class="caret hidden-md hidden-lg"></span>
+        </a>
+        <ul *ngIf="category.children.length > 0" class="dropdown-menu">
+            <li *ngFor="let sub1 of category.children"><a [routerLink]="['/categoria', sub1.id, sub1.niceName]" [attr.title]="sub1.name">{{sub1.name}}</a></li>
+        </ul>
+    </li>
+    <li>
+        <group class=""></group>
+    </li>
+</ul>

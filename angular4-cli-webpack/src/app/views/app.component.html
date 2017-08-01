@@ -1,0 +1,231 @@
+<ng-progress [color]="'#333333'"></ng-progress>
+<header id="header" *ngIf="store">
+    <nav class="nav-top navbar navbar-default hidden-xs">
+        <div class="container">
+            <div class="pull-left">
+                <span class="phone"><i class="fa fa-phone" aria-hidden="true"></i> Televendas <b>{{store.phone}}</b></span>
+            </div>
+            <div class="pull-right">
+                <div class="information-nav">
+                    <ul class="list-inline">
+                        <li>
+                            <a [routerLink]="['/contato']" title="Central de Atendimento">Central de Atendimento</a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/conta/home']" title="Minha Conta">Minha Conta</a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/conta/pedidos']" title="Meus Pedidos">Meus Pedidos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-bar hidden-xs">
+        <div class="container">
+            <div class="row">
+                <div class="col-mini-cart pull-right col-padding">
+                      <mini-cart></mini-cart>  
+                </div>
+                <div class="col-brand pull-left col-padding">
+                    <h1 id="brand" *ngIf="store">
+                        <a [routerLink]="['/']" [attr.title]="store.companyName">
+                            <b class="sr-only">{{store.companyName}}</b>
+                            <img [attr.src]="mediaPath + '/' + store.logo" [attr.alt]="store.companyName" class="img-responsive">
+                        </a>
+                    </h1>
+                </div>
+                <div class="col-welcome pull-left col-padding">
+                    <div id="welcome" *ngIf="!isLoggedIn()">
+                        <p>
+                            Olá, Visitante <br/>
+                            <a class="login-enter" [routerLink]="['/login']" title="Entre">Entre</a> ou <a class="about-us"
+                                [routerLink]="['/cadastrar']" title="Cadastre-se">Cadastre-se</a>
+                        </p>
+                    </div>
+                    <div id="welcome" *ngIf="isLoggedIn()">
+                        <p>
+                            Olá, {{customer.firstname_Companyname}} <br/>
+                            <a class="login-enter" [routerLink]="['/logout']" title="Sair">Sair</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-search overflow-hidden col-padding">
+                    <form id="form-search" action="/buscar" method="get" (submit)="searchFor($event)">
+                        <fieldset>
+                            <input id="auto-complete" type="text" placeholder="O que você procura?" name="q" [(ngModel)]="q" autocomplete="off" required>
+                            <button class="button button-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<nav class="navbar categories-nav navbar-static-top" *ngIf="store">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="pull-left navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand hidden-md hidden-lg" [routerLink]="['/']" [attr.title]="store.companyName">
+                <img [attr.src]="mediaPath + '/' + store.logo" [attr.alt]="store.companyName" class="img-responsive">
+            </a>
+            <span class="mobile-btns pull-right hidden-md hidden-lg">
+                <button id="btn-search" class="btn btn-search">
+                    <img src="assets/images/icon-search.svg" alt="Buscar" />
+                </button>
+                <a class="btn btn-my-cart" [routerLink]="['/carrinho']">
+                    <img src="assets/images/icon-cart.svg" alt="Meu Carrinho" />
+                </a>
+                <div id="search-box" style="display: none;">
+                    <div class="mask"></div>
+                    <form id="form-search-mobile" action="/buscar" method="get" (submit)="searchFor($event)">
+                        <fieldset class="clearfix">
+                            <button (click)="searchFor($event)" type="submit" class="btn btn-search pull-right"><img src="assets/images/icon-search.svg" alt="Buscar" /></button>
+                            <button class="btn-close pull-left"><img src="assets/images/icon-close.svg" alt="Fechar" /></button>
+                            <div class="overflow-hidden">
+                                <input id="auto-complete" type="text" placeholder="O que você procura?"name="q" [(ngModel)]="q" autocomplete="off" >
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </span>
+        </div>
+        
+        <category-menu [isLoggedIn]="isLoggedIn()" id="navbar" class="navbar-collapse collapse"></category-menu>
+                  
+    </div>
+</nav>
+<div class="container">
+    <router-outlet></router-outlet>
+</div>
+<footer id="footer" *ngIf="isCheckout() == false && store">
+    <!-- Newsletter -->
+    <newsletter></newsletter>
+    <!-- /Newsletter -->
+
+    <!-- Main Footer -->
+    <div id="main-footer">
+        <div class="container">
+            <div class="row">
+                <div class="list-footer col-xs-6 col-md-5 footer-institutional">
+                    <h3 class="title">Institucional</h3>
+                    <ul>
+                        <li *ngFor="let institutional of institutionals">
+                            <a [routerLink]="[getInstitutionalUrl(institutional)]" [attr.title]="institutional.title">{{institutional.title}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 visible-xs visible-sm">
+                    <hr>
+                </div>
+                <div class="list-footer col-xs-12 col-md-3 footer-call-center">
+                    <h3 class="title">Central de Atendimento</h3>
+                    <ul>
+                        <li><span>Televendas <b class="phone">{{store.phone}}</b></span></li>
+                    </ul>
+                </div>
+
+                <div class="col-xs-12 col-md-4 footer-social-networks">
+
+                    <div class="light-box">
+                        <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fidealeware%2F&tabs&width=340&height=214&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=214403341930049" width="100%" height="214" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Main Footer -->
+
+    <!-- Footer secundário -->
+    <div id="secondary-footer">
+        <div class="container">
+            <div class="row">
+                <!-- Box SSL -->
+                <div class="col-md-6">
+                    <div id="security-seal">
+                        <h3 class="title">Certificados</h3>
+                        <ul class="list-inline">
+                            <span id="ss_img_wrapper_115-55_image_en">
+                                <a href="http://www.alphassl.com/ssl-certificates/wildcard-ssl.html" target="_blank" title="SSL Certificates">
+                                    <img alt="Wildcard SSL Certificates" border=0 id="ss_img" src="//seal.alphassl.com/SiteSeal/images/alpha_noscript_115-55_en.gif" title="SSL Certificate">
+                                </a>
+                            </span>
+                        </ul>
+                    </div>
+                </div>
+                <!-- CreditCard Brands -->
+                <div class="col-md-6" *ngIf="hasMundipagg()">
+                    <div id="payment-flags">
+                        <h3 class="title">Pague com</h3>
+                        <ul class="list-inline">
+                            <li *ngFor="let method of getMundipaggBrands()"><img [attr.src]="'assets/images/' + method.icon" [attr.alt]="method.name"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div *ngIf="hasMercadoPago()" class="col-md-6 text-center">
+                    <img class="img-responsive" style="cursor: pointer" src="https://imgmp.mlstatic.com/org-img/MLB/MP/BANNERS/tipo2_468X60.jpg?v=1" alt="MercadoPago - Meios de pagamento" title="MercadoPago - Meios de pagamento" width="468" height="60" data-toggle="modal" data-target=".bs-mercadopago-modal-sm" />
+                    <div class="modal fade bs-mercadopago-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header clearfix">
+                                <button class="btn-close pull-right" data-toggle="modal" data-target=".bs-mercadopago-modal-sm" title="fechar"><img src="/assets/images/icon-close.svg" alt="Fechar" style="margin:left"/></button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="https://www.mercadopago.com/org-img/MLB/design/2016/m_pago/banners/01_21/Educativo-passo_a_passo-10x.jpg">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div *ngIf="hasPagSeguro()" class="col-md-6 text-center">
+                    <img class="img-responsive" src="https://stc.pagseguro.uol.com.br/public/img/banners/seguranca/seguranca_468X60.gif" alt="Banner PagSeguro" title="Compre com pagSeguro e fique sossegado">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Footer secundário -->
+
+    <div id="copyright">
+        <div class="container text-center">
+            <div class="items-copyright">
+
+                <p>© {{ date | date:'y'}} {{store.tradingName}}. Todos os direitos reservados.</p>
+                <p>CNPJ: {{store.cnpj}} / Inscrição Estadual: {{store.stateRegistration}} - {{store.addressLine1 + ((store.addressLine2)
+                    ? ' - ' + store.addressLine2 : '')}} - {{store.city}}/{{store.state}} - {{store.zipCode}}</p>
+
+                <div class="signature">
+                    Tecnologia:
+                    <a href="http://www.idealeware.com.br" title="Ideal Ware" target="_blank">
+                        <img src="/assets/images/signature.png" alt="Ideal Ware" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Conteúdo do rodapé -->
+
+<div id="zipcodeModal" style="display: none;">
+    <div class="mask"></div>
+    <div class="zipcodeModal-content">
+        <h1 class="text-primary">Informe seu CEP</h1>
+        <p>Para melhor atendermos, informe abaixo o seu CEP</p>
+        <form (submit)="setZipCode($event)" class="form-inline">
+            <div class="form-group">
+                <input zipcodeMask type="text" name="zipCode" [(ngModel)]="zipCode" class="form-control" maxlength="9">
+                <span class="text-danger" *ngIf="messageZipCode">{{messageZipCode}}</span>
+            </div>
+            <button type="submit" class="btn btn-primary zipcode-enter">Enviar</button>
+        </form>
+    </div>
+</div>
+<popup></popup>

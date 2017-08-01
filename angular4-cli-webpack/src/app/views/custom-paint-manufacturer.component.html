@@ -1,0 +1,14 @@
+<main role="main" >
+    <div class="custom-paint-page-details">
+        <div class="container">
+            <ul class="nav nav-pills nav-justified brand-selector">
+                <li *ngFor="let manufacturer of manufacturers" role="presentation">
+                    <a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer]">
+                        <img [attr.src]="mediaPath + manufacturer.picture" [attr.alt]="manufacturer.name" class="img-responsive">
+                        {{manufacturer.name}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>

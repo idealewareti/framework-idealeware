@@ -1,0 +1,97 @@
+<div class="content" *ngIf="payments.length > 0">
+    <!-- Payments Radio -->
+    <div class="radio" *ngFor="let methodType of availableMethodTypes">
+        <label (click)="selectType(methodType, payment)">
+            <input type="radio" name="payment-method" [attr.id]="'method_' + methodType.value" [attr.value]="methodType.value"> {{methodType.label}}
+        </label>
+    </div>
+
+    <payment-offline *ngIf="offlinePayments.length > 0" [payments]="offlinePayments" [shipping]="shipping" (paymentUpdated)="handleOfflinePayment($event)"></payment-offline>
+    <!-- Payments Radio -->
+    
+    <!-- Payment Bankslip Form -->
+    <div class="form-payment" *ngIf="isBankSlip()">
+        <label *ngFor="let method of getBankSlips()" href="#" (click)="selectMethod($event, method)" [ngClass]="{'active': methodSelected.id == method.id}" [attr.title]="'Selecione ' + method.name + ' como método de pagamento'">
+            <i class="fa" [ngClass]="{'fa-square-o': methodSelected.id != method.id, 'fa-check-square-o': methodSelected.id == method.id}"></i>
+
+            <img *ngIf="method.icon" [attr.src]="'/assets/images/' + method.icon" [attr.alt]="method.name">
+            Pagar com boleto
+        </label>
+    </div>
+    <!-- Payment Bankslip Form -->
+
+    <!-- Payment Credit Card Form -->
+    <div class="form-payment" *ngIf="isCreditCard()">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="n-cartao" class="col-sm-4 control-label">Nº do Cartão</label>
+                <div class="col-sm-8">
+                    <input type="text" creditCartMask class="form-control" [(ngModel)]="creditCard.creditCardNumber" name="creditcardnumber" (ngModelChange)="detectCard($event)" placeholder="0000-0000-0000-0000" maxlength="19" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="n-parcelas" class="col-sm-4 control-label">Nº de Parcelas</label>
+                <div class="col-sm-8">
+                    <select class="form-control" name="n-parcelas" [(ngModel)]="creditCard.installmentCount" required>
+                        <option value="" *ngIf="methodSelected.installment.length == 0">INFORME UM CARTÃO VÁLIDO PARA OBTER AS PARCELAS</option>
+                        <option *ngFor="let installment of methodSelected.installment" value="{{installment.number}}">
+                            {{installment.number}}x {{installment.description}} {{installment.installmentPrice | currencyFormat}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" *ngIf="(methodSelected.installment.length > 0 && creditCard.installmentCount > 0)">
+                <label class="col-sm-4 control-label" >Total à prazo</label>
+                <div class="col-sm-8">{{methodSelected.installment[creditCard.installmentCount - 1].totalPrice | currencyFormat}}</div>
+            </div>
+            <div class="form-group">
+                <label for="n-nome" class="col-sm-4 control-label">Seu Nome <small>(como no cartão)</small></label>
+                <div class="col-sm-8">
+                    <input type="text" [(ngModel)]="creditCard.holderName" class="form-control" name="n-nome" placeholder="" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Vencimento</label>
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <select class="form-control" [(ngModel)]="creditCard.expMonth" name="n-mes" required>
+                                <option value="0">Mês</option>
+                                <option value="1">01</option>
+                                <option value="2">02</option>
+                                <option value="3">03</option>
+                                <option value="4">04</option>
+                                <option value="5">05</option>
+                                <option value="6">06</option>
+                                <option value="7">07</option>
+                                <option value="8">08</option>
+                                <option value="9">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" [(ngModel)]="creditCard.expYear" class="form-control" name="n-ano" placeholder="2017" maxlength="4" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="n-cod-seguranca" class="col-sm-4 control-label">Código de Segurança</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="n-cod-seguranca" [(ngModel)]="creditCard.securityCode" placeholder="" required>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- Payment Credit Card Form -->
+
+    <!-- Payment Offline Form -->
+    <payment-offline-panel 
+        [payment]="paymentSelected"
+        (methodUpdated)="handleMethodUpdated($event)">
+    </payment-offline-panel>
+    <!-- Payment Offline Form -->
+        
+</div>

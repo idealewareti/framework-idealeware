@@ -1,0 +1,16 @@
+<main role="main" class="product-page" *ngIf="institutional">
+   <div class="product-page-details">
+        <div class="container">
+            <div class="row row-first">
+                <div class="col-details">
+                    <h2>{{institutional.title}}</h2>
+                    <div class="description-text" [innerHTML]="institutional.content"></div>
+                    
+                </div>
+            </div>
+            <div class="row" *ngIf="isContactPage()">   
+                <contact></contact>
+            </div>
+        </div>
+   </div>
+</main>

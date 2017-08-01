@@ -1,0 +1,50 @@
+<main role="main" >
+    <div class="custom-paint-page-details">
+        <div class="container">
+            <div class="row">
+                <ol class="breadcrumb">
+                    <li><a [routerLink]="['/corespersonalizadas']">Cores Personalizadas</a></li>
+                    <li><a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer]" [attr.title]="manufacturer.name">{{manufacturer.name}}</a></li>
+                    <li><a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer, colorCode]" title="Variações">Variações</a></li>
+                    <li class="active">Escolha o produto</li>
+                </ol>
+                <div class="showcase showcase-catalog">
+                    <ul class="showcase-items list-style-none" *ngIf="paints.length > 0">
+                        <li class="showcase-item" *ngFor="let paint of paints">
+                            <span  class="border">
+                                <span class="thumb">
+                                    <a href="javascript:void(0)" [attr.title]="paint.name">
+                                        <img [attr.src]="coverImg(paint)" [attr.alt]="paint.name" >
+                                    </a>
+                                </span>
+                                <h3 class="product-name">
+                                    <a href="javascript:void(0)" [attr.title]="paint.name">
+                                        {{paint.name}}
+                                    </a>
+                                </h3>
+                                <span class="price-box" *ngIf="showValues() && paint.price > 0">
+                                    <div>
+                                        <span class="regular-price">
+                                            <span class="price-label"></span>
+                                            <span class="price">{{paint.price | currencyFormat }}</span>
+                                        </span>
+                                    </div>
+                                </span>
+                                <a href="#" (click)="purchase(paint, $event)" class="btn btn-success btn-buy">
+                                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>  
+                                    <span *ngIf="modality == 1">Comprar</span>
+                                    <span *ngIf="modality != 1">Orçamento</span>
+                                </a>
+                            </span>
+                        </li>
+                    </ul>
+
+                    <p class="text-muted text-center" *ngIf="paints.length == 0">Nenhum produto encontrado</p>
+                </div>
+                <div class="form-group">
+                    <a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer, colorCode]" class="btn btn-lg btn-default">Voltar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,12 @@
+<div class="product-variation-item">
+    <legend class="product-variation-title">{{relatedProducts.variation}}:</legend>
+
+    <div class="product-variation-options">
+        <span class="product-variation-option" *ngFor="let product of relatedProducts.products">
+            <a *ngIf="!isColor()" href="javascript:void(0)" (click)="selectProduct(product, $event)" [ngClass]="{'product-variation-selected': isProductSelected(product)}" class="product-variation-choice" [attr.title]="product.optionName" >
+                {{product.optionName}}
+            </a>
+            <a *ngIf="isColor()" href="javascript:void(0)" (click)="selectProduct(product, $event)" [ngClass]="{'product-variation-selected': isProductSelected(product)}" class="product-variation-choice product-variation-color" [ngStyle]="{'background-color': product.rgb}" [attr.title]="product.optionName"></a>
+        </span>
+    </div>
+</div>

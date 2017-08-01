@@ -1,0 +1,48 @@
+<div *ngIf="hasSimulation()">
+    <div class="form-group clearfix">
+        <a class="pull-right" href="#" (click)="getSimulation()" data-toggle="modal" data-target="#modal-installments"><i class="fa fa-credit-card" aria-hidden="true"></i> Veja as formas de parcelamento deste produto</a>
+    </div>
+
+
+    <div class="modal fade" id="modal-installments" tabindex="-1" role="dialog" aria-labelledby="modal-installments">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modal-installments">Formas de Parcelamento</h4>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="simulation.paymentMethods.length > 0">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li *ngFor="let method of nonEmptyMethod(); let i = index" role="presentation" [ngClass]="{'active': i == 0}" >
+                            <a [attr.href]="'#method_' + method.name" [attr.aria-controls]="method.name" role="tab" data-toggle="tab">
+                                <img *ngIf="method.icon" [attr.src]="mediaPath + method.icon">
+                                {{method.name}}
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div *ngFor="let method of nonEmptyMethod(); let i = index" role="tabpanel" class="tab-pane fade in active" [ngClass]="{'in active': i == 0}" [attr.id]="'method_' + method.name">
+                            <div class="installments-simulations">
+                                <ul class="list-group">
+                                    <li class="list-group-item active">
+                                        Pague em até {{getMaxInstallment(method)}}x com {{method.name}}
+                                    </li>
+                                    <li class="list-group-item" *ngFor="let installment of method.installment">
+                                        em <strong>{{installment.number}}x </strong> de <strong>{{installment.installmentPrice | currencyFormat}} </strong>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    
+    
+    
+</div>
