@@ -250,5 +250,9 @@ export class CartComponent {
         else return false;
     }
 
+    getCart(): Cart{
+        return this.globals.cart;
+    }
+
 }
 

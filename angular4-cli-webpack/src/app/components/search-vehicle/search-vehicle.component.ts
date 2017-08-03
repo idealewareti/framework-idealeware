@@ -9,7 +9,7 @@ declare var $: any;
 
 @Component({
     moduleId: module.id,
-    selector: 'vehicle',
+    selector: 'search-vehicle',
     templateUrl: '../../views/search-vehicle.component.html'
 })
 export class SearchVehicleComponent {

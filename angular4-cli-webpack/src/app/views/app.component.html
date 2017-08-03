@@ -65,6 +65,9 @@
     </div>
 </header>
 <nav class="navbar categories-nav navbar-static-top" *ngIf="store">
+    <!-- <div class="container">
+        <search-vehicle></search-vehicle>
+    </div> -->
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="pull-left navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -97,9 +100,7 @@
                 </div>
             </span>
         </div>
-        
         <category-menu [isLoggedIn]="isLoggedIn()" id="navbar" class="navbar-collapse collapse"></category-menu>
-                  
     </div>
 </nav>
 <div class="container">

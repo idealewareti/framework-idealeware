@@ -5,9 +5,9 @@
             <span class="badge badge-success">{{getNumItemsInCart()}}</span>
             <span class="name-cart visible-md-inline-block  visible-lg-inline-block">Meu Carrinho</span>
         </a>
-        <div id="header-cart" *ngIf="globals.cart">
+        <div id="header-cart" *ngIf="getCart()">
             <ul class="header-cart-items scroll-bar" *ngIf="getNumItemsInCart() > 0">
-                <li *ngFor="let item of globals.cart.products" class="header-cart-item clearfix">
+                <li *ngFor="let item of getCart().products" class="header-cart-item clearfix">
                     <span class="actions pull-right">
                         <button class="btn-remove" (click)="deleteItem($event, item)"><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">Remover do Carrinho</span></button>
                     <span class="update-qty">
@@ -30,7 +30,7 @@
                     </a>
                     </span>
                 </li>
-                <li *ngFor="let paint of globals.cart.paints" class="header-cart-item clearfix">
+                <li *ngFor="let paint of getCart().paints" class="header-cart-item clearfix">
                     <span class="actions pull-right">
                         <button class="btn-remove" (click)="deletePaint($event, paint)"><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">Remover do Carrinho</span></button>
                     <span class="update-qty">
@@ -60,7 +60,7 @@
                 </div>
                 <div class="btn-actions">
                     <a *ngIf="modality > -1" [routerLink]="['/']" class="btn btn-block btn-default btn-lg btn-continue">{{(modality == 1) ? 'Continuar Comprando' : 'Continuar orçando'}}</a>
-                    <checkout-button [cart]="globals.cart"></checkout-button>
+                    <checkout-button [cart]="getCart()"></checkout-button>
                 </div>
             </div>
         </div>

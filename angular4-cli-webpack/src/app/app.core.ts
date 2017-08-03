@@ -51,7 +51,7 @@ export class AppCore{
         apis['API_PRODUCT'] =               'https://api-pub-product.idealeware.com.br:10000';
         apis['API_PRODUCTAWAITED'] =        'https://api-pub-productsawaited.idealeware.com.br:10000';
         apis['API_PRODUCTRATING'] =         'https://api-pub-productrating.idealeware.com.br:10000';
-        apis['API_RELATEDPRODUCTS'] =       'http://api-pub.relatedproducts.idealeware.com.br:1000';
+        apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts.idealeware.com.br:1000';
         apis['API_SEARCH'] =                'https://api-pub-search.idealeware.com.br:10000';
         apis['API_SERVICE'] =               'https://api-pub-service.idealeware.com.br:10000';
         apis['API_SHOWCASE'] =              'https://api-pub-showcase.idealeware.com.br:10000';
@@ -94,7 +94,7 @@ export class AppCore{
         apis['API_PRODUCT'] =               'https://api-pub-product-stage.idealeware.com.br:10000';
         apis['API_PRODUCTAWAITED'] =        'https://api-pub-productsawaited-stage.idealeware.com.br:10000';
         apis['API_PRODUCTRATING'] =         'https://api-pub-productrating-stage.idealeware.com.br:10000';
-        apis['API_RELATEDPRODUCTS'] =       'http://api-pub.relatedproducts-stage.idealeware.com.br:1000';
+        apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts-stage.idealeware.com.br:1000';
         apis['API_SEARCH'] =                'https://api-pub-search-stage.idealeware.com.br:10000';
         apis['API_SERVICE'] =               'https://api-pub-service-stage.idealeware.com.br:10000';
         apis['API_SHOWCASE'] =              'https://api-pub-showcase-stage.idealeware.com.br:10000';
@@ -136,7 +136,7 @@ private static apiProduction(key: string): string{
         apis['API_PRODUCT'] =               'https://api-pub-product.idealeware.com.br:10000';
         apis['API_PRODUCTAWAITED'] =        'https://api-pub-productsawaited.idealeware.com.br:10000';
         apis['API_PRODUCTRATING'] =         'https://api-pub-productrating.idealeware.com.br:10000';
-        apis['API_RELATEDPRODUCTS'] =       'http://api-pub.relatedproducts.idealeware.com.br:1000';
+        apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts.idealeware.com.br:1000';
         apis['API_SEARCH'] =                'https://api-pub-search.idealeware.com.br:10000';
         apis['API_SERVICE'] =               'https://api-pub-service.idealeware.com.br:10000';
         apis['API_SHOWCASE'] =              'https://api-pub-showcase.idealeware.com.br:10000';

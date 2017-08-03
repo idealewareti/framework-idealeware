@@ -1,4 +1,4 @@
-# Trabalhando com Angular 2 e Angular 4
+# Trabalhando com Angular 4.x
 
 ## O que será necessário instalar:
 
