@@ -5,6 +5,7 @@ import { CartItem } from 'app/models/cart/cart-item';
 import { CartManager } from 'app/managers/cart.manager';
 import { ProductService } from 'app/services/product.service';
 import { Globals } from "app/models/globals";
+import { Sku } from "app/models/product/sku";
 
 //declare var $: any;
 declare var S: any;
