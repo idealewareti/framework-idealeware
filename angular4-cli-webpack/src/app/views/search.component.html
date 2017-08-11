@@ -1,21 +1,16 @@
-<main role="main">
-
+<main role="main" *ngIf="getStore()">
     <banner *ngIf="id" [module]="module" [moduleId]="id" place="1"></banner>
     <div id="layout">
         <div class="container">
-
             <div class="bread-crumb">
                 <bread-crump *ngIf="getBreadCrump()" [category]="getBreadCrump() "></bread-crump>
             </div>
-
             <div class="row">
-
                 <!-- Filter Box -->
                 <div class="filter-box hidden-lg hidden-md">
                     <div class="clearfix" id="filterby-title">
                         <button class="btn-filter pull-left"><img src="assets/images/icon-filter.svg" alt="" /> Filtrar por</button>
                     </div>
-
                     <div id="filter" style="display: none;">
                         <div class="filter-header">
                             <div class="clearfix">
@@ -62,7 +57,6 @@
                                     </div>
                                 </div>
                             </li>
-
                             <li class="lvl1-item" *ngIf="filterModel.brands.length > 0">
                                 <button class="lvl1-link">
                                     Marcas
@@ -110,7 +104,6 @@
                                     </ul>
                                 </div>
                             </li>
-
                             <li class="lvl1-item">
                                 <button class="lvl1-link">
                                     Variações
@@ -136,7 +129,6 @@
                                     </ul>
                                 </div>
                             </li>
-
                             <li class="lvl1-item">
                                 <button class="lvl1-link">
                                     Opções
@@ -165,7 +157,6 @@
                         </ul>
                     </div>
                 </div>
-
                 <!-- Filter Sidebar -->
                 <div class="col-md-3 col-sm-12 filter-left hidden-xs">
                     <!-- Filtrar por -->
@@ -185,7 +176,6 @@
                             </ul>
                         </div>
                     </div>
-
                     <!-- Filtrar por -->
                     <div class="filter-by nav" *ngIf="showFilter(brands)">
                         <div class="filter-items marcas">
@@ -216,7 +206,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="filter-by nav" *ngIf="pagination.TotalCount > 0">
+                    <div class="filter-by nav" *ngIf="totalItens() > 0 && showValues()">
                         <div class="filter-items">
                             <b class="caption">Filtrar por Preço</b>
                             
@@ -230,45 +220,45 @@
                                 <input type="number" [attr.min]="priceRange.minimumPrice" [(ngModel)]="priceRange.maximumPrice" class="form-control">
                             </div>
                             
-                            <div class="form-group col-md-12">
-                                <a href="#" class="btn btn-default" (click)="listProducts(page, $event)">Aplicar Filtro</a>
+                            <div class="col-md-12">
+                                <a href="#" class="btn btn-sm btn-default" (click)="filterByPriceRange($event)">Aplicar Filtro</a>
+                                <a href="#" class="btn btn-sm btn-danger" (click)="removeFilterByPriceRange($event)">Remover Filtro</a>
                             </div>
                         </div>
                     </div>
                     <bannerSide *ngIf="id" [module]="module" [moduleId]="id" [place]="2"></bannerSide>
                 </div>
-
                 <!-- Results -->
                 <div class="col-md-9 col-sm-12 main-content">
                     <div class="row-order-by clearfix">
                         <div class="order-by">
                             <form class="form-inline" *ngIf="!loading">
-                                <select *ngIf="pagination.TotalCount > 0" class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
-                                    <option *ngFor="let option of orderSearchOptions" [value]="option.value">{{option.label}}</option>
+                                <select *ngIf="totalItens() > 0 && showValues()" class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
+                                    <option *ngFor="let option of orderSearchOptionsEcommerce" [value]="option.value">{{option.label}}</option>
+                                </select>
+                                <select *ngIf="totalItens() > 0 && !showValues()" class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
+                                    <option *ngFor="let option of orderSearchOptionsCatalog" [value]="option.value">{{option.label}}</option>
                                 </select>
                                 <span class="results-found-text">{{resultsFound()}}</span>
                             </form>
                         </div>
                     </div>
+                    <div class="search-catalog" *ngIf="!loading">
 
-                    <div class="showcase search-catalog" *ngIf="!loading">
-
-                        <ul class="showcase-items list-style-none" *ngIf="products">
-                            <li class="showcase-item col-md-3 col-sm-12" *ngFor="let product of products">
-                                <product-grid-item [product]="product" [store]="store" showCompare="true"></product-grid-item>
-                            </li>
-                        </ul>
+                        <div class="" *ngIf="products">
+                            <div class="col-md-4 col-sm-12" *ngFor="let product of products">
+                                <product-grid-item [product]="product" [store]="getStore()" showCompare="true"></product-grid-item>
+                            </div>
+                        </div>
                         <!-- paginacao -->
                         <search-pagination *ngIf="numPages > 1" [page]="page" [pagination]="pagination" (pageChanged)="navigate($event)"></search-pagination>
                         <!-- /paginacao -->
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </main>
-
 
 <!-- Comparar produto -->
 <div id="to-compare" *ngIf="countCompare()">

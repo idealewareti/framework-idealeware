@@ -4,7 +4,7 @@ import {ProductService} from 'app/services/product.service';
 import {CartShowCase} from 'app/models/cart-showcase/cart-showcase';
 import {Product} from 'app/models/product/product';
 import { Store } from "app/models/store/store";
-import { StoreService } from "app/services/store.service";
+import { Globals } from "app/models/globals";
 
 declare var $: any;
 
@@ -21,15 +21,10 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
     constructor(
         private service: CartService,
         private productService: ProductService,
-        private storeService: StoreService
-
+        private globals: Globals
     ) { }
 
     ngOnInit() {
-        this.storeService.getInfo()
-        .then(response => this.store = response)
-        .catch(error => console.log(error));
-
         this.getShowCases();
      }
 
@@ -78,7 +73,7 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
                 autoplayTimeout: 5000,
                 autoplayHoverPause: true,
                 responsive: {
-                    0: { items: 2 },
+                    0: { items: 1 },
                     768: { items: 3 },
                     992: { items: 4 },
                     1200: { items: 4 }
@@ -94,5 +89,9 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
         let $owl = $('#cartshowcase-items');
         $owl.owlCarousel();
         $owl.trigger('destroy.owl.carousel')
+    }
+
+    getStore(): Store{
+        return this.globals.store;
     }
 }

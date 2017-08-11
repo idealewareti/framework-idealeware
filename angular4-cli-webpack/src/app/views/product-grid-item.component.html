@@ -1,4 +1,4 @@
-<span class="border">
+<span class="border" [attr.id]="'sku_' + sku.id">
     <span class="flags">
     </span>
     <span class="thumb">
@@ -20,12 +20,14 @@
             <span class="regular-price">
                 <span class="price-label">Por</span>
                 <span class="price">{{promotionalPrice |  currencyFormat }}</span>
+                <span class="parcelamento" *ngIf="product.installmentText">ou em até {{ product.installmentText }}</span>
             </span>
         </div>
         <div *ngIf="promotionalPrice == 0">
             <span class="regular-price">
                 <span class="price-label"></span>
                 <span class="price">{{price |  currencyFormat }}</span>
+                <span class="parcelamento" *ngIf="product.installmentText">ou em até {{ product.installmentText }}</span>
             </span>
         </div>
     </span>

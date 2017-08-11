@@ -60,6 +60,7 @@ import { NewsLetterModule } from './components/newsletter/newsletter.module';
 import { MundiPaggBankslipModule } from './components/checkout-payment-mundipagg/mundipagg-bankslip/mundipagg-bankslip.module';
 import { MundipaggCreditCardModule } from './components/checkout-payment-mundipagg/mundipagg-creditcard/mundipagg-creditcard.module';
 import { PaymentPagseguroModule} from './components/checkout-payment-pagseguro/payment-pagseguro.module';
+import { PaymentPickuUpStoreModule } from './components/checkout-payment-pickupstore/payment-pickupstore.module';
 import { PopUpModule} from './components/pop-up/popup.module';
 import { ProductCrossSellingModule } from './components/product-cross-selling/product-cross-selling.module';
 import { ProductGalleryModule } from './components/product-gallery/product-gallery.module';
@@ -74,7 +75,10 @@ import { SearchVehicleModule } from './components/search-vehicle/search-vehicle.
 import { ServiceModule } from './components/service/service.module';
 import { ShippingCalcModule } from './components/shipping/shipping.module';
 import { ShowcaseBannerModule } from './components/showcase-banner/showcase-banner.module';
+import { ShowcaseBannerHalfModule } from './components/showcase-banner-half/showcase-banner-half.module';
+import { ShowcaseBannerStripeModule } from './components/showcase-banner-stripe/showcase-banner-stripe.module';
 import { ShowcaseGroupModule } from './components/showcase-group/showcase-group.module';
+import { WaitLoaderModule } from './components/wait-loader/wait-loader.module'
 
 //  _____                   _   _       _     
 // |  ___|                 | | (_)     | |    
@@ -182,6 +186,7 @@ import { Globals } from './models/globals';
         OrderByModule,
         PaymentMercadoPagoModule,
         PaymentPagseguroModule,
+        PaymentPickuUpStoreModule,
         PhoneMaskModule,
         PopUpModule,
         ProductCrossSellingModule,
@@ -200,8 +205,11 @@ import { Globals } from './models/globals';
         ServiceModule,
         ShippingCalcModule,
         ShowcaseBannerModule,
+        ShowcaseBannerHalfModule,
+        ShowcaseBannerStripeModule,
         ShowcaseGroupModule,
         ZipCodeMaskModule,
+        WaitLoaderModule
     ],
     declarations: [
         AppComponent,

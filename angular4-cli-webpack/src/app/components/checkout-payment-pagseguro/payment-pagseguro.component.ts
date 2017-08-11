@@ -11,6 +11,7 @@ import { Shipping } from "app/models/shipping/shipping";
 import { PaymentMethod } from "app/models/payment/payment-method";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgProgressService } from "ngx-progressbar";
+import { PaymentSetting } from "app/models/payment/payment-setting";
 
 declare var PagSeguroDirectPayment: any;
 declare var swal: any;
@@ -238,6 +239,10 @@ export class PaymentPagseguroComponent implements OnInit {
             if(product.installmentLimit != 0 && product.installmentLimit < installmentLimitMin)
                 installmentLimitMin = product.installmentLimit;
         });
+
+        let installmentLimit: PaymentSetting = this.payment.settings.find(s => s.name.toLowerCase() == 'installmentlimit');
+        if(installmentLimit && Number.parseInt(installmentLimit.value) < installmentLimitMin)
+            installmentLimitMin = Number.parseInt(installmentLimit.value);
 
         let index = this.installments.findIndex(i => i.quantity == installmentLimitMin);
         if(index > -1)

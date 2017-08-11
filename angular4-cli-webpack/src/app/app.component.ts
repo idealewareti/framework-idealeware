@@ -25,6 +25,7 @@ import { Payment } from "./models/payment/payment";
 import { PaymentMethod } from "./models/payment/payment-method";
 import { EnumStoreModality } from "./enums/store-modality.enum";
 import { PaymentManager } from "./managers/payment.manager";
+import { Globals } from "app/models/globals";
 
 declare var S: any;
 declare var ga: any;
@@ -38,7 +39,6 @@ declare var $: any;
 export class AppComponent implements OnInit {
     cart: Cart;
     date: Date = new Date();
-    store: Store;
     googleUA: Google;
     customer: Customer;
     private path: string;
@@ -64,6 +64,7 @@ export class AppComponent implements OnInit {
         private paymentManager: PaymentManager,
         private googleService: GoogleService,
         private cartManager: CartManager,
+        private globals: Globals
     ) {
 
         if (!this.getSessionId())
@@ -76,12 +77,12 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.service.getInfo()
             .then(store => {
-                this.store = store;
+                this.globals.store = store;
                 this.getInstitutionals();
                 this.getGoogle();
                 this.showZipcodePopup();
 
-                if(this.store.modality == EnumStoreModality.Ecommerce)
+                if(this.globals.store.modality == EnumStoreModality.Ecommerce)
 				    this.getPayments();
             })
             .catch(error => console.log(error));
@@ -93,7 +94,7 @@ export class AppComponent implements OnInit {
     ngAfterContentChecked() {
         this.getUrl();
         this.getCustomer();
-        if (this.store && !this.ssl) {
+        if (this.globals.store && !this.ssl) {
             this.ssl = this.addSSL();
         }
 
@@ -233,7 +234,7 @@ export class AppComponent implements OnInit {
     }
 
     checkZipcode() {
-        this.store.settings.forEach(element => {
+        this.globals.store.settings.forEach(element => {
             if (element.type == 2 && element.status == true) {
                 if (!localStorage.getItem('customer_zipcode')) {
                     $('#zipcodeModal').fadeIn(function () {
@@ -265,7 +266,7 @@ export class AppComponent implements OnInit {
         var s = document.createElement('script');
         s.type = 'text/javascript';
         s.src = '//seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js';
-        $('head').append(s);
+        $('body').append(s);
         return true;
     }
 
@@ -277,17 +278,16 @@ export class AppComponent implements OnInit {
      */
 
     addPagseguro(){
-        if(this.store
-            && this.isCheckout() 
+        if(this.globals.store
             && !this.PagseguroScriptAdded 
-            && this.store.modality == EnumStoreModality.Ecommerce
+            && this.globals.store.modality == EnumStoreModality.Ecommerce
             && this.hasPagSeguro()
         ){
             this.PagseguroScriptAdded = true;
             var s = document.createElement('script');
             s.type = 'text/javascript';
             s.src = (this.getPagSeguro().isSandBox) ? 'https://stc.sandbox.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js' : 'https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js';
-            $('head').append(s);
+            $('body').append(s);
         }
     }
 
@@ -307,10 +307,9 @@ export class AppComponent implements OnInit {
   * @memberof AppComponent
   */
     addMercadoPago() {
-        if(this.store
-            && this.isCheckout() 
+        if(this.globals.store
             && !this.MercadopagoScriptAdded 
-            && this.store.modality == EnumStoreModality.Ecommerce
+            && this.globals.store.modality == EnumStoreModality.Ecommerce
             && this.hasMercadoPago()
         ){
             this.MercadopagoScriptAdded = true;
@@ -347,6 +346,10 @@ export class AppComponent implements OnInit {
 
     getPagSeguro(): Payment{
         return this.paymentManager.getPagSeguro(this.payments);
+    }
+
+    getStore(): Store{
+        return this.globals.store;
     }
 
 }

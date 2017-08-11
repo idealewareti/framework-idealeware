@@ -4,7 +4,7 @@
     </h3>
     <ul id="cartshowcase-items" class="showcase-items list-style-none owl-carousel owl-theme">
         <li class="showcase-item" *ngFor="let product of products">
-            <product-grid-item [product]="product" [store]="store"></product-grid-item>
+            <product-grid-item [product]="product" [store]="getStore()"></product-grid-item>
         </li>
     </ul>
 </div>

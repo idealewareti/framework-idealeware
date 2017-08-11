@@ -104,7 +104,7 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="tab-payment-creditcard" class="panel-collapse collapse" role="tabpanel" aria-labelledby="head-payment-creditcard">
+                        <div id="tab-payment-creditcard" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getMundipaggCreditCard())}" role="tabpanel" aria-labelledby="head-payment-creditcard">
                             <div class="panel-body">
                                 <mundipagg-creditcard 
                                     [payment]="getMundipaggCreditCard()" 
@@ -124,7 +124,7 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="tab-payment-bankslip" class="panel-collapse collapse" role="tabpanel" aria-labelledby="head-payment-bankslip">
+                        <div id="tab-payment-bankslip" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getMundipaggBankslip())}" role="tabpanel" aria-labelledby="head-payment-bankslip">
                             <div class="panel-body">
                                 <mundipagg-bankslip 
                                     [payment]="getMundipaggBankslip()" 
@@ -144,7 +144,7 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="tab-payment-mercadopago" class="panel-collapse collapse" role="tabpanel" aria-labelledby="head-payment-mercadopago">
+                        <div id="tab-payment-mercadopago" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getMercadoPago())}" role="tabpanel" aria-labelledby="head-payment-mercadopago">
                             <div class="panel-body">
                                 <mercadopago 
                                     [payment]="getMercadoPago()" 
@@ -165,7 +165,7 @@
                                 </a>
                             </h4>
                         </div>
-                        <div id="tab-payment-pagseguro" class="panel-collapse collapse" role="tabpanel" aria-labelledby="head-payment-pagseguro">
+                        <div id="tab-payment-pagseguro" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getPagSeguro())}" role="tabpanel" aria-labelledby="head-payment-pagseguro">
                             <div class="panel-body">
                                 <pagseguro 
                                     [payment]="getPagSeguro()"
@@ -176,20 +176,20 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div *ngIf="isPickUpStore()" class="panel panel-default">
+                     <div *ngIf="isPickUpStore()" class="panel panel-default">
                         <div class="panel-heading" role="tab" id="head-payment-pickupstore">
                             <h4 class="panel-title">
-                                <a (click)="selectThisPayment(getPagSeguro())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-pickupstore" aria-expanded="true" aria-controls="tab-payment-pickupstore">
+                                <a (click)="selectThisPayment(getPickUpStorePayment())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-pickupstore" aria-expanded="true" aria-controls="tab-payment-pickupstore">
                                     Pagamento na Retirada
                                 </a>
                             </h4>
                         </div>
                          <div id="tab-payment-pickupstore" class="panel-collapse collapse" role="tabpanel" aria-labelledby="head-payment-pickupstore">
                             <div class="panel-body">
-                                TODO: Retirar na loja
+                                <payment-pickupstore></payment-pickupstore>
                             </div>
                          </div>
-                    </div> -->
+                    </div> 
 
                 </div>
             </div>

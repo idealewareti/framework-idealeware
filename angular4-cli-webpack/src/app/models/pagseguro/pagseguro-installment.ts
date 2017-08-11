@@ -1,4 +1,6 @@
-export class PagseguroInstallment{
+import { Installment } from "app/models/payment/installment";
+
+export class PagseguroInstallment {
     
     installmentAmount: number;
     interestFree: boolean;
@@ -17,5 +19,16 @@ export class PagseguroInstallment{
         }
 
         return model;
+    }
+
+    convertToInstallment(): Installment{
+        let installment: Installment = new Installment(
+            { 
+                number: this.quantity, 
+                installmentPrice: this.installmentAmount, 
+                totalPrice: this.totalAmount,
+                description: (this.interestFree) ? 's/ juros' : 'c/ juros'
+            });
+        return installment;
     }
 }

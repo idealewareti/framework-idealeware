@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { Category } from "app/models/category/category";
 import { Brand } from "app/models/brand/brand";
@@ -13,13 +13,14 @@ import { Filter } from "app/models/search/search-filter";
 import { Variation } from "app/models/product/variation";
 import { Group } from "app/models/group/group";
 import { VariationOption } from "app/models/product/product-variation-option";
-import { StoreService } from "app/services/store.service";
 import { Store } from "app/models/store/store";
 import { Pagination } from "app/models/pagination";
 import { SearchResult } from "app/models/search/search-result";
 import { EnumSort } from "app/enums/sort.enum";
 import { GroupService } from "app/services/group.service";
 import { PriceRange } from "app/models/search/price-range";
+import { Globals } from "app/models/globals";
+import { EnumStoreModality } from "app/enums/store-modality.enum";
 
 declare var $: any;
 
@@ -40,15 +41,6 @@ export class SearchComponent implements OnInit {
     sortBy: string[] = [];
     pageSize: number = 9;
     pages: number[];
-    orderSearchOptions: Object[] = [
-        { label: 'Mais Relevantes', value: EnumSort.MostRelevant },
-        { label: 'Menores Preços', value: EnumSort.PriceLowestFirst },
-        { label: 'Maiores Preços', value: EnumSort.PriceHighestFirst },
-        { label: 'Ordem Alfabética Crescente', value: EnumSort.NameAtoZ },
-        { label: 'Ordem Alfabética Decrescente', value: EnumSort.NameZtoA },
-    ];
-
-    store: Store;
     pagination: Pagination;
     products: Product[] = [];
     category: Category;
@@ -63,6 +55,18 @@ export class SearchComponent implements OnInit {
     numPages: number = 0;
     sort: EnumSort = EnumSort.MostRelevant;
     priceRange: PriceRange = new PriceRange(0, 0);
+    orderSearchOptionsEcommerce: Object[] = [
+        { label: 'Mais Relevantes', value: EnumSort.MostRelevant },
+        { label: 'Menores Preços', value: EnumSort.PriceLowestFirst },
+        { label: 'Maiores Preços', value: EnumSort.PriceHighestFirst },
+        { label: 'Ordem Alfabética Crescente', value: EnumSort.NameAtoZ },
+        { label: 'Ordem Alfabética Decrescente', value: EnumSort.NameZtoA },
+    ];
+    orderSearchOptionsCatalog: Object[] = [
+        { label: 'Mais Relevantes', value: EnumSort.MostRelevant },
+        { label: 'Ordem Alfabética Crescente', value: EnumSort.NameAtoZ },
+        { label: 'Ordem Alfabética Decrescente', value: EnumSort.NameZtoA },
+    ];
 
     searchInput: Search;
 
@@ -73,62 +77,54 @@ export class SearchComponent implements OnInit {
         private brandApi: BrandService,
         private groupApi: GroupService,
         private service: SearchService,
-        private storeService: StoreService,
         private titleService: Title,
         private metaService: Meta,
+        private globals: Globals
     ) { }
 
     ngOnInit() {
-        this.storeService.getInfo()
-        .then(response => this.store = response)
-        .catch(error => console.log(error));
-
         this.route.params
-            .map(params => params)
-            .subscribe(params => {
-                /* Unsetting filter */
-                this.id = params['id'];
-                this.searchInput = new Search();
-                this.filterModel = new Filter();
-                this.category = new Category();
-                this.categories = [];
-                this.sort = EnumSort.MostRelevant;
-                this.priceRange = new PriceRange(0, 0);
+        .map(params => params)
+        .subscribe(params => {
+            /* Unsetting filter */
+            this.id = params['id'];
+            this.searchInput = new Search();
+            this.filterModel = new Filter();
+            this.category = new Category();
+            this.categories = [];
+            this.sort = EnumSort.MostRelevant;
+            this.priceRange = new PriceRange(0, 0);
 
-                AppSettings.setTitle('Buscar Produtos', this.titleService);
+            AppSettings.setTitle('Buscar Produtos', this.titleService);
 
-                this.getModule()
-                .then(module => {
-                    this.module = module;
-                    if (params['id'])
-                        this.id = params['id'];
+            this.getModule()
+            .then(module => {
+                this.module = module;
+                if (params['id'])
+                    this.id = params['id'];
 
-                    this.orderBy = (params['orderBy']) ? params['orderBy'] : undefined;
-                    if(params['page'])
-                        this.page = (Number.parseInt(params['page']) < 1) ? 1 : Number.parseInt(params['page']);
-                    else this.page = 1;
-                    this.products = [];
-                    return this.prepareSearch(params);
-                })
-                .then(results => {
-                    this.applyResults(results);
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.loading = false;
-                    this.variations = [];
-                    this.options = [];
-                    this.brands = [];
-                    window.scrollTo(0, 0); // por causa das hash url
-                    this.getCategories()
-                        .then(categories => this.buildFilterModel());
-                });
+                this.orderBy = (params['orderBy']) ? params['orderBy'] : undefined;
+                if(params['page'])
+                    this.page = (Number.parseInt(params['page']) < 1) ? 1 : Number.parseInt(params['page']);
+                else this.page = 1;
+                this.products = [];
+                return this.prepareSearch(params);
+            })
+            .then(results => {
+                this.applyResults(results);
+            })
+            .catch(error => {
+                console.log(error);
+                this.loading = false;
+                this.variations = [];
+                this.options = [];
+                this.brands = [];
+                window.scrollTo(0, 0); // por causa das hash url
+                this.getCategories()
+                    .then(categories => this.buildFilterModel());
             });
-
-            
+        });
     }
-
-    ngAfterContentChecked() { }
 
     ngAfterViewChecked() {
         if (this.isMobile())
@@ -230,9 +226,9 @@ export class SearchComponent implements OnInit {
                 url += `;options=${this.searchInput.options.toString()}`;
             if(this.searchInput.groups.length > 0)
                 url += `;groups=${this.searchInput.groups.toString()}`;
-            if(this.priceRange.maximumPrice > 0)
+            if(this.searchInput.priceRange.maximumPrice > 0)
                 url += `;maximumPrice=${this.priceRange.maximumPrice.toString()}`;
-            if(this.priceRange.minimumPrice > 0)
+            if(this.searchInput.priceRange.minimumPrice > 0)
                 url += `;minimumPrice=${this.priceRange.minimumPrice.toString()}`;
         }
 
@@ -599,6 +595,13 @@ export class SearchComponent implements OnInit {
             return `Nenhum produto`;
     }
 
+    totalItens(): number{
+        if(this.pagination)
+            return this.pagination.TotalCount;
+        else
+            return 0;
+    }
+
     navigate(page: number, event = null){
         if(event)
             event.preventDefault();
@@ -607,6 +610,7 @@ export class SearchComponent implements OnInit {
         url = `${url};page=${page}`;
 
         this.parentRouter.navigateByUrl(url);
+        window.scrollTo(0, 0); // por causa das hash url
     }
 
     isMobile(): boolean {
@@ -660,6 +664,39 @@ export class SearchComponent implements OnInit {
         this.priceRange = results.facetPrice;
 
         this.buildFilterModel();
+    }
+
+    getStore(): Store{
+        return this.globals.store;
+    }
+
+    isCatalog(): boolean{
+        if(this.globals.store.modality == EnumStoreModality.Budget)
+            return true;
+        else return false;
+    }
+
+    showValues(): boolean {
+        if (!this.isCatalog())
+            return true;
+        else if (this.isCatalog() && this.globals.store.settings.find(s => s.type == 3 && s.status == true))
+            return true;
+        else return false;
+    }
+
+    filterByPriceRange(event = null){
+        if(event)
+            event.preventDefault();
+        this.searchInput.priceRange = this.priceRange;
+        this.listProducts(this.page, null);
+    }
+
+    removeFilterByPriceRange(event = null){
+        if(event)
+            event.preventDefault();
+        this.searchInput.priceRange = new PriceRange(0, 0);
+        this.listProducts(this.page, null);
+        
     }
  
 }

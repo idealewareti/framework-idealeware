@@ -18,14 +18,13 @@ import { CustomerProductRating } from "app/models/product-rating/customer-produc
 import { CustomerService } from "app/services/customer.service";
 import { Customer } from "app/models/customer/customer";
 import { ProductRatingCreate } from "app/models/product-rating/product-rating-create";
-import { PaymentService } from "app/services/payment.service";
 import { Service } from "app/models/product-service/product-service";
-import { StoreService } from "app/services/store.service";
 import { Store } from "app/models/store/store";
 import { RelatedProductsService } from "app/services/related-products.service";
 import { EnumStoreModality } from "app/enums/store-modality.enum";
 import { RelatedProductGroup } from "app/models/related-products/related-product-group";
-
+import { PaymentManager } from "app/managers/payment.manager";
+import { Globals } from "app/models/globals";
 
 declare var $: any;
 declare var S: any;
@@ -53,11 +52,11 @@ export class ProductComponent {
     coverImg: ProductPicture = new ProductPicture();
     mediaPath: string = `${AppSettings.MEDIA_PATH}/products/`;
     related: RelatedProductGroup = new RelatedProductGroup();
-    store: Store;
     modality: EnumStoreModality = -1;
     showValuesProduct: boolean = false;
     totalNote: number = 0;
     notFound: boolean = false;
+    installment: string = '';
 
     @Input() quantity: number = 1;
     @Input() areaSizer: number = 0;
@@ -65,7 +64,6 @@ export class ProductComponent {
     constructor(
         private route: ActivatedRoute,
         private service: ProductService,
-        private storeService: StoreService,
         private relatedService: RelatedProductsService,
         private manager: CartManager,
         private parentRouter: Router,
@@ -73,6 +71,8 @@ export class ProductComponent {
         private metaService: Meta,
         private location: Location,
         private sanitizer: DomSanitizer,
+        private paymentManager: PaymentManager,
+        private globals: Globals
     ) {
         this.product = null;
     }
@@ -81,33 +81,32 @@ export class ProductComponent {
     ngOnInit() {
         window.scrollTo(0, 0); // por causa das hash url
 
-        this.storeService.getInfo()
-            .then(response => {
-                this.modality = response.modality;
-                this.store = response;
-                this.showValuesProduct = this.showValues(response);
-            });
+        this.modality = this.globals.store.modality;
+        this.showValuesProduct = this.showValues(this.globals.store);
 
         $('body').addClass('product');
 
         this.route.params
         .map(params => params)
         .subscribe((params) => {
-            this.id = params['id'];
-            this.getProductBySku(this.id);
+            if(params['id']){
+                this.id = params['id'];
+                this.getProductBySku(this.id);
+            }
         });
     }
 
     ngOnDestroy() {
         this.metaService.removeTag("name='title'");
         this.metaService.removeTag("name='description'");
+        $('body').removeClass('product');
     }
 
-    public isMobile(): boolean {
+    isMobile(): boolean {
         return AppSettings.isMobile()
     }
 
-    public accordion(id) {
+    accordion(id) {
         var $button = $(id).siblings('button');
         if ($(id).length) {
             if ($(id).is(':visible')) {
@@ -121,7 +120,7 @@ export class ProductComponent {
     }
 
     /* Cart Events */
-    public addToCart() {
+    addToCart() {
         if (this.product.selfColor && !this.feature) {
             swal({
                 title: "Cor necessária",
@@ -163,7 +162,7 @@ export class ProductComponent {
     }
 
     /* Get SKU */
-    public open(event, item: string) {
+    open(event, item: string) {
         if (event)
             event.preventDefault()
         this.setCurrentSku(item);
@@ -171,12 +170,8 @@ export class ProductComponent {
     }
 
     handleSkuUpdated(event: Sku) {
-        this.open(null, event.id);
-    }
-
-    handleProductUpdated(event: Product){
-        this.product = event;
-        this.open(null, event.skuBase.id);
+        if(this.sku.id != event.id)
+            this.open(null, event.id);
     }
 
     handleOptionChanged(event: boolean) {
@@ -190,9 +185,12 @@ export class ProductComponent {
                 this.sku = this.product.getSku(skuId);
             else
                 this.sku = this.product.getSku(this.id);
-            this.parcelValue = this.getInstallmentValue();
             this.getImages();
             this.getCoverImage();
+
+            if(!this.isCatalog() && this.isProductAvailable())
+                this.getInstallmentValue();
+            
             resolve(this.product);
         })
 
@@ -229,7 +227,7 @@ export class ProductComponent {
     }
 
     /* Breadcrump */
-    public getBreadCrump(): Category {
+    getBreadCrump(): Category {
         if(this.product.baseCategory['id'])
             return this.product.baseCategory;
         else
@@ -242,11 +240,15 @@ export class ProductComponent {
 
     /* Installment Simulator */
     private getInstallmentValue() {
-        let price = 0;
-        if (this.sku.promotionalPrice && this.sku.promotionalPrice > 0)
-            price = this.sku.promotionalPrice
-        else price = this.sku.price;
-        return price / this.product.installmentLimit;
+        if(this.product.installmentNumber == 0 && this.product.installmentValue == 0){
+            this.paymentManager.getInstallments(this.sku)
+            .then(payment => {
+                this.installment = this.paymentManager.getInstallmentText(payment, payment.paymentMethods[0]);
+            });
+        }
+        else{
+            this.installment = `em ${this.product.installmentNumber}x de R$ ${this.product.installmentValue.toString().replace('.', ',')}`;
+        }
 
     }
 
@@ -264,7 +266,7 @@ export class ProductComponent {
     }
 
     /* Product Awaited */
-    public receiveProductsAwaited(event) {
+    receiveProductsAwaited(event) {
         event.preventDefault();
         let productName = this.product.name;
         this.sku.variations.forEach(v => {
@@ -296,7 +298,7 @@ export class ProductComponent {
 
 
     /* Loss Percentage */
-    public getLossPercentage(event = null) {
+    getLossPercentage(event = null) {
         if (event)
             event.preventDefault();
 
@@ -318,7 +320,7 @@ export class ProductComponent {
     }
 
     /* Area Sizer */
-    public getAreaSizer(event = null) {
+    getAreaSizer(event = null) {
         if (event)
             event.preventDefault();
 
@@ -328,7 +330,7 @@ export class ProductComponent {
     }
 
     /* Rating */
-    public getRating() {
+    getRating() {
         if (this.productsRating) {
             let total = 0;
             this.productsRating.customers.forEach(a => {
@@ -340,18 +342,18 @@ export class ProductComponent {
         else return 0;
     }
 
-    public handleRating(event) {
+    handleRating(event) {
         this.productsRating = event;
     }
 
     /* Color Picker Events */
-    public colorPicker(event) {
+    colorPicker(event) {
         event.preventDefault();
         window.scrollTo(0, 850);
     }
 
     /* Services */
-    public handleServiceUpdated(event) {
+    handleServiceUpdated(event) {
         let service = event;
         let index = this.services.findIndex(s => s.id == service.id);
         if (index > -1) {
@@ -397,15 +399,15 @@ export class ProductComponent {
     }
 
     isProductAvailable(): boolean{
-        if(this.store.modality == EnumStoreModality.Budget && this.sku.available)
+        if(this.globals.store.modality == EnumStoreModality.Budget && this.sku.available)
             return true;
-        else if(this.store.modality == EnumStoreModality.Ecommerce && this.sku.available && this.sku.stock > 0)
+        else if(this.globals.store.modality == EnumStoreModality.Ecommerce && this.sku.available && this.sku.stock > 0)
             return true;
         else return false;
     }
 
     isCatalog(): boolean{
-        if(this.store.modality == EnumStoreModality.Budget)
+        if(this.globals.store.modality == EnumStoreModality.Budget)
             return true;
         else return false;
     }
@@ -415,4 +417,8 @@ export class ProductComponent {
             return true;
         else return false;
     } 
+
+    getStore(): Store{
+        return this.globals.store;
+    }
 }

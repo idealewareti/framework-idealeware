@@ -4,7 +4,6 @@ import { Cart } from 'app/models/cart/cart';
 import { CartItem } from 'app/models/cart/cart-item';
 import { CartManager } from 'app/managers/cart.manager';
 import { ProductService } from 'app/services/product.service';
-import { StoreService } from "app/services/store.service";
 import { Globals } from "app/models/globals";
 
 //declare var $: any;
@@ -26,17 +25,12 @@ export class MiniCartComponent {
     constructor(
         private manager: CartManager,
         private productService: ProductService,
-        private storeService: StoreService,
         private globals: Globals) {
     }
 
     ngOnInit() {
-        this.storeService.getInfo()
-            .then(store => {
-                this.modality = store.modality;
-                this.showValuesProduct = this.showValues(store);
-            });
-
+        this.modality = this.globals.store.modality;
+        this.showValuesProduct = this.showValues(this.globals.store);
         this.getProducts();
     }
 
@@ -143,5 +137,11 @@ export class MiniCartComponent {
         else if (this.modality == 0 && store.settings.find(s => s.type == 3 && s.status == true)) {
             return true;
         }
+    }
+	
+	getPicture(sku: Sku): string{
+        if(sku.picture && sku.picture['showcase'])
+            return `${this.mediaPath}${sku.picture.thumbnail}`
+        else return 'assets/images/no-image.jpg';
     }
 }

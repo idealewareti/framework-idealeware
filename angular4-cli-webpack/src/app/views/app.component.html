@@ -1,9 +1,26 @@
 <ng-progress [color]="'#333333'"></ng-progress>
-<header id="header" *ngIf="store">
+<header id="header-checkout" *ngIf="isCheckout() && getStore()">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="brand overflow-hidden text-center">
+                <a [routerLink]="['/']"><img [attr.src]="mediaPath + '/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive"></a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12 text-center">
+                <span><i class="fa fa-lock" aria-hidden="true"></i> Compra 100% segura</span>
+            </div>
+            <div class="col-md-6 col-sm-12 text-center">
+                <span><i class="fa fa-phone" aria-hidden="true"></i> Televendas {{getStore().phone}}</span>
+            </div>
+        </div>
+    </div>
+</header>
+<header id="header" *ngIf="getStore() && !isCheckout()">
     <nav class="nav-top navbar navbar-default hidden-xs">
         <div class="container">
             <div class="pull-left">
-                <span class="phone"><i class="fa fa-phone" aria-hidden="true"></i> Televendas <b>{{store.phone}}</b></span>
+                <span class="phone"><i class="fa fa-phone" aria-hidden="true"></i> Televendas <b>{{getStore().phone}}</b></span>
             </div>
             <div class="pull-right">
                 <div class="information-nav">
@@ -30,10 +47,10 @@
                       <mini-cart></mini-cart>  
                 </div>
                 <div class="col-brand pull-left col-padding">
-                    <h1 id="brand" *ngIf="store">
-                        <a [routerLink]="['/']" [attr.title]="store.companyName">
-                            <b class="sr-only">{{store.companyName}}</b>
-                            <img [attr.src]="mediaPath + '/' + store.logo" [attr.alt]="store.companyName" class="img-responsive">
+                    <h1 id="brand" *ngIf="getStore()">
+                        <a [routerLink]="['/']" [attr.title]="getStore().companyName">
+                            <b class="sr-only">{{getStore().companyName}}</b>
+                            <img [attr.src]="mediaPath + '/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive">
                         </a>
                     </h1>
                 </div>
@@ -64,7 +81,7 @@
         </div>
     </div>
 </header>
-<nav class="navbar categories-nav navbar-static-top" *ngIf="store">
+<nav class="navbar categories-nav navbar-static-top" *ngIf="getStore() && !isCheckout()">
     <!-- <div class="container">
         <search-vehicle></search-vehicle>
     </div> -->
@@ -76,8 +93,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand hidden-md hidden-lg" [routerLink]="['/']" [attr.title]="store.companyName">
-                <img [attr.src]="mediaPath + '/' + store.logo" [attr.alt]="store.companyName" class="img-responsive">
+            <a class="navbar-brand hidden-md hidden-lg" [routerLink]="['/']" [attr.title]="getStore().companyName">
+                <img [attr.src]="mediaPath + '/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive">
             </a>
             <span class="mobile-btns pull-right hidden-md hidden-lg">
                 <button id="btn-search" class="btn btn-search">
@@ -103,16 +120,16 @@
         <category-menu [isLoggedIn]="isLoggedIn()" id="navbar" class="navbar-collapse collapse"></category-menu>
     </div>
 </nav>
-<div class="container">
+<div class="container" *ngIf="getStore()">
     <router-outlet></router-outlet>
 </div>
-<footer id="footer" *ngIf="isCheckout() == false && store">
+<footer id="footer" *ngIf="getStore()">
     <!-- Newsletter -->
-    <newsletter></newsletter>
+    <newsletter *ngIf="!isCheckout()"></newsletter>
     <!-- /Newsletter -->
 
     <!-- Main Footer -->
-    <div id="main-footer">
+    <div *ngIf="!isCheckout()" id="main-footer">
         <div class="container">
             <div class="row">
                 <div class="list-footer col-xs-6 col-md-5 footer-institutional">
@@ -129,7 +146,7 @@
                 <div class="list-footer col-xs-12 col-md-3 footer-call-center">
                     <h3 class="title">Central de Atendimento</h3>
                     <ul>
-                        <li><span>Televendas <b class="phone">{{store.phone}}</b></span></li>
+                        <li><span>Televendas <b class="phone">{{getStore().phone}}</b></span></li>
                     </ul>
                 </div>
 
@@ -145,11 +162,11 @@
     <!-- /Main Footer -->
 
     <!-- Footer secundário -->
-    <div id="secondary-footer">
+    <div *ngIf="!isCheckout()" id="secondary-footer">
         <div class="container">
             <div class="row">
                 <!-- Box SSL -->
-                <div class="col-md-6">
+                <div class="col-md-2 col-sm-12">
                     <div id="security-seal">
                         <h3 class="title">Certificados</h3>
                         <ul class="list-inline">
@@ -162,33 +179,33 @@
                     </div>
                 </div>
                 <!-- CreditCard Brands -->
-                <div class="col-md-6" *ngIf="hasMundipagg()">
-                    <div id="payment-flags">
-                        <h3 class="title">Pague com</h3>
-                        <ul class="list-inline">
-                            <li *ngFor="let method of getMundipaggBrands()"><img [attr.src]="'assets/images/' + method.icon" [attr.alt]="method.name"></li>
-                        </ul>
-                    </div>
+                <div *ngIf="hasPagSeguro()" class="col-md-2 col-sm-12 text-center">
+                    <img src="https://stc.pagseguro.uol.com.br/public/img/banners/seguranca/seguranca_125x125.gif" alt="Banner PagSeguro" title="Compre com pagSeguro e fique sossegado">
                 </div>
-            </div>
-            <div class="row">
-                <div *ngIf="hasMercadoPago()" class="col-md-6 text-center">
-                    <img class="img-responsive" style="cursor: pointer" src="https://imgmp.mlstatic.com/org-img/MLB/MP/BANNERS/tipo2_468X60.jpg?v=1" alt="MercadoPago - Meios de pagamento" title="MercadoPago - Meios de pagamento" width="468" height="60" data-toggle="modal" data-target=".bs-mercadopago-modal-sm" />
-                    <div class="modal fade bs-mercadopago-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header clearfix">
-                                <button class="btn-close pull-right" data-toggle="modal" data-target=".bs-mercadopago-modal-sm" title="fechar"><img src="/assets/images/icon-close.svg" alt="Fechar" style="margin:left"/></button>
-                            </div>
-                            <div class="modal-body">
-                                <img src="https://www.mercadopago.com/org-img/MLB/design/2016/m_pago/banners/01_21/Educativo-passo_a_passo-10x.jpg">
+                <div class="col-md-8 col-sm-12">
+                        <div *ngIf="hasMundipagg()" class="col-md-6 col-sm-12">
+                            <div id="payment-flags">
+                                <h3 class="title">Pague com</h3>
+                                <ul class="list-inline">
+                                    <li *ngFor="let method of getMundipaggBrands()"><img [attr.src]="'assets/images/' + method.icon" [attr.alt]="method.name"></li>
+                                </ul>
                             </div>
                         </div>
-                    </div>
-                </div>
-                </div>
-                <div *ngIf="hasPagSeguro()" class="col-md-6 text-center">
-                    <img class="img-responsive" src="https://stc.pagseguro.uol.com.br/public/img/banners/seguranca/seguranca_468X60.gif" alt="Banner PagSeguro" title="Compre com pagSeguro e fique sossegado">
+                        <div *ngIf="hasMercadoPago()" class="text-left col-md-6 col-sm-12">
+                            <img class="img-responsive" style="cursor: pointer" src="https://imgmp.mlstatic.com/org-img/MLB/MP/BANNERS/tipo2_468X60.jpg?v=1" alt="MercadoPago - Meios de pagamento" title="MercadoPago - Meios de pagamento" width="468" height="60" data-toggle="modal" data-target=".bs-mercadopago-modal-sm" />
+                            <div class="modal fade bs-mercadopago-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header clearfix">
+                                            <button class="btn-close pull-right" data-toggle="modal" data-target=".bs-mercadopago-modal-sm" title="fechar"><img src="/assets/images/icon-close.svg" alt="Fechar" style="margin:left"/></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <img src="https://www.mercadopago.com/org-img/MLB/design/2016/m_pago/banners/01_21/Educativo-passo_a_passo-10x.jpg">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>
@@ -199,9 +216,9 @@
         <div class="container text-center">
             <div class="items-copyright">
 
-                <p>© {{ date | date:'y'}} {{store.tradingName}}. Todos os direitos reservados.</p>
-                <p>CNPJ: {{store.cnpj}} / Inscrição Estadual: {{store.stateRegistration}} - {{store.addressLine1 + ((store.addressLine2)
-                    ? ' - ' + store.addressLine2 : '')}} - {{store.city}}/{{store.state}} - {{store.zipCode}}</p>
+                <p>© {{ date | date:'y'}} {{getStore().tradingName}}. Todos os direitos reservados.</p>
+                <p>CNPJ: {{getStore().cnpj}} / Inscrição Estadual: {{getStore().stateRegistration}} - {{getStore().addressLine1 + ((getStore().addressLine2)
+                    ? ' - ' + getStore().addressLine2 : '')}} - {{getStore().city}}/{{getStore().state}} - {{getStore().zipCode}}</p>
 
                 <div class="signature">
                     Tecnologia:
@@ -229,4 +246,4 @@
         </form>
     </div>
 </div>
-<popup></popup>
+<popup *ngIf="!isCheckout()"></popup>

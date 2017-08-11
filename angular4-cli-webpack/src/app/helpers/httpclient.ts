@@ -17,11 +17,15 @@ export class HttpClient {
   }
 
   setStore(headers: Headers, params = []) {
+    headers.append('Content-Type', 'application/json');
+    headers.append('Access-Control-Allow-Origin', '*');
+    headers.append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+    headers.append('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token');
+    
     let zipcode = localStorage.getItem('customer_zipcode');
     headers.append('Domain', AppSettings.DOMAIN);
     headers.append('storeId', AppSettings.DOMAIN);
     headers.append('ZipCode', zipcode);
-    headers.append('Content-Type', 'application/json');
 
     params.forEach(param => {
       headers.append(param['key'], param['value']);

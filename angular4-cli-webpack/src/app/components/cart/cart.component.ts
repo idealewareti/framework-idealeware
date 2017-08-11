@@ -14,6 +14,7 @@ import { ProductService } from 'app/services/product.service';
 import { StoreService } from "app/services/store.service";
 import { Service } from "app/models/product-service/product-service";
 import { Globals } from "app/models/globals";
+import { Store } from "app/models/store/store";
 
 //declare var $: any;
 declare var S: any;
@@ -25,8 +26,8 @@ declare var swal: any;
     templateUrl: '../../views/cart.component.html',
 })
 export class CartComponent {
-    public readonly mediaPath = `${AppSettings.MEDIA_PATH}/products/`;
-    public readonly mediaPathPaint = `${AppSettings.MEDIA_PATH}/custompaint/`;
+    readonly mediaPath = `${AppSettings.MEDIA_PATH}/products/`;
+    readonly mediaPathPaint = `${AppSettings.MEDIA_PATH}/custompaint/`;
     cartReady: boolean = false;
     buttonLabel: string;
     modality: number = -1;
@@ -35,7 +36,6 @@ export class CartComponent {
     constructor(
         private manager: CartManager,
         private productService: ProductService,
-        private storeService: StoreService,
         private titleService: Title,
         private globals: Globals
     ) {
@@ -43,16 +43,6 @@ export class CartComponent {
     }
 
     ngOnInit() {
-        this.storeService.getInfo()
-            .then(store => {
-                this.modality = store.modality;
-                this.showProductValue = this.showValues(store);
-                if (this.modality == 0)
-                    this.buttonLabel = 'FINALIZAR ORÇAMENTO';
-                else
-                    this.buttonLabel = 'FINALIZAR COMPRA';
-            });
-
         this.manager.getCart()
             .then((cart) => {
                 this.globals.cart = cart;
@@ -70,6 +60,14 @@ export class CartComponent {
     ngAfterContentChecked() {
         if (this.globals.cart)
             AppSettings.setTitle(`Meu Carrinho - (${this.getNumItemsInCart()}) item(ns)`, this.titleService);
+        if(this.getStore() && this.modality == -1){
+            this.modality = this.globals.store.modality;
+            this.showProductValue = this.showValues();
+            if (this.modality == 0)
+                this.buttonLabel = 'FINALIZAR ORÇAMENTO';
+            else
+                this.buttonLabel = 'FINALIZAR COMPRA';
+        }
     }
 
     getProducts() {
@@ -226,13 +224,14 @@ export class CartComponent {
         return AppSettings.isMobile();
     }
 
-    showValues(store): boolean {
+    showValues(): boolean {
         if (this.modality == 1) {
             return true;
         }
-        else if (this.modality == 0 && store.settings.find(s => s.type == 3 && s.status == true)) {
+        else if (this.modality == 0 && this.globals.store.settings.find(s => s.type == 3 && s.status == true)) {
             return true;
         }
+        else return false;
     }
 
     hasServices(): boolean{
@@ -252,6 +251,10 @@ export class CartComponent {
 
     getCart(): Cart{
         return this.globals.cart;
+    }
+
+    getStore(): Store{
+        return this.globals.store;
     }
 
 }

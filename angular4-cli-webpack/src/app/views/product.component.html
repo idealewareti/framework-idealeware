@@ -8,7 +8,7 @@
     </div>
 </main>
 
-<main role="main" class="product-page" *ngIf="product && store && !isMobile()">
+<main role="main" class="product-page" *ngIf="product && getStore() && !isMobile()">
     
     
     <div class="product-page-details">
@@ -45,7 +45,7 @@
 
 
                     <div class="product-variation col-md-12" *ngIf="product.skus.length > 0">
-                        <product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></product-variation>
+                         <product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></product-variation> 
                     </div>
 
                     <div class="clearfix" *ngIf="isProductAvailable()">
@@ -61,8 +61,8 @@
                                     <span class="price-label">Por</span>
                                     <span class="price">{{sku.promotionalPrice |  currencyFormat}}</span>
                                     </span>
-                                    <span class="parcelamento" *ngIf="product.installmentValue > 0 && product.installmentNumber > 1">
-                                        em <strong>{{product.installmentNumber}}x </strong> de <strong>{{product.installmentValue |  currencyFormat}} </strong>
+                                    <span class="parcelamento" *ngIf="installment">
+                                        em {{ installment }}
                                     </span>
                                 </diV>
                             </div>
@@ -73,8 +73,8 @@
                                     <span class="price-label"></span>
                                     <span class="price">{{sku.price |  currencyFormat}}</span>
                                     </span>
-                                    <span class="parcelamento" *ngIf="product.installmentValue > 0 && product.installmentNumber > 1">
-                                        em <strong>{{product.installmentNumber}}x </strong> de <strong>{{product.installmentValue |  currencyFormat}} </strong>
+                                    <span class="parcelamento" *ngIf="installment">
+                                        em {{ installment }}
                                     </span>
                                     <span class="text-info" *ngIf="getTotalServices() > 0">
                                         + {{getTotalServices() |  currencyFormat}}
@@ -82,6 +82,7 @@
                                     </span>
                                 </diV>
                             </div>
+                            <installment-simulation *ngIf="!isCatalog()" [sku]="sku" [sku]="sku"></installment-simulation>
                         </div>
 
                         <div class="col-md-6">
@@ -129,7 +130,7 @@
 
                             </div>
                         </div>
-                        <installment-simulation *ngIf="product.showInstallment == true" [sku]="sku" [sku]="sku"></installment-simulation>
+                        
                     </div>
 
                     <div class="product-unavaliable" *ngIf="!isProductAvailable()">
@@ -156,7 +157,7 @@
 
     <div class="product-suggestions">
         <div class="container">
-            <cross-selling *ngIf="product.crossSelling.length > 0" [store]="store"  [references]="product.crossSelling"></cross-selling>
+            <cross-selling *ngIf="product.crossSelling.length > 0" [store]="getStore()"  [references]="product.crossSelling"></cross-selling>
 
         </div>
     </div>
@@ -197,12 +198,12 @@
             </div>
 
             <product-rating [product]="product" (ratingUpdated)="handleRating($event)"></product-rating>
-            <up-selling *ngIf="product.upSelling.length > 0" [store]="store" [references]="product.upSelling"></up-selling>
+            <up-selling *ngIf="product.upSelling.length > 0" [store]="getStore()" [references]="product.upSelling"></up-selling>
         </div>
     </div>
 </main>
 
-<main role="main" class="container" *ngIf="product && store && isMobile()">
+<main role="main" class="container" *ngIf="product && getStore() && isMobile()">
 
     <!-- Product Details -->
     <div class="product-page-details">
@@ -217,7 +218,7 @@
                 <div class="product-sku">Cód: <span>{{sku.code}}</span></div>
 
                 <div class="product-variation">
-                    <product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></product-variation>
+                     <product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></product-variation> 
                 </div>
 
                 <div class="product-price-box text-center" *ngIf="sku.promotionalPrice">
@@ -229,7 +230,7 @@
                         <span class="price-label">Por</span>
                     <span class="price">{{sku.promotionalPrice |  currencyFormat}}</span>
                     </span>
-                    <installment-simulation *ngIf="product.showInstallment == true" [sku]="sku"></installment-simulation>
+                    <installment-simulation *ngIf="!isCatalog()" [sku]="sku"></installment-simulation>
                 </div>
                 <div class="product-price-box text-center" *ngIf="sku.promotionalPrice == 0">
                     <span class="regular-price">
@@ -237,7 +238,7 @@
                     <span class="price">{{sku.price |  currencyFormat}}</span>
                     </span>
 
-                    <installment-simulation *ngIf="product.showInstallment == true" [sku]="sku" [sku]="sku"></installment-simulation>
+                    <installment-simulation *ngIf="!isCatalog()" [sku]="sku" [sku]="sku"></installment-simulation>
                 </div>
 
                 <div class="product-unavaliable" *ngIf="!isProductAvailable()">
@@ -308,7 +309,7 @@
             </div>
 
             <!-- Produtos Relacionados -->
-            <cross-selling *ngIf="product.crossSelling.length > 0" [store]="store" [references]="product.crossSelling"></cross-selling>
+            <cross-selling *ngIf="product.crossSelling.length > 0" [store]="getStore()" [references]="product.crossSelling"></cross-selling>
             <!-- /Produtos Relacionados -->
 
         </div>

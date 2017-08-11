@@ -60,4 +60,10 @@ export class ShowcaseGroupComponent implements OnInit {
 	isMobile(): boolean{
 		return AppSettings.isMobile();
 	}
+
+	hasProducts(): boolean{
+		if(this.group.products && this.group.products.length > 0)
+			return true;
+		else return false;
+	}
 }

@@ -13,7 +13,7 @@ export class AppCore{
     public static getAPI(environment, key: string): string{
         if(environment.production)
             return this.apiProduction(key);
-        else return this.apiDevelopment(key);
+        else return this.apiStage(key);
     }
 
     
@@ -109,7 +109,6 @@ export class AppCore{
 // |  __/ '__/ _ \ / _` | | | |/ __| __| |/ _ \| '_ \ 
 // | |  | | | (_) | (_| | |_| | (__| |_| | (_) | | | |
 // \_|  |_|  \___/ \__,_|\__,_|\___|\__|_|\___/|_| |_|
-
 private static apiProduction(key: string): string{
         let apis: string[] = [];
         apis['API_AUTHENTICATE'] =          'https://api-pub-authenticate.idealeware.com.br:10000';
@@ -146,3 +145,4 @@ private static apiProduction(key: string): string{
     }
 
 }
+

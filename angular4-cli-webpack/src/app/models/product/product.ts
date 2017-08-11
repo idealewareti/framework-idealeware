@@ -43,6 +43,7 @@ export class Product {
     installmentValue : number;
     installmentNumber : number;
     showInstallment : boolean;
+    installmentText: string;
 
     constructor(product = null){
         if(product) 

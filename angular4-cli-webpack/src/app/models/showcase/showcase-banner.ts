@@ -1,4 +1,6 @@
-export class ShowCaseBanner{
+import { EnumBannerType } from "app/enums/banner-type.enum";
+
+export class ShowCaseBanner {
     id: string;
     showCaseId: string;
     name: string;
@@ -6,6 +8,7 @@ export class ShowCaseBanner{
     position: number;
     createdDate: Date;
     url: string;
+    bannerType: EnumBannerType = EnumBannerType.Full;
 
     constructor(response = null){
         if(response) return this.CreateFromResponse(response);

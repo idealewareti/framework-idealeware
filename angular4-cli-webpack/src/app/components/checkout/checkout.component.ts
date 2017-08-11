@@ -73,6 +73,7 @@ export class CheckoutComponent implements OnInit {
     mercadoPagoPaymentMethods: MercadoPagoPaymentMethod = new MercadoPagoPaymentMethod();
     branches: Branch[] = [];
     changeFor: number = null;
+    defaultPayment: Payment;
     
     constructor(
         private route: ActivatedRoute,
@@ -125,6 +126,10 @@ export class CheckoutComponent implements OnInit {
         this.paymentService.getAll()
         .then(payments => {
             this.payments = payments;
+            return this.paymentManager.getDefault();
+        })
+        .then(defaultPayment => {
+            this.defaultPayment = defaultPayment;
         })
         .catch(error => {
             console.log(error);
@@ -621,11 +626,9 @@ export class CheckoutComponent implements OnInit {
             return new Promise((resolve, reject) => {
                 Mercadopago.createToken(form, (status, response) => {
                     if(status == 200)
-                    resolve(response.id);
-                    else {
-                        let res: Response = new Response('Não foi possível obter o token do cartão de crédito');
-                        reject(res);
-                    }
+                        resolve(response.id);
+                    else 
+                        reject(this.paymentManager.getMercadoPagoError(response.cause[0].code))
                 })
             });
         })
@@ -646,7 +649,14 @@ export class CheckoutComponent implements OnInit {
         })
         .catch(error => {
             console.log(error);
-            let message: string = (error['_body']) ? error.text() : error;
+            let message: string = '';
+            
+            if(error['_body']) 
+                message = error.text();
+            else if(error['message'])
+                message = error.message;
+            else if(error['code'])
+                message = `${error.code} - ${error.message}`
 
             swal({
                 title: 'Erro ao criar o pedido',
@@ -764,7 +774,7 @@ export class CheckoutComponent implements OnInit {
     // }
 
     handleMercadoPagoUpdated(event: PaymentSelected){
-        if(this.isMercadoPago()){
+        if(this.isMercadoPago(event.payment)){
             this.methodSelected = event.method;
             this.paymentSelected = event.payment;
             this.mercadoPagoPaymentMethods = event.mercadopago;
@@ -774,7 +784,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     handleMundipaggBankslipUpdated(event: PaymentSelected){
-        if(this.isMundipaggBankslip()){
+        if(this.isMundipaggBankslip(event.payment)){
             this.methodSelected = event.method;
             this.creditCard = null;
             this.mercadoPagoPaymentMethods = null;
@@ -783,7 +793,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     handleMundipaggCreditCardUpdated(event: PaymentSelected){
-        if(this.isMundipaggCreditCard()){
+        if(this.isMundipaggCreditCard(event.payment)){
             this.methodSelected = event.method;
             this.paymentSelected = event.payment;
             this.creditCard = event.creditCard;
@@ -794,14 +804,23 @@ export class CheckoutComponent implements OnInit {
     }
 
     handlePagseguroUpdated(event: PaymentSelected) {
-        if(this.isPagSeguro()){
+        if(this.isPagSeguro(event.payment)){
             this.optionSelected = event.pagseguro;
             this.paymentSelected = event.payment;
             this.creditCard = event.creditCard;
             
             this.methodSelected = null;
             this.mercadoPagoPaymentMethods = null;
+        }
+    }
 
+    handlePickUpStorePayment(event: PaymentSelected){
+        if(this.isPickUpStorePayment(event.payment)){
+            this.optionSelected = null;
+            this.paymentSelected = event.payment;
+            this.creditCard = null;
+            this.methodSelected = event.payment.paymentMethods[0];
+            this.mercadoPagoPaymentMethods = null;
         }
     }
     /* HANDLERS - END */
@@ -910,8 +929,10 @@ export class CheckoutComponent implements OnInit {
      * @returns {boolean} 
      * @memberof CheckoutComponent
      */
-    isMercadoPago(): boolean{
-        return this.paymentManager.isMercadoPago(this.paymentSelected, this.payments);
+    isMercadoPago(paymentSelected: Payment = null): boolean{
+        if(!paymentSelected)
+            paymentSelected = this.paymentSelected;
+        return this.paymentManager.isMercadoPago(paymentSelected, this.payments);
     }
 
     /**
@@ -940,8 +961,10 @@ export class CheckoutComponent implements OnInit {
      * @returns {boolean} 
      * @memberof CheckoutComponent
      */
-    isPagSeguro(): boolean{
-        return this.paymentManager.isPagSeguro(this.paymentSelected, this.payments);
+    isPagSeguro(payment: Payment = null): boolean{
+        if(!payment)
+            payment = this.paymentSelected;
+        return this.paymentManager.isPagSeguro(payment, this.payments);
     }
 
     /**
@@ -970,8 +993,10 @@ export class CheckoutComponent implements OnInit {
      * @returns {boolean} 
      * @memberof CheckoutComponent
      */
-    isMundipaggBankslip(): boolean{
-        return this.paymentManager.isMundipaggBankslip(this.paymentSelected, this.payments);
+    isMundipaggBankslip(paymentSelected: Payment = null): boolean{
+        if(!paymentSelected)
+            paymentSelected = this.paymentSelected;
+        return this.paymentManager.isMundipaggBankslip(paymentSelected, this.payments);
     }
 
     /**
@@ -1000,8 +1025,10 @@ export class CheckoutComponent implements OnInit {
      * @returns {boolean} 
      * @memberof CheckoutComponent
      */
-    isMundipaggCreditCard(): boolean{
-        return this.paymentManager.isMundipaggCreditCard(this.paymentSelected, this.payments);
+    isMundipaggCreditCard(paymentSelected: Payment = null): boolean{
+        if(!paymentSelected)
+            paymentSelected = this.paymentSelected;
+        return this.paymentManager.isMundipaggCreditCard(paymentSelected, this.payments);
     }
 
     isPickUpStore(): boolean{
@@ -1009,6 +1036,23 @@ export class CheckoutComponent implements OnInit {
             return true;
         else
             return false;
+    }
+
+    isDefaultPayment(payment: Payment){        
+        if(this.defaultPayment && this.defaultPayment.id == payment.id)
+     return true;
+        else return false;
+    }
+
+    getPickUpStorePayment(): Payment{
+        return this.payments.find(p => p.name.toLowerCase() == 'pagamento na loja');
+    }
+
+    isPickUpStorePayment(payment: Payment): boolean{
+        let pickUpStore: Payment = this.getPickUpStorePayment();
+        if(payment.id == pickUpStore.id)
+            return true;
+        else return false;
     }
     /* VALIDATIONS - END */
 
@@ -1023,6 +1067,9 @@ export class CheckoutComponent implements OnInit {
             this.methodSelected.name = this.mercadoPagoPaymentMethods.name;
             return this.methodSelected;
         }
+        // else if(this.paymentSelected && this.isPickUpStorePayment(this.paymentSelected)){
+        //     this.methodSelected.name == 'Pagamento na Loja';
+        // }
         else {
             return this.methodSelected;
         }
@@ -1046,6 +1093,11 @@ export class CheckoutComponent implements OnInit {
             event.preventDefault();
         this.paymentSelected = payment;
         this.methodSelected = null;
+
+        if(this.isPickUpStorePayment(payment)){
+            let selected: PaymentSelected = new PaymentSelected(payment, payment.paymentMethods[0]);
+            this.handlePickUpStorePayment(selected);
+        }
     }
 
     finishOrder(order: Order){

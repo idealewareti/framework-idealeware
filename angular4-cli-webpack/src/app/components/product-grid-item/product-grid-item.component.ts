@@ -2,12 +2,17 @@ import { Component, Input, AfterViewChecked, OnInit, OnDestroy } from '@angular/
 import { AppSettings } from 'app/app.settings';
 import { Product } from 'app/models/product/product';
 import { Router } from "@angular/router";
-import { StoreService } from "app/services/store.service";
 import { Store } from "app/models/store/store";
 import { EnumStoreModality } from "app/enums/store-modality.enum";
 import { Sku } from "app/models/product/sku";
+import { PaymentManager } from "app/managers/payment.manager";
+import { Payment } from "app/models/payment/payment";
+import { PagseguroInstallment } from "app/models/pagseguro/pagseguro-installment";
+import { PaymentMethod } from "app/models/payment/payment-method";
+import { ProductPicture } from "app/models/product/product-picture";
 
 declare var $: any;
+declare var PagSeguroDirectPayment: any;
 
 @Component({
     moduleId: module.id,
@@ -29,7 +34,7 @@ export class ProductGridItemComponent {
     promotionalPrice: number = 0;
     private alternative: boolean = false;
 
-    constructor(private parentRouter: Router) {}
+    constructor(private parentRouter: Router, private paymentManager: PaymentManager) {}
 
     ngOnInit() {
 
@@ -47,13 +52,19 @@ export class ProductGridItemComponent {
         this.productUrl = `/produto/${this.sku.id}/${this.product.niceName}`;
         this.price = this.sku.price;
         this.promotionalPrice = this.sku.promotionalPrice;
-        this.alternativeImg = this.sku.alternativePicture['showcase'] ? `${AppSettings.MEDIA_PATH}/products/${this.sku.alternativePicture.showcase}` : '';
+        this.alternativeImg = this.sku.alternativePicture['id'] ? `${AppSettings.MEDIA_PATH}/products/${this.sku.alternativePicture.showcase}` : this.coverImg;
+
+        this.paymentManager.getInstallments(this.sku)
+        .then(payment => {
+            this.product.installmentText = this.paymentManager.getInstallmentText(payment, payment.paymentMethods[0]);
+        })
+        .catch(error => console.log(error));
     }
 
     ngAfterViewChecked() {
         if (!this.alternative) {
             this.alternative = true;
-            $(".thumb").on("mouseover", function () {
+            $(`#sku_${this.sku.id} .thumb`).on("mouseover", function () {
                 let src = ($('img', this).data('alternative') === '')
                     ? $('img', this).data('original')
                     : $('img', this).data('alternative');
@@ -66,11 +77,11 @@ export class ProductGridItemComponent {
         }
     }
 
-    getCoverImage() {
-       return this.product.getSkuCoverImage(this.sku.id);
+    getCoverImage(): ProductPicture{
+       return this.product.skuBase.picture;
     }
 
-    public quickView() {
+    quickView() {
 
         let quickviewId = `#quickview-${this.product.id}`;
 
@@ -127,7 +138,7 @@ export class ProductGridItemComponent {
         });
     }
 
-    public addToCompare(event, product) {
+    addToCompare(event, product) {
         event.preventDefault();
         let compare = JSON.parse(localStorage.getItem('compare'));
         if (!compare)
@@ -145,7 +156,7 @@ export class ProductGridItemComponent {
         }
     }
 
-    public isComparing(id: string): boolean {
+    isComparing(id: string): boolean {
         let compare = JSON.parse(localStorage.getItem('compare'));
         if (!compare)
             return false;
@@ -155,7 +166,7 @@ export class ProductGridItemComponent {
             return false;
     }
 
-    public isMobile(): boolean {
+    isMobile(): boolean {
         return AppSettings.isMobile();
     }
 
@@ -175,6 +186,24 @@ export class ProductGridItemComponent {
         if(this.store.modality == EnumStoreModality.Budget && this.sku.available)
             return true;
         else if(this.store.modality == EnumStoreModality.Ecommerce && this.sku.available && this.sku.stock > 0)
+            return true;
+        else return false;
+    }
+
+    isMundiPagg(gateway: Payment): boolean{
+        if(this.paymentManager.isMundiPagg(gateway))
+            return true;
+        else return false;
+    }
+
+    isMercadoPago(gateway: Payment): boolean{
+        if(gateway.name.toLowerCase() == 'mercadopago')
+            return true;
+        else return false;
+    }
+
+    isPagseguro(gateway: Payment): boolean{
+        if(gateway.name.toLowerCase() == 'pagseguro')
             return true;
         else return false;
     }

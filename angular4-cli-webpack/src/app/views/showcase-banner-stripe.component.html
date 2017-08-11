@@ -1,0 +1,12 @@
+<div id="banner-tarja" *ngIf="banners.length > 0">
+    <div class="container">
+        <div class="box clearfix">
+            <div *ngFor="let banner of banners" [attr.class]="'col-sm-12 col-md-' + calcWidthMedium()">
+                <a *ngIf="banner.url" [attr.href]="banner.url" target="_blank">
+                    <img [attr.src]="mediaPath + banner.fullBanner" [attr.alt]="banner.name" class="img-responsive">
+                </a>
+                <img *ngIf="!banner.url" [attr.src]="mediaPath + banner.fullBanner" [attr.alt]="banner.name" class="img-responsive">
+            </div>
+        </div>
+    </div>
+</div>

@@ -696,7 +696,9 @@ input:focus, button:focus {
 }
 
 
-
+#main-banner img{
+  margin:0 auto;
+}
 
 #main-banner {
   margin: 25px 0 0;
@@ -858,9 +860,9 @@ input:focus, button:focus {
 }
 @media (min-width: 992px) {
   
-  .showcase .showcase-items > li {
+  /* .showcase .showcase-items > li {
     width: 33%;
-  }
+  } */
 }
 
 .border {
@@ -984,7 +986,7 @@ input:focus, button:focus {
 
 .border .price-box {
   display: block;
-  height: 50px;
+  min-height: 50px;
 }
 
 .border .price-box .regular-price {
@@ -1004,6 +1006,7 @@ input:focus, button:focus {
   font-weight: 400;
   color: #757575;
   font-size: 15px;
+  display: block;
 }
 
 .border .parcelamento strong {
@@ -4764,4 +4767,12 @@ body.checkout {
 
 .installments-simulations{
   padding: 10px;
+}
+
+.half-banners{
+  margin: 10px 0;
+}
+
+#cross-selling-items .showcase-item{
+  float: left;
 }

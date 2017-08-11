@@ -1,18 +1,13 @@
 import { PaymentMethod } from "./payment-method";
 import { PaymentSetting } from "app/models/payment/payment-setting";
+import { EnumPaymentType } from "app/enums/payment-type.enum";
 
 export class Payment {
     id: string;
+    default: boolean;
     isSandBox: boolean;
     name: string;
-
-    /**
-     * 1: Online, 2 Offline
-     * 
-     * @type {number}
-     * @memberof Payment
-     */
-    type: number;
+    type: EnumPaymentType;
     url: string;
     paymentReferenceCode: string;
     paymentDate: Date;
