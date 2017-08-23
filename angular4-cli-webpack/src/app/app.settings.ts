@@ -12,6 +12,8 @@ export class AppSettings {
     public static DOMAIN = AppConfig.DOMAIN;
     public static ROOT_PATH = AppConfig.ROOT_PATH;
     public static MEDIA_PATH = AppConfig.MEDIA_PATH;
+    public static FACEBOOK_PAGE = AppConfig.FACEBOOK_PAGE;
+    public static LOADER_COLOR = AppConfig.LOADER_COLOR;
 
     public static SELF_COLOR_PALETA = '/assets/services';
     /* APIs */

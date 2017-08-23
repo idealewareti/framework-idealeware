@@ -50,7 +50,7 @@ export class ProductUpSellingComponent implements OnInit {
     private buildCarousel() {
 
         if (this.products
-            && $('#up-selling-items').children('li').length > 3
+            && $('#up-selling-items').children('li').length > 0
             && $('#up-selling-items').children('.owl-stage-outer').length == 0) {
             $("#up-selling-items").owlCarousel({
                 items: 4,
@@ -66,7 +66,7 @@ export class ProductUpSellingComponent implements OnInit {
                 autoplayTimeout: 5000,
                 autoplayHoverPause: true,
                 responsive: {
-                    0: { items: 2 },
+                    0: { items: 1 },
                     768: { items: 3 },
                     992: { items: 4 },
                     1200: { items: 4 }

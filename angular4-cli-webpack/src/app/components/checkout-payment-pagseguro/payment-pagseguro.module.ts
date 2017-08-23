@@ -6,6 +6,9 @@ import { CurrencyFormatModule } from "app/pipes/currency-format/currency-format.
 import { CreditCartdMaskModule } from "app/directives/creditcart-mask/creditcard-mask.module";
 import { OfflinePaymentPanelModule } from "../checkout-payment-offline/payment-offline-panel.module";
 import { OfflinePaymentModule } from "../checkout-payment-offline/payment-offline.module";
+import { WaitLoaderModule } from "app/components/wait-loader/wait-loader.module";
+import { CpfMaskModule } from "app/directives/cpf-mask/cpf-mask.module";
+import { PhoneMaskModule } from "app/directives/phone-mask/phone-mask.module";
 
 @NgModule({
     declarations: [ PaymentPagseguroComponent ],
@@ -15,8 +18,9 @@ import { OfflinePaymentModule } from "../checkout-payment-offline/payment-offlin
         ReactiveFormsModule, 
         CurrencyFormatModule, 
         CreditCartdMaskModule,
-        OfflinePaymentModule,
-        OfflinePaymentPanelModule,
+        WaitLoaderModule,
+        CpfMaskModule,
+        PhoneMaskModule
     ],
     providers: [],
     exports: [ PaymentPagseguroComponent ]

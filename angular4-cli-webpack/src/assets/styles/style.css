@@ -2,7 +2,9 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-
+#layout{
+  padding-bottom: 10px;
+}
 
 a, button, input[type="button"], input[type="submit"] {
   transition: 300ms all;
@@ -774,17 +776,17 @@ input:focus, button:focus {
 
 
 
-#list-brads {
+#list-brands {
   margin-bottom: 25px;
 }
 
-#list-brads ul {
+#list-brands ul {
   padding-top: 25px;
   padding-bottom: 25px;
   border-bottom: 1px solid #D9D9D9;
 }
 
-#list-brads ul a {
+#list-brands ul a {
   display: block;
   text-align: center;
   opacity: .2;
@@ -802,13 +804,13 @@ input:focus, button:focus {
   height: 50px;
 }
 
-#list-brads ul a:hover {
+#list-brands ul a:hover {
   opacity: 1;
   -webkit-filter: grayscale(0);
   filter: grayscale(0);
 }
 
-/*#list-brads ul a {
+/*#list-brands ul a {
   display: block;
   margin: 0 auto;
   width: 220px;
@@ -3846,6 +3848,7 @@ body.checkout {
   height: auto;*/
   height: 238px;
   width: 238px;
+  margin: 0 auto;
 }
 /*
 	COMPARAR

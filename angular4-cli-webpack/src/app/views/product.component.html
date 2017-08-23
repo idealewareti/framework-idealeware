@@ -183,7 +183,7 @@
             <div class="fileguide" *ngIf="product.fileGuide">
                 <h3 class="title"><b>MANUAL DO PRODUTO</b></h3>
                 <div class="form-group">
-                    <a href="{{mediaPath + product.fileGuide}}" class="btn btn-default">
+                    <a (click)="downloadGuide($event)" href="#" rel="nofollow" class="btn btn-default">
                         <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Baixe aqui o manual do produto
                     </a>
                 </div>

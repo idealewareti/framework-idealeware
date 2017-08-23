@@ -15,13 +15,13 @@
                         </span>
                     </span>
                     <span class="thumb pull-left">
-                        <a [routerLink]="['/produto/' + item.sku.id]" class="link-product">
+                        <a [routerLink]="[getRoute(item)]" class="link-product">
                             <img *ngIf="item.sku.picture" [attr.src]="getPicture(item.sku)" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
                             <img *ngIf="!item.sku.picture" [attr.src]="'/assets/images/no-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
                         </a>
                     </span>
                     <span class="details overflow-hidden">
-                        <a [routerLink]="['/produto/' + item.sku.id]" class="link-product">
+                        <a [routerLink]="[getRoute(item)]" class="link-product">
                             <b>{{item.name}} {{item.sku.code}} {{item.sku.feature}}</b>
                             
                             <strong>

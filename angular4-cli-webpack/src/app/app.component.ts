@@ -26,6 +26,7 @@ import { PaymentMethod } from "./models/payment/payment-method";
 import { EnumStoreModality } from "./enums/store-modality.enum";
 import { PaymentManager } from "./managers/payment.manager";
 import { Globals } from "app/models/globals";
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 declare var S: any;
 declare var ga: any;
@@ -52,7 +53,7 @@ export class AppComponent implements OnInit {
     zipCode: string;
     messageZipCode: string;
     q: string;
-
+    facebookSafeUrl: SafeResourceUrl;
 
     constructor(
         private loaderService: NgProgressService,
@@ -64,7 +65,8 @@ export class AppComponent implements OnInit {
         private paymentManager: PaymentManager,
         private googleService: GoogleService,
         private cartManager: CartManager,
-        private globals: Globals
+        private globals: Globals,
+        private sanitizer: DomSanitizer,
     ) {
 
         if (!this.getSessionId())
@@ -83,7 +85,9 @@ export class AppComponent implements OnInit {
                 this.showZipcodePopup();
 
                 if(this.globals.store.modality == EnumStoreModality.Ecommerce)
-				    this.getPayments();
+                    this.getPayments();
+                
+                this.facebookSafeUrl = this.getFacebookUrl();
             })
             .catch(error => console.log(error));
 
@@ -350,6 +354,19 @@ export class AppComponent implements OnInit {
 
     getStore(): Store{
         return this.globals.store;
+    }
+
+    getFacebook(): string{
+        return AppSettings.FACEBOOK_PAGE;
+    }
+
+    getFacebookUrl(): SafeResourceUrl {
+        let url = `https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F${this.getFacebook()}%2F&tabs&width=340&height=214&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=214403341930049`;
+        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
+    getLoaderColor(): string{
+        return AppSettings.LOADER_COLOR;
     }
 
 }

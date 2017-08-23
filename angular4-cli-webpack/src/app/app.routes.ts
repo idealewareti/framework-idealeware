@@ -44,12 +44,12 @@ const appRoutes: Routes = [
     { path: 'orcamento', component: BudgetComponent },
     { path: 'orcamento/concluido', component: BudgetFinishComponent },
     { path: 'orcamento/concluido/:id', component: BudgetFinishComponent },
-    { path: 'produto/:id/:nicename', component: ProductComponent },
     { path: 'produto/:id', component: ProductComponent },
     { path: 'recuperar-senha', component: ForgetPasswordComponent },
+    { path: ':product', component: ProductComponent },
     { path: '**', component: ShowCaseComponent }
       
 ];
 
-export const routing = RouterModule.forRoot(appRoutes, { useHash: true });
+export const routing = RouterModule.forRoot(appRoutes, { useHash: false });
 

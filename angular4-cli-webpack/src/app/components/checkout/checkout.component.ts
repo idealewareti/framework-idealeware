@@ -51,8 +51,8 @@ export class CheckoutComponent implements OnInit {
     logged: boolean = false;
     private customer: Customer;
     private selectedAddress: CustomerAddress;
+    private selectedBillingAddress: CustomerAddress;
     private customer_ip = {};
-    private showAddresses: boolean = false;
     private intelipost: Intelipost = new Intelipost();
     private shippingSelected: Shipping = new Shipping();
     private payment: Payment = new Payment();
@@ -65,6 +65,8 @@ export class CheckoutComponent implements OnInit {
     public readonly mediaPathPaint = `${AppSettings.MEDIA_PATH}/custompaint/`;
     public readonly paymentMethodTypes = AppTexts.PAYMENT_METHOD_TYPES;
 
+    showAddresses: boolean = false;
+    showBillingAddresses: boolean = false;
     availableMethodTypes = [];
     creditCard: CreditCard = new CreditCard();
     paymentSelected: Payment = null;
@@ -101,6 +103,9 @@ export class CheckoutComponent implements OnInit {
             }
             else
                 return this.getCustomer();
+        })
+        .then(customer => {
+            return this.manager.setCustomerToCart();
         })
         .catch(error => {
             console.log(error);
@@ -171,11 +176,29 @@ export class CheckoutComponent implements OnInit {
     }
 
     selectedAddressOrDefault(): CustomerAddress {
-        if (!this.selectedAddress) {
+        if (!this.selectedAddress)
             this.selectThisAddress(this.customer.addresses.filter(a => a.mainAddress == true)[0], null);
-        }
-
+        
         return this.selectedAddress;
+    }
+
+    selectedBillingAddressOrDefault(): CustomerAddress{
+        if(!this.selectedBillingAddress)
+            this.selectThisBillingAddress(this.customer.addresses.filter(a => a.mainAddress == true)[0], null);
+        
+        return this.selectedBillingAddress;
+    }
+
+    selectThisBillingAddress(address: CustomerAddress, event = null){
+        if(event)
+            event.preventDefault();
+        this.selectedBillingAddress = address;
+        this.showBillingAddresses = false;
+        let cartId = localStorage.getItem('cart_id');
+        this.manager.addBillingAddress(cartId, address.id)
+        .catch(error => {
+            console.log(error);
+        });
     }
 
     selectThisAddress(address: CustomerAddress, event) {
@@ -189,9 +212,6 @@ export class CheckoutComponent implements OnInit {
             .then(response => {
                 this.intelipost = response;
                 return this.manager.addDeliveryAddress(cartId, address.id);
-            })
-            .then(cart => {
-                return this.manager.addBillingAddress(cartId, address.id);
             })
             .then(cart => {
                 this.getBranches(address.zipCode);
@@ -433,7 +453,9 @@ export class CheckoutComponent implements OnInit {
                     let creditCard = new PagseguroCreditCard();
                     creditCard.creditCardToken = this.token;
                     creditCard.holderName = this.creditCard.holderName;
-                    creditCard.cpf = this.customer.cpf_Cnpj;
+                    creditCard.cpf = this.creditCard.taxId;
+                    creditCard.birthDate = this.creditCard.birthDate;
+                    creditCard.phone = this.creditCard.phone;
                     creditCard.installmentQuantity = this.creditCard.installmentCount;
                     creditCard.installmentValue = this.creditCard.installmentValue;
                     creditCard.noInterestInstallmentQuantity = Number.parseInt(this.paymentSelected.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
@@ -670,9 +692,12 @@ export class CheckoutComponent implements OnInit {
     }
     /* PAYMENTS - END */
 
-    showMyAddresses(event) {
+    showMyAddresses(event, isBillingAddress: boolean = false) {
         event.preventDefault();
-        this.showAddresses = !this.showAddresses;
+        if(isBillingAddress)
+            this.showBillingAddresses = !this.showBillingAddresses;
+        else
+            this.showAddresses = !this.showAddresses;
     }
 
     checkOption(methodName: string, branch: Branch = null): boolean {

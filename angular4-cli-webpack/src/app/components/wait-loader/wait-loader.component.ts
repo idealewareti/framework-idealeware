@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
     selector: 'wait-loader',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['../../styles/wait-loader.component.css']
 })
 export class WaitLoaderComponent implements OnInit {
+    @Input() small: boolean = false;
+    
     constructor() { }
 
     ngOnInit() { }

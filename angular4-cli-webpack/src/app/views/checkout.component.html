@@ -23,7 +23,7 @@
                     <span class="text">Endereços</span>
                 </div>
                 <div class="content">
-                    <h4>Endereço Principal</h4>
+                    <h4>Endereço de Entrega</h4>
                     <div class="adress-details">
                         <strong>{{selectedAddressOrDefault().addressName}}</strong>
                         <p>
@@ -43,6 +43,42 @@
                         <div class="content">
                             <div class="radio" *ngFor="let address of customer.addresses">
                                 <label for="" (click)="selectThisAddress(address, $event)">
+                                    <strong>{{address.addressName}}</strong>
+                                    <p>
+                                        {{address.addressLine1}}
+                                        {{(address.number) ? ', ' + address.number : ''}}<br>
+                                        {{address.addressLine2}}<br>
+                                        {{address.district}}<br>
+                                        {{address.zipCode}}
+                                        -  
+                                        {{address.city + '/' + address.state}}<br>
+                                    </p>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content">
+                    <h4>Endereço de Cobrança</h4>
+                    <div class="adress-details">
+                        <strong>{{selectedBillingAddressOrDefault().addressName}}</strong>
+                        <p>
+                            {{selectedBillingAddressOrDefault().addressLine1}}
+                            {{(selectedBillingAddressOrDefault().number) ? ', ' + selectedBillingAddressOrDefault().number : ''}}<br>
+                            {{selectedBillingAddressOrDefault().addressLine2}}<br>
+                            {{selectedBillingAddressOrDefault().district}}<br>
+                            {{selectedBillingAddressOrDefault().zipCode}}
+                             -  
+                             {{selectedBillingAddressOrDefault().city + '/' + selectedBillingAddressOrDefault().state}}<br>
+                        </p>
+                    </div>
+                     <div class="select-other text-center">
+                        <a href="#" (click)="showMyAddresses($event, true)">Selecionar outro</a>
+                    </div>
+                    <div class="step" *ngIf="showBillingAddresses">
+                        <div class="content">
+                            <div class="radio" *ngFor="let address of customer.addresses">
+                                <label for="" (click)="selectThisBillingAddress(address, $event)">
                                     <strong>{{address.addressName}}</strong>
                                     <p>
                                         {{address.addressLine1}}
@@ -176,7 +212,8 @@
                             </div>
                         </div>
                     </div>
-                     <div *ngIf="isPickUpStore()" class="panel panel-default">
+                    <!-- Pickup Store -->
+                    <div *ngIf="isPickUpStore()" class="panel panel-default">
                         <div class="panel-heading" role="tab" id="head-payment-pickupstore">
                             <h4 class="panel-title">
                                 <a (click)="selectThisPayment(getPickUpStorePayment())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-pickupstore" aria-expanded="true" aria-controls="tab-payment-pickupstore">
@@ -190,6 +227,21 @@
                             </div>
                          </div>
                     </div> 
+                    <!-- Delivery Payment -->
+                    <!-- <div *ngIf="isPickUpStore()" class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="head-payment-pickupstore">
+                            <h4 class="panel-title">
+                                <a (click)="selectThisPayment(getPickUpStorePayment())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-pickupstore" aria-expanded="true" aria-controls="tab-payment-pickupstore">
+                                    Pagamento na Entrega
+                                </a>
+                            </h4>
+                        </div>
+                         <div id="tab-payment-pickupstore" class="panel-collapse collapse" role="tabpanel" aria-labelledby="head-payment-pickupstore">
+                            <div class="panel-body">
+                                <payment-pickupstore></payment-pickupstore>
+                            </div>
+                         </div>
+                    </div>  -->
 
                 </div>
             </div>

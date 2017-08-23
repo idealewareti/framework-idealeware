@@ -30,4 +30,21 @@ export class AppConfig{
      * @memberof AppConfig
      */
     public static MEDIA_PATH = 'https://ecommerce.idealeware.com.br/static';
+
+    /**
+     * ID da Página do facebook
+     * https://www.facebook.com.br/{ID_DA_PAGINA}
+     * 
+     * @static
+     * @memberof AppConfig
+     */
+    public static FACEBOOK_PAGE = 'idealeware'
+
+    /**
+     * Cor da barra de carregando
+     * 
+     * @static
+     * @memberof AppConfig
+     */
+    public static LOADER_COLOR = '#333333';
 }

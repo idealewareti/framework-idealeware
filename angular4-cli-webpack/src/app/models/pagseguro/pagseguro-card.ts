@@ -4,5 +4,7 @@ export class PagseguroCreditCard{
   installmentValue: number;
   noInterestInstallmentQuantity: number;
   holderName: string;
-  cpf: string
+  cpf: string;
+  phone: string;
+  birthDate: Date;
 }

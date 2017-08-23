@@ -44,6 +44,7 @@ export class Product {
     installmentNumber : number;
     showInstallment : boolean;
     installmentText: string;
+    fileGuide: string;
 
     constructor(product = null){
         if(product) 
@@ -111,8 +112,6 @@ export class Product {
         return product;
     }
 
-    
-
     getCoverImage(){
         let image: string;
         if(this.skuBase.picture['showcase']){
@@ -130,6 +129,4 @@ export class Product {
         }
         else return null;
     }
-
-    
 }

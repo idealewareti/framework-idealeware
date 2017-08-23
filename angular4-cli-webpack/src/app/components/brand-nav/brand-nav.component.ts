@@ -40,17 +40,15 @@ export class BrandNavComponent {
 	ngAfterViewChecked(){
 		if(this.brands
 			&& this.brands.length > 4
-			&& $('#list-brads ul').children('li').length > 0 
-			&& $('#list-brads ul').children('.owl-stage-outer').length == 0
+			&& $('#list-brands ul').children('li').length > 0 
+			&& $('#list-brands ul').children('.owl-stage-outer').length == 0
 		){
-			$("#list-brads ul").owlCarousel({
+			$("#list-brands ul").owlCarousel({
 				items: 5,
 				margin: 10,
 				loop: true,
 				nav: true,
-				navText: [
-					'<i class="fa fa-angle-left" aria-hidden="true"></i>',
-					'<i class="fa fa-angle-right" aria-hidden="true"></i>'],
+				navText: ['<i class="fa fa-angle-left" aria-hidden="true"></i>', '<i class="fa fa-angle-right" aria-hidden="true"></i>'],
 				dots: false,
 				autoplay: true,
 				autoplayTimeout: 5000,

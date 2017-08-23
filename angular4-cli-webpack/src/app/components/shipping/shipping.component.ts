@@ -27,6 +27,8 @@ export class ShippingCalcComponent implements OnInit {
     @Input() cart: Cart;
     @Output() cartUpdated: EventEmitter<Cart> = new EventEmitter<Cart>();
 
+    loading: boolean = false;
+
     constructor(
         private service: IntelipostService,
         private cartManager: CartManager,
@@ -38,7 +40,7 @@ export class ShippingCalcComponent implements OnInit {
             this.zipCode = localStorage.getItem('customer_zipcode');
     }
 
-    private sendRequest(): Promise<Intelipost> {
+    sendRequest(): Promise<Intelipost> {
         return new Promise((resolve, reject) => {
             if (!this.zipCode) {
                 swal({ title: 'Erro!', text: 'CEP Inválido', type: 'warning', confirmButtonText: 'OK' });
@@ -55,7 +57,7 @@ export class ShippingCalcComponent implements OnInit {
             }
             else {
                 this.loader.start();
-
+                this.loading = true;
                 this.cartManager.getCart()
                     .then(cart => {
                         if (cart.totalPurchasePrice == 0) {
@@ -71,24 +73,27 @@ export class ShippingCalcComponent implements OnInit {
                     })
                     .then(response => {
                         this.loader.done();
+                        this.loading = false;
                         resolve(response);
                     })
                     .catch(error => {
                         this.loader.done();
+                        this.loading = false;
                         reject(error);
                     });
             }
         });
     }
 
-    public calculate(event) {
+    calculate(event) {
         event.preventDefault();
         this.deliveryOptions = [];
-
+        this.loading = true;
         this.sendRequest()
             .then(response => {
                 this.intelipost = response;
                 this.deliveryOptions = this.intelipost.content.delivery_options;
+                this.loading = false;
             })
             .catch(error => {
                 if (error.status == 400)
@@ -101,10 +106,11 @@ export class ShippingCalcComponent implements OnInit {
                 else
                     swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
                 console.log(error);
+                this.loading = false;
             });
     }
 
-    public addShippingToCart(event, option: IntelipostDeliveryOption) {
+    addShippingToCart(event, option: IntelipostDeliveryOption) {
         event.preventDefault();
         this.selected = option;
         let shipping = new Shipping();
@@ -118,27 +124,29 @@ export class ShippingCalcComponent implements OnInit {
         delivery.deliveryEstimateBusinessDays = option.delivery_estimate_business_days;
 
         shipping.deliveryInformation = delivery;
-
+        this.loading = true;
         this.cartManager.setShipping(shipping)
             .then(cart => {
                 this.cart = cart;
                 this.cartUpdated.emit(this.cart);
+                this.loading = false;
             })
             .catch(error => {
                 swal({ title: 'Erro!', text: 'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK' });
                 console.log(error);
+                this.loading = false;
             })
 
     }
 
-    public checkOption(option: IntelipostDeliveryOption): boolean {
+    checkOption(option: IntelipostDeliveryOption): boolean {
         if (option.delivery_method_type == this.selected.delivery_method_type)
             return true;
         else return false;
 
     }
 
-    public isMobile(): boolean {
+    isMobile(): boolean {
         return AppSettings.isMobile();
     }
 }

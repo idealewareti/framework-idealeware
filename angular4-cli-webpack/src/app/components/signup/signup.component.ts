@@ -89,7 +89,7 @@ export class SignUpComponent {
     signUp(event) {
         event.preventDefault();
 
-        if(this.myForm.invalid){
+        if(this.invalidForm()){
             swal({
                 title: 'Falha ao cadastrar',
                 text: 'Os campos informados com * são obrigatórios',
@@ -198,5 +198,30 @@ export class SignUpComponent {
     hasError(key: string): boolean{
         let error: boolean = (this.myForm.controls[key].touched && this.myForm.controls[key].invalid);
         return error;
+    }
+
+    invalidForm(): boolean{
+        if(this.myForm.invalid && this.customer.type == 1)
+            return true;
+        else if(this.myForm.invalid && this.customer.type == 1){
+            let errors = [];
+            for(let i in this.myForm.controls){
+                if((<any>this.myForm.controls[i]).invalid)
+                    errors.push(i)
+            }
+
+            if(errors.length == 1 && errors[0] == 'birthdate')
+                return false;
+            else return true;
+        }
+        else return false;
+    }
+
+    errorCPF_CNPJ(): boolean{
+        if(this.customer.type == 1 && (this.hasError('cpf_Cnpj') || (!this.validCPF() && this.validCPF() != null)))
+            return true;
+        else if(this.customer.type == 2 && (this.hasError('cpf_Cnpj') || (!this.validCNPJ() && this.validCNPJ() != null)))
+            return true;
+        else return false;
     }
 }

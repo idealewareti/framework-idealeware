@@ -71,7 +71,10 @@ export class PaymentPagseguroComponent implements OnInit {
             holder: ['', Validators.required],
             expMonth: ['', Validators.required],
             expYear: ['', Validators.required],
-            cvv: ['', Validators.required]
+            cvv: ['', Validators.required],
+            cpf: ['', Validators.required],
+            birthDate: ['', Validators.required],
+            phone: ['', Validators.required]
         });
     }
 
@@ -133,6 +136,12 @@ export class PaymentPagseguroComponent implements OnInit {
             return false;
         else if(!this.paymentSelected.creditCard.securityCode)
             return false;
+        else if(!this.paymentSelected.creditCard.taxId)
+            return false;
+        else if(!this.paymentSelected.creditCard.phone)
+            return false;
+        else if(!this.paymentSelected.creditCard.birthDate)
+            return false;
         else
             return true;
     }
@@ -158,7 +167,7 @@ export class PaymentPagseguroComponent implements OnInit {
         this.paymentUpdated.emit(this.paymentSelected);
      }
 
-    availableMethods(){
+    availableMethods(): PagseguroMethod[]{
         return this.paymentMethods.filter(m => m.code == 1 || m.code == 2);
      }
 

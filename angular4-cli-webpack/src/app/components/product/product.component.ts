@@ -93,6 +93,10 @@ export class ProductComponent {
                 this.id = params['id'];
                 this.getProductBySku(this.id);
             }
+            else if(params['product']){
+                this.id = params['product'].substr(params['product'].length - 36);
+                this.getProductBySku(this.id);
+            }
         });
     }
 
@@ -420,5 +424,10 @@ export class ProductComponent {
 
     getStore(): Store{
         return this.globals.store;
+    }
+
+    downloadGuide(event){
+        event.preventDefault();
+        this.parentRouter.navigateByUrl(this.mediaPath + this.product.fileGuide);
     }
 }

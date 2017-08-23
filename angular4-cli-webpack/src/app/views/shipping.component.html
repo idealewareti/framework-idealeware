@@ -4,6 +4,9 @@
             Simule o prazo de entrega e o frete para seu CEP abaixo
         </label>
         <div class="clearfix">
+            <div class="shipping-loader pull-right" *ngIf="loading">
+                <wait-loader [small]="true" ></wait-loader>
+            </div>
             <a href="http://www.buscacep.correios.com.br/sistemas/buscacep/buscaCepEndereco.cfm" target="_blank" class="pull-right">Não sei meu CEP</a>
             <div class="input-box overflow-hidden">
                 <input type="text" name="zipCode" id="zipCode" [(ngModel)]="zipCode" maxlength="9" zipcodeMask placeholder="CEP">

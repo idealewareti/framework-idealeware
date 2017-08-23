@@ -10,6 +10,8 @@ export class CreditCard{
   installmentValue: number;
   noInterestInstallmentQuantity: number;
   taxId: string;
+  birthDate: Date;
+  phone: string;
 
   isCardOK(taxIdValidate: boolean = false): boolean{
       if(!this.creditCardBrand)

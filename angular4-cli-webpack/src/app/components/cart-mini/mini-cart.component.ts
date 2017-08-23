@@ -7,7 +7,6 @@ import { ProductService } from 'app/services/product.service';
 import { Globals } from "app/models/globals";
 import { Sku } from "app/models/product/sku";
 
-//declare var $: any;
 declare var S: any;
 declare var swal: any;
 
@@ -44,30 +43,25 @@ export class MiniCartComponent {
 
     getProducts() {
         this.manager.getCart()
-            .then((cart) => {
-                this.cartReady = true;
-                this.globals.cart = cart;
-                // setInterval(() => {
-                //     let c = new Cart(JSON.parse(localStorage.getItem('shopping_cart')));
-                //     if(c.totalPurchasePrice != this.globals.cart.totalPurchasePrice)
-                //         this.globals.cart = c;
-                // }, 5000);
-            })
-            .catch(e => console.log(e));
+        .then((cart) => {
+            this.cartReady = true;
+            this.globals.cart = cart;
+        })
+        .catch(e => console.log(e));
     }
 
     updateItem(quantity, item: CartItem) {
         item.quantity = quantity;
         this.manager.updateItem(item)
-            .then(cart => this.globals.cart = cart)
-            .catch(error => {
-                swal({
-                    title: "Falha ao atualizar o produto ao carrinho",
-                    text: error.text(),
-                    type: "warning",
-                    confirmButtonText: "OK"
-                });
+        .then(cart => this.globals.cart = cart)
+        .catch(error => {
+            swal({
+                title: "Falha ao atualizar o produto ao carrinho",
+                text: error.text(),
+                type: "warning",
+                confirmButtonText: "OK"
             });
+        });
     }
 
     deleteItem(event, item: CartItem) {
@@ -139,7 +133,11 @@ export class MiniCartComponent {
             return true;
         }
     }
-	
+
+    getRoute(item: CartItem): string{
+        return `/${AppSettings.getNiceName(item.name)}-${item.sku.id}`;
+    }
+
 	getPicture(sku: Sku): string{
         if(sku.picture && sku.picture['showcase'])
             return `${this.mediaPath}${sku.picture.thumbnail}`

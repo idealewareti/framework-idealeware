@@ -49,7 +49,7 @@ export class ProductGridItemComponent {
             this.sku = this.product.skuBase;
 
         this.coverImg = (this.getCoverImage()['showcase']) ?`${AppSettings.MEDIA_PATH}/products/${this.getCoverImage().showcase}` : '/assets/images/no-image.jpg';
-        this.productUrl = `/produto/${this.sku.id}/${this.product.niceName}`;
+        this.productUrl = this.getRoute();
         this.price = this.sku.price;
         this.promotionalPrice = this.sku.promotionalPrice;
         this.alternativeImg = this.sku.alternativePicture['id'] ? `${AppSettings.MEDIA_PATH}/products/${this.sku.alternativePicture.showcase}` : this.coverImg;
@@ -206,5 +206,9 @@ export class ProductGridItemComponent {
         if(gateway.name.toLowerCase() == 'pagseguro')
             return true;
         else return false;
+    }
+
+    getRoute(): string{
+        return `/${this.product.niceName}-${this.sku.id}`;
     }
 }
