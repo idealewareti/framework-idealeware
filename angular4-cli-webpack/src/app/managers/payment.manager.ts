@@ -96,13 +96,13 @@ export class PaymentManager{
     getMundipaggBankslip(payments: Payment[]): Payment{
         return payments
             .filter(p => p.name.toLowerCase() == 'mundipagg')
-            .find(m => m.paymentMethods.findIndex(method => method.type == PaymentMethodTypeEnum.BankSlip) > -1);
+            .find(m => m.paymentMethods.findIndex(method => method.name.toLowerCase() == 'boleto') > -1);
     }
 
     isMundipaggBankslip(paymentSelected: Payment, payments: Payment[]): boolean{
         let mundipagg = this.getMundipaggBankslip(payments);
         
-        if(paymentSelected && mundipagg && paymentSelected.id == mundipagg.id && mundipagg.paymentMethods[0].id == paymentSelected.paymentMethods[0].id)
+        if(paymentSelected && mundipagg && paymentSelected.id == mundipagg.id && mundipagg.paymentMethods[0].name.toLowerCase() == 'boleto' && mundipagg.paymentMethods.length == 1)
             return true;
         else return false;
     }

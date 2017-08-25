@@ -35,7 +35,7 @@ export class SignUpComponent {
     public readonly genders = AppTexts.GENDERS;
     public readonly states = AppTexts.BRAZILIAN_STATES;
     public readonly addressTypes = AppTexts.ADDRESS_TYPES;
-    public readonly strongPasswordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+    public readonly strongPasswordRegex = /(?=.*\d)(?=.*[a-z]).{6,}/;
 
     constructor(
         formBuilder: FormBuilder,

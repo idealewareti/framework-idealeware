@@ -163,7 +163,8 @@
                         <div id="tab-payment-bankslip" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getMundipaggBankslip())}" role="tabpanel" aria-labelledby="head-payment-bankslip">
                             <div class="panel-body">
                                 <mundipagg-bankslip 
-                                    [payment]="getMundipaggBankslip()" 
+                                    [payment]="getMundipaggBankslip()"
+                                    [actualPayment]="paymentSelected"
                                     [shipping]="shippingSelected" 
                                     (paymentUpdated)="handleMundipaggBankslipUpdated($event)">
                                 </mundipagg-bankslip>
@@ -213,7 +214,7 @@
                         </div>
                     </div>
                     <!-- Pickup Store -->
-                    <div *ngIf="isPickUpStore()" class="panel panel-default">
+                    <div *ngIf="isPickUpStore() && hasPickUpStorePayment()" class="panel panel-default">
                         <div class="panel-heading" role="tab" id="head-payment-pickupstore">
                             <h4 class="panel-title">
                                 <a (click)="selectThisPayment(getPickUpStorePayment())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-pickupstore" aria-expanded="true" aria-controls="tab-payment-pickupstore">

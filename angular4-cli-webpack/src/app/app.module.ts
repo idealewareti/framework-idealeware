@@ -32,6 +32,7 @@ import { LoginComponent } from './components/login/login.component';
 import { LogoutComponent } from './components/logout/logout.component';
 import { NotFoundComponent } from './components/404/404.component';
 import { ProductComponent } from './components/product/product.component';
+import { RedirectComponent } from './components/redirect/redirect.component';
 import { SearchComponent } from './components/search/search.component';
 import { ShowCaseComponent } from './components/showcase/showcase.component';
 import { SignUpComponent } from './components/signup/signup.component';
@@ -225,6 +226,7 @@ import { Globals } from './models/globals';
         LoginComponent,
         LogoutComponent,
         ProductComponent,
+        RedirectComponent,
         SearchComponent,
         ShowCaseComponent,
         SignUpComponent

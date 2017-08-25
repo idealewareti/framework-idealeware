@@ -209,29 +209,29 @@ export class CheckoutComponent implements OnInit {
 
         let request = new IntelipostRequest(null, null, null, address.zipCode);
         this.shippingService.getShipping(request)
-            .then(response => {
-                this.intelipost = response;
-                return this.manager.addDeliveryAddress(cartId, address.id);
-            })
-            .then(cart => {
-                this.getBranches(address.zipCode);
-                this.addShippingToCart(null, this.intelipost.content.delivery_options[0]);
-            })
-            .catch(error => {
-                console.log(error);
-                let message = error.text().replace(/"/g, '');
+        .then(response => {
+            this.intelipost = response;
+            return this.manager.addDeliveryAddress(cartId, address.id);
+        })
+        .then(cart => {
+            this.getBranches(address.zipCode);
+            this.addShippingToCart(null, this.intelipost.content.delivery_options[0]);
+        })
+        .catch(error => {
+            console.log(error);
+            let message = error.text().replace(/"/g, '');
 
-                if(message.split('|').length > 1)
-                    message = message.split('|')[1];
+            if(message.split('|').length > 1)
+                message = message.split('|')[1];
 
-                swal({
-                    title: 'Erro',
-                    text: message,
-                    type: 'warning',
-                    confirmButtonText: 'OK'
-                });
-
+            swal({
+                title: 'Erro',
+                text: message,
+                type: 'warning',
+                confirmButtonText: 'OK'
             });
+
+        });
     }
 
     getCustomer(): Promise<Customer> {
@@ -254,7 +254,7 @@ export class CheckoutComponent implements OnInit {
         });
     }
 
-     paymentAvailable(type: number): boolean {
+    paymentAvailable(type: number): boolean {
         let available = false
         if (this.payment.paymentMethods.filter(m => m.type == type).length > 0)
             available = true;
@@ -809,7 +809,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     handleMundipaggBankslipUpdated(event: PaymentSelected){
-        if(this.isMundipaggBankslip(event.payment)){
+        if(this.isMundipagg(event.payment) && event.method.type == PaymentMethodTypeEnum.BankSlip){
             this.methodSelected = event.method;
             this.creditCard = null;
             this.mercadoPagoPaymentMethods = null;
@@ -818,7 +818,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     handleMundipaggCreditCardUpdated(event: PaymentSelected){
-        if(this.isMundipaggCreditCard(event.payment)){
+        if(this.isMundipagg(event.payment) && event.method.type == PaymentMethodTypeEnum.CreditCard){
             this.methodSelected = event.method;
             this.paymentSelected = event.payment;
             this.creditCard = event.creditCard;
@@ -1056,6 +1056,14 @@ export class CheckoutComponent implements OnInit {
         return this.paymentManager.isMundipaggCreditCard(paymentSelected, this.payments);
     }
 
+    isMundipagg(paymentSelected: Payment = null){
+        if(!paymentSelected)
+            paymentSelected = this.paymentSelected;
+        if(paymentSelected.name.toLowerCase() == 'mundipagg')
+            return true;
+        else return false;
+    }
+
     isPickUpStore(): boolean{
         if(this.hasShippingSelected() && this.cart.shipping.shippingType == EnumShippingType.PickuUpStore)
             return true;
@@ -1073,9 +1081,16 @@ export class CheckoutComponent implements OnInit {
         return this.payments.find(p => p.name.toLowerCase() == 'pagamento na loja');
     }
 
+    hasPickUpStorePayment(): boolean{
+        let payment = this.getPickUpStorePayment();
+        if(payment)
+            return true;
+        else return false;
+    }
+
     isPickUpStorePayment(payment: Payment): boolean{
         let pickUpStore: Payment = this.getPickUpStorePayment();
-        if(payment.id == pickUpStore.id)
+        if(pickUpStore && payment.id == pickUpStore.id)
             return true;
         else return false;
     }

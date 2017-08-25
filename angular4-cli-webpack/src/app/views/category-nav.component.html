@@ -10,7 +10,7 @@
     </li>
     <li role="separator" class="divider hidden-md hidden-lg"></li>
     <li *ngFor="let category of categories" [ngClass]="{'dropdown': category.children.length > 0}">
-        <a [routerLink]="['/categoria/' + category.id + '/' + category.niceName]" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <a [routerLink]="['/categoria/' + category.id + '/' + category.niceName]" class="dropdown-toggle" data-toggle="" role="button" aria-haspopup="true" aria-expanded="false">
             <span *ngIf="category.picture" class="icon hidden-xs"><img [attr.src]="mediaPath + category.picture" [attr.alt]="category.name"></span>
             {{category.name}}
             <span class="caret hidden-md hidden-lg"></span>

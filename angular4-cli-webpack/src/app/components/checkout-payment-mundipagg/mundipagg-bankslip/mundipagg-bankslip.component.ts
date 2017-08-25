@@ -14,6 +14,7 @@ import { PaymentMethodTypeEnum } from "app/enums/payment-method-type.enum";
 export class MundipaggBankslipComponent implements OnInit {
     @Input() payment: Payment;
     @Input() shipping: Shipping = null;
+    @Input() actualPayment: Payment;
     
     @Output() paymentUpdated: EventEmitter<PaymentSelected> = new EventEmitter<PaymentSelected>();
 
@@ -41,7 +42,7 @@ export class MundipaggBankslipComponent implements OnInit {
             }
         });
 
-        if(bankslips.length == 1)
+        if(bankslips.length == 1 && this.isMundipaggBankslip())
             this.selectMethod(null, bankslips[0]);
 
         return bankslips;
@@ -52,7 +53,20 @@ export class MundipaggBankslipComponent implements OnInit {
             event.preventDefault();
 
         this.methodSelected = method;
-        let selected = new PaymentSelected(this.paymentSelected, this.methodSelected);
+        let selected = new PaymentSelected(this.payment, this.methodSelected);
         this.paymentUpdated.emit(selected);
+    }
+
+    isMundipaggBankslip(): boolean{
+        if(!this.actualPayment)
+            return false;
+        else{
+            if(this.actualPayment.name.toLowerCase() != 'mundipagg')
+                return false;
+            else if(this.actualPayment.paymentMethods[0].name.toLowerCase() == 'boleto')
+                return true;
+            else
+                return false;
+        }
     }
 }

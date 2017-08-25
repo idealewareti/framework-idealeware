@@ -94,8 +94,14 @@ export class ProductComponent {
                 this.getProductBySku(this.id);
             }
             else if(params['product']){
-                this.id = params['product'].substr(params['product'].length - 36);
-                this.getProductBySku(this.id);
+                let paramProduct = params['product'];
+                this.id = paramProduct.substr(params['product'].length - 36);
+                if(this.isGuid(this.id))
+                    this.getProductBySku(this.id);
+                else{
+                    let routeParam = decodeURI(this.parentRouter.url).slice(1);
+                    this.parentRouter.navigateByUrl(`/redirect/${routeParam}`);
+                }
             }
         });
     }
@@ -429,5 +435,9 @@ export class ProductComponent {
     downloadGuide(event){
         event.preventDefault();
         this.parentRouter.navigateByUrl(this.mediaPath + this.product.fileGuide);
+    }
+
+    isGuid(value: string): boolean{
+        return AppSettings.isGuid(value);
     }
 }

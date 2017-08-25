@@ -16,7 +16,8 @@
                     <span *ngIf="hasError('lastname_Tradingname')" class="help-block">O campo é obrigatório</span>
                 </div>
             </div>
-            <div class="form-group" *ngIf="customer.type == 1">
+
+             <!--<div class="form-group" *ngIf="customer.type == 1">
                 <label for="cpf_Cnpj" class="col-sm-4 control-label">CPF</label>
                 <div class="col-sm-8">
                     <input maxlength="14" disabled="disabled" cpfMask type="text" class="form-control" [(ngModel)]="customer.cpf_Cnpj" placeholder="000.000.000-00" required>
@@ -35,7 +36,9 @@
                 <div class="col-sm-8">
                     <input type="text" class="form-control" formControlName="rg_Ie" [(ngModel)]="customer.rg_Ie" disabled>
                 </div>
-            </div>
+            </div>-->
+
+
             <!--<div class="form-group required" *ngIf="customer.type == 1">
                 <label for="gender" class="col-sm-4 control-label">Sexo</label>
                 <div class="col-sm-8">
@@ -61,7 +64,7 @@
             <div class="form-group">
                 <label for="celPhone" class="col-sm-4 control-label">Telefone 2</label>
                 <div class="col-sm-8">
-                    <input phoneMask type="text" class="form-control" formControlName="celPhone" [(ngModel)]="customer.celPhone" placeholder="(00) 00000-0000" required>
+                    <input phoneMask type="text" class="form-control" formControlName="celPhone" [(ngModel)]="customer.celPhone" placeholder="(00) 00000-0000">
                 </div>
             </div>
         </div>

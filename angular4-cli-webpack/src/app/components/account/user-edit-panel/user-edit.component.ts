@@ -38,7 +38,7 @@ export class UserEditComponent implements OnInit {
             email: [''],
             password: [''],
             phone: ['', Validators.required],
-            celPhone: ['', Validators.required],
+            celPhone: [''],
             receivenews: [''],
             gender: [''],
             birthdate: [''],

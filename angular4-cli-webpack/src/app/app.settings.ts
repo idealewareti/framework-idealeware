@@ -128,4 +128,16 @@ export class AppSettings {
         .s
     }
 
+     /**
+     * Valida se um valor é um GUID
+     * 
+     * @static
+     * @param {string} value 
+     * @returns {boolean} 
+     * @memberof AppSettings
+     */
+    public static isGuid(value: string): boolean{
+        return /^[0-9A-Fa-f]{8}[-]?([[0-9A-Fa-f]{4}[-]?){3}[[0-9A-Fa-f]{12}$/.test(value);
+    }
+
 }

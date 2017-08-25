@@ -15,6 +15,7 @@ import { ProductComponent } from './components/product/product.component';
 import { SearchComponent } from './components/search/search.component';
 import { ShowCaseComponent } from './components/showcase/showcase.component';
 import { SignUpComponent } from "app/components/signup/signup.component";
+import { RedirectComponent } from "app/components/redirect/redirect.component";
 
 const appRoutes: Routes = [
     { path: '', component: ShowCaseComponent },
@@ -46,8 +47,9 @@ const appRoutes: Routes = [
     { path: 'orcamento/concluido/:id', component: BudgetFinishComponent },
     { path: 'produto/:id', component: ProductComponent },
     { path: 'recuperar-senha', component: ForgetPasswordComponent },
+    { path: 'recuperar-senha', component: ForgetPasswordComponent },
     { path: ':product', component: ProductComponent },
-    { path: '**', component: ShowCaseComponent }
+    { path: '**', component: RedirectComponent }
       
 ];
 

@@ -13,7 +13,7 @@ export class StrongPasswordDirective{
         const change = changes['forbiddenName'];
         if (change) {
             const val: string | RegExp = change.currentValue;
-            const re = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+            const re = /(?=.*\d)(?=.*[a-z]).{6,}/;
             this.valFn = strongPasswordValidator(re);
         }
         else {

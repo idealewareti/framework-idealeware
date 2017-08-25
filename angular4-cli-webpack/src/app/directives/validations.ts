@@ -70,7 +70,7 @@ export class Validations{
     }
 
     public static strongPassword(password: string): boolean{
-        let regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+        let regex = /(?=.*\d)(?=.*[a-z]).{6,}/;
 
         return regex.test(password);
     }
