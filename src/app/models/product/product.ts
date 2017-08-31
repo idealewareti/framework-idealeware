@@ -115,7 +115,7 @@ export class Product {
     getCoverImage(){
         let image: string;
         if(this.skuBase.picture['showcase']){
-            image =  `${AppSettings.MEDIA_PATH}/products/${this.skuBase.picture.showcase}`;
+            image =  `/static/products/${this.skuBase.picture.showcase}`;
         }
         else{
             image = `/assets/images/no-image.jpg`;

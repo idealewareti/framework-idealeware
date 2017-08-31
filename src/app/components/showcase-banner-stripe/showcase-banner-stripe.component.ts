@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ShowCaseBanner } from "app/models/showcase/showcase-banner";
 import { AppSettings } from "app/app.settings";
+import { Globals } from "app/models/globals";
 
 @Component({
     selector: 'showcase-banner-stripe',
@@ -8,11 +9,13 @@ import { AppSettings } from "app/app.settings";
 })
 export class ShowcaseBannerStripeComponent implements OnInit {
     @Input() banners: ShowCaseBanner[];
-    readonly mediaPath = `${AppSettings.MEDIA_PATH}/showcases/`;
+    mediaPath: string;
     
-    constructor() { }
+    constructor(private globals: Globals) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/showcases/`;
+     }
 
     calcWidthMedium(): number{
         let total: number = this.banners.length

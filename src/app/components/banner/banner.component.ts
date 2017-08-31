@@ -2,6 +2,7 @@ import { Component, Input, OnInit, SimpleChange, OnChanges, OnDestroy } from '@a
 import { Banner } from 'app/models/banner/banner';
 import { BannerService } from 'app/services/banner.service';
 import { AppSettings } from "app/app.settings";
+import { Globals } from "app/models/globals";
 declare var $: any;
 
 @Component({
@@ -15,13 +16,15 @@ export class BannerComponent implements OnChanges {
     @Input() place: number;
     bannersTop: Banner[] = [];
 
-    public readonly mediaPath = AppSettings.MEDIA_PATH + "/banners/";
-    public items: string[] = [];
-    public options = { items: 1, dots: false, navigation: true }
-    public carouselClasses: string[] = ['owl-theme', 'owl-carousel', 'list-style-none'];
+    mediaPath: string;
+    items: string[] = [];
+    options = { items: 1, dots: false, navigation: true }
+    carouselClasses: string[] = ['owl-theme', 'owl-carousel', 'list-style-none'];
 
 
-    constructor(private service: BannerService) { }
+    constructor(private service: BannerService, private globals: Globals) { 
+        this.mediaPath = `${this.globals.store.link}/static/banners/`;
+    }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
 
@@ -30,38 +33,38 @@ export class BannerComponent implements OnChanges {
             switch (this.module) {
                 case 'category':
                     this.service.getBannersFromCategory(this.moduleId, this.place)
-                        .then(banners => {
-                            this.bannersTop = banners;
-                            // this.buildCarousel();
-                        })
-                        .catch(error => console.log(error));
+                    .then(banners => {
+                        this.bannersTop = banners;
+                        // this.buildCarousel();
+                    })
+                    .catch(error => console.log(error));
                     break;
 
                 case 'brand':
                     this.service.getBannersFromBrand(this.moduleId, this.place)
-                        .then(banners => {
-                            this.bannersTop = banners;
-                            // this.buildCarousel();
-                        })
-                        .catch(error => console.log(error));
+                    .then(banners => {
+                        this.bannersTop = banners;
+                        // this.buildCarousel();
+                    })
+                    .catch(error => console.log(error));
                     break;
 
                 case 'group':
                     this.service.getBannersFromGroup(this.moduleId, this.place)
-                        .then(banners => {
-                            this.bannersTop = banners;
-                            // this.buildCarousel();
-                        })
-                        .catch(error => console.log(error));
+                    .then(banners => {
+                        this.bannersTop = banners;
+                        // this.buildCarousel();
+                    })
+                    .catch(error => console.log(error));
                     break;
 
                 default:
                     this.service.getBannersFromCategory(this.moduleId, this.place)
-                        .then(banners => {
-                            this.bannersTop = banners;
-                            // this.buildCarousel();
-                        })
-                        .catch(error => console.log(error));
+                    .then(banners => {
+                        this.bannersTop = banners;
+                        // this.buildCarousel();
+                    })
+                    .catch(error => console.log(error));
                     break;
             }
         }

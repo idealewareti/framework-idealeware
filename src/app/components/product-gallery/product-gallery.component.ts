@@ -12,6 +12,7 @@ import {
 import { ProductPicture } from "app/models/product/product-picture";
 import { AppSettings } from "app/app.settings";
 import { Sku } from "app/models/product/sku";
+import { Globals } from "app/models/globals";
 
 declare var $: any;
 
@@ -26,12 +27,14 @@ export class ProductGalleryComponent implements OnInit {
     @Input() sku: Sku = null;
     coverImg: ProductPicture = null;
     pictures: ProductPicture[] = [];
-    mediaPath: string = `${AppSettings.MEDIA_PATH}/products/`;
+    mediaPath: string;
     private zoomChecked = false;
     
-    constructor() { }
+    constructor(private globals: Globals) { }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/products/`;
+    }
 
     ngAfterViewInit() {}
 

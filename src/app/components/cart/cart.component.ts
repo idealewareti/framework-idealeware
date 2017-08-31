@@ -26,8 +26,8 @@ declare var swal: any;
     templateUrl: '../../views/cart.component.html',
 })
 export class CartComponent {
-    readonly mediaPath = `${AppSettings.MEDIA_PATH}/products/`;
-    readonly mediaPathPaint = `${AppSettings.MEDIA_PATH}/custompaint/`;
+    mediaPath: string;
+    mediaPathPaint: string;
     cartReady: boolean = false;
     buttonLabel: string;
     modality: number = -1;
@@ -43,17 +43,20 @@ export class CartComponent {
     }
 
     ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/products/`;
+        this.mediaPathPaint = `${this.globals.store.link}/static/custompaint/`;
+
         this.manager.getCart()
-            .then((cart) => {
-                this.globals.cart = cart;
-                this.cartReady = true;
-                setInterval(() => {
-                    let c = new Cart(JSON.parse(localStorage.getItem('shopping_cart')));
-                    if(this.globals.cart && (c.totalPurchasePrice != this.globals.cart.totalPurchasePrice))
-                        this.globals.cart = c;
-                }, 3000);
-            })
-            .catch(e => console.log(e));
+        .then((cart) => {
+            this.globals.cart = cart;
+            this.cartReady = true;
+            setInterval(() => {
+                let c = new Cart(JSON.parse(localStorage.getItem('shopping_cart')));
+                if(this.globals.cart && (c.totalPurchasePrice != this.globals.cart.totalPurchasePrice))
+                    this.globals.cart = c;
+            }, 3000);
+        })
+        .catch(e => console.log(e));
 
     }
 

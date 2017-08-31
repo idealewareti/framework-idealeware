@@ -44,7 +44,6 @@ export class UserEditComponent implements OnInit {
             birthdate: [''],
             receivePromotionalAndNews: ['']
         });
-
      }
 
     ngOnInit() { 
@@ -62,7 +61,7 @@ export class UserEditComponent implements OnInit {
                 type: 'error'
             });
             console.log(error);
-        })
+        });
     }
 
     dateToText(date){
@@ -73,10 +72,10 @@ export class UserEditComponent implements OnInit {
         this.customer.birthdate = new Date(this.birthdate.split('-').map((item, index) => Number(item) - index % 2).toString());
     }
 
-    public validCPF() : boolean{
+    validCPF() : boolean{
         return Validations.validCPF(this.customer.cpf_Cnpj);
     }
-    public validCNPJ() : boolean{
+    validCNPJ() : boolean{
         return Validations.validCNPJ(this.customer.cpf_Cnpj);
     }
 
@@ -90,7 +89,7 @@ export class UserEditComponent implements OnInit {
         return (this.userEditForm.controls[key].touched && this.userEditForm.controls[key].invalid);
     }
 
-    public updateAccount(event){
+    updateAccount(event){
         event.preventDefault();
 
         if(this.userEditForm.invalid){
@@ -102,24 +101,22 @@ export class UserEditComponent implements OnInit {
         }
         else{
             this.service.updateCustomer(this.customer)
-                .then(customer => {
-                    swal({
-                        title: 'Dados Cadastrais atualizados',
-                        text: 'Seu cadastro foi atualizado',
-                        type: 'success'
-                    })
-                    this.service.updateUserOnStorage(customer);
-                    this.parentRouter.navigateByUrl(`/conta/home`);
+            .then(customer => {
+                swal({
+                    title: 'Dados Cadastrais atualizados',
+                    text: 'Seu cadastro foi atualizado',
+                    type: 'success'
                 })
-                .catch(error => {
-                    swal({
-                        title: 'Erro ao atualizar o cadastro',
-                        text: error.text(),
-                        type: 'error'
-                    })
-                });
+                this.service.updateUserOnStorage(customer);
+                this.parentRouter.navigateByUrl(`/conta/home`);
+            })
+            .catch(error => {
+                swal({
+                    title: 'Erro ao atualizar o cadastro',
+                    text: error.text(),
+                    type: 'error'
+                })
+            });
         }
-
     }
-    
 }

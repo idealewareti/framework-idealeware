@@ -8,6 +8,7 @@ import { CustomPaintCombination } from "app/models/custom-paint/custom-paint-com
 import { CartManager } from "app/managers/cart.manager";
 import { Store } from "app/models/store/store";
 import { StoreService } from "app/services/store.service";
+import { Globals } from "app/models/globals";
 
 declare var swal: any;
 
@@ -23,7 +24,7 @@ export class CustomPaintBaseComponent implements OnInit {
     optionId: string;
     modality: number = 1;
     paints: CustomPaintCombination[] = [];
-    readonly mediaPath: string = AppSettings.MEDIA_PATH + '/custompaint';
+    mediaPath: string;
     private store: Store;
 
     constructor(
@@ -33,18 +34,21 @@ export class CustomPaintBaseComponent implements OnInit {
         private route: ActivatedRoute,
         private parentRouter: Router,
         private manager: CartManager,
+        private globals: Globals
 
     ) { }
 
     ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/custompaint`;
+
         this.route.params
-            .map(params => params)
-            .subscribe((params) => {
-                this.manufacuterId = params['manufacturer'];
-                this.colorCode = params['color'];
-                this.optionId = params['option'];
-                this.getManufacturer(this.manufacuterId);
-                this.getPaints(this.manufacuterId, this.colorCode, this.optionId);
+        .map(params => params)
+        .subscribe((params) => {
+            this.manufacuterId = params['manufacturer'];
+            this.colorCode = params['color'];
+            this.optionId = params['option'];
+            this.getManufacturer(this.manufacuterId);
+            this.getPaints(this.manufacuterId, this.colorCode, this.optionId);
         });
     }
 

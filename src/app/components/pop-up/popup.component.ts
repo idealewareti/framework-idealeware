@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewChecked } from "@angular/core";
 import { PopUp } from "app/models/popup/popup";
 import { PopUpService } from "app/services/pop-up.service";
 import { AppSettings } from "app/app.settings";
+import { Globals } from "app/models/globals";
 
 declare var $: any;
 
@@ -12,25 +13,28 @@ declare var $: any;
 })
 export class PopUpComponent implements OnInit {
     popUpAssortment: PopUp = null;
-    public readonly mediaPath = AppSettings.MEDIA_PATH + "/popups/";
+    mediaPath: string;
     private popupEnabled: boolean = false;
     
     constructor(
         private service: PopUpService,
+        private globals: Globals
     ) { }
 
     ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/popups/`;
+
         this.getPopUp();
     }
 
     getPopUp() {
         this.service.getPopUp()
-            .then(response => {
-                if(response.id)
-                    this.popUpAssortment = response;
-                else this.popUpAssortment = null;
-            })
-            .catch(error => console.log(error));
+        .then(response => {
+            if(response.id)
+                this.popUpAssortment = response;
+            else this.popUpAssortment = null;
+        })
+        .catch(error => console.log(error));
     }
 
 
@@ -49,7 +53,6 @@ export class PopUpComponent implements OnInit {
                     $('#popUpModal').fadeOut();
                 });
             });
-
         }
     }
 }

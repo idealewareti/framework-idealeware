@@ -3,6 +3,7 @@ import { EnumStoreModality } from "app/enums/store-modality.enum";
 
 export class Store {
     domain: string;
+    link: string;
     logo: string;
     companyName: string;
     tradingName: string;

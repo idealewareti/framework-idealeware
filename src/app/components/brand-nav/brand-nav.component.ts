@@ -4,6 +4,7 @@ import {HttpClient} from 'app/helpers/httpclient';
 import {AppSettings} from 'app/app.settings';
 import {Brand} from 'app/models/brand/brand';
 import {BrandService} from 'app/services/brand.service';
+import { Globals } from "app/models/globals";
 
 declare var $: any;
 
@@ -17,15 +18,18 @@ export class BrandNavComponent {
 
     allBrands: Brand[] = [];
 	brands: Brand[] = [];
+	mediaPath: string;
 
-    constructor(private service: BrandService){}
+    constructor(private service: BrandService, private globals: Globals){}
 
 	ngOnInit() {
+		this.mediaPath = `${this.globals.store.link}/static/brands`;
+
 		this.service.getAll()
 		.then(brands => {
 			this.allBrands = brands;
 			this.removeBrandWithoutPicture();
-			this.brands.forEach(brand => brand.picture = `${AppSettings.MEDIA_PATH}/brands/${brand.picture}`);
+			this.brands.forEach(brand => brand.picture = `${this.mediaPath}/${brand.picture}`);
 		})
 		.catch(e => console.log(e));
 	}

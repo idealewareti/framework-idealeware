@@ -60,9 +60,9 @@ export class CheckoutComponent implements OnInit {
     private methodType: number;
     private token: string;
 
-    public readonly mediaPath = `${AppSettings.MEDIA_PATH}/products/`;
-    public readonly mediaPathPayments = `${AppSettings.MEDIA_PATH}/payments/`;
-    public readonly mediaPathPaint = `${AppSettings.MEDIA_PATH}/custompaint/`;
+    mediaPath: string;
+    mediaPathPayments: string;
+    mediaPathPaint: string;
     public readonly paymentMethodTypes = AppTexts.PAYMENT_METHOD_TYPES;
 
     showAddresses: boolean = false;
@@ -98,6 +98,10 @@ export class CheckoutComponent implements OnInit {
     ngOnInit() { 
         this.storeService.getInfo()
         .then(store => {
+            this.mediaPath = `${store.link}/static/products/`;
+            this.mediaPathPayments = `${store.link}/static/payments/`;
+            this.mediaPathPaint = `${store.link}/static/custompaint/`;
+
             if (store.modality == 0) {
                 this.parentRouter.navigateByUrl('/orcamento');
             }
@@ -295,6 +299,7 @@ export class CheckoutComponent implements OnInit {
 
     placeOrder(event) {
         event.preventDefault();
+        $('#btn_place-order').button('loading');
 
         if (!this.checkoutIsValid()) {
             $('#btn_place-order').button('reset');
@@ -302,19 +307,18 @@ export class CheckoutComponent implements OnInit {
         }
 
         if (!this.validChangeFor()) {
-            swal({
-                title: 'Valor inválido',
-                text: 'O valor para troco deve ser maior do que o valor total da compra',
-                type: 'warning',
-                confirmButtonText: 'OK'
-            });
+            swal('Valor inválido','O valor para troco deve ser maior do que o valor total da compra','warning');
             $('#btn_place-order').button('reset');
+            return;
+        }
 
+        if(!this.getPaymentTypeSelected().name){
+            swal('Nenhuma forma de pagamento selecionada', 'Não foi possível realizar o pedido', 'error');
+            $('#btn_place-order').button('reset');
             return;
         }
 
         let cartId = localStorage.getItem('cart_id');
-        $('#btn_place-order').button('loading');
 
         /* Pagamento Offline */
         if (this.paymentSelected.type == 2) {

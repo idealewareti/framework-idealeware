@@ -18,8 +18,8 @@ declare var toastr: any;
 })
 export class AddressEditComponent implements OnInit {
     @Input() tabId: string;
-    public readonly states = AppTexts.BRAZILIAN_STATES;
-    public readonly addressTypes = AppTexts.ADDRESS_TYPES;
+    readonly states = AppTexts.BRAZILIAN_STATES;
+    readonly addressTypes = AppTexts.ADDRESS_TYPES;
     myForm: FormGroup;
     address: CustomerAddress;
     isEdit: boolean = false;
@@ -121,7 +121,7 @@ export class AddressEditComponent implements OnInit {
             });
     }
 
-    public getDne(event) {
+    getDne(event) {
         event.preventDefault();
         if (this.address != null && this.address.zipCode) {
             toastr['info']('Localizando o endereço');

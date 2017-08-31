@@ -30,7 +30,6 @@ const appRoutes: Routes = [
     { path: 'checkout', component: CheckoutComponent, data: { name: 'Checkout'} },
     { path: 'checkout/concluido/:id', component: CheckoutFinishComponent },
     { path: 'compare', component: CompareComponent },
-    { path: 'conta', loadChildren: 'app/components/account/account.module#AccountModule' },
     { path: 'corespersonalizadas', loadChildren: 'app/components/custom-paint/custom-paint.module#CustomPaintModule' },
     { path: 'grupo/:id/:nicename', component: SearchComponent    },
     { path: 'buscar', component: SearchComponent },

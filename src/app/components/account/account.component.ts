@@ -65,7 +65,6 @@ export class AccountComponent{
                 this.actual = { module: 'home', title: 'Minha Conta' };
             }
             AppSettings.setTitle(this.actual.title, this.titleService);
-
         });
 
         this.storeService.getInfo()

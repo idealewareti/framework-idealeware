@@ -2,6 +2,7 @@ import { Component, OnChanges, Input, SimpleChange } from "@angular/core";
 import { Banner } from "app/models/banner/banner";
 import { AppSettings } from "app/app.settings";
 import { BannerService } from "app/services/banner.service";
+import { Globals } from "app/models/globals";
 
 @Component({
     moduleId: module.id,
@@ -14,9 +15,11 @@ export class BannerSideComponent implements OnChanges {
     @Input() place: number;
     bannersSide: Banner[] = [];
 
-    public readonly mediaPath = AppSettings.MEDIA_PATH + "/banners/";
+    mediaPath: string;
 
-    constructor(private service: BannerService) { }
+    constructor(private service: BannerService, private globals: Globals) {
+        this.mediaPath = `${this.globals.store.link}/static/banners/`;
+     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
 
@@ -24,26 +27,26 @@ export class BannerSideComponent implements OnChanges {
             switch (this.module) {
                 case 'category':
                     this.service.getBannersFromCategory(this.moduleId, this.place)
-                        .then(banners => this.bannersSide = banners)
-                        .catch(error => console.log(error));
+                    .then(banners => this.bannersSide = banners)
+                    .catch(error => console.log(error));
                     break;
 
                 case 'brand':
                     this.service.getBannersFromBrand(this.moduleId, this.place)
-                        .then(banners => this.bannersSide  = banners)
-                        .catch(error => console.log(error));
+                    .then(banners => this.bannersSide  = banners)
+                    .catch(error => console.log(error));
                     break;
 
                 case 'group':
                     this.service.getBannersFromGroup(this.moduleId, this.place)
-                        .then(banners => this.bannersSide  = banners)
-                        .catch(error => console.log(error));
+                    .then(banners => this.bannersSide  = banners)
+                    .catch(error => console.log(error));
                     break;
 
                 default:
                     this.service.getBannersFromCategory(this.moduleId, this.place)
-                        .then(banners => this.bannersSide  = banners)
-                        .catch(error => console.log(error));
+                    .then(banners => this.bannersSide  = banners)
+                    .catch(error => console.log(error));
                     break;
             }
         }

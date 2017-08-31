@@ -45,7 +45,7 @@ export class AddressPanelComponent implements OnInit {
         else return false;
     }
 
-    public handleAdressDeleted(event)
+    handleAdressDeleted(event)
     {
         let address = new CustomerAddress(event);
         let index = this.addresses.findIndex(a => a.id == address.id);

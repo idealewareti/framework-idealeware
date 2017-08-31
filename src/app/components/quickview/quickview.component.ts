@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Product } from "app/models/product/product";
 import { Router } from "@angular/router";
 import { AppSettings } from "app/app.settings";
+import { Globals } from "app/models/globals";
 
 declare var $: any;
 
@@ -14,12 +15,14 @@ declare var $: any;
 export class QuickViewComponent implements OnInit {
     
     @Input() product: Product;
-    mediaPath: string = AppSettings.MEDIA_PATH + '/products/';
+    mediaPath: string;
     promotionalPrice: number = 0;
     
-    constructor(private parentRouter: Router) { }
+    constructor(private parentRouter: Router, private globals: Globals) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/products/`;
+     }
 
     open(event, id){
         this.parentRouter.navigateByUrl(`/produto/${id}/${this.product.niceName}`);

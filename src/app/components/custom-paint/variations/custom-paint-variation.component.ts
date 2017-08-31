@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { CustomPaintManufacturer } from "app/models/custom-paint/custom-paint-manufacturer";
 import { CustomPaintVariation } from "app/models/custom-paint/custom-paint-variation";
 import { CustomPaintOption } from "app/models/custom-paint/custom-paint-option";
+import { Globals } from "app/models/globals";
 
 declare var swal: any;
 
@@ -21,23 +22,26 @@ export class CustomPaintVariationComponent implements OnInit {
     colorCode: string;
     variation: CustomPaintVariation = new CustomPaintVariation();
     optionSelected: CustomPaintOption = null;
-    readonly mediaPath = `${AppSettings.MEDIA_PATH}/custompaint/`;
+    mediaPath: string;
 
     constructor(
         private service: CustomPaintService, 
         private titleService: Title,
         private route: ActivatedRoute,
         private parentRouter: Router,
+        private globals: Globals
     ) { }
 
     ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/custompaint/`;
+        
         this.route.params
-            .map(params => params)
-            .subscribe((params) => {
-                this.manufacuterId = params['manufacturer'];
-                this.colorCode = params['color'];
-                this.getManufacturer(this.manufacuterId);
-                this.getVariation(this.manufacuterId);
+        .map(params => params)
+        .subscribe((params) => {
+            this.manufacuterId = params['manufacturer'];
+            this.colorCode = params['color'];
+            this.getManufacturer(this.manufacuterId);
+            this.getVariation(this.manufacuterId);
         });
     }
 

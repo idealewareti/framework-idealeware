@@ -6,6 +6,7 @@ import { PaymentMethod } from "app/models/payment/payment-method";
 import { AppSettings } from "app/app.settings";
 import { PaymentService } from "app/services/payment.service";
 import { PaymentMethodTypeEnum } from "app/enums/payment-method-type.enum";
+import { Globals } from "app/models/globals";
 
 @Component({
     selector: 'mundipagg-bankslip',
@@ -20,12 +21,14 @@ export class MundipaggBankslipComponent implements OnInit {
 
     paymentSelected: Payment = new Payment();
     methodSelected: PaymentMethod = new PaymentMethod();
-    readonly mediaPathPayments = `${AppSettings.MEDIA_PATH}/payments/`;
+    mediaPathPayments: string;
     private methodType: PaymentMethodTypeEnum;
     
-    constructor(private service: PaymentService) { }
+    constructor(private service: PaymentService, private globals: Globals) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.mediaPathPayments = `${this.globals.store.link}/static/payments/`;
+     }
 
     isBankSlip(){
         if(this.methodType == PaymentMethodTypeEnum.BankSlip)

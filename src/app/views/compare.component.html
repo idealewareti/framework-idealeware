@@ -10,7 +10,7 @@
                                 <td *ngFor="let product of products">
                                     <span class="thumb text-center">
                                         <a [routerLink]="['/produto', product.skuBase.id]" [attr.title]="product.name">
-                                            <img [attr.src]="product.getCoverImage()" [attr.alt]="product.name" />
+                                            <img [attr.src]="getCoverImage(product)" [attr.alt]="product.name" />
                                         </a>
                                     </span>
                                     <h3 class="product-name">

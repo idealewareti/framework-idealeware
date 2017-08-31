@@ -5,6 +5,7 @@ import { Order } from "app/models/order/order";
 import { AppSettings } from "app/app.settings";
 import { OrderStatusEnum } from "app/enums/order-status.enum";
 import { Title } from "@angular/platform-browser";
+import { Globals } from "app/models/globals";
 
 declare var swal: any;
 
@@ -16,18 +17,22 @@ declare var swal: any;
 export class MyOrderPanelComponent implements OnInit {
     @Input() tabId: string;
     order: Order = null;
-    readonly mediaPath = `${AppSettings.MEDIA_PATH}/products/`;
-    readonly mediaPathPaint = `${AppSettings.MEDIA_PATH}/custompaint/`;
+    mediaPath: string;
+    mediaPathPaint: string;
 
     constructor(
         private route:ActivatedRoute, 
         private service: OrderService, 
         private parentRouter: Router,
-        private titleService: Title
+        private titleService: Title,
+        private globals: Globals
     ) { }
 
     ngOnInit() {
         window.scrollTo(0, 0); // por causa das hash url
+        this.mediaPath = `${this.globals.store.link}/static/products/`;
+        this.mediaPathPaint = `${this.globals.store.link}/static/custompaint/`;
+
         this.tabId = this.route.params['value'].id;
         this.service.getOrder(this.tabId)
         .then(order => {
@@ -46,7 +51,7 @@ export class MyOrderPanelComponent implements OnInit {
         })
      }
 
-     public orderPipeline(){
+     orderPipeline(){
          if(this.order.status == OrderStatusEnum.NewOrder || this.order.status == OrderStatusEnum.PendingOrder)
             return 1;
         else if(this.order.status == OrderStatusEnum.ApprovedOrder || this.order.status == OrderStatusEnum.FaturedOrder || this.order.status == OrderStatusEnum.ProcessOrder)

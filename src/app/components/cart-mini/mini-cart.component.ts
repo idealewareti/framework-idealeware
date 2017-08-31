@@ -16,8 +16,8 @@ declare var swal: any;
     templateUrl: '../../views/mini-cart.component.html',
 })
 export class MiniCartComponent {
-    public readonly mediaPath = `${AppSettings.MEDIA_PATH}/products/`;
-    public readonly mediaPathPaint = `${AppSettings.MEDIA_PATH}/custompaint/`;
+    mediaPath: string;
+    mediaPathPaint: string;
     cartReady: boolean = false;
     modality: number = -1;
     showValuesProduct: boolean = false;
@@ -29,6 +29,8 @@ export class MiniCartComponent {
     }
 
     ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/products/`;
+        this.mediaPathPaint = `${this.globals.store.link}/static/custompaint/`;
         this.modality = this.globals.store.modality;
         this.showValuesProduct = this.showValues(this.globals.store);
         this.getProducts();

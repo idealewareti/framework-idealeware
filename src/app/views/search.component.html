@@ -232,7 +232,7 @@
                 </div>
                 <!-- Results -->
                 <div class="col-md-9 col-sm-12 main-content">
-                    <div class="row-order-by clearfix">
+                    <div class="row row-order-by clearfix">
                         <div class="order-by">
                             <form class="form-inline" *ngIf="!loading">
                                 <select *ngIf="totalItens() > 0 && showValues()" class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
@@ -245,13 +245,15 @@
                             </form>
                         </div>
                     </div>
-                    <div class="search-catalog" *ngIf="!loading">
+                    <div class="row search-catalog" *ngIf="!loading">
 
                         <div class="" *ngIf="products">
                             <div class="col-md-4 col-sm-12" *ngFor="let product of products">
                                 <product-grid-item [product]="product" [store]="getStore()" showCompare="true"></product-grid-item>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <!-- paginacao -->
                         <search-pagination *ngIf="numPages > 1" [page]="page" [pagination]="pagination" (pageChanged)="navigate($event)"></search-pagination>
                         <!-- /paginacao -->

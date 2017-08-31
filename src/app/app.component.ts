@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
     private ssl: boolean = false;
     private PagseguroScriptAdded: boolean = false;
     private MercadopagoScriptAdded: boolean = false;
-    public readonly mediaPath = `${AppSettings.MEDIA_PATH}/store`;
+    mediaPath: string;
     institutionals: Institutional[] = [];
     payments: Payment[] = [];
     zipCode: string;
@@ -83,6 +83,7 @@ export class AppComponent implements OnInit {
                 this.getInstitutionals();
                 this.getGoogle();
                 this.showZipcodePopup();
+                this.mediaPath = `${store.link}/static/store`
 
                 if(this.globals.store.modality == EnumStoreModality.Ecommerce)
                     this.getPayments();

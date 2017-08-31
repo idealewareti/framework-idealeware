@@ -8,6 +8,7 @@ import { PaymentMethod } from "app/models/payment/payment-method";
 import { PaymentService } from "app/services/payment.service";
 import { NgProgressService } from "ngx-progressbar";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Globals } from "app/models/globals";
 
 @Component({
     selector: 'mundipagg-creditcard',
@@ -23,7 +24,7 @@ export class MundipaggCreditCardComponent implements OnInit {
     paymentSelected: PaymentSelected = new PaymentSelected();
     methodSelected: PaymentMethod = new PaymentMethod();
     creditCardForm: FormGroup;
-    readonly mediaPathPayments = `${AppSettings.MEDIA_PATH}/payments/`;
+    mediaPathPayments: string;
 
     private regexBrands = {
         Visa: /^4[0-9]{6,}$/,
@@ -36,7 +37,14 @@ export class MundipaggCreditCardComponent implements OnInit {
         Discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/
     }
     
-    constructor(private service: PaymentService, formBuilder: FormBuilder, private loaderService: NgProgressService) {
+    constructor(
+        private service: PaymentService, 
+        formBuilder: FormBuilder, 
+        private loaderService: NgProgressService,
+        private globals: Globals
+    ) {
+        this.mediaPathPayments = `${this.globals.store.link}/static/payments/`;
+        
         this.creditCardForm = formBuilder.group({
             cardNumber: ['', Validators.required],
             installment: ['', Validators.required],

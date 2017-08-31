@@ -27,7 +27,7 @@ export class BudgetComponent implements OnInit {
     logged: boolean = false;
     private customer: Customer;
     private customer_ip = {};
-    private readonly mediaPath = AppSettings.MEDIA_PATH + "/products/"
+    mediaPath: string;
 
     constructor(
         private route:ActivatedRoute,
@@ -41,7 +41,9 @@ export class BudgetComponent implements OnInit {
         private globals: Globals
     ) { }
 
-    ngOnInit() { 
+    ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/products/`;
+        
         this.storeService.getInfo()
         .then(store => {
             if(store.modality == 1){
@@ -93,7 +95,7 @@ export class BudgetComponent implements OnInit {
         });
     }
 
-    public placeOrder(event){
+    placeOrder(event){
         event.preventDefault();
         $('.btn-checkout').button('loading');
         let cartId = localStorage.getItem('cart_id');
@@ -110,13 +112,13 @@ export class BudgetComponent implements OnInit {
         .catch(error => {
             $('.btn-checkout').button('reset');
             swal({
-                    title: 'Erro ao criar o orçamento',
-                    text: error.text(),
-                    type: 'error',
-                    confirmButtonText: 'OK'
-                });
-                console.log(error);
-        })
+                title: 'Erro ao criar o orçamento',
+                text: error.text(),
+                type: 'error',
+                confirmButtonText: 'OK'
+            });
+            console.log(error);
+    });
     }
 
     isCartEmpty(cart: Cart):boolean{

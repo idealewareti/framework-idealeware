@@ -10,6 +10,7 @@ import { Payment } from "app/models/payment/payment";
 import { PagseguroInstallment } from "app/models/pagseguro/pagseguro-installment";
 import { PaymentMethod } from "app/models/payment/payment-method";
 import { ProductPicture } from "app/models/product/product-picture";
+import { Globals } from "app/models/globals";
 
 declare var $: any;
 declare var PagSeguroDirectPayment: any;
@@ -28,15 +29,20 @@ export class ProductGridItemComponent {
     sku: Sku = new Sku();
     coverImg: string;
     alternativeImg: string;
-    mediaPath: string = `${AppSettings.MEDIA_PATH}/products`;
+    mediaPath: string;
     parcelValue: number;
     price: number = 0;
     promotionalPrice: number = 0;
     private alternative: boolean = false;
 
-    constructor(private parentRouter: Router, private paymentManager: PaymentManager) {}
+    constructor(
+        private parentRouter: Router, 
+        private paymentManager: PaymentManager,
+        private globals: Globals
+    ) {}
 
     ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/products`;
 
         if(!this.product.skuBase.available || this.product.skuBase.stock <= 0){
             let availables: Sku[] = this.product.skus.filter(sku => (sku.stock > 0) && (sku.available));
@@ -48,11 +54,11 @@ export class ProductGridItemComponent {
         else
             this.sku = this.product.skuBase;
 
-        this.coverImg = (this.getCoverImage()['showcase']) ?`${AppSettings.MEDIA_PATH}/products/${this.getCoverImage().showcase}` : '/assets/images/no-image.jpg';
+        this.coverImg = (this.getCoverImage()['showcase']) ?`${this.mediaPath}/${this.getCoverImage().showcase}` : '/assets/images/no-image.jpg';
         this.productUrl = this.getRoute();
         this.price = this.sku.price;
         this.promotionalPrice = this.sku.promotionalPrice;
-        this.alternativeImg = this.sku.alternativePicture['id'] ? `${AppSettings.MEDIA_PATH}/products/${this.sku.alternativePicture.showcase}` : this.coverImg;
+        this.alternativeImg = this.sku.alternativePicture['id'] ? `${this.mediaPath}/${this.sku.alternativePicture.showcase}` : this.coverImg;
 
         this.paymentManager.getInstallments(this.sku)
         .then(payment => {

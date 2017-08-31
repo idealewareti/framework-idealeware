@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, AfterViewInit, ViewChild, AfterViewChecked } from '@angular/core';
 import { ShowCaseBanner } from "app/models/showcase/showcase-banner";
 import { AppSettings } from "app/app.settings";
+import { Globals } from "app/models/globals";
 
 declare var $: any;
 
@@ -14,13 +15,16 @@ export class ShowcaseBannerComponent implements OnInit {
     
     @Input() banners: ShowCaseBanner[];
     
-    public readonly mediaPath = `${AppSettings.MEDIA_PATH}/showcases/`;
-    public items: string[] = [];
-    public options = {items: 1, dots: false, navigation: true}
-    public carouselClasses: string[] = ['owl-theme', 'owl-carousel', 'list-style-none'];
-    constructor() { }
+    mediaPath: string;
+    items: string[] = [];
+    options = {items: 1, dots: false, navigation: true}
+    carouselClasses: string[] = ['owl-theme', 'owl-carousel', 'list-style-none'];
+    
+    constructor(private globals: Globals) { }
 
     ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/showcases/`;
+
         this.banners.forEach(banner => {
             this.items.push(`${this.mediaPath}${banner.fullBanner}`);
         });

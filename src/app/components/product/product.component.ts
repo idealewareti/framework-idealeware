@@ -50,7 +50,7 @@ export class ProductComponent {
     videoSafeUrl: SafeResourceUrl;
     allOptionsSelected: boolean = false;
     coverImg: ProductPicture = new ProductPicture();
-    mediaPath: string = `${AppSettings.MEDIA_PATH}/products/`;
+    mediaPath: string;
     related: RelatedProductGroup = new RelatedProductGroup();
     modality: EnumStoreModality = -1;
     showValuesProduct: boolean = false;
@@ -80,7 +80,7 @@ export class ProductComponent {
     /* Lifecycle events */
     ngOnInit() {
         window.scrollTo(0, 0); // por causa das hash url
-
+        this.mediaPath = `${this.globals.store.link}/static/products/`;
         this.modality = this.globals.store.modality;
         this.showValuesProduct = this.showValues(this.globals.store);
 

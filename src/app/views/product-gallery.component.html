@@ -8,7 +8,7 @@
     <ul *ngIf="pictures.length > 1" id="image-thumb"  class="owl-carousel owl-theme">
         <li class="image-thumb-item" *ngFor="let picture of pictures">
             <a href="#" [attr.data-image]="mediaPath + picture.showcase" [attr.data-zoom-image]="mediaPath + picture.full">
-                <img [attr.id]="picture.id" [attr.src]="mediaPath + picture.thumbnail" />
+                <img [attr.id]="picture.id" [attr.src]="mediaPath + picture.thumbnail" class="img-responsive" />
             </a>
         </li>
     </ul>
