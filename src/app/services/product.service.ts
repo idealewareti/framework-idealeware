@@ -9,9 +9,12 @@ import { NgProgressService } from "ngx-progressbar";
 import { ProductAwaited } from "../models/product-awaited/product-awaited";
 import { ProductRating } from "../models/product-rating/product-rating";
 import { ProductRatingCreate } from "../models/product-rating/product-rating-create";
+import { Token } from "app/models/customer/token";
 
 @Injectable()
 export class ProductService{
+    
+    private token: Token;
     
     constructor(
         private client: HttpClient,
@@ -111,12 +114,21 @@ export class ProductService{
       return new Promise((resolve, reject) => 
         {
             let url = `${AppSettings.API_PRODUCTRATING}/productrating`;
-            this.client.post(url, productRating)
+            this.getToken();
+            this.client.post(url, productRating, this.token)
             .map(res => res.json())
             .subscribe(response => {
                 let productsRating = new ProductRatingCreate(response);
                 resolve(productsRating);
             }, error => reject(error));
         });
+    }
+
+    private getToken(){
+        this.token = new Token();
+        this.token.accessToken = localStorage.getItem('auth');
+        this.token.createdDate = new Date(localStorage.getItem('auth_create'));
+        this.token.expiresIn = Number(localStorage.getItem('auth_expires'));
+        this.token.tokenType = 'Bearer';
     }
 }
