@@ -257,7 +257,7 @@ export class ProductComponent {
             });
         }
         else{
-            this.installment = `em ${this.product.installmentNumber}x de R$ ${this.product.installmentValue.toString().replace('.', ',')}`;
+            this.installment = `em ${this.product.installmentNumber}x de R$ ${this.product.installmentValue.toFixed(2).toString().replace('.', ',')}`;
         }
 
     }

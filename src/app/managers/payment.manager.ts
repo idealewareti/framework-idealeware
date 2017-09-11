@@ -242,7 +242,7 @@ export class PaymentManager{
 
         if(gateway.name.toLowerCase() == 'mundipagg'){
             maxInstallment = method.installment[method.installment.length -1].number;
-            return `${maxInstallment}x de ${method.installment[method.installment.length -1].installmentPrice}`;
+            return `${maxInstallment}x de R$ ${method.installment[method.installment.length -1].installmentPrice.toFixed(2).toString().replace('.', ',')}`;
         }
         else if(gateway.name.toLowerCase() == 'mercadopago'){
             let installment = method.installment[method.installment.length -1].description;
