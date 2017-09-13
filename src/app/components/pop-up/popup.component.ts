@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewChecked } from "@angular/core";
+import { Component, OnInit, AfterContentChecked } from "@angular/core";
 import { PopUp } from "app/models/popup/popup";
 import { PopUpService } from "app/services/pop-up.service";
 import { AppSettings } from "app/app.settings";
@@ -22,9 +22,12 @@ export class PopUpComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.mediaPath = `${this.globals.store.link}/static/popups/`;
-
         this.getPopUp();
+    }
+    
+    ngAfterContentChecked() {
+        if(!this.mediaPath && this.globals.store)        
+            this.mediaPath = `${this.globals.store.link}/static/popups/`;
     }
 
     getPopUp() {

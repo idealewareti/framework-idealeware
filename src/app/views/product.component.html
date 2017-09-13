@@ -43,9 +43,17 @@
                         <p [innerHTML]="product.briefDescription"></p>
                     </div>
 
-
                     <div class="product-variation col-md-12" *ngIf="product.skus.length > 0">
                          <product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></product-variation> 
+                    </div>
+
+                    <div class="product-variation-item" *ngIf="product.selfColor">
+                        <legend class="product-variation-title">Cor selecionada:</legend>
+                        <span class="product-variation-option" *ngIf="!feature"><a href="#" (click)="colorPicker($event)">Nenhuma cor selecionada</a></span>
+                        <span class="product-variation-option" *ngIf="feature">
+                            <span class="self-color-selected" [style.background-color]="selfColor.Hex"></span>
+                        <span class="self-color-text"><a href="#" (click)="colorPicker($event)">{{feature}}</a></span>
+                        </span>
                     </div>
 
                     <div class="clearfix" *ngIf="isProductAvailable()">
@@ -152,6 +160,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="product-extra" *ngIf="product.selfColor">
+        <div class="container">
+            <div class="description">
+                <h3 class="title"><b>SELECIONE A COR</b></h3>
+            </div>
+            <self-color (colorUpdated)="handleFeatureUpdated($event)"></self-color>
         </div>
     </div>
 

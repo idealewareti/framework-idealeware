@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><paleta>
+	<cor codigo="F119" nome="Marshmallow" hex="F1E8E3"/>
+	<cor codigo="V129" nome="Doce Amanhã" hex="F5DED3"/>
+	<cor codigo="F126" nome="Anel de Noivado" hex="F5E9DE"/>
+	<cor codigo="A003" nome="Violoncelo" hex="F1E7D6"/>
+	<cor codigo="A122" nome="Sininho" hex="F7E1C5"/>
+	<cor codigo="A035" nome="Luzes da Cidade" hex="F4EAC5"/>
+	<cor codigo="B050" nome="Verde Supremo" hex="D0E7BB"/>
+	<cor codigo="Z049" nome="Reino da Ilusão" hex="E5EEE4"/>
+	<cor codigo="D016" nome="Eternidade" hex="D6E3D7"/>
+	<cor codigo="F017" nome="Banho de Chuva" hex="DEE3E3"/>
+	<cor codigo="F166" nome="Filme de Amor" hex="E7E1DC"/>
+	<cor codigo="F146" nome="Grinalda" hex="ECE4DF"/>
+	<cor codigo="B007" nome="Noviça" hex="E9E2D9"/>
+	<cor codigo="F097" nome="Pão de Minuto" hex="F2EBD8"/>
+	<cor codigo="V097" nome="Casquinha de Sorvete" hex="EEE3CA"/>
+	<cor codigo="F064" nome="Travesseiro de Pena" hex="EAE7D5"/>
+	<cor codigo="G126" nome="Risco de Giz" hex="ECDED9"/>
+	<cor codigo="B009" nome="Cheia de Charme" hex="EEDBD5"/>
+	<cor codigo="F086" nome="Chantilly" hex="F2E9DE"/>
+	<cor codigo="C004" nome="Palha de Seda" hex="F7E7D6"/>
+	<cor codigo="B125" nome="Calor das Ruas" hex="F8DBB2"/>
+	<cor codigo="A036" nome="Mitologia" hex="F3E9C4"/>
+	<cor codigo="Z054" nome="Maxixe" hex="DBECBB"/>
+	<cor codigo="G045" nome="Verde Plástico" hex="DAEADE"/>
+	<cor codigo="F050" nome="Frescor da Natureza" hex="D8E1D6"/>
+	<cor codigo="F006" nome="Amanhecer Nevado" hex="DBE2E2"/>
+	<cor codigo="F149" nome="Aroma da Noite" hex="E1DBDE"/>
+	<cor codigo="F148" nome="Bodas de Rosa" hex="E7DFE1"/>
+	<cor codigo="F152" nome="Palavras ao Vento" hex="E5DFD7"/>
+	<cor codigo="A030" nome="Espinho de Rosa" hex="F2ECD8"/>
+	<cor codigo="A143" nome="Trufa de Cupuaçu" hex="ECE9DC"/>
+	<cor codigo="V098" nome="Palavras Cruzadas" hex="E4DECC"/>
+	<cor codigo="F144" nome="Sete Pecados" hex="F0E0DB"/>
+	<cor codigo="F132" nome="Beleza Natural" hex="F4DED7"/>
+	<cor codigo="F118" nome="Roupa de Cama" hex="EEE1D6"/>
+	<cor codigo="G089" nome="Organza" hex="FBE0C8"/>
+	<cor codigo="A125" nome="Brioche" hex="F6E2C0"/>
+	<cor codigo="A031" nome="Luz de Inverno" hex="EEE9C9"/>
+	<cor codigo="V058" nome="Chenile" hex="DFE7C1"/>
+	<cor codigo="G043" nome="Pufe" hex="D7EBDC"/>
+	<cor codigo="F043" nome="Atmosfera" hex="E6EDDF"/>
+	<cor codigo="F003" nome="Vestido Longo" hex="DDE4E2"/>
+	<cor codigo="F026" nome="Feitiço Inocente" hex="E2DDDE"/>
+	<cor codigo="F147" nome="Tempos Modernos" hex="E6DDE2"/>
+	<cor codigo="A088" nome="Amor sem Fim" hex="E7DED7"/>
+	<cor codigo="A173" nome="Castanha de Cajú" hex="EFE5D6"/>
+	<cor codigo="A144" nome="Guardanapo de Pano" hex="E9E7D7"/>
+	<cor codigo="F106" nome="Metrópole" hex="E4DDCF"/>
+	<cor codigo="F150" nome="Bella Luna" hex="EBDFDB"/>
+	<cor codigo="G134" nome="Margaridinha Rosa" hex="F7DCD2"/>
+	<cor codigo="F129" nome="Serpentina" hex="F3E4D7"/>
+	<cor codigo="V091" nome="Adormecida" hex="F7E0CC"/>
+	<cor codigo="H082" nome="Faraó" hex="F6E2C0"/>
+	<cor codigo="G073" nome="Creme de Milho" hex="F3EFBF"/>
+	<cor codigo="G058" nome="Baile da Primavera" hex="E4EAC4"/>
+	<cor codigo="F040" nome="Belíssima" hex="CAE7D8"/>
+	<cor codigo="A017" nome="Mergulho no Mar" hex="E3EBD6"/>
+	<cor codigo="G011" nome="Fada" hex="CFE3E3"/>
+	<cor codigo="V151" nome="Hippie Chique" hex="D6CECE"/>
+	<cor codigo="Z026" nome="Sonho Bom" hex="EAE2E5"/>
+	<cor codigo="A149" nome="Incenso de Sândalo" hex="E7E2DA"/>
+	<cor codigo="A166" nome="Cesta de Vime" hex="E9DFCE"/>
+	<cor codigo="A148" nome="Cookie" hex="E9E3D9"/>
+	<cor codigo="G159" nome="Som das Ondas" hex="E5E2DA"/>
+	<cor codigo="F128" nome="Boneca de Luxo" hex="F2E1DE"/>
+	<cor codigo="H093" nome="Céu de Primavera" hex="F8DAC9"/>
+	<cor codigo="F140" nome="Mundo da Fantasia" hex="F4E6DD"/>
+	<cor codigo="G096" nome="Mormaço" hex="F8DAC4"/>
+	<cor codigo="A137" nome="Cordão de Ouro" hex="F9E1A9"/>
+	<cor codigo="B039" nome="Palácio Real" hex="F6EAAA"/>
+	<cor codigo="G066" nome="Grande Jornada" hex="E6E8D1"/>
+	<cor codigo="H039" nome="Artista de Circo" hex="BCE8D7"/>
+	<cor codigo="B058" nome="Caminho do Lago" hex="D4E0CC"/>
+	<cor codigo="V032" nome="Sala de Espelhos" hex="DCE5E1"/>
+	<cor codigo="G025" nome="Lilás Prateado" hex="DDDDE4"/>
+	<cor codigo="G146" nome="Charme de Outono" hex="E6DDE2"/>
+	<cor codigo="A165" nome="Tiramisu" hex="E3DBD3"/>
+	<cor codigo="A172" nome="Crista de Pônei" hex="F0E6D5"/>
+	<cor codigo="A154" nome="Berço" hex="E5E2DB"/>
+	<cor codigo="F164" nome="Tomara que Caia" hex="DEDDD9"/>
+	<cor codigo="A099" nome="Doce Vício" hex="E8D8D7"/>
+	<cor codigo="B110" nome="Festa-Surpresa" hex="F7D5CA"/>
+	<cor codigo="F135" nome="Vestido de Renda" hex="F3E0D4"/>
+	<cor codigo="B124" nome="Sol de Outono" hex="FBDBBF"/>
+	<cor codigo="G081" nome="Tesouro Perdido" hex="F8E9BF"/>
+	<cor codigo="J075" nome="Amarelo Riqueza" hex="F8E182"/>
+	<cor codigo="H071" nome="Teatro de Fantoches" hex="E7E49F"/>
+	<cor codigo="G052" nome="Verde Triunfo" hex="CDEACD"/>
+	<cor codigo="V053" nome="Refúgio Perdido" hex="CAD5C4"/>
+	<cor codigo="V035" nome="História sem Fim" hex="CEE0DC"/>
+	<cor codigo="F021" nome="Presente-Surpresa" hex="DDE0E3"/>
+	<cor codigo="G143" nome="Ilha das Flores" hex="E9D9DD"/>
+	<cor codigo="F101" nome="Aroma de Café" hex="E4DBCC"/>
+	<cor codigo="A006" nome="Dama de Honra" hex="EFE8DA"/>
+	<cor codigo="A159" nome="Sessão de Cinema" hex="DDDBD3"/>
+	<cor codigo="A152" nome="Vento Sul" hex="DEDFDD"/>
+	<cor codigo="F141" nome="Rosedal" hex="F1DBD9"/>
+	<cor codigo="G140" nome="Petúnia Rosa" hex="F8D4CF"/>
+	<cor codigo="F130" nome="Marcha Nupcial" hex="F4E4D9"/>
+	<cor codigo="J084" nome="Luxo" hex="FDD9B3"/>
+	<cor codigo="X022" nome="Realeza" hex="FDE29F"/>
+	<cor codigo="C037" nome="Idade do Ouro" hex="FBE284"/>
+	<cor codigo="S072" nome="Verde Cativante" hex="E2D992"/>
+	<cor codigo="H056" nome="Paraíso Tropical" hex="CCE9B7"/>
+	<cor codigo="Z057" nome="Destino" hex="D6DDD2"/>
+	<cor codigo="B069" nome="Pé de Vento" hex="CFE2DE"/>
+	<cor codigo="Z033" nome="Transatlântico" hex="D8E2EA"/>
+	<cor codigo="Z019" nome="Sal e Pimenta" hex="E1D5D2"/>
+	<cor codigo="F104" nome="Esponja do Mar" hex="E5DCCC"/>
+	<cor codigo="A001" nome="Pérola Aveludada" hex="F1EAD6"/>
+	<cor codigo="A157" nome="Teto do Mundo" hex="E0DFD5"/>
+	<cor codigo="A082" nome="Viagem à Lua" hex="D6DEDD"/>
+</paleta>

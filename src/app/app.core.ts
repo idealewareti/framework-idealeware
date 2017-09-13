@@ -13,7 +13,7 @@ export class AppCore{
     public static getAPI(environment, key: string): string{
         if(environment.production)
             return this.apiProduction(key);
-        else return this.apiStage(key);
+        else return this.apiDevelopment(key);
     }
 
     

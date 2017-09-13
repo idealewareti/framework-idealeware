@@ -12,6 +12,7 @@ import { PaymentMethod } from "app/models/payment/payment-method";
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgProgressService } from "ngx-progressbar";
 import { PaymentSetting } from "app/models/payment/payment-setting";
+import { PagseguroCardBrand } from 'app/models/pagseguro/pagseguro-card-brand';
 
 declare var PagSeguroDirectPayment: any;
 declare var swal: any;
@@ -171,27 +172,43 @@ export class PaymentPagseguroComponent implements OnInit {
         return this.paymentMethods.filter(m => m.code == 1 || m.code == 2);
      }
 
-    getCardBrand(cardnumber: string){
-        for(let k in this.regexBrands){
-            if(this.regexBrands[k].test(cardnumber))
-                return k;
-        }
+    getCardBrand(cardnumber: string): Promise<PagseguroCardBrand>{
+        return new Promise((resolve, reject) => {
+            let bin: string = cardnumber.substring(0, 6);
+            PagSeguroDirectPayment.getBrand({ 
+                cardBin: bin, 
+                success: (response) => {
+                    resolve(new PagseguroCardBrand(response.brand));
+                },
+                error: (response) => { 
+                    console.log(response); 
+                    reject('Cartão Inválido');
+                }
+            });
+        });
+        
     }
 
-    detectCard(event){
-        if(event){
-            let card = event.replace(/-/g, '');
+    detectCard(inputCardNumber: string){
+        if(inputCardNumber){
+            let card = inputCardNumber.replace(/-/g, '');
             if(card.length == 16){
                 this.loaderService.start();
                 toastr['info']('Identificando o cartão');
-                this.paymentSelected.creditCard.creditCardBrand = this.getCardBrand(this.paymentSelected.creditCard.creditCardNumber.replace(/-/g, '')).toLowerCase();
-                this.paymentSelected.creditCard.noInterestInstallmentQuantity = Number.parseInt(this.payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
-                if(this.paymentSelected.creditCard.creditCardBrand){
+
+                this.getCardBrand(this.paymentSelected.creditCard.creditCardNumber.replace(/-/g, ''))
+                .then(brand => {
+                    this.loaderService.done();
+                    this.paymentSelected.creditCard.creditCardBrand = brand.name;
+                    this.paymentSelected.creditCard.noInterestInstallmentQuantity = Number.parseInt(this.payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
                     toastr['success'](`Cartão ${this.paymentSelected.creditCard.creditCardBrand} identificado`);
-                    let cartId = localStorage.getItem('cart_id');
+                    return brand;
+                })
+                .then(() => {
+                    this.loaderService.start();
                     toastr['info']('Obtendo parcelas');
+                    let cartId = localStorage.getItem('cart_id');
                     PagSeguroDirectPayment.getInstallments({
-                        
                         amount: this.cart.totalPurchasePrice,
                         brand: this.paymentSelected.creditCard.creditCardBrand,
                         maxInstallmentNoInterest: this.paymentSelected.creditCard.noInterestInstallmentQuantity,
@@ -216,10 +233,11 @@ export class PaymentPagseguroComponent implements OnInit {
                             this.loaderService.done();
                         }
                     });
-                }
-                else{
+                })
+                .catch(error => {
+                    toastr['error'](error);
                     this.loaderService.done();
-                }
+                });
             }
             else{
                 this.installments = [];
@@ -228,9 +246,7 @@ export class PaymentPagseguroComponent implements OnInit {
                 this.paymentSelected.creditCard = new CreditCard();
                 this.paymentUpdated.emit(this.paymentSelected);
             }
-
         }
-
     }
 
     getInstallmentFreeInterest(): number{

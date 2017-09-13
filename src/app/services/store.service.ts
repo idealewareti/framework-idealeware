@@ -8,9 +8,7 @@ import {Store} from '../models/store/store';
 @Injectable()
 export class StoreService{
 
-    constructor(private client: HttpClient){
-
-    }
+    constructor(private client: HttpClient){}
 
     setUp(){
         if(AppSettings.DOMAIN != localStorage.getItem('store_domain'))

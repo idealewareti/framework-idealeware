@@ -73,6 +73,7 @@ import { QuickViewModule } from './components/quickview/quickview.module';
 import { RelatedProductsModule } from './components/product-related/related-product.module'
 import { SearchPaginationModule } from './components/search-pagination/search-pagination.module';
 import { SearchVehicleModule } from './components/search-vehicle/search-vehicle.module';
+import { SelfColorModule } from './components/self-color/self-color.module';
 import { ServiceModule } from './components/service/service.module';
 import { ShippingCalcModule } from './components/shipping/shipping.module';
 import { ShowcaseBannerModule } from './components/showcase-banner/showcase-banner.module';
@@ -80,7 +81,6 @@ import { ShowcaseBannerHalfModule } from './components/showcase-banner-half/show
 import { ShowcaseBannerStripeModule } from './components/showcase-banner-stripe/showcase-banner-stripe.module';
 import { ShowcaseGroupModule } from './components/showcase-group/showcase-group.module';
 import { WaitLoaderModule } from './components/wait-loader/wait-loader.module'
-
 //  _____                   _   _       _     
 // |  ___|                 | | (_)     | |    
 // | |__ ___ ___  ___ _ __ | |_ _  __ _| |___ 
@@ -135,6 +135,7 @@ import { PopUpService } from './services/pop-up.service';
 import { ProductService } from './services/product.service';
 import { RelatedProductsService } from './services/related-products.service';
 import { SearchService } from './services/search.service';
+import { SelfColorService } from './services/self-color.service';
 import { ServiceService } from './services/service.service';
 import { ShowCaseService } from './services/showcase.service';
 import { StoreService } from './services/store.service';
@@ -203,6 +204,7 @@ import { Globals } from './models/globals';
         routing,
         SearchPaginationModule,
         SearchVehicleModule,
+        SelfColorModule,
         ServiceModule,
         ShippingCalcModule,
         ShowcaseBannerModule,
@@ -261,6 +263,7 @@ import { Globals } from './models/globals';
         ProductService,
         RelatedProductsService,
         SearchService,
+        SelfColorService,
         ServiceService,
         ShowCaseService,
         StoreService,

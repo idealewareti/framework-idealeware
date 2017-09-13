@@ -25,6 +25,7 @@ import { EnumStoreModality } from "app/enums/store-modality.enum";
 import { RelatedProductGroup } from "app/models/related-products/related-product-group";
 import { PaymentManager } from "app/managers/payment.manager";
 import { Globals } from "app/models/globals";
+import { SelfColor } from "app/models/self-color/self-color";
 
 declare var $: any;
 declare var S: any;
@@ -57,6 +58,7 @@ export class ProductComponent {
     totalNote: number = 0;
     notFound: boolean = false;
     installment: string = '';
+    selfColor: SelfColor = null;
 
     @Input() quantity: number = 1;
     @Input() areaSizer: number = 0;
@@ -188,6 +190,12 @@ export class ProductComponent {
         this.allOptionsSelected = event;
     }
 
+    public handleFeatureUpdated(event: SelfColor) {
+        this.selfColor = event;
+        this.feature = `${this.selfColor.code} - ${this.selfColor.name}`;
+        window.scrollTo(0, 0); // por causa das hash url
+    }
+
     setCurrentSku(skuId: string = null) {
         this.allOptionsSelected = true;
         return new Promise((resolve, reject) => {
@@ -210,6 +218,8 @@ export class ProductComponent {
         this.service.getProductBySku(id)
             .then(product => {
                 this.product = product;
+                if(this.product.name.toLowerCase().indexOf('tinta') !== -1 && this.globals.store.domain === 'ecommerce')
+                    this.product.selfColor = true;
                 this.setTitle(this.product, this.sku);
                 this.metaService.addTags([
                     { name: 'title', content: this.product.metaTagTitle },

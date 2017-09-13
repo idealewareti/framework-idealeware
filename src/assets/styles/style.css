@@ -4711,6 +4711,63 @@ body.checkout {
 /*
  ** CUSTOM PAINT 
 */
+.custom-paint-page-details{
+  margin: 20px 0px;
+  box-sizing: border-box;
+}
+
+.custom-paint-page-details .brand-selector{
+    margin: 0 auto 20px;
+    text-align: center;
+}
+
+.custom-paint-page-details .brand-selector img{
+  max-width: 250px;
+  height: 115px;
+  width: auto;
+  margin: 0 auto;
+}
+
+.custom-paint-colors{
+  height: 200px;
+  margin: 25px 0px;
+  width: 100%;
+}
+
+.color-block{
+  width: 40px;
+  height: 25px;
+  border-bottom: 1px solid #fff;
+  border-right: 1px solid #fff;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.custom-paint-colors .color-block{
+  display: block;
+  float: left;
+}
+
+.custom-paint-colors .color-block:hover{
+  border:1px solid #888888;
+}
+
+.selected-color{
+  line-height: 25px;
+  vertical-align:middle;
+}
+
+.selected-color .color-block{
+  vertical-align:middle;
+}
+
+.table-checkout .color-block{
+  display: inline-block;
+  float: none;
+}
+/*
+ ** CUSTOM PAINT 
+*/
 .form-group.required .control-label:after { 
    content:"*";
    color:red;
