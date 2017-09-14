@@ -10,6 +10,8 @@ import { NgProgressService } from "ngx-progressbar";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Globals } from "app/models/globals";
 
+declare var toastr: any;
+
 @Component({
     selector: 'mundipagg-creditcard',
     templateUrl: '../../../views/payment-mundipagg-creditcard.component.html',
@@ -85,19 +87,25 @@ export class MundipaggCreditCardComponent implements OnInit {
         else return true;
     }
 
-    getCardBrand(cardnumber: string){
+    getCardBrand(cardnumber: string): string{
+        let brand: string = null;
         for(let k in this.regexBrands){
-            if(this.regexBrands[k].test(cardnumber.replace(/-/g, '')))
-                return k;
+            if(this.regexBrands[k].test(cardnumber.replace(/-/g, ''))){
+                brand = k;
+            }
         }
+
+        return brand;
     }
     
     detectCard(event){
         if(event){
             let card = event.replace(/-/g, '');
             if(card.length == 16){
+                toastr['info']('Identificando o cartão');
                 this.creditCard.creditCardBrand = this.getCardBrand(this.creditCard.creditCardNumber);
                 if(this.creditCard.creditCardBrand){
+                    toastr['success'](`Cartão ${this.paymentSelected.creditCard.creditCardBrand} identificado`);
                     let cartId = localStorage.getItem('cart_id');
                     this.paymentSelected.creditCard = this.creditCard;
                     this.paymentSelected.payment = this.payment;
@@ -111,6 +119,9 @@ export class MundipaggCreditCardComponent implements OnInit {
                         this.paymentUpdated.emit(this.paymentSelected);
                     })
                     .catch(error => console.log(error));
+                }
+                else{
+                    toastr['error']('Cartão não identificado');
                 }
             }
             else{
