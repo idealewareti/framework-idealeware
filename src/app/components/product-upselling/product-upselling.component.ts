@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewChecked, AfterContentInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, AfterViewChecked, AfterContentInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { Http } from '@angular/http';
 
 import { Product } from 'app/models/product/product';
@@ -14,7 +14,7 @@ declare var $: any;
     selector: 'up-selling',
     templateUrl: '../../views/product-upselling.component.html',
 })
-export class ProductUpSellingComponent implements OnInit {
+export class ProductUpSellingComponent implements OnChanges {
 
     @Input() references: Object[];
     @Input() store: Store;
@@ -22,7 +22,10 @@ export class ProductUpSellingComponent implements OnInit {
 
     constructor(private service: ProductService) { }
 
-    ngOnInit() {
+    ngOnChanges(changes: SimpleChanges) {
+        if(!changes['references'].firstChange)
+            this.destroyCarousel();
+        this.products = [];
         this.getProducts();
     }
 
@@ -50,9 +53,11 @@ export class ProductUpSellingComponent implements OnInit {
     private buildCarousel() {
 
         if (this.products
-            && $('#up-selling-items').children('li').length > 0
+            && this.products.length > 3
+            && $('#up-selling-items').children('li').length > 3
             && $('#up-selling-items').children('.owl-stage-outer').length == 0) {
-            $("#up-selling-items").owlCarousel({
+            
+                $("#up-selling-items").owlCarousel({
                 items: 4,
                 margin: 10,
                 loop: true,

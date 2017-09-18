@@ -18,7 +18,7 @@ export class BreadcrumpComponent implements OnInit {
     ngOnInit() {
         if(this.category.isSet()){
             this.crumps.push(this.category);
-            if(this.category['parentCategoryId']){
+            if(this.category['parentCategoryId'] && this.category.parentCategoryId != '00000000-0000-0000-0000-000000000000'){
                 this.getParent(this.category.parentCategoryId);
             }
         }
@@ -28,7 +28,7 @@ export class BreadcrumpComponent implements OnInit {
         this.service.getCategory(parentCategoryId)
         .then(category => {
             this.crumps.push(category);
-            if(category.parentCategoryId)
+            if(category.parentCategoryId && category.parentCategoryId != '00000000-0000-0000-0000-000000000000')
                 this.getParent(category.parentCategoryId);
             else{
                 this.crumps = this.crumps.reverse();

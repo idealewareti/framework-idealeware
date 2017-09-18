@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewChecked, AfterContentInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, AfterViewChecked, AfterContentInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { Http } from '@angular/http';
 
 import { Product } from 'app/models/product/product';
@@ -14,7 +14,7 @@ declare var $: any;
     selector: 'cross-selling',
     templateUrl: '../../views/product-cross-selling.component.html',
 })
-export class ProductCrossSellingComponent implements OnInit {
+export class ProductCrossSellingComponent implements OnChanges {
 
     @Input() references: Object[];
     @Input() store: Store;
@@ -22,12 +22,15 @@ export class ProductCrossSellingComponent implements OnInit {
 
     constructor(private service: ProductService) { }
 
-    ngOnInit() {
-        this.getProducts();
-    }
-
     ngOnDestroy() {
         this.destroyCarousel();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if(!changes['references'].firstChange)
+            this.destroyCarousel();
+        this.products = [];
+        this.getProducts();
     }
 
     ngAfterViewChecked() {
@@ -50,6 +53,7 @@ export class ProductCrossSellingComponent implements OnInit {
     private buildCarousel() {
 
         if (this.products
+            && this.products.length > 3
             && $('#cross-selling-items').children('li').length > 3
             && $('#cross-selling-items').children('.owl-stage-outer').length == 0) {
 
