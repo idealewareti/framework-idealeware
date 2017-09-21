@@ -41,6 +41,7 @@ export class AppSettings {
     public static API_PRODUCT =             AppCore.getAPI(environment, 'API_PRODUCT');
     public static API_PRODUCTAWAITED =      AppCore.getAPI(environment, 'API_PRODUCTAWAITED');
     public static API_PRODUCTRATING =       AppCore.getAPI(environment, 'API_PRODUCTRATING');
+    public static API_REDIRECT301 =         AppCore.getAPI(environment, 'API_REDIRECT301');
     public static API_RELATEDPRODUCTS =     AppCore.getAPI(environment, 'API_RELATEDPRODUCTS');
     public static API_SEARCH =              AppCore.getAPI(environment, 'API_SEARCH');
     public static API_SERVICE =             AppCore.getAPI(environment, 'API_SERVICE');
@@ -138,6 +139,20 @@ export class AppSettings {
      */
     public static isGuid(value: string): boolean{
         return /^[0-9A-Fa-f]{8}[-]?([[0-9A-Fa-f]{4}[-]?){3}[[0-9A-Fa-f]{12}$/.test(value);
+    }
+
+    /**
+     * Verifica se uma GUID é nula ou zerada
+     * 
+     * @static
+     * @param {string} value 
+     * @returns {boolean} 
+     * @memberof AppSettings
+     */
+    public static isGuidEmpty(value: string): boolean{
+        if(value && value == '00000000-0000-0000-0000-000000000000')
+            return true;
+        return false;
     }
 
 }

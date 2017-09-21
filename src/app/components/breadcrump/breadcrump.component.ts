@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Category} from 'app/models/category/category';
 import {CategoryService} from 'app/services/category.service';
+import { AppSettings } from "app/app.settings";
 
 @Component({
     moduleId: module.id,
@@ -18,7 +19,7 @@ export class BreadcrumpComponent implements OnInit {
     ngOnInit() {
         if(this.category.isSet()){
             this.crumps.push(this.category);
-            if(this.category['parentCategoryId'] && this.category.parentCategoryId != '00000000-0000-0000-0000-000000000000'){
+            if(this.category['parentCategoryId'] && !AppSettings.isGuidEmpty(this.category.parentCategoryId)){
                 this.getParent(this.category.parentCategoryId);
             }
         }
@@ -28,7 +29,7 @@ export class BreadcrumpComponent implements OnInit {
         this.service.getCategory(parentCategoryId)
         .then(category => {
             this.crumps.push(category);
-            if(category.parentCategoryId && category.parentCategoryId != '00000000-0000-0000-0000-000000000000')
+            if(category.parentCategoryId && !AppSettings.isGuidEmpty(category.parentCategoryId))
                 this.getParent(category.parentCategoryId);
             else{
                 this.crumps = this.crumps.reverse();

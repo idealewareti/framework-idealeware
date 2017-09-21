@@ -338,11 +338,14 @@ export class AppComponent implements OnInit {
     }
 
     getMundipaggBrands(){
-        let bankslip: Payment = this.paymentManager.getMundipaggBankslip(this.payments);
-        let creditCard: Payment = this.paymentManager.getMundipaggCreditCard(this.payments);
-
-        let methods: PaymentMethod[] = [];
-        return methods.concat(bankslip.paymentMethods, creditCard.paymentMethods);
+        if(this.paymentManager.hasMundipagg(this.payments)){
+            let bankslip: Payment = this.paymentManager.getMundipaggBankslip(this.payments);
+            let creditCard: Payment = this.paymentManager.getMundipaggCreditCard(this.payments);
+    
+            let methods: PaymentMethod[] = [];
+            return methods.concat((bankslip) ? bankslip.paymentMethods: [], (creditCard) ? creditCard.paymentMethods : []);
+        }
+        else return [];
     }
 
     hasPagSeguro(): boolean{

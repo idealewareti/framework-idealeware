@@ -51,7 +51,8 @@ export class AppCore{
         apis['API_PRODUCT'] =               'https://api-pub-product.idealeware.com.br';
         apis['API_PRODUCTAWAITED'] =        'https://api-pub-productsawaited.idealeware.com.br';
         apis['API_PRODUCTRATING'] =         'https://api-pub-productrating.idealeware.com.br';
-        apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts.idealeware.com.br:1000';
+        apis['API_REDIRECT301'] =           'https://api-pub-redirect301.idealeware.com.br';
+        apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts.idealeware.com.br';
         apis['API_SEARCH'] =                'https://api-pub-search.idealeware.com.br';
         apis['API_SERVICE'] =               'https://api-pub-service.idealeware.com.br';
         apis['API_SHOWCASE'] =              'https://api-pub-showcase.idealeware.com.br';
@@ -93,7 +94,8 @@ export class AppCore{
         apis['API_PRODUCT'] =               'https://api-pub-product-stage.idealeware.com.br';
         apis['API_PRODUCTAWAITED'] =        'https://api-pub-productsawaited-stage.idealeware.com.br';
         apis['API_PRODUCTRATING'] =         'https://api-pub-productrating-stage.idealeware.com.br';
-        apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts-stage.idealeware.com.br:1000';
+        apis['API_REDIRECT301'] =           'https://api-pub-redirect301-stage.idealeware.com.br';
+        apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts-stage.idealeware.com.br';
         apis['API_SEARCH'] =                'https://api-pub-search-stage.idealeware.com.br';
         apis['API_SERVICE'] =               'https://api-pub-service-stage.idealeware.com.br';
         apis['API_SHOWCASE'] =              'https://api-pub-showcase-stage.idealeware.com.br';
@@ -135,7 +137,8 @@ export class AppCore{
         apis['API_PRODUCT'] =               'https://api-pub-product.hmg.idealeware.com.br';
         apis['API_PRODUCTAWAITED'] =        'https://api-pub-productsawaited.hmg.idealeware.com.br';
         apis['API_PRODUCTRATING'] =         'https://api-pub-productrating.hmg.idealeware.com.br';
-        apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts.hmg.idealeware.com.br:1000';
+        apis['API_REDIRECT301'] =           'https://api-pub-redirect301.hmg.idealeware.com.br';
+        apis['API_RELATEDPRODUCTS'] =       'https://api-pub-relatedproducts.hmg.idealeware.com.br';
         apis['API_SEARCH'] =                'https://api-pub-search.hmg.idealeware.com.br';
         apis['API_SERVICE'] =               'https://api-pub-service.hmg.idealeware.com.br';
         apis['API_SHOWCASE'] =              'https://api-pub-showcase.hmg.idealeware.com.br';
@@ -175,7 +178,8 @@ export class AppCore{
             apis['API_PRODUCT'] =               'https://api-pub-product.idealeware.com.br';
             apis['API_PRODUCTAWAITED'] =        'https://api-pub-productsawaited.idealeware.com.br';
             apis['API_PRODUCTRATING'] =         'https://api-pub-productrating.idealeware.com.br';
-            apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts.idealeware.com.br:1000';
+            apis['API_REDIRECT301'] =           'https://api-pub-redirect301.idealeware.com.br';
+            apis['API_RELATEDPRODUCTS'] =       'https://api-pub.relatedproducts.idealeware.com.br';
             apis['API_SEARCH'] =                'https://api-pub-search.idealeware.com.br';
             apis['API_SERVICE'] =               'https://api-pub-service.idealeware.com.br';
             apis['API_SHOWCASE'] =              'https://api-pub-showcase.idealeware.com.br';

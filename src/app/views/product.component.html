@@ -10,7 +10,6 @@
 
 <main role="main" class="product-page" *ngIf="product && getStore() && !isMobile()">
     
-    
     <div class="product-page-details">
         <div class="container">
             <div class="bread-crumb">
@@ -42,8 +41,12 @@
                     <div class="product-short-description col-md-12">
                         <p [innerHTML]="product.briefDescription"></p>
                     </div>
+                    
+                    <div class="product-variation col-md-12">
+                        <related-products *ngIf="isProductRelated()" [relatedProducts]="related" [product]="product" (productUpdated)="handleProductUpdated($event)"></related-products>
+                    </div>
 
-                    <div class="product-variation col-md-12" *ngIf="product.skus.length > 0">
+                    <div class="product-variation col-md-12" *ngIf="!isProductRelated() && product.skus.length > 0">
                          <product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></product-variation> 
                     </div>
 

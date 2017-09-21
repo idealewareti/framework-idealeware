@@ -31,7 +31,7 @@ export class RelatedProductsService{
 
     getRelatedProductGroupById(id: string): Promise<RelatedProductGroup>{
         return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_RELATEDPRODUCTS}/group/${id}`;
+            let url = `${AppSettings.API_RELATEDPRODUCTS}/RelatedProducts/group/${id}`;
             this.client.get(url)
             .map(res => res.json())
             .subscribe(response => {

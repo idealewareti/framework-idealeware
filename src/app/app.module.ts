@@ -133,6 +133,7 @@ import { OrderService } from './services/order.service';
 import { PaymentService } from './services/payment.service';
 import { PopUpService } from './services/pop-up.service';
 import { ProductService } from './services/product.service';
+import { Redirect301Service } from './services/redirect301.service';
 import { RelatedProductsService } from './services/related-products.service';
 import { SearchService } from './services/search.service';
 import { SelfColorService } from './services/self-color.service';
@@ -261,6 +262,7 @@ import { Globals } from './models/globals';
         PaymentManager,
         PopUpService,
         ProductService,
+        Redirect301Service,
         RelatedProductsService,
         SearchService,
         SelfColorService,

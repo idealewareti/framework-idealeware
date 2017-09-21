@@ -3,8 +3,8 @@
     <div class="container">
         <ul *ngIf="this.brands.length > 4" class="list-style-none owl-carousel owl-theme">
             <li *ngFor="let brand of brands">
-                <a [routerLink]="['/marcas/' + brand.id + '/' + brand.niceName]" title="{{brand.name}}" [ngStyle]="{'background-image': 'url(' + brand.picture + ') '}">
-                    {{brand.name}}
+                <a [routerLink]="['/marcas/' + brand.id + '/' + brand.niceName]" title="{{brand.name}}">
+                    <img [attr.src]="brand.picture" class="img-responsive" [attr.alt]="brand.name">
                 </a>
             </li>
         </ul>

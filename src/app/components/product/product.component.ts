@@ -186,6 +186,13 @@ export class ProductComponent {
             this.open(null, event.id);
     }
 
+    handleProductUpdated(event: Product){
+        this.product = event;
+        this.sku = event.skuBase;
+        this.setCurrentSku(this.sku.id);
+        this.location.replaceState(`/${this.product.niceName}-${this.sku.id}`);
+    }
+
     handleOptionChanged(event: boolean) {
         this.allOptionsSelected = event;
     }
@@ -228,11 +235,15 @@ export class ProductComponent {
                 if (product.video.videoEmbed)
                     this.videoSafeUrl = this.videoURL();
                 this.setCurrentSku(id);
-                if(this.isProductRelated())
-                    return this.relatedService.getRelatedProductGroupById(this.product.relatedProductsId);
-            })
-            .then(relatedProducts => {
-                this.related = relatedProducts;
+                if(this.isProductRelated()){
+                    this.relatedService.getRelatedProductGroupById(this.product.relatedProductsId)
+                    .then(related => {
+                        this.related = related;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+                }
             })
             .catch(error => {
                 this.product = null;
@@ -433,7 +444,7 @@ export class ProductComponent {
     }
 
     isProductRelated(): boolean{
-        if(this.product.relatedProductsId)
+        if(!AppSettings.isGuidEmpty(this.product.relatedProductsId))
             return true;
         else return false;
     } 

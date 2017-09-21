@@ -34,16 +34,13 @@ export class RelatedProductsComponent implements OnInit {
         .then(product => {
             this.product = product;
             this.productUpdated.emit(this.product);
-
-        })
-
+        });
     }
 
     isProductSelected(reference: ProductReference): boolean{
-        if(this.product.id == reference.productId)
+        if(this.product.skuBase.id == reference.skuId)
             return true;
         else return false;
     }
-
 
 }

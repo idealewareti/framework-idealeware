@@ -1,6 +1,8 @@
 import { Component, OnInit, AfterContentChecked } from '@angular/core';
 import { Router, ActivatedRoute } from "@angular/router";
 import { Http } from "@angular/http";
+import { Redirect301Service } from 'app/services/redirect301.service';
+import { Globals } from 'app/models/globals';
 
 @Component({
     selector: 'redirect',
@@ -8,8 +10,14 @@ import { Http } from "@angular/http";
 })
 export class RedirectComponent implements OnInit {
     path: string;
+    regexUrl: RegExp = /^https?:\/{2}(www\.)?.+(.com|.net|.org)(.br)?/;
 
-    constructor(private router: Router, private route: ActivatedRoute, private http: Http) { }
+    constructor(
+        private router: Router, 
+        private route: ActivatedRoute, 
+        private globals: Globals,
+        private service: Redirect301Service
+    ) { }
 
     ngOnInit() { 
         this.route.params
@@ -28,16 +36,22 @@ export class RedirectComponent implements OnInit {
     }
     
     redirectTo(path: string){
-        this.http.get('/assets/services/routes.json')
-        .map(res => res.json())
-        .subscribe(routes => {
-            let redirect = routes.find(r => r.path == path.replace(/%2F/g, '/'));
+        path = path.replace(/^redirect/, '');
+        this.service.getAll()
+        .then(routes => {
+
+            routes.forEach(route => {
+                route.redirectFrom = route.redirectFrom.replace(this.regexUrl, '');
+                route.redirectTo = route.redirectTo.replace(this.regexUrl, '');
+            });
+
+            let redirect = routes.find(r => r.redirectFrom == path.replace(/%2F/g, '/'));
             if(redirect)
                 this.router.navigateByUrl(redirect.redirectTo);
             else
                 this.router.navigateByUrl('/');
-
-        }, error => {
+        })
+        .catch(error => {
             console.log(error);
             this.router.navigateByUrl('/');
         });

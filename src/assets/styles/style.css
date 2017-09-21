@@ -794,14 +794,14 @@ input:focus, button:focus {
   filter: grayscale(100%);
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: cover;
+  background-position: fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: 100% auto;
+  background-size: cover;
   color: transparent;
-  width: 220px;
-  height: 50px;
+  /* width: 220px; */
+  /* height: 50px; */
 }
 
 #list-brands ul a:hover {
@@ -810,12 +810,12 @@ input:focus, button:focus {
   filter: grayscale(0);
 }
 
-/*#list-brands ul a {
+#list-brands ul a img{
+  max-width: 150px;
+  max-height: 50px;
   display: block;
   margin: 0 auto;
-  width: 220px;
-  height: auto;
-}*/
+}
 
 
 
@@ -3976,6 +3976,7 @@ body.checkout {
   font-weight: 300;
   color: #999999;
   font-weight: 15px;
+  margin: 0 5px;
   padding: 10px 15px;
   transition: 300ms all;
   position: relative;
