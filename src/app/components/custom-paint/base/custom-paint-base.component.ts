@@ -9,6 +9,7 @@ import { CartManager } from "app/managers/cart.manager";
 import { Store } from "app/models/store/store";
 import { StoreService } from "app/services/store.service";
 import { Globals } from "app/models/globals";
+import { EnumStoreModality } from 'app/enums/store-modality.enum';
 
 declare var swal: any;
 
@@ -16,6 +17,7 @@ declare var swal: any;
     moduleId: module.id,
     selector: 'custom-paint-base',
     templateUrl: '../../../views/custom-paint-base.component.html',
+    styleUrls: ['../../../styles/custom-paint-base.component.css']
 })
 export class CustomPaintBaseComponent implements OnInit {
     manufacturer: CustomPaintManufacturer = new CustomPaintManufacturer();
@@ -25,7 +27,6 @@ export class CustomPaintBaseComponent implements OnInit {
     modality: number = 1;
     paints: CustomPaintCombination[] = [];
     mediaPath: string;
-    private store: Store;
 
     constructor(
         private service: CustomPaintService, 
@@ -40,6 +41,7 @@ export class CustomPaintBaseComponent implements OnInit {
 
     ngOnInit() {
         this.mediaPath = `${this.globals.store.link}/static/custompaint`;
+        this.modality = this.globals.store.modality;
 
         this.route.params
         .map(params => params)
@@ -67,11 +69,6 @@ export class CustomPaintBaseComponent implements OnInit {
         this.service.getPaints(manufacturer, colorCode, optionId)
         .then(paints => {
             this.paints = paints;
-            return this.storeService.getInfo();
-        })
-        .then(store => {
-            this.store = store;
-            this.modality = store.modality;
         })
         .catch(error => {
             console.log(error);
@@ -79,13 +76,11 @@ export class CustomPaintBaseComponent implements OnInit {
     }
 
     showValues(): boolean {
-        if(this.store)
-            return false;
-        else if (this.modality == 1)
+        if (this.modality == EnumStoreModality.Ecommerce)
             return true;
-        else if (this.modality == 0 && this.store.settings.find(s => s.type == 3 && s.status == true)) 
+        else if (this.modality == EnumStoreModality.Budget && this.globals.store.settings.find(s => s.type == 3 && s.status == true)) 
             return true;
-                else return false;
+        else return false;
     }
 
     coverImg(paint: CustomPaintCombination): string{

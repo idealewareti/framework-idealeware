@@ -33,7 +33,9 @@ Pasta/Arquivo            | Descrição
 /src/app/services        |     _Providers do projetos que irão se comunicar com as API's_
 /src/app/styles    			 |			_Folhas de estilo dos componentes_
 /src/app/views 					 |			_HTML das views dos componentes_
-/src/assets			 				 |			_Arquivos estáticos: CSS, Imagens e JS_
+/src/assets			 				 |			_Arquivos estáticos: , Imagens e etc_
+/src/scripts/                   |       _Scripts adicionais da loja_
+/src/styles/                   |       _Estilos CSS da loja_
 
 
 ## Iniciando um server Angular para desenvolvimento

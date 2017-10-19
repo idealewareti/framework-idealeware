@@ -8,6 +8,9 @@ import { PaymentMethod } from "app/models/payment/payment-method";
 import { MercadoPagoError } from "app/models/mercadopago/mercadopago-error";
 import { PaymentSetting } from "app/models/payment/payment-setting";
 import { PagSeguroSimulationResponse } from "app/models/pagseguro/pagseguro-simulation";
+import { EnumPaymentType } from "app/enums/payment-type.enum";
+import { MercadoPagoPaymentMethod } from "app/models/mercadopago/mercadopago-paymentmethod";
+import { MercadoPagoInstallmentResponse } from "app/models/mercadopago/mercadopago-installment-response";
 
 declare var PagSeguroDirectPayment: any;
 
@@ -31,6 +34,22 @@ export class PaymentManager{
     simulateInstallmentsBySkuIdDefault(skuId: string): Promise<Payment>{
         let sessionId = this.getPagSeguroSession();
         return this.service.simulateInstallmentsBySkuIdDefault(skuId, sessionId);
+    }
+
+    simulateInstallmentsByCartId(cartId: string): Promise<Payment[]>{
+        return this.service.simulateInstallments(cartId);
+    }
+
+    getMercadoPagoMethods(): Promise<MercadoPagoPaymentMethod[]>{
+        return this.service.MercadoPagoGetPaymentsMethods();
+    }
+
+    getMercadoPagoPublicKey(): Promise<string>{
+        return this.service.GetMercadoPagoPublicKey();
+    }
+
+    getMercadoPagoInstalments(methodId: string, totalPurchasePrice: number): Promise<MercadoPagoInstallmentResponse>{
+        return this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice);
     }
 
     /*
@@ -102,7 +121,11 @@ export class PaymentManager{
     isMundipaggBankslip(paymentSelected: Payment, payments: Payment[]): boolean{
         let mundipagg = this.getMundipaggBankslip(payments);
         
-        if(paymentSelected && mundipagg && paymentSelected.id == mundipagg.id && mundipagg.paymentMethods[0].name.toLowerCase() == 'boleto' && mundipagg.paymentMethods.length == 1)
+        if(paymentSelected
+            && mundipagg 
+            && paymentSelected.paymentMethods.length > 0
+            && paymentSelected.paymentMethods[0].id == mundipagg.paymentMethods[0].id
+        )
             return true;
         else return false;
     }
@@ -133,7 +156,40 @@ export class PaymentManager{
     }
 
     isMundiPagg(paymentSelected: Payment): boolean{
-        if(paymentSelected.name.toLowerCase() == 'mundipagg')
+        if(paymentSelected && paymentSelected.name && paymentSelected.name.toLowerCase() == 'mundipagg')
+            return true;
+        else return false;
+    }
+
+    getDeliveryPayment(payments: Payment[]): Payment{
+        return payments.find(p => p.type == EnumPaymentType.Offline && p.name.toLowerCase() == 'pagamento na entrega');
+    }
+
+    hasDeliveryPayment(payments: Payment[]): boolean{
+        return (this.getDeliveryPayment(payments) ? true : false);
+    }
+
+    isDeliveryPayment(payment: Payment, payments: Payment[]): boolean{
+        if(this.hasDeliveryPayment(payments) && payment){
+            return (payment.id == this.getDeliveryPayment(payments).id) ? true : false;
+        }
+        else return false
+    }
+
+    getPickUpStorePayment(payments: Payment[]): Payment{
+        return payments.find(p => p.name.toLowerCase() == 'pagamento na loja');
+    }
+
+    hasPickUpStorePayment(payments: Payment[]): boolean{
+        let payment = this.getPickUpStorePayment(payments);
+        if(payment)
+            return true;
+        else return false;
+    }
+
+    isPickUpStorePayment(payment: Payment, payments: Payment[]): boolean{
+        let pickUpStore: Payment = this.getPickUpStorePayment(payments);
+        if(pickUpStore && payment.id == pickUpStore.id)
             return true;
         else return false;
     }
@@ -237,6 +293,10 @@ export class PaymentManager{
     getInstallmentText(gateway: Payment, method: PaymentMethod): string{
         let maxInstallment: number = 0;
         let installmentLimit: PaymentSetting = gateway.settings.find(s => s.name.toLowerCase() == 'installmentlimit');
+
+        if(!method)
+            return null;
+            
         if(installmentLimit)
             method.installment = method.installment.slice(0, Number.parseInt(installmentLimit.value));
 

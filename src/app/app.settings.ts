@@ -10,8 +10,6 @@ export class AppSettings {
 
     public static NAME = AppConfig.NAME;
     public static DOMAIN = AppConfig.DOMAIN;
-    public static ROOT_PATH = AppConfig.ROOT_PATH;
-    public static MEDIA_PATH = AppConfig.MEDIA_PATH;
     public static FACEBOOK_PAGE = AppConfig.FACEBOOK_PAGE;
     public static LOADER_COLOR = AppConfig.LOADER_COLOR;
 

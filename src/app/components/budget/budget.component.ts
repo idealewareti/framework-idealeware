@@ -102,6 +102,7 @@ export class BudgetComponent implements OnInit {
 
         this.manager.setCustomerToCart()
         .then(cart => {
+            this.globals.cart = cart;
             return this.service.createBudget(cartId)
         })
         .then(budget => {

@@ -8,6 +8,7 @@ export class CreditCardMaskDirective {
 
     @HostListener('keyup', ['$event']) inputChanged(event) {
         let creditCardNumber = event.target.value;
+
         if (creditCardNumber) {
             creditCardNumber = creditCardNumber.replace(/\D/g, '');
         }
@@ -20,8 +21,18 @@ export class CreditCardMaskDirective {
             creditCardNumber = creditCardNumber.replace(/^(\d{0,4})(\d{0,4})(\d+)/, '$1-$2-$3')
         }
 
-        else if(creditCardNumber.length > 12 && creditCardNumber.length < 16){
+        else if(creditCardNumber.length > 12 && creditCardNumber.length < 14){
             creditCardNumber = creditCardNumber.replace(/^(\d{0,4})(\d{0,4})(\d{0,4})(\d+)/, '$1-$2-$3-$4')
+        }
+
+        else if(creditCardNumber.length == 14){
+            // Dinners
+            creditCardNumber = creditCardNumber.replace(/^(\d{0,4})(\d{0,6})(\d{0,4})/, '$1-$2-$3')
+        }
+
+        else if(creditCardNumber.length == 15){
+            // American Express
+            creditCardNumber = creditCardNumber.replace(/^(\d{0,4})(\d{0,6})(\d{0,5})/, '$1-$2-$3')
         }
 
         else if(creditCardNumber.length == 16){

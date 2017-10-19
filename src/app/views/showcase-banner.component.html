@@ -2,9 +2,12 @@
     <div class="container">
         <ul class="list-style-none owl-carousel owl-theme">
             <li *ngFor="let banner of banners">
-                <a [attr.href]="(banner.url) ? banner.url : '#'" target="_blank">
+                <a *ngIf="banner.url" [attr.href]="banner.url" target="_blank">
                     <img [attr.src]="mediaPath + banner.fullBanner" [attr.alt]="banner.name" class="img-responsive"/>
                 </a>
+                <span *ngIf="!banner.url">
+                    <img [attr.src]="mediaPath + banner.fullBanner" [attr.alt]="banner.name" class="img-responsive"/>
+                </span>
             </li>
         </ul>
     </div>

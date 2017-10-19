@@ -16,6 +16,10 @@ export class Payment {
 
     constructor(object = null){
         if(object) return this.createFromResponse(object);
+        else{
+            this.id = null;
+            this.name = null;
+        }
     }
 
     public createFromResponse(response): Payment{

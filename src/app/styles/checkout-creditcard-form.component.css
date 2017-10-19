@@ -1,0 +1,34 @@
+.checkout-creditcard-brands{
+    margin: 0 auto;
+    padding: 0;
+    display: table;
+    list-style: none;
+    box-sizing: border-box;
+  }
+  
+  .checkout-creditcard-brands li{
+    float: left;
+    padding: 5px;
+    margin: 0;
+  }
+  
+  .checkout-creditcard-brand{
+    display: block;
+    width: 30px;
+    height: 30px;
+    position:relative;
+    -webkit-filter: opacity(30%);
+    filter: opacity(30%);
+  }
+  
+  .checkout-creditcard-brand.brand-selected{
+    -webkit-filter: opacity(100%);
+    filter: opacity(100%);
+  }
+  
+  .checkout-creditcard-brand img{
+    position:absolute;
+    top:0;
+    bottom:0;
+    margin:auto;
+  }

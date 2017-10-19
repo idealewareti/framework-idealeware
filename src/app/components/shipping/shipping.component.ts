@@ -10,6 +10,7 @@ import { DeliveryInformation } from "app/models/shipping/delivery-information";
 import { Cart } from "app/models/cart/cart";
 import { CartManager } from "app/managers/cart.manager";
 import { NgProgressService } from "ngx-progressbar";
+import { Globals } from 'app/models/globals';
 
 declare var swal: any;
 
@@ -32,7 +33,8 @@ export class ShippingCalcComponent implements OnInit {
     constructor(
         private service: IntelipostService,
         private cartManager: CartManager,
-        private loader: NgProgressService
+        private loader: NgProgressService,
+        private globals: Globals
     ) { }
 
     ngOnInit() {
@@ -68,7 +70,7 @@ export class ShippingCalcComponent implements OnInit {
                         }
                         this.loader.start();
 
-                        let request = new IntelipostRequest(this.cartManager.getSessionId(), AppSettings.NAME, AppSettings.ROOT_PATH, zipCode.toString());
+                        let request = new IntelipostRequest(this.cartManager.getSessionId(), AppSettings.NAME, this.globals.store.link, zipCode.toString());
                         return this.service.getShipping(request);
                     })
                     .then(response => {

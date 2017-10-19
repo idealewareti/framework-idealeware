@@ -92,7 +92,7 @@ export class PaymentService {
         });
     }
 
-    simulateInstallments(cartId): Promise<Payment[]> {
+    simulateInstallments(cartId: string): Promise<Payment[]> {
         return new Promise((resolve, reject) => {
             let url = `${AppSettings.API_PAYMENTS}/payments/PaymentSimulation/Cart/${cartId}`;
             this.getToken();

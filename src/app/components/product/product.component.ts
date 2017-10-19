@@ -49,6 +49,7 @@ export class ProductComponent {
     feature: string = null;
     services: Service[] = [];
     videoSafeUrl: SafeResourceUrl;
+    fileGuideSafeUrl: SafeResourceUrl;
     allOptionsSelected: boolean = false;
     coverImg: ProductPicture = new ProductPicture();
     mediaPath: string;
@@ -232,8 +233,12 @@ export class ProductComponent {
                     { name: 'title', content: this.product.metaTagTitle },
                     { name: 'description', content: this.product.metaTagDescription }
                 ]);
+                
                 if (product.video.videoEmbed)
-                    this.videoSafeUrl = this.videoURL();
+                    this.videoSafeUrl = this.createSafeUrl(this.product.video.videoEmbed);
+                if(product.fileGuide)
+                    this.fileGuideSafeUrl = this.createSafeUrl(`javascript:window.open('${this.mediaPath}${product.fileGuide}');`);
+                
                 this.setCurrentSku(id);
                 if(this.isProductRelated()){
                     this.relatedService.getRelatedProductGroupById(this.product.relatedProductsId)
@@ -249,6 +254,7 @@ export class ProductComponent {
                 this.product = null;
                 console.log(error);
                 this.notFound = true;
+                AppSettings.setTitle('Ocorreu um erro', this.titleService);
             });
     }
 
@@ -397,8 +403,8 @@ export class ProductComponent {
             this.services.push(service);
     }
 
-    videoURL() {
-        return this.sanitizer.bypassSecurityTrustResourceUrl(this.product.video.videoEmbed);
+    createSafeUrl(url: string): SafeResourceUrl{
+        return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
     showValues(store): boolean {

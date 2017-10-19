@@ -1,7 +1,7 @@
 <!-- Parte principal do site -->
 <main role="main" *ngIf="showcase">
-    <showcase-banner [banners]="banners"></showcase-banner>
     <showcase-banner-stripe [banners]="stripeBanners"></showcase-banner-stripe>
+    <showcase-banner [banners]="banners"></showcase-banner>
     <brand-nav></brand-nav>
     <showcase-banner-half [banners]="halfBanners"></showcase-banner-half>
     <div class="container" *ngIf="showcase.groups">

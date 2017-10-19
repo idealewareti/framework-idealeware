@@ -17,7 +17,7 @@
     </div>
 </header>
 <header id="header" *ngIf="getStore() && !isCheckout()">
-    <nav class="nav-top navbar navbar-default hidden-xs">
+    <nav class="nav-top navbar navbar-default hidden-xs hidden-sm">
         <div class="container">
             <div class="pull-left">
                 <span class="phone"><i class="fa fa-phone" aria-hidden="true"></i> Televendas <b>{{getStore().phone}}</b></span>
@@ -40,7 +40,7 @@
         </div>
     </nav>
 
-    <div class="header-bar hidden-xs">
+    <div class="header-bar hidden-xs hidden-sm">
         <div class="container">
             <div class="row">
                 <div class="col-mini-cart pull-right col-padding">
@@ -140,7 +140,7 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-xs-12 visible-xs visible-sm">
+                <div class="col-xs-12 visible-xs visible-sm hidden-md hidden-lg">
                     <hr>
                 </div>
                 <div class="list-footer col-xs-12 col-md-3 footer-call-center">

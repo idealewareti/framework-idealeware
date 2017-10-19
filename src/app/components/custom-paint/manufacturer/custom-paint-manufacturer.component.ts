@@ -25,4 +25,14 @@ export class CustomPaintManufacturerComponent implements OnInit {
         .then(manufacturers => this.manufacturers = manufacturers)
         .catch(error => console.log(error));
     }
+
+
+    getColWidth(): string{
+        if(this.manufacturers.length == 1)
+            return 'col-md-12 col-sm-12';
+        else if(this.manufacturers.length == 2)
+            return 'col-md-6 col-sm-12';
+        else
+            return 'col-md-4 col-sm-12';
+    }
 }

@@ -20,12 +20,9 @@
                             <b><img src="assets/images/icon-filter.svg" alt=""> Filtrar por</b>
                         </div>
                         <ul class="lvl1">
-                            <li class="lvl1-item" *ngFor="let category of filterModel.categories">
+                            <li class="lvl1-item">
                                 <button class="lvl1-link">
                                     Categoria
-                                    <span class="selected">
-                                        {{category.name}}
-                                    </span>
                                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                                 </button>
                                 <div class="lvl2">
@@ -36,33 +33,34 @@
                                                 <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
                                             </div>
                                         </div>
-                                        <ul class="lvl2-items">
-                                            <li class="lvl2-item">
-                                                <label (click)="addFilter($event, 'category', category.id)">
-                                                    <input type="checkbox" [checked]="isChecked('category', category.id)" [value]="category.id" class="v-middle"> 
-                                                    <span class="v-middle">Tudo em <strong>{{category.name}}</strong>
-                                                    </span>
-                                                    <span *ngIf="category.quantity > 0" class="badge">{{category.quantity}}</span>
-                                                </label>
-                                            </li>
-                                            <li class="lvl2-item" *ngFor="let lvl2 of category.children">
-                                                <label (click)="addFilter($event, 'category', lvl2.id)">
-                                                    <input type="checkbox" [checked]="isChecked('category', lvl2.id)" [value]="lvl2.id" class="v-middle"> 
-                                                    <span class="v-middle">{{lvl2.name}}</span>
-                                                    <span *ngIf="lvl2.quantity > 0" class="badge">{{lvl2.quantity}}</span>
-                                                </label>
-                                            </li>
-                                        </ul>
-
+                                        <div class="panel panel-default" *ngFor="let category of categories">
+                                            <div class="panel-heading">{{category.name}}</div>
+                                            <div class="panel-body">
+                                                <ul class="lvl2-items">
+                                                    <li class="lvl2-item">
+                                                        <label (click)="addFilter($event, 'category', category.id)">
+                                                            <input type="checkbox" [checked]="isChecked('category', category.id)" [value]="category.id" class="v-middle"> 
+                                                            <span class="v-middle">Tudo em <strong>{{category.name}}</strong>
+                                                            </span>
+                                                            <span *ngIf="category.quantity > 0" class="badge">{{category.quantity}}</span>
+                                                        </label>
+                                                    </li>
+                                                    <li class="lvl2-item" *ngFor="let lvl2 of category.children">
+                                                        <label (click)="addFilter($event, 'category', lvl2.id)">
+                                                            <input type="checkbox" [checked]="isChecked('category', lvl2.id)" [value]="lvl2.id" class="v-middle"> 
+                                                            <span class="v-middle">{{lvl2.name}}</span>
+                                                            <span *ngIf="lvl2.quantity > 0" class="badge">{{lvl2.quantity}}</span>
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </li>
-                            <li class="lvl1-item" *ngIf="filterModel.brands.length > 0">
+                            <li class="lvl1-item" *ngIf="brands.length > 0">
                                 <button class="lvl1-link">
                                     Marcas
-                                    <span class="selected" *ngIf="filterModel.brands.length > 0">
-                                        <span *ngFor="let selected of filterModel.brands">{{selected.name}} </span>
-                                    </span>
                                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                                 </button>
                                 <div class="lvl2">
@@ -73,7 +71,7 @@
                                         </div>
                                     </div>
                                     <ul class="lvl2-items">
-                                        <li class="lvl2-item" *ngFor="let brand of filterModel.brands">
+                                        <li class="lvl2-item" *ngFor="let brand of brands">
                                             <label (click)="addFilter($event, 'brand', brand.id)">
                                                 <input type="checkbox" [checked]="isChecked('brand', brand.id)" [value]="brand.id" class="v-middle"> <span class="v-middle">{{brand.name}}</span>
                                                 <span *ngIf="brand.quantity > 0" class="badge">{{brand.quantity}}</span>
@@ -82,7 +80,7 @@
                                     </ul>
                                 </div>
                             </li>
-                            <li class="lvl1-item" *ngIf="filterModel.brands.length == 0">
+                            <li class="lvl1-item" *ngIf="brands.length == 0">
                                 <button class="lvl1-link">
                                     Marcas
                                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
@@ -107,9 +105,6 @@
                             <li class="lvl1-item">
                                 <button class="lvl1-link">
                                     Variações
-                                    <span class="selected" *ngIf="filterModel.variations.length > 0">
-                                        <span *ngFor="let selected of filterModel.variations">{{selected.name}}</span>
-                                    </span>
                                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                                 </button>
                                 <div class="lvl2">
@@ -132,9 +127,6 @@
                             <li class="lvl1-item">
                                 <button class="lvl1-link">
                                     Opções
-                                    <span class="selected" *ngIf="filterModel.options.length > 0">
-                                        <span *ngFor="let selected of filterModel.options">{{selected.name}}</span>
-                                    </span>
                                     <i class="fa fa-chevron-right" aria-hidden="true"></i>
                                 </button>
                                 <div class="lvl2">

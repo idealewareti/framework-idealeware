@@ -6,15 +6,20 @@ import { NgProgressService } from "ngx-progressbar";
 import { IntelipostRequest } from "../models/intelipost/intelipost-request";
 import { CartService } from "./cart.service";
 import { Intelipost } from '../models/intelipost/intelipost';
+import { Globals } from 'app/models/globals';
 
 @Injectable()
 export class IntelipostService {
-    constructor(private client: HttpClient, private cartService: CartService) { }
+    constructor(
+        private client: HttpClient, 
+        private cartService: CartService,
+        private globals: Globals
+    ) { }
 
     public getShipping(request: IntelipostRequest): Promise<Intelipost> {
         return new Promise((resolve, reject) => {
             request.pageName = AppSettings.NAME;
-            request.url = AppSettings.ROOT_PATH;
+            request.url = this.globals.store.link;
             request.session = this.cartService.getSessionId();
 
             let cartId = this.cartService.getCartId();

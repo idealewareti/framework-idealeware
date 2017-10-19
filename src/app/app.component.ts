@@ -90,7 +90,10 @@ export class AppComponent implements OnInit {
                 
                 this.facebookSafeUrl = this.getFacebookUrl();
             })
-            .catch(error => console.log(error));
+            .catch(error => {
+                console.log(error);
+                this.router.navigate(['/erro-500']);
+            });
 
     }
 

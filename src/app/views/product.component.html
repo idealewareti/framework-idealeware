@@ -42,11 +42,11 @@
                         <p [innerHTML]="product.briefDescription"></p>
                     </div>
                     
-                    <div class="product-variation col-md-12">
-                        <related-products *ngIf="isProductRelated()" [relatedProducts]="related" [product]="product" (productUpdated)="handleProductUpdated($event)"></related-products>
+                    <div *ngIf="isProductRelated()" class="product-variation col-md-12">
+                        <related-products [relatedProducts]="related" [product]="product" (productUpdated)="handleProductUpdated($event)"></related-products>
                     </div>
 
-                    <div class="product-variation col-md-12" *ngIf="!isProductRelated() && product.skus.length > 0">
+                    <div *ngIf="!isProductRelated() && product.skus.length > 0" class="product-variation col-md-12">
                          <product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></product-variation> 
                     </div>
 
@@ -202,8 +202,9 @@
 
             <div class="fileguide" *ngIf="product.fileGuide">
                 <h3 class="title"><b>MANUAL DO PRODUTO</b></h3>
+                <div class="lineshowcase"></div>
                 <div class="form-group">
-                    <a (click)="downloadGuide($event)" href="#" rel="nofollow" class="btn btn-default">
+                    <a [attr.href]="fileGuideSafeUrl" class="btn btn-default">
                         <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Baixe aqui o manual do produto
                     </a>
                 </div>
@@ -237,7 +238,11 @@
 
                 <div class="product-sku">Cód: <span>{{sku.code}}</span></div>
 
-                <div class="product-variation">
+                <div *ngIf="isProductRelated()" class="product-variation">
+                    <related-products [relatedProducts]="related" [product]="product" (productUpdated)="handleProductUpdated($event)"></related-products>
+                </div>
+
+                <div *ngIf="!isProductRelated() && product.skus.length > 0" class="product-variation">
                      <product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></product-variation> 
                 </div>
 

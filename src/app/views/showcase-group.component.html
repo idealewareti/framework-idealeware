@@ -2,7 +2,7 @@
     <h3 class="title">
         <b>{{group.name}}</b>
     </h3>
-    <ul [attr.id]="'group-' + group.id" class="showcase-items list-style-none" [ngClass]="{'owl-carousel owl-theme': group.products.length > 3}" *ngIf="group.products">
+    <ul [attr.id]="'group-' + group.id" class="showcase-items list-style-none" [ngClass]="{'owl-carousel owl-theme': group.products.length > 1}" *ngIf="group.products">
         <li class="showcase-item" *ngFor="let product of group.products">
             <product-grid-item *ngIf="product.skuBase" [product]="product" [store]="store"></product-grid-item>
         </li>

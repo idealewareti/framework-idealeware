@@ -9,11 +9,11 @@ export class MercadoPagoPayerCost {
     total_amount: number;
 
     constructor(object = null){
-        if(object) return this.createResponse(object);
+        if(object) return this.createFromResponse(object);
     }
 
 
-   createResponse(object): MercadoPagoPayerCost{
+   createFromResponse(object): MercadoPagoPayerCost{
         let model = new MercadoPagoPayerCost();
 
         for(let k in object){

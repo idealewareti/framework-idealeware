@@ -9,11 +9,11 @@ export class MercadoPagoInstallmentResponse {
 
 
     constructor(object = null){
-        if(object) return this.createResponse(object);
+        if(object) return this.createFromResponse(object);
     }
 
 
-   createResponse(object): MercadoPagoInstallmentResponse{
+   createFromResponse(object): MercadoPagoInstallmentResponse{
         let model = new MercadoPagoInstallmentResponse();
 
         for(let k in object){

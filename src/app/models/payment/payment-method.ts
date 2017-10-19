@@ -16,7 +16,13 @@ export class PaymentMethod {
         installment: Installment[] = [];
     
     constructor(object = null){
-        if(object) return this.createFromResponse(object);
+        if(object)
+            return this.createFromResponse(object);
+        else{
+            this.id = null;
+            this.code = null;
+            this.name = null;
+        }
     }
 
     public createFromResponse(response): PaymentMethod{

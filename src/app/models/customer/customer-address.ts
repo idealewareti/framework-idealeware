@@ -16,6 +16,21 @@ export class CustomerAddress{
     constructor(object = null){
         if(object)
             return this.CreateFromResponse(object);
+        else{
+            this.id = null;
+            this.mainAddress = false;
+            this.addressType = null;
+            this.zipCode = null;
+            this.addressLine1 = null;
+            this.addressLine2 = null;
+            this.landmark = null;
+            this.district = null;
+            this.city = null;
+            this.state = null;
+            this.country = null;
+            this.number = null;
+            this.addressName = null;
+        }
     }
 
     public CreateFromResponse(object) : CustomerAddress{

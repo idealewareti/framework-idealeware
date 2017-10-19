@@ -3,11 +3,16 @@ import { CustomerService } from "app/services/customer.service";
 import { Login } from "app/models/customer/login";
 import { CartManager } from "app/managers/cart.manager";
 import { Customer } from "app/models/customer/customer";
+import { Globals } from "app/models/globals";
 
 @Injectable()
 export class CustomerManager{
 
-    constructor(private service: CustomerService, private cartManager: CartManager){}
+    constructor(
+        private service: CustomerService, 
+        private cartManager: CartManager,
+        private globals: Globals
+    ){}
 
     /**
      * Realiza o login do cliente na loja
@@ -27,7 +32,10 @@ export class CustomerManager{
                     resolve(customer)
                 }
                 else{
-                    this.cartManager.setCustomerToCart();
+                    this.cartManager.setCustomerToCart()
+                    .then(cart => {
+                        this.globals.cart = cart;
+                    });
                     resolve(customer)
                 }
             })

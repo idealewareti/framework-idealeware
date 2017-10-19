@@ -13,6 +13,7 @@
                         <li class="showcase-item" *ngFor="let paint of paints">
                             <span  class="border">
                                 <span class="thumb">
+                                    <div class="img-circle pull-right custom-paint-color-sample" [ngStyle]="{'background-color': paint.getColor()}" [attr.title]="paint.color.name + ' ' + paint.color.code"></div>
                                     <a href="javascript:void(0)" [attr.title]="paint.name">
                                         <img [attr.src]="coverImg(paint)" [attr.alt]="paint.name" >
                                     </a>

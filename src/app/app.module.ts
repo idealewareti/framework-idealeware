@@ -26,6 +26,7 @@ import { CartComponent } from './components/cart/cart.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
 import { CheckoutFinishComponent } from "./components/checkout-finish/checkout-finish.component";
 import { CompareComponent } from './components/compare/compare.component';
+import { Error500Component } from './components/500/500.component';
 import { ForgetPasswordComponent } from './components/forget-password/forget-password.component';
 import { InstitutionalComponent } from './components/institutional/institutional.component';
 import { LoginComponent } from './components/login/login.component';
@@ -51,17 +52,16 @@ import { CartShowCaseModule } from './components/cart-showcase/cart-showcase.mod
 import { CategoryNavModule } from './components/category-nav/category-nav.module';
 import { ContactModule } from './components/contact/contact.module';
 import { CouponModule } from './components/coupon/coupon.module';
+import { CheckoutAddressesModule }  from './components/checkout-addresses/checkout-addresses.module';
 import { CheckoutButtonModule } from './components/checkout-button/checkout-button.module';
+import { CheckoutCreditCardFormModule } from './components/checkout-creditcard-form/checkout-creditcard-form.module';
+import { CheckoutPaymentsModule } from './components/checkout-payments/checkout-payments.module'
+import { CheckoutShippingModule } from './components/checkout-shipping/checkout-shipping.module';
 import { GroupModule } from './components/group/group.module';
 import { InstallmentSimulationModule } from './components/installment-simulation/installment-simulation.module';
 import { LoginEmbedModule } from './components/login-embed/login-embed.module';
-import { PaymentMercadoPagoModule } from './components/checkout-payment-mercadopago/payment-mercadopago.module'; 
 import { MiniCartModule } from './components/cart-mini/mini-cart.module';
 import { NewsLetterModule } from './components/newsletter/newsletter.module';
-import { MundiPaggBankslipModule } from './components/checkout-payment-mundipagg/mundipagg-bankslip/mundipagg-bankslip.module';
-import { MundipaggCreditCardModule } from './components/checkout-payment-mundipagg/mundipagg-creditcard/mundipagg-creditcard.module';
-import { PaymentPagseguroModule} from './components/checkout-payment-pagseguro/payment-pagseguro.module';
-import { PaymentPickuUpStoreModule } from './components/checkout-payment-pickupstore/payment-pickupstore.module';
 import { PopUpModule} from './components/pop-up/popup.module';
 import { ProductCrossSellingModule } from './components/product-cross-selling/product-cross-selling.module';
 import { ProductGalleryModule } from './components/product-gallery/product-gallery.module';
@@ -81,6 +81,7 @@ import { ShowcaseBannerHalfModule } from './components/showcase-banner-half/show
 import { ShowcaseBannerStripeModule } from './components/showcase-banner-stripe/showcase-banner-stripe.module';
 import { ShowcaseGroupModule } from './components/showcase-group/showcase-group.module';
 import { WaitLoaderModule } from './components/wait-loader/wait-loader.module'
+
 //  _____                   _   _       _     
 // |  ___|                 | | (_)     | |    
 // | |__ ___ ___  ___ _ __ | |_ _  __ _| |___ 
@@ -170,7 +171,11 @@ import { Globals } from './models/globals';
         BreadcrumpModule,
         CartShowCaseModule,
         CategoryNavModule,
+        CheckoutAddressesModule,
         CheckoutButtonModule,
+        CheckoutCreditCardFormModule,
+        CheckoutPaymentsModule,
+        CheckoutShippingModule,
         CnpjMaskModule,
         ContactModule,
         CouponModule,
@@ -182,14 +187,9 @@ import { Globals } from './models/globals';
         InstallmentSimulationModule,
         LoginEmbedModule,
         MiniCartModule, 
-        MundiPaggBankslipModule,
-        MundipaggCreditCardModule,
         NewsLetterModule,
         NgProgressModule,
         OrderByModule,
-        PaymentMercadoPagoModule,
-        PaymentPagseguroModule,
-        PaymentPickuUpStoreModule,
         PhoneMaskModule,
         PopUpModule,
         ProductCrossSellingModule,
@@ -223,6 +223,7 @@ import { Globals } from './models/globals';
         CheckoutComponent,
         CheckoutFinishComponent,
         CompareComponent,
+        Error500Component,
         ForgetPasswordComponent,
         InstitutionalComponent,
         NotFoundComponent,

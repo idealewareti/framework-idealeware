@@ -28,7 +28,7 @@ export class ShowcaseGroupComponent implements OnInit {
 
     ngAfterViewChecked() {
         if(this.group.products
-		&& $(`#group-${this.group.id}`).children('li').length > 3 
+		&& $(`#group-${this.group.id}`).children('li').length > 1 
 		&& $(`#group-${this.group.id}`).children('.owl-stage-outer').length == 0){
         
             $(`#group-${this.group.id}`).owlCarousel({

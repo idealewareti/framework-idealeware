@@ -49,4 +49,12 @@ export class CustomPaintCombination {
             optionPicture: this.variation.optionPicture
         });
     }
+
+
+    getColor(): string{
+        if(/^\S{6}$/.test(this.color.rgb))
+            return `#${this.color.rgb}`;
+        else
+            return `rgb(${this.color.rgb})`;
+    }
 }

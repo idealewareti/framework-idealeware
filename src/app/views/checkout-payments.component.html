@@ -1,0 +1,70 @@
+<div class="step step-payments step-active">
+    <div class="header">
+        <span class="number">3</span>
+        <span class="text">Formas de Pagamento</span>
+    </div>
+
+    <div class="panel-group" id="accordion-payments" role="tablist" aria-multiselectable="true" *ngIf="payments.length > 0">
+        <div class="panel panel-default" *ngFor="let payment of availablePayments()">
+            <div class="panel-heading" role="tab" [attr.id]="'head-payment-' + getPaymentNicename(payment)">
+                <h4 class="panel-title">
+                    <a (click)="selectPayment(payment, $event)" role="button" data-toggle="collapse" data-parent="#accordion-payments" [attr.href]="'#tab-payment-' + getPaymentNicename(payment)" aria-expanded="true" [attr.aria-controls]="'tab-payment-' + getPaymentNicename(payment)">
+                        {{getPaymentLabel(payment)}}
+                    </a>
+                </h4>
+            </div>
+            <div [attr.id]="'tab-payment-' + getPaymentNicename(payment)" class="panel-collapse collapse" role="tabpanel" [attr.aria-labelledby]="'head-payment-' + getPaymentNicename(payment)">
+                <div class="panel-body" *ngIf="isPickupStore(payment)">
+                    <!-- Pickup Store -->
+                    <div class="alert alert-info">
+                        <p><i class="fa fa-check" aria-hidden="true"></i> O pagamento poderá ser efetuado diretamente com a retirada do seu pedido</p>
+                    </div>  
+                </div>
+
+                <div class="panel-body" *ngIf="isPagseguro(payment)">
+                    <!-- Pagseguro -->
+                    <wait-loader *ngIf="availablePagseguroMethods().length == 0 && !pagseguro_error"></wait-loader>
+                    <div *ngIf="pagseguro_error" class="alert alert-danger" role="alert">
+                        {{pagseguro_error}} <a href="#" (click)="getPagseguroMethods($event)" class="alert-link">Tentar novamente?</a>
+                    </div>
+                    <div class="list-group" >
+                        <a *ngFor="let method of availablePagseguroMethods()" href="" (click)="selectPagseguroMethod(method, $event)" class="list-group-item" [ngClass]="{'active': isPagseguroMethodSelected(method)}">
+                            {{method.label}}
+                        </a>
+                    </div>
+                    <checkout-creditcard-form *ngIf="isPagseguroCreditCard()" (creditCardUpdated)="handleCreditCartUpdated($event)" [pagseguro]="pagseguro" (pagseguroUpdated)="handlePagseguroUpdated($event)" [payment]="payment" ></checkout-creditcard-form>
+                </div>
+
+                <div class="panel-body" *ngIf="isMercadoPago(payment)">
+                    <!-- Mercado Pago -->
+                    <div class="form-group">
+                        <img src="https://www.mercadopago.com/org-img/MLB/design/2015/m_pago/logos/mp_processado_02.png" alt="Mercado Pago" class="img-responsive center-block">
+                    </div>
+                    <wait-loader *ngIf="mercadopago.methods.length == 0 && !mercadopago_error"></wait-loader>
+                    <div *ngIf="mercadopago_error" class="alert alert-danger" role="alert">
+                        {{mercadopago_error}} <a href="#" (click)="getMercadoPagoMethods($event)" class="alert-link">Tentar novamente?</a>
+                    </div>
+                    <div class="list-group" >
+                        <a *ngIf="getMercadoPagoTicket()" href="" (click)="selectMercadoPagoMethod(getMercadoPagoTicket(), $event)" class="list-group-item" [ngClass]="{'active': isMercadoPagoTicket()}">Boleto</a>
+                        <a *ngIf="hasMercadoPagoCreditCards()" href="" (click)="selectMercadoPagoMethod(mercadopago.creditCardType, $event)" class="list-group-item" [ngClass]="{'active': isMercadoPagoCreditCard()}">Cartão de Crédito</a>
+                    </div>
+                    <checkout-creditcard-form *ngIf="isMercadoPagoCreditCard()" (creditCardUpdated)="handleCreditCartUpdated($event)" [mercadopago]="mercadopago"></checkout-creditcard-form>
+                </div>
+
+                <div class="panel-body" *ngIf="isMundipaggBankslip(payment)">
+                    <!-- Boleto Mundipagg -->
+                    <label *ngFor="let method of payment.paymentMethods" href="#" (click)="selectMundipaggMethod(method, $event)" [attr.title]="'Selecione ' + method.name + ' como método de pagamento'">
+                        <i class="fa" [ngClass]="{'fa-square-o': !isMundiPaggMethodSelected(method), 'fa-check-square-o': isMundiPaggMethodSelected(method)}"></i>
+                        <img *ngIf="method.icon" [attr.src]="'assets/images/' + method.icon" [attr.alt]="method.name">
+                        Pagar com boleto
+                    </label>
+                </div>
+
+                <div class="panel-body" *ngIf="isMundipaggCreditCard(payment)">
+                    <!-- Mundipagg Credit Card -->
+                    <checkout-creditcard-form *ngIf="isMundipaggCreditCard()" (creditCardUpdated)="handleCreditCartUpdated($event)" [payment]="payment" [mundipagg]="mundipagg" (mundipaggUpdated)="handleMundipaggUpdated($event)" ></checkout-creditcard-form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

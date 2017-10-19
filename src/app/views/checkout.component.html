@@ -1,5 +1,4 @@
 <main role="main" class="container checkout-page" *ngIf="logged">
-    
     <ul class="checkout-tabs" *ngIf="!isMobile()">
         <li class="is-ok">
             <span class="icon"><img src="assets/images/icon-checkout-identificacao.svg" alt=""></span>
@@ -15,239 +14,19 @@
         </li>
     </ul>
 
-    <div class="row checkout-steps">
+    <div class="row checkout-steps" *ngIf="globals.cart && customer">
         <div class="col-xs-12 col-md-4">
-            <div class="step step-adress">
-                <div class="header">
-                    <span class="number">1</span>
-                    <span class="text">Endereços</span>
-                </div>
-                <div class="content">
-                    <h4>Endereço de Entrega</h4>
-                    <div class="adress-details">
-                        <strong>{{selectedAddressOrDefault().addressName}}</strong>
-                        <p>
-                            {{selectedAddressOrDefault().addressLine1}}
-                            {{(selectedAddressOrDefault().number) ? ', ' + selectedAddressOrDefault().number : ''}}<br>
-                            {{selectedAddressOrDefault().addressLine2}}<br>
-                            {{selectedAddressOrDefault().district}}<br>
-                            {{selectedAddressOrDefault().zipCode}}
-                             -  
-                             {{selectedAddressOrDefault().city + '/' + selectedAddressOrDefault().state}}<br>
-                        </p>
-                    </div>
-                    <div class="select-other text-center">
-                        <a href="#" (click)="showMyAddresses($event)">Selecionar outro</a>
-                    </div>
-                    <div class="step" *ngIf="showAddresses">
-                        <div class="content">
-                            <div class="radio" *ngFor="let address of customer.addresses">
-                                <label for="" (click)="selectThisAddress(address, $event)">
-                                    <strong>{{address.addressName}}</strong>
-                                    <p>
-                                        {{address.addressLine1}}
-                                        {{(address.number) ? ', ' + address.number : ''}}<br>
-                                        {{address.addressLine2}}<br>
-                                        {{address.district}}<br>
-                                        {{address.zipCode}}
-                                        -  
-                                        {{address.city + '/' + address.state}}<br>
-                                    </p>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="content">
-                    <h4>Endereço de Cobrança</h4>
-                    <div class="adress-details">
-                        <strong>{{selectedBillingAddressOrDefault().addressName}}</strong>
-                        <p>
-                            {{selectedBillingAddressOrDefault().addressLine1}}
-                            {{(selectedBillingAddressOrDefault().number) ? ', ' + selectedBillingAddressOrDefault().number : ''}}<br>
-                            {{selectedBillingAddressOrDefault().addressLine2}}<br>
-                            {{selectedBillingAddressOrDefault().district}}<br>
-                            {{selectedBillingAddressOrDefault().zipCode}}
-                             -  
-                             {{selectedBillingAddressOrDefault().city + '/' + selectedBillingAddressOrDefault().state}}<br>
-                        </p>
-                    </div>
-                     <div class="select-other text-center">
-                        <a href="#" (click)="showMyAddresses($event, true)">Selecionar outro</a>
-                    </div>
-                    <div class="step" *ngIf="showBillingAddresses">
-                        <div class="content">
-                            <div class="radio" *ngFor="let address of customer.addresses">
-                                <label for="" (click)="selectThisBillingAddress(address, $event)">
-                                    <strong>{{address.addressName}}</strong>
-                                    <p>
-                                        {{address.addressLine1}}
-                                        {{(address.number) ? ', ' + address.number : ''}}<br>
-                                        {{address.addressLine2}}<br>
-                                        {{address.district}}<br>
-                                        {{address.zipCode}}
-                                        -  
-                                        {{address.city + '/' + address.state}}<br>
-                                    </p>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <a [routerLink]="['/conta/enderecos/novo']" class="btn btn-block btn-default">INSERIR NOVO ENDEREÇO</a>
-                </div>
-            </div>
+            <!-- Coluna Endereços -->
+            <checkout-addresses [addresses]="customer.addresses"></checkout-addresses>
         </div>
         <div class="col-xs-12 col-md-4">
-            <div class="step step-shipping">
-                <div class="header">
-                    <span class="number">2</span>
-                    <span class="text">Opções de Entrega</span>
-                </div>
-                <div class="content" *ngIf="intelipost.content">
-                    <div class="radio" *ngFor="let option of intelipost.content.delivery_options">
-                        <label (click)="addShippingToCart($event, option)">
-                            <i class="fa" [ngClass]="{'fa-square-o': !checkOption(option.delivery_method_name), 'fa-check-square-o': checkOption(option.delivery_method_name)}"></i>
-                             {{option.delivery_method_name}} | até {{option.delivery_estimate_business_days}} dias úteis - {{option.final_shipping_cost |  currencyFormat }}
-                        </label>
-                    </div>
-                    <div class="radio" If="branches.length > 0" *ngFor="let branch of allowPickUpStore()">
-                        <label (click)="addShippingToCart($event, null, branch)">
-                            <i class="fa" [ngClass]="{'fa-square-o': !checkOption(null, branch), 'fa-check-square-o': checkOption(null, branch)}"></i>
-                            Retirar na Loja: {{branch.name}}<br>
-                            {{branch.addressLine1}}, {{branch.number}} {{branch.addressline2}}
-                            {{branch.city}}/{{branch.state}}
-                        </label>
-                    </div>
-                    <p class="alert">
-                        O prazo de envio conta apenas após a aprovação do pagamento.
-                    </p>
-                </div>
-            </div>
-            <div class="step step-payments step-active">
-                <div class="header">
-                    <span class="number">3</span>
-                    <span class="text">Formas de Pagamento</span>
-                </div>
-
-                <div class="panel-group" id="accordion-payments" role="tablist" aria-multiselectable="true" *ngIf="payments.length > 0">
-                    <!--MundiPagg Cartão de Crédito-->
-                    <div *ngIf="hasMundipaggCreditCard()" class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="head-payment-creditcard">
-                            <h4 class="panel-title">
-                                <a (click)="selectThisPayment(getMundipaggCreditCard())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-creditcard" aria-expanded="true" aria-controls="tab-payment-creditcard">
-                                    Cartão de Crédito
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="tab-payment-creditcard" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getMundipaggCreditCard())}" role="tabpanel" aria-labelledby="head-payment-creditcard">
-                            <div class="panel-body">
-                                <mundipagg-creditcard 
-                                    [payment]="getMundipaggCreditCard()" 
-                                    [shipping]="shippingSelected" 
-                                    (paymentUpdated)="handleMundipaggCreditCardUpdated($event)">
-                                </mundipagg-creditcard>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--MundiPagg Boleto-->
-                    <div *ngIf="hasMundipaggBankslip()" class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="head-payment-bankslip">
-                            <h4 class="panel-title">
-                                <a (click)="selectThisPayment(getMundipaggBankslip())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-bankslip" aria-expanded="true" aria-controls="tab-payment-bankslip">
-                                    Boleto
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="tab-payment-bankslip" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getMundipaggBankslip())}" role="tabpanel" aria-labelledby="head-payment-bankslip">
-                            <div class="panel-body">
-                                <mundipagg-bankslip 
-                                    [payment]="getMundipaggBankslip()"
-                                    [actualPayment]="paymentSelected"
-                                    [shipping]="shippingSelected" 
-                                    (paymentUpdated)="handleMundipaggBankslipUpdated($event)">
-                                </mundipagg-bankslip>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--MercadoPago-->
-                    <div *ngIf="hasMercadoPago()" class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="head-payment-mercadopago">
-                            <h4 class="panel-title">
-                                <a (click)="selectThisPayment(getMercadoPago())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-mercadopago" aria-expanded="true" aria-controls="tab-payment-mercadopago">
-                                    Mercado Pago
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="tab-payment-mercadopago" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getMercadoPago())}" role="tabpanel" aria-labelledby="head-payment-mercadopago">
-                            <div class="panel-body">
-                                <mercadopago 
-                                    [payment]="getMercadoPago()" 
-                                    [shipping]="shippingSelected" 
-                                    [cart]="cart" 
-                                    (paymentUpdated)="handleMercadoPagoUpdated($event)">
-                                </mercadopago>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--Pagseguro-->
-                    <div *ngIf="hasPagSeguro()" class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="head-payment-pagseguro">
-                            <h4 class="panel-title">
-                                <a (click)="selectThisPayment(getPagSeguro())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-pagseguro" aria-expanded="true" aria-controls="tab-payment-pagseguro">
-                                    Pagseguro
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="tab-payment-pagseguro" class="panel-collapse collapse" [ngClass]="{'in': isDefaultPayment(getPagSeguro())}" role="tabpanel" aria-labelledby="head-payment-pagseguro">
-                            <div class="panel-body">
-                                <pagseguro 
-                                    [payment]="getPagSeguro()"
-                                    [shipping]="shippingSelected" 
-                                    [cart]="cart" 
-                                    (paymentUpdated)="handlePagseguroUpdated($event)">
-                                </pagseguro>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Pickup Store -->
-                    <div *ngIf="isPickUpStore() && hasPickUpStorePayment()" class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="head-payment-pickupstore">
-                            <h4 class="panel-title">
-                                <a (click)="selectThisPayment(getPickUpStorePayment())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-pickupstore" aria-expanded="true" aria-controls="tab-payment-pickupstore">
-                                    Pagamento na Retirada
-                                </a>
-                            </h4>
-                        </div>
-                         <div id="tab-payment-pickupstore" class="panel-collapse collapse" role="tabpanel" aria-labelledby="head-payment-pickupstore">
-                            <div class="panel-body">
-                                <payment-pickupstore></payment-pickupstore>
-                            </div>
-                         </div>
-                    </div> 
-                    <!-- Delivery Payment -->
-                    <!-- <div *ngIf="isPickUpStore()" class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="head-payment-pickupstore">
-                            <h4 class="panel-title">
-                                <a (click)="selectThisPayment(getPickUpStorePayment())" role="button" data-toggle="collapse" data-parent="#accordion-payments" href="#tab-payment-pickupstore" aria-expanded="true" aria-controls="tab-payment-pickupstore">
-                                    Pagamento na Entrega
-                                </a>
-                            </h4>
-                        </div>
-                         <div id="tab-payment-pickupstore" class="panel-collapse collapse" role="tabpanel" aria-labelledby="head-payment-pickupstore">
-                            <div class="panel-body">
-                                <payment-pickupstore></payment-pickupstore>
-                            </div>
-                         </div>
-                    </div>  -->
-
-                </div>
-            </div>
+            <!-- Coluna Frete -->
+            <checkout-shipping *ngIf="hasDeliveryAddress()" [deliveryAddress]="getDeliveryAddress()" (shippingUpdated)="handleShippingUpdated($event)"></checkout-shipping>
+            <!-- Coluna Pagamento -->
+            <checkout-payments *ngIf="payments.length > 0" [payments]="payments" [shippingCost]="getShipping()" (paymentUpdated)="handlePaymentUpdated($event)" (creditCardUpdated)="handleCreditCardUpdated($event)"></checkout-payments>
         </div>
-        <div class="col-xs-12 col-md-4" *ngIf="cart">
+        <div class="col-xs-12 col-md-4" *ngIf="getCart()">
+            <!-- Coluna Revisão do Pedido -->
             <div class="step step-finish">
                 <div class="header">
                     <span class="number">4</span>
@@ -255,8 +34,9 @@
                 </div>
                 <div class="content">
                     <div class="scroll-product-list scroll-bar">
+                        <!-- Lista de Produtos -->
                         <ul class="product-list">
-                            <li class="product-item" *ngFor="let item of cart.products">
+                            <li class="product-item" *ngFor="let item of getCart().products">
                                 <span class="image">
                                     <img *ngIf="item.sku.picture" [attr.src]="mediaPath + item.sku.picture.thumbnail" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
                                     <img *ngIf="!item.sku.picture" [attr.src]="'/assets/images/no-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
@@ -270,7 +50,7 @@
                                     <span class="regular-price">{{item.totalUnitPrice |  currencyFormat }}</span>
                                 </span>
                             </li>
-                            <li class="product-item" *ngFor="let item of cart.services">
+                            <li class="product-item" *ngFor="let item of getCart().services">
                                 <span class="details">
                                     <b class="name">{{item.serviceType}}</b>
                                     <span class="qty">Quantidade: {{item.quantity}}</span>
@@ -279,7 +59,7 @@
                                     <span class="regular-price">{{item.price * item.quantity |  currencyFormat }}</span>
                                 </span>
                             </li>
-                            <li class="product-item" *ngFor="let item of cart.paints">
+                            <li class="product-item" *ngFor="let item of getCart().paints">
                                 <span class="image">
                                     <img *ngIf="item.optionPicture" [attr.src]="mediaPathPaint + item.optionPicture" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
                                     <img *ngIf="!item.optionPicture" [attr.src]="'/assets/images/no-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
@@ -297,8 +77,8 @@
                             </li>
                         </ul>
                     </div>
-
                     <div class="totals-box">
+                        <!-- Coluna Valores -->
                         <table class="totals">
                             <tbody>
                                 <tr class="subtotal">
@@ -336,13 +116,21 @@
                                     <th class="text-left"><span>Total</span></th>
                                     <th class="text-right"><strong>{{getTotal() |  currencyFormat }}</strong></th>
                                 </tr>
+                                <tr class="total" *ngIf="getTotalCreditCard() > 0">
+                                    <th class="text-left"><span>Total Parcelado</span></th>
+                                    <th class="text-right"><strong>{{getTotalCreditCard() | currencyFormat}}</strong></th>
+                                </tr>
                             </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
-            <a href="#" id="btn_place-order" data-loading-text="Processando..." (click)="placeOrder($event)" class="btn btn-block btn-lg btn-success btn-checkout"><i class="fa fa-shopping-cart" aria-hidden="true"></i> <span>FINALIZAR COMPRA</span></a>
+            <form (submit)="placeOrder($event)"> 
+                <button type="submit" href="#" id="btn_place-order" data-loading-text="Processando..." class="btn btn-block btn-lg btn-success btn-checkout">
+                    <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span>FINALIZAR COMPRA</span>
+                </button>
+
+            </form>
         </div>
     </div>
-
 </main>

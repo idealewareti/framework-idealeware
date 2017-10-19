@@ -5,6 +5,7 @@ import { Contact } from "app/models/contact/contact";
 import { AppSettings } from "app/app.settings";
 import { Title } from "@angular/platform-browser";
 import { ContactService } from "app/services/contact.service";
+import { validEmail } from 'app/directives/email-validator/email-validator.directive';
 
 declare var swal: any;
 
@@ -26,7 +27,10 @@ export class ContactComponent implements OnInit {
     ) {
         this.contactForm = formBuilder.group({
             name: ['', Validators.required],
-            email: ['', Validators.required],
+            email: ['', Validators.compose([
+                Validators.required,
+                validEmail()
+            ])],
             title: ['', Validators.required],
             message: ['', Validators.required]
         });

@@ -1,0 +1,29 @@
+<div class="step step-shipping">
+    <div class="header">
+        <span class="number">2</span>
+        <span class="text">Opções de Entrega</span>
+    </div>
+    <div class="content">
+        <div class="shipping-intelipost" *ngIf="intelipost.content">
+            <div class="radio" *ngFor="let option of intelipost.content.delivery_options">
+                <label (click)="addShippingToCart($event, option)">
+                    <i class="fa" [ngClass]="{'fa-square-o': !checkOption(option.delivery_method_name), 'fa-check-square-o': checkOption(option.delivery_method_name)}"></i>
+                     {{option.delivery_method_name}} | até {{option.delivery_estimate_business_days}} dias úteis - {{shippingCost(option) |  currencyFormat }}
+                </label>
+            </div>
+        </div>
+        <div class="shipping-pickupstore">
+            <div class="radio" If="branches.length > 0" *ngFor="let branch of allowPickUpStore()">
+                <label (click)="addShippingToCart($event, null, branch)">
+                    <i class="fa" [ngClass]="{'fa-square-o': !checkOption(null, branch), 'fa-check-square-o': checkOption(null, branch)}"></i>
+                    Retirar na Loja: {{branch.name}}<br>
+                    {{branch.addressLine1}}, {{branch.number}} {{branch.addressline2}}
+                    {{branch.city}}/{{branch.state}}
+                </label>
+            </div>
+        </div>
+        <p class="alert">
+            O prazo de envio conta apenas após a aprovação do pagamento.
+        </p>
+    </div>
+</div>

@@ -43,16 +43,7 @@ export class ProductGridItemComponent {
 
     ngOnInit() {
         this.mediaPath = `${this.globals.store.link}/static/products`;
-
-        if(!this.product.skuBase.available || this.product.skuBase.stock <= 0){
-            let availables: Sku[] = this.product.skus.filter(sku => (sku.stock > 0) && (sku.available));
-            if(availables.length > 0)
-                this.sku = availables[0];
-            else
-                this.sku = this.product.skuBase;
-        }
-        else
-            this.sku = this.product.skuBase;
+        this.sku = this.product.skuBase;
 
         this.coverImg = (this.getCoverImage()['showcase']) ?`${this.mediaPath}/${this.getCoverImage().showcase}` : '/assets/images/no-image.jpg';
         this.productUrl = this.getRoute();
@@ -60,11 +51,15 @@ export class ProductGridItemComponent {
         this.promotionalPrice = this.sku.promotionalPrice;
         this.alternativeImg = this.sku.alternativePicture['id'] ? `${this.mediaPath}/${this.sku.alternativePicture.showcase}` : this.coverImg;
 
-        this.paymentManager.getInstallments(this.sku)
-        .then(payment => {
-            this.product.installmentText = this.paymentManager.getInstallmentText(payment, payment.paymentMethods[0]);
-        })
-        .catch(error => console.log(error));
+
+        if(this.globals.store.modality == EnumStoreModality.Ecommerce){
+            this.paymentManager.getInstallments(this.sku)
+            .then(payment => {
+                this.product.installmentText = this.paymentManager.getInstallmentText(payment, payment.paymentMethods[0]);
+            })
+            .catch(error => console.log(error));
+        }
+
     }
 
     ngAfterViewChecked() {
@@ -86,6 +81,7 @@ export class ProductGridItemComponent {
     getCoverImage(): ProductPicture{
        return this.product.skuBase.picture;
     }
+
 
     quickView() {
 

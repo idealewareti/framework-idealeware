@@ -9,6 +9,7 @@ import { PaymentMethod } from "app/models/payment/payment-method";
 import { Installment } from "app/models/payment/installment";
 import { PagseguroInstallment } from "app/models/pagseguro/pagseguro-installment";
 import { PaymentSetting } from "app/models/payment/payment-setting";
+import { Globals } from 'app/models/globals';
 
 declare var $: any;
 declare var swal: any;
@@ -27,11 +28,13 @@ export class InstallmentSimulationComponent implements OnInit {
     private id: string;
     error: string;
 
-    static mediaPath = `${AppSettings.ROOT_PATH}/assets/images/`;
+    mediaPath: string;
 
-    constructor(private manager: PaymentManager) { }
+    constructor(private manager: PaymentManager, private globals: Globals) { }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/assets/images/`;
+    }
 
     ngAfterContentChecked() {
         if(this.id != this.sku.id)

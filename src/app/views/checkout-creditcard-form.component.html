@@ -1,0 +1,94 @@
+<div class="form-payment">
+    <form [formGroup]="creditCardForm" [attr.id]="(mercadopago) ? 'mercadoPagoForm' : 'creditCardForm'" (change)="onChange($event)">
+        <div class="form-group">
+            <ul class="checkout-creditcard-brands" *ngIf="mercadopago && MercadoPagoCreditCardBrands().length > 0">
+                <li *ngFor="let method of MercadoPagoCreditCardBrands()">
+                    <span class="checkout-creditcard-brand" [ngClass]="{'brand-selected': MercadoPagoisBrandSelected(method.id)}">
+                        <img class="img-responsive" [attr.src]="method.secure_thumbnail" [attr.title]="method.name" [attr.alt]="method.name">
+                    </span>
+                </li>
+            </ul>
+            <ul class="checkout-creditcard-brands" *ngIf="pagseguro && PagseguroListBrands().length > 0">
+                <li *ngFor="let option of PagseguroListBrands()">
+                    <span class="checkout-creditcard-brand" [ngClass]="{'brand-selected': PagseguroIsBrandSelected(option)}">
+                        <img class="img-responsive" [attr.src]="PagseguroBrandImage(option)" [attr.title]="option.displayName" [attr.alt]="option.displayName">
+                    </span>
+                </li>
+            </ul>
+
+            <ul class="checkout-creditcard-brands" *ngIf="isMundipagg() && MundipaggListBrands().length > 0">
+                <li *ngFor="let method of MundipaggListBrands()">
+                    <span class="checkout-creditcard-brand" [ngClass]="{'brand-selected': MundipaggIsBrandSelected(method)}">
+                        <img class="img-responsive" [attr.src]="'assets/images/' + method.icon" [attr.title]="method.name" [attr.alt]="method.name">
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="form-group" [ngClass]="{'has-error': hasError('cardNumber')}">
+            <label for="n-cartao" class="control-label">Nº do Cartão</label>
+            <input #cardNumber class="form-control" creditCartMask type="text" id="cardNumber" data-checkout="cardNumber" placeholder="0000-0000-0000-0000"  [(ngModel)]="creditCard.creditCardNumber" (ngModelChange)="detectCard($event)" (paste)="onPaste($event, cardNumber)" maxlength="19" formControlName="cardNumber" required/>
+        </div>
+        <div class="form-group" [ngClass]="{'has-error': hasError('expMonth') || hasError('expYear')}">
+            <label class="control-label">Vencimento</label>
+            <div class="row">
+                <div class="col-sm-6">
+                    <select class="form-control" [(ngModel)]="creditCard.expMonth" formControlName="expMonth" id="cardExpirationMonth" data-checkout="cardExpirationMonth" required>
+                        <option value="0">Mês</option>
+                        <option value="1">01</option>
+                        <option value="2">02</option>
+                        <option value="3">03</option>
+                        <option value="4">04</option>
+                        <option value="5">05</option>
+                        <option value="6">06</option>
+                        <option value="7">07</option>
+                        <option value="8">08</option>
+                        <option value="9">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <input type="text" [(ngModel)]="creditCard.expYear" class="form-control" data-checkout="cardExpirationYear" formControlName="expYear" placeholder="2017" maxlength="4" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-group" [ngClass]="{'has-error': hasError('holder')}">
+            <label for="n-nome" class="control-label">Seu Nome </label>
+            <input type="text" [(ngModel)]="creditCard.holderName" class="form-control" formControlName="holder" id="cardholderName" data-checkout="cardholderName" placeholder="" required>
+            <small class="text-muted">(Exatamente como impresso no cartão)</small>
+        </div>
+        <div class="form-group" [ngClass]="{'has-error': hasError('cvv')}">
+            <label for="n-cod-seguranca" class="control-label">Código de Segurança</label>
+            <input type="text" class="form-control" formControlName="cvv" [(ngModel)]="creditCard.securityCode" placeholder="" id="securityCode" data-checkout="securityCode" required>
+        </div>
+        <div class="form-group" [ngClass]="{'has-error': hasError('taxId')}">
+            <label for="n-cpf" class="control-label">CPF</label>
+            <input cpfMask type="text" maxlength="14" class="form-control" formControlName="taxId"  [(ngModel)]="creditCard.taxId" data-checkout="docNumber" required>
+            <input type="hidden" data-checkout="docType" value="CPF">
+        </div>
+        <div *ngIf="pagseguro" class="form-group" [ngClass]="{'has-error': hasError('birthDate')}">
+            <label for="birthDate" class="control-label">Data de Nascimento do Titular do Cartão</label>
+            <input type="date" class="form-control" formControlName="birthDate" [(ngModel)]="creditCard.birthDate" required>
+        </div>
+        <div *ngIf="pagseguro" class="form-group" [ngClass]="{'has-error': hasError('phone')}">
+            <label for="phone" class="control-label">Telefone do Titular do Cartão</label>
+            <input phoneMask maxlength="15" type="text" class="form-control" formControlName="phone" [(ngModel)]="creditCard.phone" required>
+        </div>
+        <div class="form-group">
+            <label for="n-parcelas" class="control-label">Número do Parcelas</label>
+            <select *ngIf="mercadopago" class="form-control" formControlName="installment" [(ngModel)]="creditCard.installmentCount">
+                <option *ngIf="mercadopago.installmentResponse.payer_costs.length == 0" value="" disabled>Informe um cartão de crédito válido para obter as parcelas</option>
+                <option class="form-control" *ngFor="let installment of mercadopago.installmentResponse.payer_costs" [value]="installment.installments">{{installment.recommended_message}}</option>
+            </select>
+            <select *ngIf="pagseguro" class="form-control" formControlName="installment" name="installmentCount" [(ngModel)]="creditCard.installmentCount">
+                <option *ngIf="pagseguro.installments.length == 0" value="" disabled>Informe um cartão de crédito válido para obter as parcelas</option>
+                <option *ngFor="let installment of pagseguro.installments" [value]="installment.quantity">{{installment.quantity}}x de {{installment.installmentAmount | currencyFormat}} {{(installment.interestFree) ? 'sem juros' : 'com juros'}}</option>
+            </select>
+            <select *ngIf="mundipagg" class="form-control" formControlName="installment" name="installmentCount" [(ngModel)]="creditCard.installmentCount">
+                <option *ngIf="MundipaggListInstallments().length == 0" value="" disabled>Informe um cartão de crédito válido para obter as parcelas</option>
+                <option *ngFor="let installment of MundipaggListInstallments()" [value]="installment.number">{{MundipaggInstallmentLabel(installment)}}</option>
+            </select>
+        </div>
+    </form>
+</div>
