@@ -26,6 +26,8 @@ import { RelatedProductGroup } from "app/models/related-products/related-product
 import { PaymentManager } from "app/managers/payment.manager";
 import { Globals } from "app/models/globals";
 import { SelfColor } from "app/models/self-color/self-color";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { validEmail } from 'app/directives/email-validator/email-validator.directive';
 
 declare var $: any;
 declare var S: any;
@@ -60,11 +62,13 @@ export class ProductComponent {
     notFound: boolean = false;
     installment: string = '';
     selfColor: SelfColor = null;
+    productAwaitedForm: FormGroup;
 
     @Input() quantity: number = 1;
     @Input() areaSizer: number = 0;
 
     constructor(
+        formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private service: ProductService,
         private relatedService: RelatedProductsService,
@@ -78,6 +82,14 @@ export class ProductComponent {
         private globals: Globals
     ) {
         this.product = null;
+
+        this.productAwaitedForm = new FormBuilder().group({
+            name: ['', Validators.required],
+            email: ['', Validators.compose([
+                Validators.required,
+                validEmail()
+            ])],
+        });
     }
 
     /* Lifecycle events */
@@ -244,6 +256,8 @@ export class ProductComponent {
                     this.relatedService.getRelatedProductGroupById(this.product.relatedProductsId)
                     .then(related => {
                         this.related = related;
+                        if(this.related.products.length == 0)
+                            this.product.relatedProductsId = null;
                     })
                     .catch(error => {
                         console.log(error);
@@ -305,32 +319,34 @@ export class ProductComponent {
     /* Product Awaited */
     receiveProductsAwaited(event) {
         event.preventDefault();
-        let productName = this.product.name;
-        this.sku.variations.forEach(v => {
-            productName += `-${v.name} : ${v.option.name}`;
-        });
 
-        this.productsAwaited.productName = productName;
-        this.productsAwaited.skuId = this.sku.id;
-        this.service.createProductAwaited(this.productsAwaited)
+        if(this.productAwaitedForm.invalid){
+            for(let i in this.productAwaitedForm.controls){
+                (<any>this.productAwaitedForm.controls[i])._touched = true;
+            }
+            swal('Erro', 'Informe corretamente os campos informados', 'error');
+            return;
+        }
+        else{
+            let productName = this.product.name;
+            this.sku.variations.forEach(v => {
+                productName += `-${v.name} : ${v.option.name}`;
+            });
+    
+            this.productsAwaited.productName = productName;
+            this.productsAwaited.skuId = this.sku.id;
+            this.service.createProductAwaited(this.productsAwaited)
             .then(newsletter => {
-                swal({
-                    title: 'Avise-me quando chegar',
-                    text: 'E-mail cadastrado com sucesso.',
-                    type: 'success',
-                    confirmButtonText: 'OK'
-                });
+                swal('Avise-me quando chegar', 'E-mail cadastrado com sucesso.', 'success');
                 this.productsAwaited = new ProductAwaited();
+                this.productAwaitedForm.reset();
             })
             .catch(error => {
-                swal({
-                    title: 'Erro ao cadastrar email',
-                    text: 'Não foi possível cadastrar seu email',
-                    type: 'error',
-                    confirmButtonText: 'OK'
-                });
+                swal('Erro ao cadastrar email', 'Não foi possível cadastrar seu email', 'error');
                 console.log(error);
             });
+        }
+
     }
 
 
@@ -450,9 +466,8 @@ export class ProductComponent {
     }
 
     isProductRelated(): boolean{
-        if(!AppSettings.isGuidEmpty(this.product.relatedProductsId))
-            return true;
-        else return false;
+        let isGuidEmpty: boolean = (this.product.relatedProductsId) ? !AppSettings.isGuidEmpty(this.product.relatedProductsId): false;
+        return isGuidEmpty;
     } 
 
     getStore(): Store{
@@ -466,5 +481,10 @@ export class ProductComponent {
 
     isGuid(value: string): boolean{
         return AppSettings.isGuid(value);
+    }
+
+    hasError(key: string): boolean{
+        let error: boolean = (this.productAwaitedForm.controls[key].touched && this.productAwaitedForm.controls[key].invalid);
+        return error;
     }
 }

@@ -5,7 +5,7 @@ export class AppConfig{
      * @static
      * @memberof AppConfig
      */
-    public static DOMAIN = 'ecommerce';
+    public static DOMAIN = 'casaeconstrucao';
 
     /**
      * Nome da Loja

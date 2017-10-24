@@ -147,17 +147,20 @@
                     <div class="product-unavaliable" *ngIf="!isProductAvailable()">
                         <b>Produto temporariamente indisponível</b>
 
-                        <form (submit)="receiveProductsAwaited($event)" class="form-inline">
+                        <form [formGroup]="productAwaitedForm" (submit)="receiveProductsAwaited($event)" class="form-inline">
                             <p>Avise-me quando estiver disponível</p>
-                            <div class="form-group box-name">
+                            <div class="form-group box-name" [ngClass]="{'has-error': hasError('name')}">
                                 <label for="name" class="sr-only">Nome</label>
-                                <input type="text" name="name" [(ngModel)]="productsAwaited.name" class="form-control form-input" placeholder="Nome" required>
+                                <input type="text" name="name" [(ngModel)]="productsAwaited.name" class="form-control form-input" placeholder="Nome" required formControlName="name" >
                             </div>
-                            <div class="form-group box-email">
+                            <div class="form-group box-email" [ngClass]="{'has-error': hasError('email')}">
                                 <label for="email" class="sr-only">E-mail</label>
-                                <input type="email" name="email" [(ngModel)]="productsAwaited.email" class="form-control form-input" placeholder="E-mail"
-                                    required>
+                                <input type="email" name="email" [(ngModel)]="productsAwaited.email" class="form-control form-input" placeholder="E-mail" formControlName="email" required>
                                 <button type="submit" id="btn-productsawaited" class="btn btn-clear"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                            </div>
+                            <div class="form-group">
+                                <div *ngIf="hasError('name')" class="text-danger">O campo Nome é obrigatório</div>
+                                <div *ngIf="hasError('email')" class="text-danger">E-mail inválido</div>
                             </div>
                         </form>
                     </div>

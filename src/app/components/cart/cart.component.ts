@@ -50,11 +50,6 @@ export class CartComponent {
         .then((cart) => {
             this.globals.cart = cart;
             this.cartReady = true;
-            setInterval(() => {
-                let c = new Cart(JSON.parse(localStorage.getItem('shopping_cart')));
-                if(this.globals.cart && (c.totalPurchasePrice != this.globals.cart.totalPurchasePrice))
-                    this.globals.cart = c;
-            }, 3000);
         })
         .catch(e => console.log(e));
 
@@ -75,68 +70,58 @@ export class CartComponent {
 
     getProducts() {
         this.manager.getCart()
-            .then((cart) => {
-                this.cartReady = true;
-            })
-            .catch(e => console.log(e));
+        .then((cart) => {
+            this.cartReady = true;
+        })
+        .catch(e => console.log(e));
     }
 
     updateItem(quantity, item: CartItem) {
         item.quantity = quantity;
         this.manager.updateItem(item)
-            .then(cart => this.globals.cart = cart)
-            .catch(error => {
-                swal({
-                    title: "Falha ao adicionar o produto ao carrinho",
-                    text: error.text(),
-                    type: "warning",
-                    confirmButtonText: "OK"
-                });
-            });
+        .then(cart => this.globals.cart = cart)
+        .catch(error => {
+            swal("Falha ao adicionar o produto ao carrinho", error.text(), "warning");
+        });
 
     }
 
     updateItemService(quantity, item: Service) {
         item.quantity = quantity;
         this.manager.updateItemService(item)
-            .then(cart => this.globals.cart = cart)
-            .catch(error => {
-                swal({
-                    title: "Falha ao alterar ao carrinho",
-                    text: error.text(),
-                    type: "warning",
-                    confirmButtonText: "OK"
-                });
+        .then(cart => this.globals.cart = cart)
+        .catch(error => {
+            swal({
+                title: "Falha ao alterar ao carrinho",
+                text: error.text(),
+                type: "warning",
+                confirmButtonText: "OK"
             });
+        });
 
     }
 
     updatePaint(quantity, item: CartItem){
         item.quantity = quantity;
         this.manager.updatePaint(item)
-            .then(cart => this.globals.cart = cart)
-            .catch(error => {
-                swal({
-                    title: "Falha ao alterar ao carrinho",
-                    text: error.text(),
-                    type: "warning",
-                    confirmButtonText: "OK"
-                });
+        .then(cart => this.globals.cart = cart)
+        .catch(error => {
+            swal({
+                title: "Falha ao alterar ao carrinho",
+                text: error.text(),
+                type: "warning",
+                confirmButtonText: "OK"
             });
+        });
     }
 
     deleteItem(event, item: CartItem) {
         event.preventDefault();
         this.manager.deleteItem(item)
-            .then(cart => this.globals.cart = cart)
-            .catch(error => {
-                swal({
-                    title: "Falha ao remover o produto do carrinho",
-                    text: error.text(),
-                    type: "warning",
-                    confirmButtonText: "OK"
-                });
-            })
+        .then(cart => this.globals.cart = cart)
+        .catch(error => {
+            swal("Falha ao remover o produto do carrinho", error.text(), "warning");
+        });
     }
 
     deleteItemService(event, item: Service) {
@@ -156,15 +141,10 @@ export class CartComponent {
      deletePaint(event, item: CartItem) {
         event.preventDefault();
         this.manager.deletePaint(item)
-            .then(cart => this.globals.cart = cart)
-            .catch(error => {
-                swal({
-                    title: "Falha ao remover a tinta do carrinho",
-                    text: error.text(),
-                    type: "warning",
-                    confirmButtonText: "OK"
-                });
-            })
+        .then(cart => this.globals.cart = cart)
+        .catch(error => {
+            swal("Falha ao remover a tinta do carrinho", error.text(), "warning");
+        });
     }
 
     handleCartUpdated(event) {

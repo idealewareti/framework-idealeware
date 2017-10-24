@@ -107,5 +107,12 @@
   		"hideMethod": "fadeOut"
 	}
 
+	
+	
+})(jQuery);
 
+(function($){
+	$(window).on("load",function(){
+		$(".facet-brands").mCustomScrollbar();
+	});
 })(jQuery);

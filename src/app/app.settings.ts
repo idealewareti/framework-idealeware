@@ -148,8 +148,11 @@ export class AppSettings {
      * @memberof AppSettings
      */
     public static isGuidEmpty(value: string): boolean{
-        if(value && value == '00000000-0000-0000-0000-000000000000')
-            return true;
+        if(value){
+            if(value == '00000000-0000-0000-0000-000000000000')
+               return true;
+            else return false;
+        }
         return false;
     }
 

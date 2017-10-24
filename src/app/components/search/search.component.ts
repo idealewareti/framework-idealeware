@@ -28,6 +28,7 @@ declare var $: any;
     moduleId: module.id,
     selector: 'search',
     templateUrl: '../../views/search.component.html',
+    styleUrls: ['../../styles/search.component.css']
 })
 export class SearchComponent implements OnInit {
     path: string;
@@ -53,8 +54,11 @@ export class SearchComponent implements OnInit {
     groups: Group[] = [];
     page: number = 1;
     numPages: number = 0;
-    sort: EnumSort = EnumSort.MostRelevant;
+    sort: EnumSort = EnumSort.MostRelevant;    
+    maximumPrice: string = null;
+    minimumPrice: string = null;
     priceRange: PriceRange = new PriceRange(0, 0);
+
     orderSearchOptionsEcommerce: Object[] = [
         { label: 'Mais Relevantes', value: EnumSort.MostRelevant },
         { label: 'Menores Preços', value: EnumSort.PriceLowestFirst },
@@ -93,6 +97,8 @@ export class SearchComponent implements OnInit {
             this.category = new Category();
             this.categories = [];
             this.sort = EnumSort.MostRelevant;
+            this.minimumPrice = null;
+            this.maximumPrice = null;
             this.priceRange = new PriceRange(0, 0);
 
             AppSettings.setTitle('Buscar Produtos', this.titleService);
@@ -227,9 +233,9 @@ export class SearchComponent implements OnInit {
             if(this.searchInput.groups.length > 0)
                 url += `;groups=${this.searchInput.groups.toString()}`;
             if(this.searchInput.priceRange.maximumPrice > 0)
-                url += `;maximumPrice=${this.priceRange.maximumPrice.toString()}`;
+                url += `;maximumPrice=${this.maximumPrice}`;
             if(this.searchInput.priceRange.minimumPrice > 0)
-                url += `;minimumPrice=${this.priceRange.minimumPrice.toString()}`;
+                url += `;minimumPrice=${this.minimumPrice}`;
         }
 
         if(this.sort)
@@ -425,11 +431,15 @@ export class SearchComponent implements OnInit {
                 this.searchInput.sort = this.sort;
             }
 
-            if(params['maximumPrice'])
+            if(params['maximumPrice']){
                 this.priceRange.maximumPrice = Number.parseFloat(params['maximumPrice']);
+                this.maximumPrice = this.priceRange.maximumPrice.toFixed(2).replace('.', ',');
+            }
 
-            if(params['minimumPrice'])
+            if(params['minimumPrice']){
                 this.priceRange.minimumPrice = Number.parseFloat(params['minimumPrice']);
+                this.minimumPrice = this.priceRange.minimumPrice.toFixed(2).replace('.', ',');
+            }
 
             this.search(this.searchInput, this.page, this.pageSize)
             .then(results => resolve(results))
@@ -439,10 +449,10 @@ export class SearchComponent implements OnInit {
 
 
     search(searchInput: Search, page: number, pageSize: number): Promise<SearchResult>{
-        if(this.priceRange.maximumPrice > 0)
-            searchInput.priceRange.maximumPrice = this.priceRange.maximumPrice
-        if(this.priceRange.minimumPrice > 0)
-            searchInput.priceRange.minimumPrice = this.priceRange.minimumPrice
+        if(Number.parseFloat(this.maximumPrice) > 0)
+            searchInput.priceRange.maximumPrice = Number.parseFloat(this.maximumPrice);
+        if(Number.parseFloat(this.minimumPrice) > 0)
+            searchInput.priceRange.minimumPrice = Number.parseFloat(this.minimumPrice);
 
         return this.service.searchFor(searchInput, page, pageSize);
     }
@@ -656,14 +666,37 @@ export class SearchComponent implements OnInit {
         this.loading = false;
         this.products = results.products;
         this.brands = results.facetBrands;
-        this.categories = results.facetCategories;
         this.options = results.facetOptions;
         this.variations = results.facetVariations;
         this.pagination = results.pagination;
         this.numPages = this.pagination.TotalPages;
         this.priceRange = results.facetPrice;
+        this.maximumPrice = results.facetPrice.maximumPrice.toFixed(2).replace('.', ',');
+        this.minimumPrice = results.facetPrice.minimumPrice.toFixed(2).replace('.', ',');
 
+        this.arrangeCategories(results.facetCategories);
         this.buildFilterModel();
+    }
+
+    arrangeCategories(facetCategories: Category[]){
+        this.categoryApi.getTree()
+        .then(categories => {
+            facetCategories.forEach(category => {
+                let found: Category = categories.find(c => c.id == category.id);
+                if(found){
+                    category.children = [];
+                    category.children.push(category); 
+                    found.children.forEach(child => {
+                        let childFound: Category = facetCategories.find(f => f.id == child.id);
+                        if(childFound)
+                            category.children.push(childFound);
+                    });
+                    
+                    this.categories.push(category);
+                }
+            })
+        });
+
     }
 
     getStore(): Store{
@@ -687,7 +720,7 @@ export class SearchComponent implements OnInit {
     filterByPriceRange(event = null){
         if(event)
             event.preventDefault();
-        this.searchInput.priceRange = this.priceRange;
+        this.searchInput.priceRange = new PriceRange(Number.parseFloat(this.maximumPrice), Number.parseFloat(this.minimumPrice));
         this.listProducts(this.page, null);
     }
 

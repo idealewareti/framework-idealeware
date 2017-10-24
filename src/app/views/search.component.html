@@ -153,28 +153,43 @@
             <div class="row">
                 <!-- Filter Sidebar -->
                 <div class="col-md-3 col-sm-12 filter-left hidden-xs">
-                    <!-- Filtrar por -->
+                    <!-- Filtrar por Categorias -->
                     <div class="filter-by nav" *ngIf="showFilter(categories)">
                         <h3 class="title">Filtrar por</h3>
-                        <div class="filter-items marcas">
-                            <b class="caption">Categorias</b>
-                            <ul>
+                        <div class="filter-items categorias">
+                            <h4 class="caption">Categorias</h4>
+                            <ul class="facet-categories"  id="collapse-categories">
                                 <li *ngFor="let category of categories">
-                                    <a [ngClass]="{'checked': isChecked('category', category.id)}" [routerLink]="['/categoria', category.id, category.niceName]"
-                                        (click)="addFilter($event, 'category', category.id)">
-                                        <i [ngClass]="{'fa-square-o': !isChecked('category', category.id), 'fa-check-square-o': isChecked('category', category.id)}" class="fa" aria-hidden="true"></i>
-                                        {{category.name}}
-                                        <small *ngIf="category.quantity > 0" class="text-info">({{category.quantity}})</small>
-                                    </a>
+                                    <h5>
+                                        <a [attr.href]="'#collapse-category-' + category.id" [attr.id]="'#collapse-header-category-' + category.id" data-parent="#collapse-categories" data-toggle="collapse" role="button" aria-expanded="false" [attr.aria-controls]="'collapse-category-' + category.id">
+                                            <i class="fa fa-caret-right" aria-hidden="true"></i>
+                                            <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                            {{category.name}}
+                                            <small *ngIf="category.quantity > 0">({{category.quantity}})</small>
+                                        </a>
+                                    </h5>
+                                    <div class="collapse" [attr.id]="'collapse-category-' + category.id" [attr.aria-labelledby]="'#collapse-header-category-' + category.id">
+                                        <ul *ngIf="category.children.length > 0">
+                                            <li *ngFor="let child of category.children">
+                                                <a [ngClass]="{'checked': isChecked('category', child.id)}" [routerLink]="['/categoria', child.id, child.niceName]"
+                                                    (click)="addFilter($event, 'category', child.id)">
+                                                    <i [ngClass]="{'fa-square-o': !isChecked('category', child.id), 'fa-check-square-o': isChecked('category', child.id)}" class="fa" aria-hidden="true"></i>
+                                                    {{child.name}}
+                                                    <small *ngIf="child.quantity > 0" class="text-info">({{child.quantity}})</small>
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                    </div>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    <!-- Filtrar por -->
+                    <!-- Filtrar por Marcas -->
                     <div class="filter-by nav" *ngIf="showFilter(brands)">
                         <div class="filter-items marcas">
                             <b class="caption">Marcas</b>
-                            <ul>
+                            <ul class="facet-brands mCustomScrollbar">
                                 <li *ngFor="let brand of brands">
                                     <a [ngClass]="{'checked': isChecked('brand', brand.id)}" [routerLink]="['/marcas', brand.id, brand.niceName]" (click)="addFilter($event, 'brand', brand.id)">
                                         <i [ngClass]="{'fa-square-o': !isChecked('brand', brand.id), 'fa-check-square-o': isChecked('brand', brand.id)}" class="fa" aria-hidden="true"></i> 
@@ -185,7 +200,7 @@
                             </ul>
                         </div>
                     </div>
-                    <!-- Filtrar por -->
+                    <!-- Filtrar por Opções -->
                     <div class="filter-by nav" *ngIf="showFilter(options)">
                         <div class="filter-items marcas">
                             <b class="caption">Opções</b>
@@ -206,12 +221,12 @@
                             
                             <div class="form-group col-md-6">
                                 <label for="" class="control-label">Valor mínimo</label>
-                                <input type="number" [attr.min]="priceRange.minimumPrice" [(ngModel)]="priceRange.minimumPrice" class="form-control">
+                                <input type="text" [attr.min]="priceRange.minimumPrice" [(ngModel)]="minimumPrice" class="form-control">
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="" class="control-label">Valor máximo</label>
-                                <input type="number" [attr.min]="priceRange.minimumPrice" [(ngModel)]="priceRange.maximumPrice" class="form-control">
+                                <input type="text" [attr.min]="priceRange.minimumPrice" [(ngModel)]="maximumPrice" class="form-control">
                             </div>
                             
                             <div class="col-md-12">

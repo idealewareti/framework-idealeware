@@ -1,8 +1,6 @@
 import { Component, Input, AfterViewChecked, OnInit, AfterContentChecked } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Http } from '@angular/http';
-
 import { AppSettings } from 'app/app.settings';
 import { AppTexts } from 'app/app.texts';
 import { Validations } from 'app/directives/validations';

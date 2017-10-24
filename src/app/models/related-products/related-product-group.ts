@@ -11,6 +11,14 @@ export class RelatedProductGroup {
 
     constructor(filter = null){
         if(filter) return this.createFromResponse(filter);
+        else{
+            this.id = null;
+            this.name = null;
+            this.status = false;
+            this.variation = null;
+            this.products = [];
+            this.type = 0;
+        }
     }
 
     createFromResponse(response): RelatedProductGroup{
