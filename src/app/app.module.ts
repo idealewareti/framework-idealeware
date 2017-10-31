@@ -92,8 +92,6 @@ import { AppSettings } from './app.settings';
 import { CurrencyFormatModule } from './pipes/currency-format/currency-format.module';
 import { HttpClient } from './helpers/httpclient';
 import { OrderByModule } from './pipes/orderBy/orderBy.module';
-import { NgProgressModule } from 'ngx-progressbar';
-import { NgProgressBrowserXhr } from "ngx-progressbar";
 import { routing } from './app.routes';
 
 // ______ _               _   _                
@@ -188,7 +186,6 @@ import { Globals } from './models/globals';
         LoginEmbedModule,
         MiniCartModule, 
         NewsLetterModule,
-        NgProgressModule,
         OrderByModule,
         PhoneMaskModule,
         PopUpModule,
@@ -237,7 +234,7 @@ import { Globals } from './models/globals';
     ],
     providers: [
         HttpClient,
-        { provide: BrowserXhr, useClass: NgProgressBrowserXhr } ,
+        // { provide: BrowserXhr, useClass: NgProgressBrowserXhr } ,
         BannerService,
         BranchService, 
         BrandService,

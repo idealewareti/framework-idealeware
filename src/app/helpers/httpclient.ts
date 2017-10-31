@@ -35,7 +35,10 @@ export class HttpClient {
   get(url, token: Token = null, params = []) {
     let headers = new Headers();
     this.setStore(headers, params);
-    if (token) this.authorize(headers, token);
+    if (token){
+      this.authorize(headers, token);
+    } 
+      
     return this.http.get(url, {
       headers: headers
     });
@@ -51,7 +54,9 @@ export class HttpClient {
   post(url, data, token: Token = null) {
     let headers = new Headers();
     this.setStore(headers);
-    if (token) this.authorize(headers, token);
+    if (token) {
+      this.authorize(headers, token);
+    }
     return this.http.post(url, data, {
       headers: headers
     });
@@ -60,7 +65,9 @@ export class HttpClient {
   put(url, data, token: Token = null) {
     let headers = new Headers();
     this.setStore(headers);
-    if (token) this.authorize(headers, token);
+    if (token) {
+      this.authorize(headers, token);
+    }
     return this.http.put(url, data, {
       headers: headers
     });
@@ -69,19 +76,25 @@ export class HttpClient {
   delete(url, token: Token = null) {
     let headers = new Headers();
     this.setStore(headers);
-    if (token) this.authorize(headers, token);
+    if (token) {
+      this.authorize(headers, token);
+    }
     return this.http.delete(url, {
       headers: headers
     });
   }
 
   private handleErrors(res){
-      if(!res.ok) throw new Error(res.statusText);
-      else return res;
+      if(!res.ok) {
+        throw new Error(res.statusText);
+      }
+        
+      else{
+        return res;
+      }      
   }
 
   xhrPost(url: string, toSend){
-
     let zipcode = localStorage.getItem('customer_zipcode');
     return fetch(url, {
       headers: {'Content-Type': 'application/json', 'Domain': AppSettings.DOMAIN},

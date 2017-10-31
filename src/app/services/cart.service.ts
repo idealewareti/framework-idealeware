@@ -3,7 +3,6 @@ import { Http } from '@angular/http';
 import { HttpClient } from '../helpers/httpclient'
 import { Title } from '@angular/platform-browser';
 import { AppSettings } from 'app/app.settings';
-import { NgProgressService } from "ngx-progressbar";
 import { CartShowCase } from '../models/cart-showcase/cart-showcase';
 import { CartItem } from '../models/cart/cart-item';
 import { Cart } from '../models/cart/cart';
@@ -15,12 +14,7 @@ import { Service } from "../models/product-service/product-service";
 @Injectable()
 export class CartService {
 
-    constructor(
-        private client: HttpClient,
-        private loader: NgProgressService
-
-    ) { }
-
+    constructor(private client: HttpClient) { }
 
     public getSessionId(): string {
         return localStorage.getItem('session_id');

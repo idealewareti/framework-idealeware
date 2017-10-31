@@ -9,7 +9,6 @@ import { Shipping } from "app/models/shipping/shipping";
 import { DeliveryInformation } from "app/models/shipping/delivery-information";
 import { Cart } from "app/models/cart/cart";
 import { CartManager } from "app/managers/cart.manager";
-import { NgProgressService } from "ngx-progressbar";
 import { Globals } from 'app/models/globals';
 
 declare var swal: any;
@@ -33,7 +32,6 @@ export class ShippingCalcComponent implements OnInit {
     constructor(
         private service: IntelipostService,
         private cartManager: CartManager,
-        private loader: NgProgressService,
         private globals: Globals
     ) { }
 
@@ -58,31 +56,25 @@ export class ShippingCalcComponent implements OnInit {
                 swal({ title: 'Erro!', text: 'Carrinho vazio', type: 'warning', confirmButtonText: 'OK' });
             }
             else {
-                this.loader.start();
                 this.loading = true;
                 this.cartManager.getCart()
-                    .then(cart => {
-                        if (cart.totalPurchasePrice == 0) {
-                            swal({ title: 'Erro!', text: 'Carrinho vazio', type: 'warning', confirmButtonText: 'OK' });
-                            this.loader.done();
+                .then(cart => {
+                    if (cart.totalPurchasePrice == 0) {
+                        swal({ title: 'Erro!', text: 'Carrinho vazio', type: 'warning', confirmButtonText: 'OK' });
+                        reject(null);
+                    }
 
-                            reject(null);
-                        }
-                        this.loader.start();
-
-                        let request = new IntelipostRequest(this.cartManager.getSessionId(), AppSettings.NAME, this.globals.store.link, zipCode.toString());
-                        return this.service.getShipping(request);
-                    })
-                    .then(response => {
-                        this.loader.done();
-                        this.loading = false;
-                        resolve(response);
-                    })
-                    .catch(error => {
-                        this.loader.done();
-                        this.loading = false;
-                        reject(error);
-                    });
+                    let request = new IntelipostRequest(this.cartManager.getSessionId(), AppSettings.NAME, this.globals.store.link, zipCode.toString());
+                    return this.service.getShipping(request);
+                })
+                .then(response => {
+                    this.loading = false;
+                    resolve(response);
+                })
+                .catch(error => {
+                    this.loading = false;
+                    reject(error);
+                });
             }
         });
     }
@@ -92,24 +84,24 @@ export class ShippingCalcComponent implements OnInit {
         this.deliveryOptions = [];
         this.loading = true;
         this.sendRequest()
-            .then(response => {
-                this.intelipost = response;
-                this.deliveryOptions = this.intelipost.content.delivery_options;
-                this.loading = false;
-            })
-            .catch(error => {
-                if (error.status == 400)
-                    swal({
-                        title: 'Erro ao calcular o frete!',
-                        text: "Sem opções de entrega viável. Por favor, verifique se os códigos postais estão corretos!",
-                        type: 'warning',
-                        confirmButtonText: 'OK'
-                    });
-                else
-                    swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
-                console.log(error);
-                this.loading = false;
-            });
+        .then(response => {
+            this.intelipost = response;
+            this.deliveryOptions = this.intelipost.content.delivery_options;
+            this.loading = false;
+        })
+        .catch(error => {
+            if (error.status == 400)
+                swal({
+                    title: 'Erro ao calcular o frete!',
+                    text: "Sem opções de entrega viável. Por favor, verifique se os códigos postais estão corretos!",
+                    type: 'warning',
+                    confirmButtonText: 'OK'
+                });
+            else
+                swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
+            console.log(error);
+            this.loading = false;
+        });
     }
 
     addShippingToCart(event, option: IntelipostDeliveryOption) {
@@ -128,17 +120,16 @@ export class ShippingCalcComponent implements OnInit {
         shipping.deliveryInformation = delivery;
         this.loading = true;
         this.cartManager.setShipping(shipping)
-            .then(cart => {
-                this.cart = cart;
-                this.cartUpdated.emit(this.cart);
-                this.loading = false;
-            })
-            .catch(error => {
-                swal({ title: 'Erro!', text: 'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK' });
-                console.log(error);
-                this.loading = false;
-            })
-
+        .then(cart => {
+            this.cart = cart;
+            this.cartUpdated.emit(this.cart);
+            this.loading = false;
+        })
+        .catch(error => {
+            swal({ title: 'Erro!', text: 'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK' });
+            console.log(error);
+            this.loading = false;
+        });
     }
 
     checkOption(option: IntelipostDeliveryOption): boolean {

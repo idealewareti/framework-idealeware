@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { HttpClient } from '../helpers/httpclient'
 import { AppSettings } from 'app/app.settings';
-import { NgProgressService } from "ngx-progressbar";
 import { IntelipostRequest } from "../models/intelipost/intelipost-request";
 import { CartService } from "./cart.service";
 import { Intelipost } from '../models/intelipost/intelipost';

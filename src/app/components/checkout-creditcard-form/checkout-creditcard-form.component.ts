@@ -5,7 +5,6 @@ import { MercadoPagoPayment } from 'app/models/mercadopago/mercadopago';
 import { CreditCard } from 'app/models/payment/credit-card';
 import { Globals } from 'app/models/globals';
 import { PaymentManager } from 'app/managers/payment.manager';
-import { NgProgressService } from 'ngx-progressbar';
 import { MercadoPagoInstallmentResponse } from 'app/models/mercadopago/mercadopago-installment-response';
 import { PagseguroPayment } from 'app/models/pagseguro/pagseguro';
 import { PagseguroCardBrand } from 'app/models/pagseguro/pagseguro-card-brand';
@@ -36,6 +35,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     @Output() creditCardUpdated: EventEmitter<CreditCard> = new EventEmitter<CreditCard>();
     @Output() pagseguroUpdated: EventEmitter<PagseguroOption> = new EventEmitter<PagseguroOption>();
     @Output() mundipaggUpdated: EventEmitter<PaymentMethod> = new EventEmitter<PaymentMethod>();
+    @Output() mercadoPagoUpdated: EventEmitter<MercadoPagoPaymentMethod> = new EventEmitter<MercadoPagoPaymentMethod>();
 
     creditCardForm: FormGroup;
     creditCard: CreditCard = new CreditCard();
@@ -57,7 +57,6 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     constructor(
         private globals: Globals,
         private manager: PaymentManager,
-        private loaderService: NgProgressService,
         formBuilder: FormBuilder,
     ) {
         this.creditCardForm = formBuilder.group({
@@ -190,7 +189,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
             // Se o método de pagamento for Mercado Pago
             if(this.mercadopago){
                 if (card.length == 10 && bin != this.bin) {
-                    this.loaderService.start();
+                    // this.loaderService.start();
                     this.bin = bin;
                     toastr['info']('Identificando o cartão');
                     this.MercadoPagoDetectCard(this.creditCard.creditCardNumber)
@@ -204,7 +203,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
                     })
                     .catch(error => {
                         toastr['error'](error);
-                        this.loaderService.done;
+                        // this.loaderService.done;
                         swal('Erro ao obter o parcelamento', 'Falha ao obter o parcelamento do MercadoPago', 'error');
                     })
                 }
@@ -219,7 +218,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
             // Se o método de pagamento for Pagseguro
             else if(this.pagseguro){
                 if (card.length >= 14 && bin != this.bin) {
-                    this.loaderService.start();
+                    // this.loaderService.start();
                     this.bin = bin;
                     toastr['info']('Identificando o cartão');
                     this.PagseguroDetectBrand(this.creditCard.creditCardNumber.replace(/-/g, ''))
@@ -242,28 +241,28 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
             // Se o método de pagamento for Mundipagg
             else if(this.mundipagg){
                 if (card.length >= 14 && bin != this.bin) {
-                    this.loaderService.start();
+                    // this.loaderService.start();
                     this.bin = bin;
                     toastr['info']('Identificando o cartão');
                     this.creditCard.creditCardBrand = this.MundipaggDetectCardBrand(card)
                     if(this.creditCard.creditCardBrand){
-                        this.loaderService.done();
+                        // this.loaderService.done();
                         toastr['success'](`Cartão ${this.creditCard.creditCardBrand} identificado`);
                         toastr['info']('Obtendo parcelas');
-                        this.loaderService.start();
+                        // this.loaderService.start();
                         this.MundipaggGetInstallments(this.creditCard.creditCardBrand)
                         .then(method => {
-                            this.loaderService.done();
+                            // this.loaderService.done();
                             this.mundipagg.methodSelected = method;
                         })
                         .catch(error => {
-                            this.loaderService.done();
+                            // this.loaderService.done();
                             console.log(error);
                             toastr['error'](error);
                         });
                     }
                     else{
-                        this.loaderService.done();
+                        // this.loaderService.done();
                         toastr['error']('Cartão não identificado');   
                     }
                 }
@@ -364,12 +363,13 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
         this.manager.getMercadoPagoInstalments(method.id, totalPurchase)
         .then(response => {
             this.mercadopago.installmentResponse = response;
-            this.getMinInstallments()
-            this.loaderService.done;
+            this.getMinInstallments();
+            this.mercadoPagoUpdated.emit(method);
+            // this.loaderService.done;
         })
         .catch(error => {
             toastr['error'](error);
-            this.loaderService.done;
+            // this.loaderService.done;
             swal('Erro ao obter o parcelamento', 'Falha ao obter o parcelamento do MercadoPago', 'error');
         });
     }
@@ -462,11 +462,11 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
                             this.pagseguroUpdated.emit(option);
                         }
                     });
-                    this.loaderService.done();
+                    // this.loaderService.done();
                     resolve(installments)
                 },
                 error: response => {
-                    this.loaderService.done();
+                    // this.loaderService.done();
                     console.log(response);
                     this.pagseguro.installments = [];
                     reject(response);

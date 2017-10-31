@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {Title} from '@angular/platform-browser';
 import {AppSettings} from 'app/app.settings';
-import {NgProgressService} from 'ngx-progressbar';
 import {Customer} from '../models/customer/customer';
 import {CustomerAddress}  from '../models/customer/customer-address';
 import {Login} from '../models/customer/login';
@@ -15,8 +13,7 @@ export class CustomerService{
 
     constructor(
         private titleService: Title,
-        private client: HttpClient,
-        private loaderService: NgProgressService
+        private client: HttpClient
     ){}
 
     public createCustomer(customer: Customer): Promise<Customer>{

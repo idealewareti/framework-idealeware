@@ -12,7 +12,6 @@ import { CartManager } from "app/managers/cart.manager";
 import { strongPasswordValidator } from "app/directives/strong-password/strong-password.directive";
 import { equalsValidator, equalsControlValidator } from "app/directives/equals/equals.directive";
 import { FormHelper } from "app/helpers/formhelper";
-import { NgProgressService } from "ngx-progressbar";
 import { Title } from "@angular/platform-browser";
 import { CustomerManager } from "app/managers/customer.manager";
 
@@ -42,7 +41,6 @@ export class SignUpComponent {
         private dneService: DneAddressService,
         private cartManager: CartManager,
         private parentRouter: Router,
-        private loader: NgProgressService,
         private titleService: Title,
 
     ) {
@@ -165,27 +163,24 @@ export class SignUpComponent {
     public getDne(event) {
         event.preventDefault();
         if (this.customer.addresses[0] != null && this.customer.addresses[0].zipCode) {
-            this.loader.start();
             toastr['info']('Localizando o endereço');
             this.dneService.getAddress(this.customer.addresses[0].zipCode)
-                .then(response => {
-                    this.customer.addresses[0].district = response.neighborhoods;
-                    this.customer.addresses[0].city = response.city;
-                    this.customer.addresses[0].addressLine1 = response.street;
-                    this.customer.addresses[0].state = response.state;
-                    this.loader.done();
-                    if(response.street){
-                        toastr['success']('Endereço encontrado');
-                    }
-                    else{
-                        toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
-                    }
-                })
-                .catch(error => { 
-                    console.log(error);
-                    this.loader.done();
-                    toastr['error']('Endereço não encontrado, preencha os campos manualmente');
-                });
+            .then(response => {
+                this.customer.addresses[0].district = response.neighborhoods;
+                this.customer.addresses[0].city = response.city;
+                this.customer.addresses[0].addressLine1 = response.street;
+                this.customer.addresses[0].state = response.state;
+                if(response.street){
+                    toastr['success']('Endereço encontrado');
+                }
+                else{
+                    toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
+                }
+            })
+            .catch(error => { 
+                console.log(error);
+                toastr['error']('Endereço não encontrado, preencha os campos manualmente');
+            });
         }
     }
 

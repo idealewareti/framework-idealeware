@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '../helpers/httpclient'
 import {Title} from '@angular/platform-browser';
 import {AppSettings} from 'app/app.settings';
-import {NgProgressService} from 'ngx-progressbar';
 import { Token } from "../models/customer/token";
 import { AppTexts } from "app/app.texts";
 import { Budget } from "../models/budget/budget";
@@ -10,11 +9,7 @@ import { Budget } from "../models/budget/budget";
 @Injectable()
 export class BudgetService{
 
-    constructor(
-        private client: HttpClient,
-        private loader: NgProgressService
-
-    ){ }
+    constructor(private client: HttpClient){ }
 
     private getToken(): Token{
         let token = new Token();

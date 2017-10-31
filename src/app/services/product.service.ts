@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {AppSettings} from 'app/app.settings';
 import {Product} from '../models/product/product';
 import {Sku} from '../models/product/sku';
 import {ProductPicture} from '../models/product/product-picture';
-import { NgProgressService } from "ngx-progressbar";
 import { ProductAwaited } from "../models/product-awaited/product-awaited";
 import { ProductRating } from "../models/product-rating/product-rating";
 import { ProductRatingCreate } from "../models/product-rating/product-rating-create";
@@ -16,10 +14,7 @@ export class ProductService{
     
     private token: Token;
     
-    constructor(
-        private client: HttpClient,
-        private loaderService: NgProgressService
-    ){ }
+    constructor(private client: HttpClient){ }
 
     getProductBySku(skuId: string) : Promise<Product>{
         return new Promise((resolve, reject) => {

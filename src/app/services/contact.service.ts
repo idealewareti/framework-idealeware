@@ -6,9 +6,7 @@ import { Contact } from "app/models/contact/contact";
 
 @Injectable()
 export class ContactService{
-    constructor(
-        private client: HttpClient,
-    ){ }
+    constructor(private client: HttpClient){ }
 
     sendContact(contact: Contact): Promise<Contact>{
         return new Promise((resolve, reject) => {

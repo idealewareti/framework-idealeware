@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {Title} from '@angular/platform-browser';
 import {AppSettings} from 'app/app.settings';
-import {NgProgressModule} from 'ngx-progressbar';
 import {Group} from '../models/group/group';
 
 @Injectable()

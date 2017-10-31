@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {Title} from '@angular/platform-browser';
 import {AppSettings} from 'app/app.settings';
-import {NgProgressService} from 'ngx-progressbar';
 import { Token } from '../models/customer/token';
 import { Coupon } from "../models/coupon/coupon";
 import { Cart } from "../models/cart/cart";
@@ -15,8 +13,6 @@ export class CouponService{
     constructor(
         private titleService: Title,
         private client: HttpClient,
-        private loaderService: NgProgressService
-
     ){}
 
     private getToken(){

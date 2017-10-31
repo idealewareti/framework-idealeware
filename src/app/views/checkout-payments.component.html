@@ -48,7 +48,7 @@
                         <a *ngIf="getMercadoPagoTicket()" href="" (click)="selectMercadoPagoMethod(getMercadoPagoTicket(), $event)" class="list-group-item" [ngClass]="{'active': isMercadoPagoTicket()}">Boleto</a>
                         <a *ngIf="hasMercadoPagoCreditCards()" href="" (click)="selectMercadoPagoMethod(mercadopago.creditCardType, $event)" class="list-group-item" [ngClass]="{'active': isMercadoPagoCreditCard()}">Cartão de Crédito</a>
                     </div>
-                    <checkout-creditcard-form *ngIf="isMercadoPagoCreditCard()" (creditCardUpdated)="handleCreditCartUpdated($event)" [mercadopago]="mercadopago"></checkout-creditcard-form>
+                    <checkout-creditcard-form *ngIf="isMercadoPagoCreditCard()" (creditCardUpdated)="handleCreditCartUpdated($event)" (mercadoPagoUpdated)="handleMercadoPagoUpdated($event)" [mercadopago]="mercadopago"></checkout-creditcard-form>
                 </div>
 
                 <div class="panel-body" *ngIf="isMundipaggBankslip(payment)">

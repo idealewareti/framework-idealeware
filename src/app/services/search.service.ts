@@ -1,10 +1,8 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {AppSettings} from 'app/app.settings';
 import {ProductPicture} from '../models/product/product-picture';
 import {Search} from '../models/search/search';
-import { NgProgressService } from "ngx-progressbar";
 import { Product } from "../models/product/product";
 import { Pagination } from "../models/pagination";
 import { SearchResult } from "../models/search/search-result";
@@ -13,10 +11,7 @@ import { Category } from "app/models/category/category";
 @Injectable()
 export class SearchService{
 
-    constructor(
-        private client: HttpClient,
-        private loaderService: NgProgressService
-    ){ }
+    constructor(private client: HttpClient){ }
 
     searchFor(search: Search, pageNumber: number = null, pageSize: number = null): Promise<SearchResult>{
         let pagination: Pagination = new Pagination();

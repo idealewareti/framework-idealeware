@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.2
+- Fix para a NgProgressbar
+
 ## 1.3.1
 - Filtro Avançado -> Melhoria para exibição de Marcas e Categorias na busca
 - Alteração na galeria do Produto: Alterado plugin de Zoom e de Carrossel de imagens

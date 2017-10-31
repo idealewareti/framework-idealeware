@@ -206,7 +206,7 @@ export class CheckoutShippingComponent implements OnChanges {
 
     shippingCost(deliveryOption: IntelipostDeliveryOption): number{
         if(deliveryOption.final_shipping_cost < deliveryOption.provider_shipping_cost)
-            return deliveryOption.provider_shipping_cost;
-        else return deliveryOption.final_shipping_cost;
+            return deliveryOption.final_shipping_cost;
+        else return deliveryOption.provider_shipping_cost;
     }
 }

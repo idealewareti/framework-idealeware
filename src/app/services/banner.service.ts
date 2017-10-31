@@ -1,19 +1,14 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {Title} from '@angular/platform-browser';
 import {AppSettings} from 'app/app.settings';
-import {NgProgressService} from 'ngx-progressbar';
 import {Banner} from '../models/banner/banner';
 import {ModelReference} from '../models/model-reference';
 
 @Injectable()
 export class BannerService{
 
-    constructor(
-        private client: HttpClient,
-        private loaderService: NgProgressService
-    ){ }
+    constructor(private client: HttpClient){ }
 
     public getBannersFromCategory(id, type): Promise<Banner[]>{
         return this.getBanners(id, 'category', type);

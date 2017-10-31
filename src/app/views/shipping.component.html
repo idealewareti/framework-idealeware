@@ -18,7 +18,10 @@
     <div class="list-group shipping-list" *ngIf="deliveryOptions.length > 0">
         <a *ngFor="let option of deliveryOptions" (click)="addShippingToCart($event, option)" [ngClass]="{'list-group-item-info': checkOption(option)}" href="" class="list-group-item">
             {{option.delivery_method_name}}
-            <strong>até <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis - <span class="price">{{option.final_shipping_cost | currencyFormat }}</span></strong>
+            <strong>até <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis -
+                <span class="" *ngIf="option.final_shipping_cost == 0">Frete Grátis</span> 
+                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat }}</span> 
+            </strong>
         </a>
     </div>
 </div>
@@ -35,7 +38,10 @@
     </form>
     <div class="list-group" *ngIf="deliveryOptions.length > 0">
         <a href="#" *ngFor="let option of deliveryOptions" (click)="addShippingToCart($event, option)" class="list-group-item" [ngClass]="{'list-group-item-info': checkOption(option)}">
-            {{option.delivery_method_name}} <strong>até <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis - <span class="price">{{option.final_shipping_cost | currencyFormat }}</span></strong>
+            {{option.delivery_method_name}} <strong>até <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis - 
+                <span class="" *ngIf="option.final_shipping_cost == 0">Frete Grátis</span> 
+                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat }}</span> 
+            </strong>
         </a>
     </div>
 </div>

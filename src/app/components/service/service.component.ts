@@ -9,7 +9,6 @@ import { Service } from "app/models/product-service/product-service";
 import { ProductService } from "app/services/product.service";
 import { Product } from "app/models/product/product";
 import { CartManager } from "app/managers/cart.manager";
-import { NgProgressService } from "ngx-progressbar";
 
 declare var swal: any;
 
@@ -37,10 +36,8 @@ export class ServiceComponent {
         private service: ServiceService,
         private productService: ProductService,
         private location: Location,
-        private cartManager: CartManager,
-        private loader: NgProgressService
-    ) {
-    }
+        private cartManager: CartManager
+    ) {}
 
     ngOnInit() {
         this.getServiceId();
@@ -81,9 +78,7 @@ export class ServiceComponent {
         if(serviceSelected.quantity == 0)
             swal("Quantidade não informada", "A quantidade mínima de serviços deve ser maior que zero");
         else{
-            this.loader.start();
             this.serviceUpdated.emit(serviceSelected);
-            this.loader.done();
         }
     }
 
@@ -92,7 +87,6 @@ export class ServiceComponent {
         let serviceSelected = this.services.filter(s => s.id == serviceId)[0];
         serviceSelected.quantity = 0;
         this.serviceUpdated.emit(serviceSelected);
-        this.loader.done();
     }
 
     changeTotalService(id: string): number {

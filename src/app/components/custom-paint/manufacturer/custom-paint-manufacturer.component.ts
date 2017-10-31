@@ -3,6 +3,7 @@ import { CustomPaintManufacturer } from "app/models/custom-paint/custom-paint-ma
 import { CustomPaintService } from "app/services/custom-paint.service";
 import { Title } from "@angular/platform-browser";
 import { AppSettings } from "app/app.settings";
+import { Globals } from 'app/models/globals';
 
 @Component({
     moduleId: module.id,
@@ -11,11 +12,16 @@ import { AppSettings } from "app/app.settings";
 })
 export class CustomPaintManufacturerComponent implements OnInit {
     manufacturers: CustomPaintManufacturer[] = [];
-    mediaPath: string = '/assets/images/';
+    mediaPath: string = '';
     
-    constructor(private service: CustomPaintService, private titleService: Title) { }
+    constructor(
+        private service: CustomPaintService, 
+        private titleService: Title,
+        private globals: Globals
+    ) { }
 
     ngOnInit() {
+        this.mediaPath = `${this.globals.store.link}/static/custompaint/`;
         AppSettings.setTitle('Cores Personalizadas', this.titleService);
         this.getManufacturers();
      }

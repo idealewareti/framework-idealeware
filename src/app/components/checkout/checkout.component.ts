@@ -867,7 +867,7 @@ export class CheckoutComponent implements OnInit {
      * Pagamento com Cartão de Crédito MercadoPago
      * 
      * @private
-     * @param {string} cartId 
+     * @param {string} cartId
      * @memberof CheckoutComponent
      */
     private payWithMercadoPagoCreditCard(cartId: string){
@@ -886,14 +886,14 @@ export class CheckoutComponent implements OnInit {
         })
         .then(public_key => {
             Mercadopago.setPublishableKey(public_key);
-            let form = document.querySelector('#mercadoPagoForm');
+            const form = document.querySelector('#mercadoPagoForm');
             return new Promise((resolve, reject) => {
                 Mercadopago.createToken(form, (status, response) => {
-                    if(status == 200)
+                    if (status === 200) {
                         resolve(response.id);
-                    else 
-                        reject(this.paymentManager.getMercadoPagoError(response.cause[0].code))
-                })
+                    }
+                    reject(this.paymentManager.getMercadoPagoError(response.cause[0].code));
+                });
             });
         })
         .then(cardToken => {

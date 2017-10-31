@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { HttpClient } from '../helpers/httpclient'
 import { AppSettings } from 'app/app.settings';
-import { NgProgressService } from "ngx-progressbar";
 import { Payment } from "../models/payment/payment";
 import { Token } from "../models/customer/token";
 import { CreditCard } from "../models//payment/credit-card";
@@ -17,10 +15,7 @@ export class PaymentService {
 
     private token: Token;
 
-    constructor(
-        private client: HttpClient,
-        private loaderService: NgProgressService
-    ) { }
+    constructor(private client: HttpClient) { }
 
     private getToken() {
         this.token = new Token();

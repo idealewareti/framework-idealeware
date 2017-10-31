@@ -1,16 +1,12 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "app/helpers/httpclient";
-import { NgProgressService } from "ngx-progressbar";
 import { Redirect301Route } from "app/models/redirect301/redirect301-route";
 import { AppSettings } from "app/app.settings";
 
 @Injectable()
 export class Redirect301Service{
 
-    constructor(
-        private client: HttpClient,
-        private loader: NgProgressService
-    ){}
+    constructor(private client: HttpClient){}
 
     getAll(): Promise<Redirect301Route[]>{
         return new Promise((resolve, reject) =>{

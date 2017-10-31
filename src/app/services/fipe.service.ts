@@ -8,9 +8,7 @@ import { VehicleYear } from "../models/vehicle/vehicleYear";
 @Injectable()
 export class FipeService {
 
-    constructor(private client: HttpClient) {
-
-    }
+    constructor(private client: HttpClient) {}
 
     setUp() {
         if (AppSettings.DOMAIN != localStorage.getItem('store_domain'))

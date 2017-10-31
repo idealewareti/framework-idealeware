@@ -1,15 +1,6 @@
 import { Component, OnInit, AfterContentChecked, AfterViewChecked, AfterViewInit } from '@angular/core';
-import { Http } from '@angular/http';
 import { AppSettings } from './app.settings';
-import {
-    Router,
-    Event as RouterEvent,
-    NavigationStart,
-    NavigationEnd,
-    NavigationCancel,
-    NavigationError
-} from '@angular/router'
-import { NgProgressService } from 'ngx-progressbar';
+import { Router, Event as RouterEvent, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { StoreService } from './services/store.service';
 import { CartManager } from "./managers/cart.manager";
 import { Cart } from "./models/cart/cart";
@@ -56,7 +47,6 @@ export class AppComponent implements OnInit {
     facebookSafeUrl: SafeResourceUrl;
 
     constructor(
-        private loaderService: NgProgressService,
         private router: Router,
         private service: StoreService,
         private customerService: CustomerService,
@@ -72,29 +62,31 @@ export class AppComponent implements OnInit {
         if (!this.getSessionId())
             this.setSessionId();
 
-        this.loaderService.start();
-        this.service.setUp();
+        this.globals.store = null;
+        this.globals.cart = new Cart();
     }
 
     ngOnInit() {
-        this.service.getInfo()
-            .then(store => {
-                this.globals.store = store;
-                this.getInstitutionals();
-                this.getGoogle();
-                this.showZipcodePopup();
-                this.mediaPath = `${store.link}/static/store`
+        this.service.setUp()
+        .then(domain => {
+            return this.service.getInfo();
+        })
+        .then(store => {
+            this.globals.store = store;
+            this.getInstitutionals();
+            this.getGoogle();
+            this.showZipcodePopup();
+            this.mediaPath = `${store.link}/static/store`
 
-                if(this.globals.store.modality == EnumStoreModality.Ecommerce)
-                    this.getPayments();
-                
-                this.facebookSafeUrl = this.getFacebookUrl();
-            })
-            .catch(error => {
-                console.log(error);
-                this.router.navigate(['/erro-500']);
-            });
-
+            if(this.globals.store.modality == EnumStoreModality.Ecommerce)
+                this.getPayments();
+            
+            this.facebookSafeUrl = this.getFacebookUrl();
+        })
+        .catch(error => {
+            console.log(error);
+            this.router.navigate(['/erro-500']);
+        });
     }
 
     ngAfterViewInit() {}
@@ -155,18 +147,18 @@ export class AppComponent implements OnInit {
 
     getGoogle() {
         this.googleService.getAll()
-            .then(response => {
-                this.googleUA = response;
-                ga('create', response.uaCode, 'auto');
+        .then(response => {
+            this.googleUA = response;
+            ga('create', response.uaCode, 'auto');
 
-                this.router.events.subscribe(event => {
-                    if (event instanceof NavigationEnd) {
-                        ga('set', 'page', event.urlAfterRedirects);
-                        ga('send', 'pageview');
-                    }
-                });
-            })
-            .catch(e => console.log(e));
+            this.router.events.subscribe(event => {
+                if (event instanceof NavigationEnd) {
+                    ga('set', 'page', event.urlAfterRedirects);
+                    ga('send', 'pageview');
+                }
+            });
+        })
+        .catch(e => console.log(e));
     }
 
     private getUrl() {
@@ -191,14 +183,14 @@ export class AppComponent implements OnInit {
     private getCustomer() {
         if (this.customerService.hasToken() && !this.customer) {
             this.customerService.getUserFromStorage()
-                .then(user => {
-                    this.customer = user;
-                    this.logged = true;
-                })
-                .catch(() => {
-                    this.customer = null;
-                    this.logged = false;
-                });
+            .then(user => {
+                this.customer = user;
+                this.logged = true;
+            })
+            .catch(() => {
+                this.customer = null;
+                this.logged = false;
+            });
         }
         else if (!this.customerService.hasToken()) {
             this.customer = null;
@@ -208,8 +200,8 @@ export class AppComponent implements OnInit {
 
     getInstitutionals() {
         this.institutionalService.getAll()
-            .then(response => this.institutionals = response)
-            .catch(error => console.log(error.text()));
+        .then(response => this.institutionals = response)
+        .catch(error => console.log(error.text()));
     }
         
     getInstitutionalUrl(page: Institutional): string{
@@ -226,7 +218,6 @@ export class AppComponent implements OnInit {
                 this.payments = payments;
                 resolve(payments);
             })
-
             .catch(error => {
                 console.log(error._body);
                 reject(error);

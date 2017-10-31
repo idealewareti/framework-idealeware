@@ -1,18 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { HttpClient } from '../helpers/httpclient'
 import { Title } from '@angular/platform-browser';
 import { AppSettings } from 'app/app.settings';
-import { NgProgressService } from "ngx-progressbar";
 import { NewsLetter } from "../models/newsletter/newsletter";
 
 @Injectable()
 export class NewsLetterService {
 
-    constructor(
-        private client: HttpClient,
-        private loader: NgProgressService
-    ) { }
+    constructor(private client: HttpClient) { }
 
     public createNewsLetter(newsLetter: NewsLetter, popupId: string): Promise<NewsLetter> {
         return new Promise((resolve, reject) => {

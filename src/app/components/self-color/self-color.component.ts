@@ -4,7 +4,6 @@ import {AppSettings} from 'app/app.settings'
 import {Http} from '@angular/http';
 import {Paleta} from 'app/models/self-color/paleta'
 import { SelfColor } from 'app/models/self-color/self-color';
-import { NgProgressService } from "ngx-progressbar";
 import { SelfColorService } from "app/services/self-color.service";
 import { SelfColorFamily } from "app/models/self-color/self-color-family";
 
@@ -29,11 +28,8 @@ export class SelfColorComponent {
     @Input() selfColor: SelfColor;
     @Output() colorUpdated: EventEmitter<SelfColor> = new EventEmitter<SelfColor>();
 
-    constructor(
-        private service: SelfColorService, 
-        private loaderService: NgProgressService)
+    constructor(private service: SelfColorService)
     {
-
         this.families = [
             new SelfColorFamily({id: '8', name: 'off-whites'}),
             new SelfColorFamily({id: '9', name: 'tons-pastel'}),

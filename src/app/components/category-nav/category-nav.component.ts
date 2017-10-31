@@ -3,7 +3,6 @@ import {HttpClient} from 'app/helpers/httpclient';
 import {AppSettings} from 'app/app.settings';
 import {Category} from 'app/models/category/category';
 import {CategoryService} from 'app/services/category.service';
-import { NgProgressService } from "ngx-progressbar";
 import { Globals } from "app/models/globals";
 
 declare var S: any;
@@ -21,7 +20,6 @@ export class CategoryNavComponent {
     mediaPath: string;
 
     constructor(
-        private loaderService: NgProgressService,
         private service: CategoryService,
         private globals: Globals
     ){

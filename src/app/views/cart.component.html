@@ -205,7 +205,13 @@
                         </tr>
                         <tr class="shipping" *ngIf="!isCatalog()">
                             <td class="text-left"><span>Frete</span></td>
-                            <td class="text-right"><strong>{{getShipping() | currencyFormat }}</strong></td>
+                            <td class="text-right" *ngIf="shipping != null">
+                                <strong *ngIf="getShipping() == 0">Frete Grátis</strong>
+                                <strong *ngIf="getShipping() != 0">{{getShipping() | currencyFormat }}</strong>
+                            </td>
+                            <td class="text-right" *ngIf="shipping == null">
+                                <strong>--</strong>
+                           </td>
                         </tr>
                     </tbody>
                     <tfoot>

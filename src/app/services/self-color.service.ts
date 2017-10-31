@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { HttpClient } from '../helpers/httpclient'
 import { AppSettings } from 'app/app.settings';
-import { NgProgressService } from "ngx-progressbar";
 import { Product } from "../models/product/product";
 import { SelfColor } from "../models/self-color/self-color";
 import { SelfColorFamily } from "../models/self-color/self-color-family";
@@ -12,10 +10,7 @@ export class SelfColorService{
 
     private urlSelfColor: string = AppSettings.SELF_COLOR_PALETA;
 
-    constructor(
-        private client: HttpClient,
-        private loaderService: NgProgressService
-    ){ }
+    constructor(private client: HttpClient){ }
 
     getColors(family: SelfColorFamily): Promise<SelfColor[]>{
         return new Promise((resolve, reject) => {

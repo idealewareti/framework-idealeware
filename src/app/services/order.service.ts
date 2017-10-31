@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient';
 import {AppSettings} from 'app/app.settings';
-import {NgProgressService} from 'ngx-progressbar';
 import {Token} from '../models/customer/token';
 import { Order } from '../models/order/order';
 import { Cart } from "../models/cart/cart";
@@ -12,12 +10,7 @@ export class OrderService{
     
     private token: Token;
     
-    constructor(
-        private client: HttpClient,
-        private loader: NgProgressService
-    ){
-
-    }
+    constructor(private client: HttpClient){}
 
     private getToken(){
         this.token = new Token();

@@ -91,7 +91,10 @@
                                 </tr>
                                 <tr class="shipping">
                                     <td class="text-left"><span>Frete</span></td>
-                                    <td class="text-right"><strong>{{getShipping() |  currencyFormat }}</strong></td>
+                                    <td class="text-right">
+                                        <strong *ngIf="getShipping() == 0" >Frete Grátis</strong>
+                                        <strong *ngIf="getShipping() != 0" >{{getShipping() |  currencyFormat }}</strong>
+                                    </td>
                                 </tr>
                                 <tr class="services">
                                     <td class="text-left"><span>Serviços</span></td>

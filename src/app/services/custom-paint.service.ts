@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { HttpClient } from '../helpers/httpclient'
 import { Title } from '@angular/platform-browser';
 import { AppSettings } from 'app/app.settings';
-import { NgProgressService } from 'ngx-progressbar';
 import { CustomPaintManufacturer } from "app/models/custom-paint/custom-paint-manufacturer";
 import { CustomPaintColor } from "app/models/custom-paint/custom-paint-color";
 import { CustomPaintVariation } from "app/models/custom-paint/custom-paint-variation";
@@ -12,7 +10,7 @@ import { CustomPaintCombination } from "app/models/custom-paint/custom-paint-com
 @Injectable()
 export class CustomPaintService{
 
-    constructor(private client: HttpClient, private loaderService: NgProgressService){}
+    constructor(private client: HttpClient){}
 
     getManufacturers(): Promise<CustomPaintManufacturer[]>{
         return new Promise((resolve, reject) => {

@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { NgProgressService } from "ngx-progressbar";
 import { HttpClient } from "app/helpers/httpclient";
 import { EnVariationType } from "app/enums/variationtype.enum";
 import { AppSettings } from "app/app.settings";
@@ -8,7 +7,7 @@ import { RelatedProductGroup } from "app/models/related-products/related-product
 @Injectable()
 export class RelatedProductsService{
 
-    constructor(private client: HttpClient, private loaderService: NgProgressService){}
+    constructor(private client: HttpClient){}
 
     getRelatedProducts(
         name: string = null,

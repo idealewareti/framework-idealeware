@@ -25,6 +25,13 @@ export class Store {
 
     public constructor(object = null) {
         if (object) return this.createFromResponse(object);
+        else{
+            this.domain = null;
+            this.link = null;
+            this.logo = null;
+            this.companyName = null;
+            this.tradingName =  null;
+        }
     }
 
     public createFromResponse(response): Store {

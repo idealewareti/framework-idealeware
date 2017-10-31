@@ -3,14 +3,10 @@ import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {AppSettings} from 'app/app.settings';
 import {Category} from '../models/category/category';
-import {NgProgressService} from 'ngx-progressbar';
 
 @Injectable()
 export class CategoryService{
-    constructor(
-        private client: HttpClient,
-        private loaderService: NgProgressService
-     ){
+    constructor(private client: HttpClient){
 
     }
 

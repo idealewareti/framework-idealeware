@@ -1,8 +1,8 @@
-export class AppCore{
+export class AppCore {
 
     /**
      * Retorna a API especificada do ambiente selecionado
-     * 
+     *
      * @static
 
      * @param {boolean} environment Ambiente
@@ -11,12 +11,13 @@ export class AppCore{
      * @memberof AppCore
      */
     public static getAPI(environment, key: string): string{
-        if(environment.production)
+        if (environment.production) {
             return this.apiProduction(key);
-        else return this.apiDevelopment(key);
+        }
+        return this.apiDevelopment(key);
     }
 
-    
+
 // ______               _                                  _   
 // |  _  \             | |                                | |  
 // | | | |_____   _____| | ___  _ __  _ __ ___   ___ _ __ | |_ 
@@ -26,7 +27,7 @@ export class AppCore{
 //                             | |                             
 //                             |_|                             
     private static apiDevelopment(key: string): string{
-        let apis: string[] = [];
+        const apis: string[] = [];
         apis['API_AUTHENTICATE'] =          'https://api-pub-authenticate.prd.idealeware.com.br';
         apis['API_BANNER'] =                'https://api-pub-banner.prd.idealeware.com.br';
         apis['API_BRANCH'] =                'https://api-pub-branch.prd.idealeware.com.br';
@@ -69,7 +70,7 @@ export class AppCore{
     //                   __/ |     
     //                  |___/      
     private static apiStage(key: string): string{
-        let apis: string[] = [];
+        const apis: string[] = [];
         apis['API_AUTHENTICATE'] =          'https://api-pub-authenticate-stage.idealeware.com.br';
         apis['API_BANNER'] =                'https://api-pub-banner-stage.idealeware.com.br';
         apis['API_BRANCH'] =                'https://api-pub-branch-stage.idealeware.com.br';
@@ -112,7 +113,7 @@ export class AppCore{
     //                                       __/ |
     //                                      |___/ 
     private static apiHomolog(key: string): string{
-        let apis: string[] = [];
+        const apis: string[] = [];
         apis['API_AUTHENTICATE'] =          'https://api-pub-authenticate.hmg.idealeware.com.br';
         apis['API_BANNER'] =                'https://api-pub-banner.hmg.idealeware.com.br';
         apis['API_BRANCH'] =                'https://api-pub-branch.hmg.idealeware.com.br';
@@ -153,7 +154,7 @@ export class AppCore{
     // | |  | | | (_) | (_| | |_| | (__| |_| | (_) | | | |
     // \_|  |_|  \___/ \__,_|\__,_|\___|\__|_|\___/|_| |_|
     private static apiProduction(key: string): string{
-            let apis: string[] = [];
+            const apis: string[] = [];
             apis['API_AUTHENTICATE'] =          'https://api-pub-authenticate.prd.idealeware.com.br';
             apis['API_BANNER'] =                'https://api-pub-banner.prd.idealeware.com.br';
             apis['API_BRANCH'] =                'https://api-pub-branch.prd.idealeware.com.br';
@@ -170,7 +171,7 @@ export class AppCore{
             apis['API_GOOGLE'] =                'https://api-pub-google.prd.idealeware.com.br';
             apis['API_GROUP'] =                 'https://api-pub-group.prd.idealeware.com.br';
             apis['API_INSTITUTIONAL'] =         'https://api-pub-institutional.prd.idealeware.com.br';
-            apis['API_INTELIPOST'] =            'https://api-pub-intelipost.prd.idealeware.com.br';
+            apis['API_INTELIPOST'] =            '';
             apis['API_ORDER'] =                 'https://api-pub-order.prd.idealeware.com.br'; 
             apis['API_ORDERVALIDATION'] =       'https://api-pub-ordervalidation.prd.idealeware.com.br';
             apis['API_PAYMENTS'] =              'https://api-pub-payments.prd.idealeware.com.br';

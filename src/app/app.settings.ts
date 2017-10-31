@@ -1,6 +1,6 @@
 import { Title } from '@angular/platform-browser';
 import { AppConfig } from './app.config';
-import { environment } from './../environments/environment'
+import { environment } from './../environments/environment';
 import { Http } from "@angular/http";
 import { AppCore } from "app/app.core";
 
@@ -65,7 +65,7 @@ export class AppSettings {
      * @memberof AppSettings
      */
     public static setTitle(title: string, titleService: Title) {
-        let defaultTitle = AppConfig.NAME;
+        const defaultTitle = AppConfig.NAME;
         titleService.setTitle(`${title} | ${defaultTitle}`);
     }
 
@@ -79,7 +79,7 @@ export class AppSettings {
      * @memberof AppSettings
      */
     public static createGuid() {
-        return (this.S4() + this.S4() + "-" + this.S4() + "-4" + this.S4().substr(0, 3) + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4()).toLowerCase();
+        return (this.S4() + this.S4() + '-' + this.S4() + '-4' + this.S4().substr(0, 3) + '-' + this.S4() + '-' + this.S4() + this.S4() + this.S4()).toLowerCase();
     }
 
     private static S4() {
@@ -96,7 +96,7 @@ export class AppSettings {
      * @memberof AppSettings
      */
     public static isMobile(): boolean {
-        let ua = window.navigator.userAgent;
+        const ua = window.navigator.userAgent;
         let check = false;
         if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(ua)) {
             check = true;
@@ -124,7 +124,7 @@ export class AppSettings {
             .replace(/\//g, '-')
         )
         .latinise()
-        .s
+        .s;
     }
 
      /**
@@ -148,10 +148,13 @@ export class AppSettings {
      * @memberof AppSettings
      */
     public static isGuidEmpty(value: string): boolean{
-        if(value){
-            if(value == '00000000-0000-0000-0000-000000000000')
-               return true;
-            else return false;
+        if (value) {
+            if (value === '00000000-0000-0000-0000-000000000000'){
+                return true;
+            }
+            else{
+                return false;
+            }
         }
         return false;
     }

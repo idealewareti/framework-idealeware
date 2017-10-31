@@ -12,7 +12,6 @@ import { PagseguroMethod } from 'app/models/pagseguro/pagseguro-method';
 import { PagseguroOption } from 'app/models/pagseguro/pagseguro-option';
 import { PagseguroInstallment } from 'app/models/pagseguro/pagseguro-installment';
 import { PagseguroPayment } from 'app/models/pagseguro/pagseguro';
-import { NgProgressService } from 'ngx-progressbar';
 import { MercadoPagoPayment } from 'app/models/mercadopago/mercadopago';
 import { MercadoPagoPaymentMethod } from 'app/models/mercadopago/mercadopago-paymentmethod';
 import { CreditCard } from 'app/models/payment/credit-card';
@@ -48,8 +47,7 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
     constructor(
         private paymentManager: PaymentManager,
         private cartManager: CartManager,
-        private globals: Globals,
-        private loaderService: NgProgressService
+        private globals: Globals
     ) { }
 
     ngOnInit() { 
@@ -259,6 +257,17 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
     }
 
     /**
+     * Recebe o método selecionado do Mercado Pago e adiciona à variável
+     * 
+     * @param {MercadoPagoPaymentMethod} event 
+     * @memberof CheckoutPaymentsComponent
+     */
+    handleMercadoPagoUpdated(event: MercadoPagoPaymentMethod){
+        this.selected.mercadopago = event;
+        this.emitPayment();
+    }
+
+    /**
      * Informa se o pagamento na loja está disponível
      * 
      * @returns {boolean} 
@@ -347,7 +356,7 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
             this.pagseguro.session = session;
             let totalPurchasePrice: number = this.globals.cart.totalPurchasePrice;
             PagSeguroDirectPayment.setSessionId(this.pagseguro.session);
-            this.loaderService.start();
+            // this.loaderService.start();
             PagSeguroDirectPayment.getPaymentMethods({
 			    amount: totalPurchasePrice,
 			    success: response => {
@@ -365,7 +374,7 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
                     swal('Erro ao obter as formas de pagamento', 'Falha ao obter as formas de pagamento do Pagseguro', 'error');
 			    },
 			    complete: response => {
-                    this.loaderService.done();
+                    // this.loaderService.done();
 			    }
 		    });
         })

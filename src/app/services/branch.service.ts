@@ -1,18 +1,13 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {Title} from '@angular/platform-browser';
 import {AppSettings} from 'app/app.settings';
 import { Branch } from "../models/branch/branch";
-import { NgProgressService } from "ngx-progressbar";
 
 @Injectable()
 export class BranchService{
 
-    constructor(
-        private client: HttpClient,
-        private loader: NgProgressService
-    ){ }
+    constructor(private client: HttpClient){ }
 
     public getBranches(zipcode: string): Promise<Branch[]>{
         return new Promise((resolve, reject) => {

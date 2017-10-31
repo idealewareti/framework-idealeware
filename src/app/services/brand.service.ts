@@ -1,18 +1,13 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {Title} from '@angular/platform-browser';
 import {AppSettings} from 'app/app.settings';
-import {NgProgressService} from 'ngx-progressbar';
 import {Brand} from '../models/brand/brand';
 
 @Injectable()
 export class BrandService{
 
-    constructor(
-        private client: HttpClient,
-        private loader: NgProgressService
-    ){ }
+    constructor(private client: HttpClient){ }
 
     public getAll(): Promise<Brand[]>{
         return new Promise((resolve, reject) => {

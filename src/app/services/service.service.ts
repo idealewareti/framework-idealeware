@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { HttpClient } from '../helpers/httpclient'
 import { Title } from '@angular/platform-browser';
 import { AppSettings } from 'app/app.settings';
-import { NgProgressService } from "ngx-progressbar";
 import { Service } from "../models/product-service/product-service";
 @Injectable()
 export class ServiceService {
     
-    constructor(
-        private client: HttpClient,
-        private loader: NgProgressService
-    ) { }
+    constructor(private client: HttpClient) { }
 
     public getService(services: Service[], cep: string): Promise<Service[]> {
         return new Promise((resolve, reject) => {

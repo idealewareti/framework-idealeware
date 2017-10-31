@@ -1,16 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {HttpClient} from '../helpers/httpclient'
 import {Title} from '@angular/platform-browser';
 import {AppSettings} from 'app/app.settings';
-import {NgProgressService} from 'ngx-progressbar';
 import {Institutional} from '../models/institutional/institutional';
 
 @Injectable()
 export class InstitutionalService{
-    constructor(private client: HttpClient){
-
-    }
+    constructor(private client: HttpClient){}
 
     getAll(): Promise<Institutional[]>{
         return new Promise((resolve, reject) => {
