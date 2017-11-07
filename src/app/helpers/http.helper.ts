@@ -69,4 +69,48 @@ export class HttpClientHelper{
 
         return this.http.get(url, {headers: this.headers});
     }
+
+    /**
+     * Executa uma requisição do tipo POST
+     * @param {any} url 
+     * @param {any} data 
+     * @param {Token} [token=null] 
+     * @returns {Observable<any>} 
+     * @memberof HttpClient
+     */
+    post(url, data, token: Token = null): Observable<any> {
+        this.setHeaders([], token);
+        return this.http.post(url, data, {
+        headers: this.headers
+        });
+    }
+
+    /**
+     * Executa uma requisição do tipo PUT
+    * @param {any} url 
+    * @param {any} data 
+    * @param {Token} [token=null] 
+    * @returns {Observable<any>} 
+    * @memberof HttpClient
+    */
+    put(url, data, token: Token = null): Observable<any> {
+        this.setHeaders([], token);
+        return this.http.put(url, data, {
+        headers: this.headers
+        });
+    }
+
+    /**
+     * Executa uma requisição do tipo DELETE
+     * @param {any} url 
+     * @param {Token} [token=null] 
+     * @returns {Observable<any>} 
+     * @memberof HttpClient
+    */
+    delete(url, token: Token = null): Observable<any> {
+        this.setHeaders([], null);
+        return this.http.delete(url, {
+        headers: this.headers
+        });
+    }
 }
