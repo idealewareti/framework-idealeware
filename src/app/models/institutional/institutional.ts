@@ -1,5 +1,3 @@
-import { AppSettings } from "app/app.settings";
-
 export class Institutional {
     id: string;
     title: string;
@@ -8,7 +6,6 @@ export class Institutional {
     metaTagTitle: string;
     metaTagDescription: string;
     status: boolean;
-    niceName: string;
     allowDelete: boolean;
 
     constructor(object = null){
@@ -17,13 +14,9 @@ export class Institutional {
 
     CreateFromResponse(object){
         let model = new Institutional();
-
         for(var k in object){
             model[k] = object[k];
         }
-
-        model.niceName = AppSettings.getNiceName(model.title);
-  
         return model;
     }
 }

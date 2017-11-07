@@ -25,7 +25,7 @@ export class SearchResult {
         for (var k in response){
             if(k == 'products' && response[k])
                 model.products = response[k].map(x => x = new Product(x));
-            else if(k == 'facetBrands')
+            else if(k == 'facetBrands' && response[k])
                 model.facetBrands = response[k].map(x => x = new Brand(x));
             else if(k == 'facetCategories' && response[k])
                 model.facetCategories = response[k].map(x => x = new Category(x));    

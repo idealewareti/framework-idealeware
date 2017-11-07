@@ -1,7 +1,3 @@
-import { AppSettings } from "app/app.settings";
-
-declare var S: any;
-
 export class Brand{
     id: string;
     code: string;
@@ -11,7 +7,6 @@ export class Brand{
     metaTagTitle: string;
     metaTagDescription: string;
     status: true;
-    niceName: string;
     quantity: number = 0;
 
     constructor(brand = null){
@@ -20,15 +15,10 @@ export class Brand{
 
     public createFromResponse(response): Brand{
         let model = new Brand();
-        
         for (var k in response){
             model[k] = response[k];
         }
-
-        model.niceName = AppSettings.getNiceName(model.name);
-
         return model;
     }
-
     
 }

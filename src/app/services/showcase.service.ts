@@ -1,31 +1,9 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '../helpers/httpclient'
-import {Title} from '@angular/platform-browser';
-import {AppSettings} from 'app/app.settings';
-import {ShowCase} from '../models/showcase/showcase';
-import {Product} from '../models/product/product';
+import { Injectable } from "@angular/core";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { environment } from "../../environments/environment";
 
 @Injectable()
-export class ShowCaseService{
+export class ShowcaseService{
 
-    constructor(private client: HttpClient){}
-
-    getShowCase() : Promise<ShowCase>{
-   		return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_SHOWCASE}/showcases`;
-            let showcase = new ShowCase();
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                let showcase = new ShowCase(response);
-                resolve(showcase);
-                
-            }, error => {
-                console.log(error);
-                reject(error);
-            });
-        });
-           
-    }
-
+    constructor(private client: HttpClientHelper) {}
 }

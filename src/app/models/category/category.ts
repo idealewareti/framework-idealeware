@@ -1,5 +1,3 @@
-import { AppSettings } from "app/app.settings";
-
 export class Category {
   id: string;
   code: string;
@@ -13,7 +11,6 @@ export class Category {
   metaTagTitle: string;
   metaTagDescription: string;
   children: Category[] = [];
-  niceName: string;
   quantity: number = 0;
 
     constructor(objectResponse = null){
@@ -34,10 +31,7 @@ export class Category {
             else{
                 category[k] = response[k];
             }
-            
         }
-        
-        category.niceName = AppSettings.getNiceName(category.name);
         return category;
     }
 

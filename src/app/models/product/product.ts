@@ -2,7 +2,6 @@ import {Sku} from './sku';
 import {ProductPicture} from './product-picture';
 import {Category} from '../category/category';
 import {Service} from '../product-service/product-service';
-import { AppSettings } from 'app/app.settings';
 import { Brand } from "../brand/brand";
 import { TechnicalInformation } from "./product-technical-information";
 import { ProductVideo } from "./product-video";
@@ -12,7 +11,6 @@ export class Product {
     relatedProductsId: string;
     baseCategory: Category;
     name: string;
-    niceName: string;
     urlTo: string;
     description: string;
     briefDescription: string;
@@ -106,9 +104,6 @@ export class Product {
                 product[k] = object[k];
             }
         }
-
-        product.niceName = AppSettings.getNiceName(product.name);
-  
         return product;
     }
 

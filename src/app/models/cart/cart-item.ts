@@ -1,8 +1,7 @@
 import {ProductPicture} from '../product/product-picture';
 import {Product} from '../product/product';
 import {Sku} from '../product/sku';
-import {AppSettings} from 'app/app.settings';
-import { CustomPaintCombination } from "app/models/custom-paint/custom-paint-combination";
+import { CustomPaintCombination } from '../custom-paint/custom-paint-combination';
 
 export class CartItem {
     productItemId: string;
