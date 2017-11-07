@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 
 /* Home */
 import { ShowcaseComponent } from './components/home/showcase/showcase.component';
+import { CategoryMenuModule } from './components/home/category-menu/category-menu.module';
 /* Search */
 /* Product */
 /* Cart */
@@ -20,9 +21,10 @@ import { ShowcaseComponent } from './components/home/showcase/showcase.component
 
 /* Services */
 import { HttpClientHelper } from './helpers/http.helper';
-import { StoreService } from './services/store.service.';
+import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
 import { ShowcaseService } from './services/showcase.service';
+import { CategoryService } from './services/category.service';
 
 
 @NgModule({
@@ -38,10 +40,12 @@ import { ShowcaseService } from './services/showcase.service';
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
+    CategoryMenuModule,
   ],
   providers: [
     HttpClientHelper,
     Globals,
+    CategoryService,
     ShowcaseService,
     StoreService
   ],

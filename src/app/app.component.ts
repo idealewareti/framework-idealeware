@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title, SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { StoreService } from './services/store.service.';
+import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
 import { Store } from './models/store/store';
 import { Router } from '@angular/router';
@@ -68,7 +68,9 @@ export class AppComponent implements OnInit {
    * @memberof AppComponent
    */
   getStore(): Store {
-    return this.globals.store;
+    if(this.globals.store && this.globals.store.domain)
+      return this.globals.store;
+    else return null;
   }
 
   /**

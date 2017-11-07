@@ -1,5 +1,5 @@
 <!-- Header Checkout -->
-<header id="header-checkout" [ngClass]="{'hide': !isCheckout()}">
+<header id="header-checkout" *ngIf="getStore() && isCheckout()">
     <div class="container-fluid">
         <div class="row">
             <div class="brand overflow-hidden text-center">
@@ -17,7 +17,7 @@
     </div>
 </header>
 <!-- Header Normal -->
-<header id="header" [ngClass]="{'hide': isCheckout()}">
+<header id="header" *ngIf="getStore() && !isCheckout()">
     <nav class="nav-top navbar navbar-default hidden-xs hidden-sm">
         <div class="container">
             <div class="pull-left">
@@ -81,5 +81,48 @@
         </div>
     </div>
 </header>
-
+<!-- Menu -->
+<nav class="navbar categories-nav navbar-static-top" *ngIf="getStore() && !isCheckout()">
+    <!-- <div class="container">
+        <search-vehicle></search-vehicle>
+    </div> -->
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="pull-left navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand hidden-md hidden-lg" [routerLink]="['/']" [attr.title]="getStore().companyName">
+                <img [attr.src]="mediaPath + '/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive">
+            </a>
+            <span class="mobile-btns pull-right hidden-md hidden-lg">
+                <button id="btn-search" class="btn btn-search">
+                    <img src="assets/images/icon-search.svg" alt="Buscar" />
+                </button>
+                <a class="btn btn-my-cart" [routerLink]="['/carrinho']">
+                    <img src="assets/images/icon-cart.svg" alt="Meu Carrinho" />
+                </a>
+                <div id="search-box" style="display: none;">
+                    <div class="mask"></div>
+                    <form id="form-search-mobile" action="/buscar" method="get" (submit)="searchFor($event)">
+                        <fieldset class="clearfix">
+                            <button (click)="searchFor($event)" type="submit" class="btn btn-search pull-right"><img src="assets/images/icon-search.svg" alt="Buscar" /></button>
+                            <button class="btn-close pull-left"><img src="assets/images/icon-close.svg" alt="Fechar" /></button>
+                            <div class="overflow-hidden">
+                                <input id="auto-complete" type="text" placeholder="O que você procura?"name="q" [(ngModel)]="q" autocomplete="off" >
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </span>
+        </div>
+        <category-menu [store]="getStore()" [isLoggedIn]="isLoggedIn()" id="navbar" class="navbar-collapse collapse"></category-menu>
+    </div>
+</nav>
+<!-- Conteúdo -->
+<div class="container" *ngIf="getStore()">
+    <router-outlet></router-outlet>
+</div>
     
