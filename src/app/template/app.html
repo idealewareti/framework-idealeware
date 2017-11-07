@@ -1,5 +1,5 @@
 <!-- Header Checkout -->
-<header id="header-checkout" *ngIf="getStore() && isCheckout()">
+<header id="header-checkout" [ngClass]="{'hide': !isCheckout()}">
     <div class="container-fluid">
         <div class="row">
             <div class="brand overflow-hidden text-center">
@@ -17,7 +17,7 @@
     </div>
 </header>
 <!-- Header Normal -->
-<header id="header" *ngIf="getStore() && !isCheckout()">
+<header id="header" [ngClass]="{'hide': isCheckout()}">
     <nav class="nav-top navbar navbar-default hidden-xs hidden-sm">
         <div class="container">
             <div class="pull-left">
@@ -82,9 +82,9 @@
     </div>
 </header>
 <!-- Menu -->
-<nav class="navbar categories-nav navbar-static-top" *ngIf="getStore() && !isCheckout()">
+<nav class="navbar categories-nav navbar-static-top" [ngClass]="{'hide': isCheckout()}">
     <!-- <div class="container">
-        <search-vehicle></search-vehicle>
+        <app-search-vehicle></app-search-vehicle>
     </div> -->
     <div class="container">
         <div class="navbar-header">
@@ -118,11 +118,68 @@
                 </div>
             </span>
         </div>
-        <category-menu [store]="getStore()" [isLoggedIn]="isLoggedIn()" id="navbar" class="navbar-collapse collapse"></category-menu>
+        <app-category-menu [store]="getStore()" [isLoggedIn]="isLoggedIn()" id="navbar" class="navbar-collapse collapse"></app-category-menu>
     </div>
 </nav>
 <!-- Conteúdo -->
-<div class="container" *ngIf="getStore()">
+<div class="container">
     <router-outlet></router-outlet>
 </div>
+<!-- Footer -->
+<footer id="footer">
+    <!-- Newsletter -->
+    <!-- <app-newsletter *ngIf="!isCheckout()"></app-newsletter> -->
+    <!-- /Newsletter -->
+
+    <!-- Main Footer -->
+    <div *ngIf="!isCheckout()" id="main-footer">
+        <div class="container">
+            <div class="row">
+                <div class="list-footer col-xs-6 col-md-5 footer-institutional">
+                    <h3 class="title">Institucional</h3>
+                    <ul>
+                        <li *ngFor="let institutional of institutionals">
+                            <a [routerLink]="[getInstitutionalUrl(institutional)]" [attr.title]="institutional.title">{{institutional.title}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 visible-xs visible-sm hidden-md hidden-lg">
+                    <hr>
+                </div>
+                <div class="list-footer col-xs-12 col-md-3 footer-call-center">
+                    <h3 class="title">Central de Atendimento</h3>
+                    <ul>
+                        <li><span>Televendas <b class="phone">{{getStore().phone}}</b></span></li>
+                    </ul>
+                </div>
+                <div class="col-xs-12 col-md-4 footer-social-networks">
+
+                    <div class="light-box">
+                        <iframe [attr.src]="facebookSafeUrl" width="100%" height="214" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Main Footer -->    
+
     
+    <div id="copyright">
+        <div class="container text-center">
+            <div class="items-copyright">
+
+                <p>© {{ date | date:'y'}} {{getStore().tradingName}}. Todos os direitos reservados.</p>
+                <p>CNPJ: {{getStore().cnpj}} / Inscrição Estadual: {{getStore().stateRegistration}} - {{getStore().addressLine1 + ((getStore().addressLine2)
+                    ? ' - ' + getStore().addressLine2 : '')}} - {{getStore().city}}/{{getStore().state}} - {{getStore().zipCode}}</p>
+
+                <div class="signature">
+                    Tecnologia:
+                    <a href="http://www.idealeware.com.br" title="Idealeware" target="_blank">
+                        <img src="/assets/images/signature.png" alt="Idealeware" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Conteúdo do rodapé -->    

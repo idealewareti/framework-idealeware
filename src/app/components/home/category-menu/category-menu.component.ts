@@ -6,7 +6,7 @@ import { Store } from '../../../models/store/store';
 import { StoreService } from '../../../services/store.service';
 
 @Component({
-    selector: 'category-menu',
+    selector: 'app-category-menu',
     templateUrl: '../../../template/home/category-menu/category-menu.html',
     styleUrls: ['../../../template/home/category-menu/category-menu.scss']
 })

@@ -5,6 +5,11 @@ import { Globals } from './models/globals';
 import { Store } from './models/store/store';
 import { Router } from '@angular/router';
 import { Cart } from './models/cart/cart';
+import { Institutional } from './models/institutional/institutional';
+import { AppCore } from './app.core';
+import { InstitutionalService } from './services/institutional.service';
+
+declare var S: any;
 
 @Component({
   selector: 'app-root',
@@ -21,17 +26,21 @@ export class AppComponent implements OnInit {
   mediaPath: string;
   facebookSafeUrl: SafeResourceUrl;
   q: string;
+  institutionals: Institutional[] = [];
+  date: Date = new Date();
+  
   /*
   Constructor
   *********************************************************************************************************
   */
   constructor(
-    private service: StoreService,
     private title: Title,
     private meta: Meta,
     private globals: Globals,
     private router: Router,
     private sanitizer: DomSanitizer,
+    private service: StoreService,
+    private institutionalService: InstitutionalService,
   ){
     this.globals = new Globals();
     this.globals.store = new Store();
@@ -48,6 +57,7 @@ export class AppComponent implements OnInit {
       this.globals.store = store;
       this.title.setTitle(store.companyName);
       this.mediaPath = `${this.globals.store.link}/static`;
+      this.getInstitutionals();
     })
     .catch(error => {
       console.log(error);
@@ -71,6 +81,19 @@ export class AppComponent implements OnInit {
     if(this.globals.store && this.globals.store.domain)
       return this.globals.store;
     else return null;
+  }
+
+  getInstitutionals() {
+    this.institutionalService.getAll()
+    .then(response => this.institutionals = response)
+    .catch(error => console.log(error.text()));
+}
+
+  getInstitutionalUrl(page: Institutional): string{
+    if(page.allowDelete)
+        return `/institucional/${page.id}/${AppCore.getNiceName(page.title, S)}`;
+    else
+        return '/contato';
   }
 
   /**
@@ -103,13 +126,13 @@ export class AppComponent implements OnInit {
     } 
     else return false;
   }
-
+  
   /**
    * Valida se o cliente está logado
-   * @returns 
+   * @returns {boolean} 
    * @memberof AppComponent
    */
-  isLoggedIn() {
+  isLoggedIn(): boolean {
     return false;
   }
 

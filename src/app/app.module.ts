@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 /* Home */
 import { ShowcaseComponent } from './components/home/showcase/showcase.component';
 import { CategoryMenuModule } from './components/home/category-menu/category-menu.module';
+import { GroupModule } from './components/home/group/group.module';
 /* Search */
 /* Product */
 /* Cart */
@@ -25,6 +26,8 @@ import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
 import { ShowcaseService } from './services/showcase.service';
 import { CategoryService } from './services/category.service';
+import { GroupService } from './services/group.service';
+import { InstitutionalService } from './services/institutional.service';
 
 
 @NgModule({
@@ -41,11 +44,14 @@ import { CategoryService } from './services/category.service';
     FormsModule,
     ReactiveFormsModule,
     CategoryMenuModule,
+    GroupModule,
   ],
   providers: [
     HttpClientHelper,
     Globals,
     CategoryService,
+    GroupService,
+    InstitutionalService,
     ShowcaseService,
     StoreService
   ],
