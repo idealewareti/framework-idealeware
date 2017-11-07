@@ -1,4 +1,4 @@
-import { PagseguroInstallment } from "app/models/pagseguro/pagseguro-installment";
+import { PagseguroInstallment } from "./pagseguro-installment";
 
 export class PagSeguroSimulationBrands {
     visa: PagseguroInstallment[] = [];

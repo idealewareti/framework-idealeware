@@ -1,10 +1,10 @@
 import { Product } from "../product/product";
 import { Pagination } from "../pagination";
-import { Brand } from "app/models/brand/brand";
-import { Category } from "app/models/category/category";
-import { VariationOption } from "app/models/product/product-variation-option";
-import { Variation } from "app/models/product/variation";
-import { PriceRange } from "app/models/search/price-range";
+import { Brand } from "../brand/brand";
+import { Category } from "../category/category";
+import { VariationOption } from "../product/product-variation-option";
+import { PriceRange } from "./price-range";
+import { Variation } from "../product/variation";
 
 export class SearchResult {
     facetBrands: Brand[] = [];

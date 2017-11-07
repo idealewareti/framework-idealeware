@@ -1,5 +1,5 @@
-import { MercadoPagoPaymentMethod } from "app/models/mercadopago/mercadopago-paymentmethod";
-import { MercadoPagoInstallmentResponse } from "app/models/mercadopago/mercadopago-installment-response";
+import { MercadoPagoPaymentMethod } from "./mercadopago-paymentmethod";
+import { MercadoPagoInstallmentResponse } from "./mercadopago-installment-response";
 
 /**
  * Objeto com as informações de pagamento do Mercado Pago

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Cart } from "app/models/cart/cart";
-import { Store } from "app/models/store/store";
+import { Cart } from "./cart/cart";
+import { Store } from "./store/store";
 
 @Injectable()
 export class Globals {

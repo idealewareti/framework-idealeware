@@ -1,5 +1,5 @@
-import { EnumSort } from "app/enums/sort.enum";
-import { PriceRange } from "app/models/search/price-range";
+import { EnumSort } from "../../enums/sort.enum";
+import { PriceRange } from "./price-range";
 
 export class Search {
     name: string;

@@ -1,5 +1,5 @@
-import { Payment } from "app/models/payment/payment";
-import { PaymentMethod } from "app/models/payment/payment-method";
+import { Payment } from "../payment/payment";
+import { PaymentMethod } from "../payment/payment-method";
 
 export class MundipaggPayment{
     bankslip: Payment;

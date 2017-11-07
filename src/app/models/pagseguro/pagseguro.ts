@@ -1,6 +1,6 @@
-import { PagseguroMethod } from "app/models/pagseguro/pagseguro-method";
-import { PagseguroInstallment } from "app/models/pagseguro/pagseguro-installment";
-import { PagseguroOption } from "app/models/pagseguro/pagseguro-option";
+import { PagseguroMethod } from "./pagseguro-method";
+import { PagseguroOption } from "./pagseguro-option";
+import { PagseguroInstallment } from "./pagseguro-installment";
 
 export class PagseguroPayment {
     session: string;

@@ -1,5 +1,5 @@
-import { EnVariationType } from "app/enums/variationtype.enum";
-import { ProductReference } from "app/models/related-products/product-reference";
+import { EnVariationType } from "../../enums/variationtype.enum";
+import { ProductReference } from "./product-reference";
 
 export class RelatedProductGroup {
     id: string;

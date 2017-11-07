@@ -1,3 +1,85 @@
-<header id="header" *ngIf="getStore() && !isCheckout()">
-    
+<!-- Header Checkout -->
+<header id="header-checkout" [ngClass]="{'hide': !isCheckout()}">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="brand overflow-hidden text-center">
+                <a [routerLink]="['/']"><img [attr.src]="mediaPath + '/store/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive"></a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12 text-center">
+                <span><i class="fa fa-lock" aria-hidden="true"></i> Compra 100% segura</span>
+            </div>
+            <div class="col-md-6 col-sm-12 text-center">
+                <span><i class="fa fa-phone" aria-hidden="true"></i> Televendas {{getStore().phone}}</span>
+            </div>
+        </div>
+    </div>
 </header>
+<!-- Header Normal -->
+<header id="header" [ngClass]="{'hide': isCheckout()}">
+    <nav class="nav-top navbar navbar-default hidden-xs hidden-sm">
+        <div class="container">
+            <div class="pull-left">
+                <span class="phone"><i class="fa fa-phone" aria-hidden="true"></i> Televendas <b>{{getStore().phone}}</b></span>
+            </div>
+            <div class="pull-right">
+                <div class="information-nav">
+                    <ul class="list-inline">
+                        <li>
+                            <a [routerLink]="['/contato']" title="Central de Atendimento">Central de Atendimento</a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/conta/home']" title="Minha Conta">Minha Conta</a>
+                        </li>
+                        <li>
+                            <a [routerLink]="['/conta/pedidos']" title="Meus Pedidos">Meus Pedidos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="header-bar hidden-xs hidden-sm">
+        <div class="container">
+            <div class="row">
+                <div class="col-mini-cart pull-right col-padding">
+                        <!-- <mini-cart></mini-cart>   -->
+                </div>
+                <div class="col-brand pull-left col-padding">
+                    <h1 id="brand">
+                        <a [routerLink]="['/']" [attr.title]="getStore().companyName">
+                            <b class="sr-only">{{getStore().companyName}}</b>
+                            <img [attr.src]="mediaPath + '/store/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive">
+                        </a>
+                    </h1>
+                </div>
+                <div class="col-welcome pull-left col-padding">
+                    <div id="welcome" *ngIf="!isLoggedIn()">
+                        <p>
+                            Olá, Visitante <br/>
+                            <a class="login-enter" [routerLink]="['/login']" title="Entre">Entre</a> ou <a class="about-us"
+                                [routerLink]="['/cadastrar']" title="Cadastre-se">Cadastre-se</a>
+                        </p>
+                    </div>
+                    <div id="welcome" *ngIf="isLoggedIn()">
+                        <p>
+                            Olá, {{customer.firstname_Companyname}} <br/>
+                            <a class="login-enter" [routerLink]="['/logout']" title="Sair">Sair</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-search overflow-hidden col-padding">
+                    <form id="form-search" action="/buscar" method="get" (submit)="searchFor($event)">
+                        <fieldset>
+                            <input id="auto-complete" type="text" placeholder="O que você procura?" name="q" [(ngModel)]="q" autocomplete="off" required>
+                            <button class="button button-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+    

@@ -1,6 +1,6 @@
 import { Branch } from "../branch/branch";
 import { DeliveryInformation } from "./delivery-information";
-import { EnumShippingType } from "app/enums/shipping-type.enum";
+import { EnumShippingType } from "../../enums/shipping-type.enum";
 
 export class Shipping {
 

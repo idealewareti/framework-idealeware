@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import 'rxjs/add/operator/map';
 
 
@@ -34,7 +35,9 @@ import { ShowcaseService } from './services/showcase.service';
     RouterModule.forRoot([
       { path: '', component: ShowcaseComponent, pathMatch: 'full'},
     ]),
-    HttpModule
+    HttpModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [
     HttpClientHelper,

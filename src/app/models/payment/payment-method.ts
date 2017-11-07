@@ -1,5 +1,5 @@
 import { Installment } from "./installment";
-import { PaymentMethodTypeEnum } from "app/enums/payment-method-type.enum";
+import { PaymentMethodTypeEnum } from "../../enums/payment-method-type.enum";
 
 export class PaymentMethod {
         id: string;

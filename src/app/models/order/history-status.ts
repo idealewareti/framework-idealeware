@@ -1,4 +1,4 @@
-import { OrderStatusEnum } from "app/enums/order-status.enum";
+import { OrderStatusEnum } from "../../enums/order-status.enum";
 
 export class HistoryStatus {
       status: OrderStatusEnum;

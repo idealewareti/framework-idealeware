@@ -8,8 +8,8 @@ import { Coupon } from "../coupon/coupon";
 import { Payment } from "../payment/payment";
 import { HistoryStatus } from "./history-status";
 import { Shipping } from "../shipping/shipping";
-import { OrderStatusEnum } from "app/enums/order-status.enum";
-import { Paint } from "app/models/custom-paint/custom-paint";
+import { Paint } from "../custom-paint/custom-paint";
+import { OrderStatusEnum } from "../../enums/order-status.enum";
 
 export class Order {
     id: string;
