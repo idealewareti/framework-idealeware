@@ -6,11 +6,11 @@ import { Globals } from '../../../models/globals';
 import { ShowCaseService } from '../../../services/showcase.service';
 import { ShowCaseBanner } from '../../../models/showcase/showcase-banner';
 import { ShowCase } from '../../../models/showcase/showcase';
-import { Group } from '../../../models/group/group';
 import { EnumBannerType } from '../../../enums/banner-type.enum';
 import { Store } from '../../../models/store/store';
 import { AppCore } from '../../../app.core';
 import { StoreService } from '../../../services/store.service';
+import { ShowcaseGroup } from '../../../models/showcase/showcase-group';
 
 @Component({
     selector: 'app-showcase',
@@ -21,7 +21,7 @@ export class ShowcaseComponent implements OnInit {
     banners: ShowCaseBanner[] = [];
 	stripeBanners: ShowCaseBanner[] = [];
 	halfBanners: ShowCaseBanner[] = [];
-	groups: Group[] = [];
+	groups: ShowcaseGroup[] = [];
     showcase: ShowCase = new ShowCase();
     store: Store = new Store();
 

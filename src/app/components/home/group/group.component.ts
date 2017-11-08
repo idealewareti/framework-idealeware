@@ -37,6 +37,6 @@ export class GroupComponent implements OnInit {
     }
 
     getRoute(group: Group): string {
-        return `/categoria/${group.id}/${AppCore.getNiceName(group.name)}`;
+        return `/grupo/${group.id}/${AppCore.getNiceName(group.name)}`;
     }
 }

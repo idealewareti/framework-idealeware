@@ -24,8 +24,9 @@ import { ShowcaseBannerStripeModule } from './components/home/showcase-banner-st
 /* Custom Paint */
 /* Account */
 /* Shared */
-import { CurrencyFormatModule } from './pipes/currency-format/currency-format.module';
 import { CheckoutButtonModule } from './components/shared/checkout-button/checkout-button.module';
+import { CurrencyFormatModule } from './pipes/currency-format/currency-format.module';
+import { ProductGridItemModule } from './components/shared/product-grid-item/product-grid-item.module';
 
 /* Services */
 import { HttpClientHelper } from './helpers/http.helper';
@@ -37,6 +38,8 @@ import { GroupService } from './services/group.service';
 import { InstitutionalService } from './services/institutional.service';
 import { CartService } from './services/cart.service';
 import { BrandService } from './services/brand.service';
+import { ShowcaseGroupModule } from './components/home/showcase-group/showcase-group.module';
+import { ProductService } from './services/product.service';
 
 
 @NgModule({
@@ -58,9 +61,11 @@ import { BrandService } from './services/brand.service';
     CurrencyFormatModule,
     GroupModule,
     MiniCartModule,
+    ProductGridItemModule,
     ShowcaseBannerModule,
     ShowcaseBannerHalfModule,
     ShowcaseBannerStripeModule,
+    ShowcaseGroupModule,
   ],
   providers: [
     HttpClientHelper,
@@ -70,6 +75,7 @@ import { BrandService } from './services/brand.service';
     CategoryService,
     GroupService,
     InstitutionalService,
+    ProductService,
     ShowCaseService,
     StoreService
   ],
