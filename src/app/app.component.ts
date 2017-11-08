@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
   q: string;
   institutionals: Institutional[] = [];
   date: Date = new Date();
+  store: Store = new Store();
   
   /*
   Constructor
@@ -53,6 +54,7 @@ export class AppComponent implements OnInit {
     this.service.getStore()
     .then(store => {
       this.globals.store = store;
+      this.store = store;
       this.title.setTitle(store.companyName);
       this.mediaPath = `${this.globals.store.link}/static`;
       this.getInstitutionals();
@@ -76,7 +78,7 @@ export class AppComponent implements OnInit {
    * @memberof AppComponent
    */
   getStore(): Store {
-    if(this.globals.store && this.globals.store.domain)
+    if(this.globals.store)
       return this.globals.store;
     else return null;
   }

@@ -13,6 +13,7 @@ import { ShowcaseComponent } from './components/home/showcase/showcase.component
 import { CategoryMenuModule } from './components/home/category-menu/category-menu.module';
 import { GroupModule } from './components/home/group/group.module';
 import { MiniCartModule } from './components/home/mini-cart/mini-cart.module';
+import { ShowcaseBannerStripeModule } from './components/home/showcase-banner-stripe/showcase-banner-stripe.module';
 /* Search */
 /* Product */
 /* Cart */
@@ -27,7 +28,7 @@ import { CheckoutButtonModule } from './components/shared/checkout-button/checko
 import { HttpClientHelper } from './helpers/http.helper';
 import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
-import { ShowcaseService } from './services/showcase.service';
+import { ShowCaseService } from './services/showcase.service';
 import { CategoryService } from './services/category.service';
 import { GroupService } from './services/group.service';
 import { InstitutionalService } from './services/institutional.service';
@@ -52,6 +53,7 @@ import { CartService } from './services/cart.service';
     CurrencyFormatModule,
     GroupModule,
     MiniCartModule,
+    ShowcaseBannerStripeModule,
   ],
   providers: [
     HttpClientHelper,
@@ -60,7 +62,7 @@ import { CartService } from './services/cart.service';
     CategoryService,
     GroupService,
     InstitutionalService,
-    ShowcaseService,
+    ShowCaseService,
     StoreService
   ],
   bootstrap: [AppComponent]
