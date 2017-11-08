@@ -6,17 +6,8 @@ export class AppCore{
      * @returns {string} 
      * @memberof AppSettings
      */
-    public static getNiceName(name: string, S: any): string{
-        return S(name.toLowerCase()
-            .replace(/ /g, '-')
-            .replace(/"/g, '')
-            .replace(/'/g, '')
-			.replace(/[(]/g, '')
-            .replace(/[)]/g, '')
-            .replace(/\//g, '-')
-        )
-        .latinise()
-        .s;
+    public static getNiceName(name: string): string{
+        return this.slug(name);
     }
 
     /**
@@ -76,13 +67,26 @@ export class AppCore{
      * 
      * @memberof AppSettings
      */
-    public static isMobile(): boolean {
+    public static isMobile(window: Window): boolean {
         const ua = window.navigator.userAgent;
         let check = false;
         if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(ua)) {
             check = true;
         }
-
         return check;
     }
+
+    static slug(str: string) {
+        str = str.replace(/^\s+|\s+$/g, '');
+        str = str.toLowerCase();
+        const from = "ãàáäâẽèéëêìíïîõòóöôùúüûñç·/_,:;";
+        const to   = "aaaaaeeeeeiiiiooooouuuunc------";
+        for (let i=0, l=from.length ; i<l ; i++) {
+          str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+        }
+        str = str.replace(/[^a-z0-9 -]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-');
+        return str;
+      };
 }

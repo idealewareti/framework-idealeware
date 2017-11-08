@@ -18,10 +18,9 @@ export class HttpClientHelper{
      * @param {Token} [token=null]
      * @memberof HttpClientHelper
      */
-    setHeaders(params = [], token: Token = null) {
+    setHeaders(params = [], token: Token = null, zipcode: string = null) {
         this.headers = new Headers();
         let domain: string = AppConfig.DOMAIN;
-        let zipcode = localStorage.getItem('customer_zipcode');
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Access-Control-Allow-Origin', '*');
         this.headers.append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
@@ -44,7 +43,7 @@ export class HttpClientHelper{
     }
 
     /**
-     * Adiciona o Token ao cabeçãlho da requisição
+     * Adiciona o Token ao cabeçalho da requisição
      * @param {Token} token 
      * @memberof HttpClientHelper
      */

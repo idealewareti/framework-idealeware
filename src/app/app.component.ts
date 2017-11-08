@@ -9,8 +9,6 @@ import { Institutional } from './models/institutional/institutional';
 import { AppCore } from './app.core';
 import { InstitutionalService } from './services/institutional.service';
 
-declare var S: any;
-
 @Component({
   selector: 'app-root',
   templateUrl: './template/app.html',
@@ -91,7 +89,7 @@ export class AppComponent implements OnInit {
 
   getInstitutionalUrl(page: Institutional): string{
     if(page.allowDelete)
-        return `/institucional/${page.id}/${AppCore.getNiceName(page.title, S)}`;
+        return `/institucional/${page.id}/${AppCore.getNiceName(page.title)}`;
     else
         return '/contato';
   }

@@ -4,6 +4,7 @@ import { Globals } from '../../../models/globals';
 import { CategoryService } from '../../../services/category.service';
 import { Store } from '../../../models/store/store';
 import { StoreService } from '../../../services/store.service';
+import { AppCore } from '../../../app.core';
 
 @Component({
     selector: 'app-category-menu',
@@ -34,4 +35,8 @@ export class CategoryMenuComponent implements OnInit {
     getMediaPath():string {
         return `${this.store.link}/static/categories/`;
     }    
+
+    getRoute(category: Category): string {
+        return `/categoria/${category.id}/${AppCore.getNiceName(category.name)}`;
+    }
 }

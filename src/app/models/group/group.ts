@@ -1,7 +1,5 @@
 import {Product} from '../product/product';
 
-declare var S: any;
-
 export class Group{
     id: string;
     code: string;
@@ -10,7 +8,6 @@ export class Group{
     picture: string;
     metaTagTitle: string;
     metaTagDescription: string;
-    niceName: string;
     products: Product[];
 
     constructor(object = null){
@@ -28,17 +25,6 @@ export class Group{
                 model[k] = object[k];
             }
         }
-
-        model.niceName = model.createNiceName(model);
-  
         return model;
-    }
-
-    createNiceName(model: Group){
-        return S(model.name.toLowerCase().replace(/ /g, '-')
-            .replace(/"/g, '')
-            .replace(/'/g, '')
-            .replace(/\//g, ''))
-            .latinise().s;
     }
 }

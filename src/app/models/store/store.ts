@@ -31,6 +31,7 @@ export class Store {
             this.logo = null;
             this.companyName = null;
             this.tradingName =  null;
+            this.phone = null;
         }
     }
 

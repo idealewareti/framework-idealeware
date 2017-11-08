@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Globals } from '../../../models/globals';
 import { CartService } from '../../../services/cart.service';
 import { AppCore } from '../../../app.core';
 import { CartItem } from '../../../models/cart/cart-item';
 import { Sku } from '../../../models/product/sku';
 
-declare var S: any;
 declare var swal: any;
 
 @Component({
@@ -22,7 +23,8 @@ export class MiniCartComponent implements OnInit {
 
     constructor(
         private manager: CartService,
-        private globals: Globals
+        private globals: Globals,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
@@ -38,45 +40,55 @@ export class MiniCartComponent implements OnInit {
     }
 
     getProducts() {
-        let cartId: string = localStorage.getItem('cart_id');
-        this.manager.getCart(cartId)
-        .then((cart) => {
-            this.cartReady = true;
-            this.globals.cart = cart;
-        })
-        .catch(e => console.log(e));
+        if (isPlatformBrowser(this.platformId)) {
+            let cartId: string = localStorage.getItem('cart_id');
+            this.manager.getCart(cartId)
+            .then((cart) => {
+                this.cartReady = true;
+                this.globals.cart = cart;
+            })
+            .catch(e => {
+                console.log(e);
+            });
+        }
     }
 
     updateItem(quantity, item: CartItem) {
-        let cartId: string = localStorage.getItem('cart_id');
-        item.quantity = quantity;
-        this.manager.updateItem(item, cartId)
-        .then(cart => {
-            this.globals.cart = cart;
-        })
-        .catch(error => {
-            swal("Falha ao atualizar o produto ao carrinho", error.text(), "warning");
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            let cartId: string = localStorage.getItem('cart_id');
+            item.quantity = quantity;
+            this.manager.updateItem(item, cartId)
+            .then(cart => {
+                this.globals.cart = cart;
+            })
+            .catch(error => {
+                swal("Falha ao atualizar o produto ao carrinho", error.text(), "warning");
+            });
+        }            
     }
 
     deleteItem(event, item: CartItem) {
         event.preventDefault();
-        let cartId: string = localStorage.getItem('cart_id');
-        this.manager.deleteItem(item, cartId)
-        .then(cart => this.globals.cart = cart)
-        .catch(error => {
-            swal("Falha ao remover o produto ao carrinho", error.text(), "warning");
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            let cartId: string = localStorage.getItem('cart_id');
+            this.manager.deleteItem(item, cartId)
+            .then(cart => this.globals.cart = cart)
+            .catch(error => {
+                swal("Falha ao remover o produto ao carrinho", error.text(), "warning");
+            });
+        }            
     }
 
     deletePaint(event, item: CartItem) {
         event.preventDefault();
-        let cartId: string = localStorage.getItem('cart_id');
-        this.manager.deletePaint(item, cartId)
-        .then(cart => this.globals.cart = cart)
-        .catch(error => {
-            swal("Falha ao remover a tinta do carrinho", error.text(), "warning");
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            let cartId: string = localStorage.getItem('cart_id');
+            this.manager.deletePaint(item, cartId)
+            .then(cart => this.globals.cart = cart)
+            .catch(error => {
+                swal("Falha ao remover a tinta do carrinho", error.text(), "warning");
+            });
+        }            
     }
 
     getDiscount(): number {
@@ -108,7 +120,10 @@ export class MiniCartComponent implements OnInit {
     }
 
     isMobile(): boolean {
-        return AppCore.isMobile();
+        if (isPlatformBrowser(this.platformId)) {
+            return AppCore.isMobile(window);
+        }
+        else return false;            
     }
 
     showValues(store): boolean {
@@ -121,7 +136,7 @@ export class MiniCartComponent implements OnInit {
     }
 
     getRoute(item: CartItem): string{
-        return `/${AppCore.getNiceName(item.name, S)}-${item.sku.id}`;
+        return `/${AppCore.getNiceName(item.name)}-${item.sku.id}`;
     }
 
 	getPicture(sku: Sku): string{
