@@ -24,6 +24,8 @@ export class ShowcaseBannerComponent implements OnInit {
             if(this.banners.length > 0 && $('.showcase-banners.slick-slider .slick-track').children('.slick-slide').length == 0) {
                 $('.showcase-banners').slick({
                     dots: true,
+                    autoplay: true,
+                    infinite: true,
                 });
             }
         }            

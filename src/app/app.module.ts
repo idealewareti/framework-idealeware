@@ -10,11 +10,13 @@ import { AppComponent } from './app.component';
 
 /* Home */
 import { ShowcaseComponent } from './components/home/showcase/showcase.component';
+import { BrandNavModule } from './components/home/brand-nav/brand-nav.module';
 import { CategoryMenuModule } from './components/home/category-menu/category-menu.module';
 import { GroupModule } from './components/home/group/group.module';
 import { MiniCartModule } from './components/home/mini-cart/mini-cart.module';
-import { ShowcaseBannerStripeModule } from './components/home/showcase-banner-stripe/showcase-banner-stripe.module';
 import { ShowcaseBannerModule } from './components/home/showcase-banner/showcase-banner.module';
+import { ShowcaseBannerHalfModule } from './components/home/showcase-banner-half/showcase-banner-half.module';
+import { ShowcaseBannerStripeModule } from './components/home/showcase-banner-stripe/showcase-banner-stripe.module';
 /* Search */
 /* Product */
 /* Cart */
@@ -34,6 +36,7 @@ import { CategoryService } from './services/category.service';
 import { GroupService } from './services/group.service';
 import { InstitutionalService } from './services/institutional.service';
 import { CartService } from './services/cart.service';
+import { BrandService } from './services/brand.service';
 
 
 @NgModule({
@@ -49,17 +52,20 @@ import { CartService } from './services/cart.service';
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
+    BrandNavModule,
     CategoryMenuModule,
     CheckoutButtonModule,
     CurrencyFormatModule,
     GroupModule,
     MiniCartModule,
     ShowcaseBannerModule,
+    ShowcaseBannerHalfModule,
     ShowcaseBannerStripeModule,
   ],
   providers: [
     HttpClientHelper,
     Globals,
+    BrandService,
     CartService,
     CategoryService,
     GroupService,

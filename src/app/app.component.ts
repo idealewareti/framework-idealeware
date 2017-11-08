@@ -55,7 +55,6 @@ export class AppComponent implements OnInit {
     .then(store => {
       this.globals.store = store;
       this.store = store;
-      this.title.setTitle(store.companyName);
       this.mediaPath = `${this.globals.store.link}/static`;
       this.getInstitutionals();
     })
