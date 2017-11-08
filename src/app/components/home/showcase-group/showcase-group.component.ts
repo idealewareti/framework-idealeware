@@ -5,6 +5,8 @@ import { Store } from '../../../models/store/store';
 import { ShowcaseGroup } from '../../../models/showcase/showcase-group';
 import { ProductService } from '../../../services/product.service';
 
+declare var $: any;
+
 @Component({
     selector: 'app-showcase-group',
     templateUrl: '../../../template/home/showcase-group/showcase-group.html',
@@ -27,7 +29,38 @@ export class ShowcaseGroupComponent implements OnInit {
 		.catch(error => {
             console.log(error);
         });
-     }
+    }
+
+    ngAfterViewChecked() {
+    if (isPlatformBrowser(this.platformId)) {
+        if(this.group.products 
+            && this.group.products.length > 0 
+            &&  $(`#group-${this.group.id}`).children('li').length > 1
+            && $(`#group-${this.group.id}`).children('.owl-stage-outer').length == 0
+        ) {
+            $(`#group-${this.group.id}`).owlCarousel({
+                items: 4,
+				margin: 10,
+				loop: true,
+				nav: true,
+				navText: [
+                    '<i class="fa fa-angle-left" aria-hidden="true"></i>',
+                    '<i class="fa fa-angle-right" aria-hidden="true"></i>'
+                ],
+				dots: false,
+				autoplay: true,
+				autoplayTimeout: 5000,
+				autoplayHoverPause: true,
+				responsive : {
+				    0 : { items: 1 },
+				    768 : { items: 3 },
+				    992 : { items: 4 },
+				    1200 : { items : 4 }
+                }
+            });
+        }
+    }            
+}
 
     hasProducts(): boolean{
 		if(this.group.products && this.group.products.length > 0) {

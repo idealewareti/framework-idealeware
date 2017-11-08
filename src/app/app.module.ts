@@ -1,8 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { registerLocaleData } from '@angular/common';
+import ptBr from '@angular/common/locales/pt';
+registerLocaleData(ptBr)
 import 'rxjs/add/operator/map';
 
 
@@ -40,6 +43,8 @@ import { CartService } from './services/cart.service';
 import { BrandService } from './services/brand.service';
 import { ShowcaseGroupModule } from './components/home/showcase-group/showcase-group.module';
 import { ProductService } from './services/product.service';
+import { PaymentManager } from './managers/payment.manager';
+import { PaymentService } from './services/payment.service';
 
 
 @NgModule({
@@ -68,6 +73,7 @@ import { ProductService } from './services/product.service';
     ShowcaseGroupModule,
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
     HttpClientHelper,
     Globals,
     BrandService,
@@ -75,6 +81,8 @@ import { ProductService } from './services/product.service';
     CategoryService,
     GroupService,
     InstitutionalService,
+    PaymentManager,
+    PaymentService,
     ProductService,
     ShowCaseService,
     StoreService
