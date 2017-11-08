@@ -1,4 +1,5 @@
 <!-- Parte principal do site -->
 <main role="main" *ngIf="showcase">
     <app-showcase-banner-stripe [store]="getStore()" [banners]="stripeBanners"></app-showcase-banner-stripe>
+    <app-showcase-banner [store]="getStore()" [banners]="banners"></app-showcase-banner>
 </main>

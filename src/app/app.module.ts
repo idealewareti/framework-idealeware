@@ -14,6 +14,7 @@ import { CategoryMenuModule } from './components/home/category-menu/category-men
 import { GroupModule } from './components/home/group/group.module';
 import { MiniCartModule } from './components/home/mini-cart/mini-cart.module';
 import { ShowcaseBannerStripeModule } from './components/home/showcase-banner-stripe/showcase-banner-stripe.module';
+import { ShowcaseBannerModule } from './components/home/showcase-banner/showcase-banner.module';
 /* Search */
 /* Product */
 /* Cart */
@@ -53,6 +54,7 @@ import { CartService } from './services/cart.service';
     CurrencyFormatModule,
     GroupModule,
     MiniCartModule,
+    ShowcaseBannerModule,
     ShowcaseBannerStripeModule,
   ],
   providers: [
@@ -65,6 +67,6 @@ import { CartService } from './services/cart.service';
     ShowCaseService,
     StoreService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }

@@ -11,7 +11,6 @@ import { Store } from '../../../models/store/store';
 export class ShowcaseBannerStripeComponent implements OnInit {
     @Input() banners: ShowCaseBanner[];
     @Input() store: Store = new Store();
-    mediaPath: string;
     
     constructor(private globals: Globals) { }
     
