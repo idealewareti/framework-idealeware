@@ -4,11 +4,15 @@ import { ProductRating } from "../models/product-rating/product-rating";
 import { environment } from "../../environments/environment";
 import { ProductRatingCreate } from "../models/product-rating/product-rating-create";
 import { Token } from "../models/customer/token";
+import { Http } from "@angular/http";
 
 @Injectable()
 export class ProductRatingService {
-
-    constructor(private client: HttpClientHelper){ }
+    client: HttpClientHelper;
+    
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
     
     getProductRating(id:string) : Promise<ProductRating>{
         return new Promise((resolve, reject) => {

@@ -32,7 +32,6 @@ import { CurrencyFormatModule } from './pipes/currency-format/currency-format.mo
 import { ProductGridItemModule } from './components/shared/product-grid-item/product-grid-item.module';
 
 /* Services */
-import { HttpClientHelper } from './helpers/http.helper';
 import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
 import { ShowCaseService } from './services/showcase.service';
@@ -74,7 +73,6 @@ import { PaymentService } from './services/payment.service';
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt-BR' },
-    HttpClientHelper,
     Globals,
     BrandService,
     CartService,

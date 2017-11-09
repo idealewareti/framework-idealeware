@@ -51,6 +51,10 @@ export class HttpClientHelper{
         this.headers.append('Authorization', `${token.tokenType} ${token.accessToken}`);
     }
 
+    getHeaders(): Headers {
+        return this.headers;
+    }
+
     /**
      * Executa uma requisição do tipo GET
      * @param {any} url 
@@ -60,12 +64,7 @@ export class HttpClientHelper{
      * @memberof HttpClientHelper
      */
     get(url, token: Token = null, params = []): Observable<any> {
-        let headers = new Headers();
         this.setHeaders(params, token);
-        if (token){
-          this.authorize(token);
-        } 
-
         return this.http.get(url, {headers: this.headers});
     }
 

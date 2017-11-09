@@ -9,11 +9,15 @@ import { PagseguroCreditCard } from "../models/pagseguro/pagseguro-card";
 import { MercadoPagoCreditCard } from "../models/mercadopago/mercadopago-creditcard";
 import { MercadoPagoPaymentMethod } from "../models/mercadopago/mercadopago-paymentmethod";
 import { MercadoPagoInstallmentResponse } from "../models/mercadopago/mercadopago-installment-response";
+import { Http } from "@angular/http";
 
 @Injectable()
 export class PaymentService {
-
-    constructor(private client: HttpClientHelper) { }
+    client: HttpClientHelper;
+    
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
 
     getAll(): Promise<Payment[]> {
         return new Promise((resolve, reject) => {

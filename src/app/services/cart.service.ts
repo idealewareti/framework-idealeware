@@ -7,11 +7,15 @@ import { CartItem } from "../models/cart/cart-item";
 import { Service } from "../models/product-service/product-service";
 import { CartShowCase } from "../models/cart-showcase/cart-showcase";
 import { Shipping } from "../models/shipping/shipping";
+import { Http } from "@angular/http";
 
 @Injectable()
 export class CartService {
+    client: HttpClientHelper;
 
-    constructor(private client: HttpClientHelper) { }
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
 
     getCart(cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {

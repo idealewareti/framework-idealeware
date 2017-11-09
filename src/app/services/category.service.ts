@@ -2,10 +2,15 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { Category } from "../models/category/category";
 import { environment } from "../../environments/environment";
+import { Http } from "@angular/http";
 
 @Injectable()
 export class CategoryService{
-    constructor(private client: HttpClientHelper) { }
+    client: HttpClientHelper;
+
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
 
     getTree(): Promise<Category[]>{
         return new Promise((resolve, reject) => {

@@ -2,11 +2,15 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { Brand } from "../models/brand/brand";
 import { environment } from "../../environments/environment";
+import { Http } from "@angular/http";
 
 @Injectable()
 export class BrandService{
+    client: HttpClientHelper;
 
-    constructor(private client: HttpClientHelper){ }
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
 
     getAll(): Promise<Brand[]>{
         return new Promise((resolve, reject) => {

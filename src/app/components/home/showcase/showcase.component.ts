@@ -35,9 +35,9 @@ export class ShowcaseComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.storeService.getStore()
-        .then(store => {
-            this.store = store;
+       this.fetchStore()
+       .then(store => {
+           this.store = store;
             return this.service.getShowCase();
         })
 		.then(showcase => {
@@ -61,6 +61,18 @@ export class ShowcaseComponent implements OnInit {
 		this.showcase = null;
         this.metaService.removeTag("name='title'");
         this.metaService.removeTag("name='description'");
+    }
+
+    private fetchStore(): Promise<Store> {
+        return new Promise((resolve, reject) => {
+            this.storeService.getStore()
+            .subscribe(response  => {
+                let store: Store = new Store(response);
+                resolve(store);
+            }, error => {
+                reject(error);
+            });
+        });
     }
     
     isMobile(): boolean {

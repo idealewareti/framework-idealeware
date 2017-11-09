@@ -2,10 +2,15 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { Institutional } from "../models/institutional/institutional";
 import { environment } from "../../environments/environment";
+import { Http } from "@angular/http";
 
 @Injectable()
 export class InstitutionalService{
-    constructor(private client: HttpClientHelper){}
+    client: HttpClientHelper;
+    
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
 
     getAll(): Promise<Institutional[]>{
         return new Promise((resolve, reject) => {

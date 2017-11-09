@@ -52,13 +52,13 @@ export class AppComponent implements OnInit {
   */
   ngOnInit() {
     this.service.getStore()
-    .then(store => {
+    .subscribe(response  => {
+      let store: Store = new Store(response);
       this.globals.store = store;
       this.store = store;
       this.mediaPath = `${this.globals.store.link}/static`;
       this.getInstitutionals();
-    })
-    .catch(error => {
+    }, error => {
       console.log(error);
     });
   }

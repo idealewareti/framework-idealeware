@@ -2,11 +2,15 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { Product } from "../models/product/product";
 import { environment } from "../../environments/environment";
+import { Http } from "@angular/http";
 
 @Injectable()
 export class ProductService{
+    client: HttpClientHelper;
     
-    constructor(private client: HttpClientHelper){ }
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
 
     getProductBySku(skuId: string) : Promise<Product>{
         return new Promise((resolve, reject) => {
