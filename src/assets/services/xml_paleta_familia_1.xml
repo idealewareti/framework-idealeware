@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><paleta>
+	<cor codigo="A225" nome="Echarpe de Seda" hex="E1CED6"/>
+	<cor codigo="A226" nome="Canção de Ninar" hex="F2D5E4"/>
+	<cor codigo="A227" nome="Beijo de Anjo" hex="F6DDE8"/>
+	<cor codigo="A228" nome="Camisola de Cetim" hex="F4E6E8"/>
+	<cor codigo="A229" nome="Manequim" hex="E8CED6"/>
+	<cor codigo="A230" nome="Jasmim do Brejo" hex="E7DFE2"/>
+	<cor codigo="A231" nome="Rosa-Branca" hex="ECE3E9"/>
+	<cor codigo="B097" nome="Suco de Lichia" hex="E8D9DA"/>
+	<cor codigo="A233" nome="Cacatua Rosa" hex="EFD9DE"/>
+	<cor codigo="A101" nome="Sapatilha de Ponta" hex="ECD4D7"/>
+	<cor codigo="B100" nome="Castiçal" hex="E8D5D6"/>
+	<cor codigo="A236" nome="Purê de Maçã" hex="E4CDD0"/>
+	<cor codigo="A237" nome="Cidade da Garoa" hex="E4DCDD"/>
+	<cor codigo="B095" nome="Algodão Colorido" hex="E6D0D2"/>
+	<cor codigo="A239" nome="Beijo Doce" hex="EBDAE0"/>
+	<cor codigo="B103" nome="Pavê Gelado" hex="F2D5D5"/>
+	<cor codigo="A241" nome="Serenata" hex="FEDFE1"/>
+	<cor codigo="A242" nome="Rosa Bebê" hex="F1DCDB"/>
+	<cor codigo="A022" nome="Rosa Boneca" hex="E8D5D4"/>
+	<cor codigo="B108" nome="Flor de Macieira" hex="EBD0CD"/>
+	<cor codigo="A245" nome="Lírio Rosa" hex="F4D4D2"/>
+	<cor codigo="A105" nome="Rosa Angelical" hex="F3D9D5"/>
+	<cor codigo="A247" nome="Biju" hex="EFDCD7"/>
+	<cor codigo="A248" nome="Magnólia" hex="F2E2E0"/>
+	<cor codigo="D022" nome="Rosa Altar" hex="ECD8D2"/>
+	<cor codigo="B109" nome="Suco de Maçã" hex="F9D8CF"/>
+	<cor codigo="A109" nome="Espumante Rosé" hex="F4DED5"/>
+	<cor codigo="V139" nome="Leite de Pétalas" hex="EBD2C8"/>
+	<cor codigo="A106" nome="Fio de Seda" hex="EBE3DA"/>
+	<cor codigo="A108" nome="Manteiga Fresca" hex="E9DFD8"/>
+	<cor codigo="A104" nome="Lichia" hex="EDDCD6"/>
+	<cor codigo="A256" nome="Marzipã" hex="FBD6C0"/>
+	<cor codigo="B225" nome="Dança Comigo" hex="D7B8C8"/>
+	<cor codigo="B226" nome="Rosa Cremoso" hex="EEC8DD"/>
+	<cor codigo="B227" nome="Delícia de Morango" hex="F3D1E2"/>
+	<cor codigo="B228" nome="Conto de Fadas" hex="F3D4DE"/>
+	<cor codigo="B229" nome="Flor de Lótus" hex="E9C2CC"/>
+	<cor codigo="C097" nome="Flor-de-Maio" hex="D6C4CA"/>
+	<cor codigo="B231" nome="Vestido de Seda" hex="E0CED2"/>
+	<cor codigo="A098" nome="Pérola Rosa" hex="ECD0D5"/>
+	<cor codigo="B098" nome="Iogurte de Morango" hex="EEC9D2"/>
+	<cor codigo="B102" nome="Caleidoscópio" hex="EAC2C9"/>
+	<cor codigo="B235" nome="Bala de Maçã" hex="E2B4BB"/>
+	<cor codigo="B236" nome="Céu de Outono" hex="D9B5BA"/>
+	<cor codigo="B237" nome="Aroma de Canela" hex="DDCED0"/>
+	<cor codigo="B238" nome="Flor-do-Paraíso" hex="E7CCC7"/>
+	<cor codigo="B239" nome="Rosa Menina" hex="EACED2"/>
+	<cor codigo="Z018" nome="Pedaço do Céu" hex="EABDBC"/>
+	<cor codigo="B241" nome="Tutti Frutti" hex="FFCED4"/>
+	<cor codigo="B104" nome="Rosa Sapatilha" hex="F2CCCB"/>
+	<cor codigo="C106" nome="Rosa Talco" hex="DFC5C0"/>
+	<cor codigo="B244" nome="Focinho de Gato" hex="E3B4B0"/>
+	<cor codigo="C109" nome="Petit-Suisse" hex="FAC1BE"/>
+	<cor codigo="B113" nome="Sorvete de Morango" hex="F6B5AD"/>
+	<cor codigo="S139" nome="Creme Cor-de-Rosa" hex="DEB6B0"/>
+	<cor codigo="B176" nome="Rosa Carinho" hex="DEC9C3"/>
+	<cor codigo="A113" nome="Linha de Crochê" hex="F4CCC3"/>
+	<cor codigo="B250" nome="Pele de Pêssego" hex="F5B9AA"/>
+	<cor codigo="S094" nome="Salada de Fruta" hex="F6C1AE"/>
+	<cor codigo="S134" nome="Fruta-da-Condessa" hex="ECBFAE"/>
+	<cor codigo="S137" nome="Ouro Rosa" hex="E5C9BE"/>
+	<cor codigo="A174" nome="Creme de Canela" hex="DFCDC3"/>
+	<cor codigo="A107" nome="Rosa Secreto" hex="E8CABF"/>
+	<cor codigo="B256" nome="Batida de Pêssego" hex="FDBC9B"/>
+	<cor codigo="D099" nome="Rosa Inca" hex="CD9EBB"/>
+	<cor codigo="C226" nome="Rosa Design" hex="E2AECD"/>
+	<cor codigo="C227" nome="Rosa Biquíni" hex="EFBCD5"/>
+	<cor codigo="C101" nome="Sachê de Rosas" hex="EABCCD"/>
+	<cor codigo="C100" nome="Begônia Rosada" hex="DFB0BE"/>
+	<cor codigo="S145" nome="Frapê de Uva" hex="CEB2BF"/>
+	<cor codigo="C231" nome="Lenda de Amor" hex="D5BBC3"/>
+	<cor codigo="C232" nome="Bala de Morango" hex="E2ACBB"/>
+	<cor codigo="C233" nome="Morango com Champagne" hex="E7B0C1"/>
+	<cor codigo="C103" nome="Rosa Ballet" hex="ECB7C0"/>
+	<cor codigo="C235" nome="Morango com Suspiro" hex="D6929E"/>
+	<cor codigo="C236" nome="Rosa Bronzeado" hex="CC9CA5"/>
+	<cor codigo="C237" nome="Cartas Guardadas" hex="D6C0C4"/>
+	<cor codigo="C238" nome="Frutas Cristalizadas" hex="D4A7A5"/>
+	<cor codigo="C239" nome="Bordado Rosa" hex="E9C4C6"/>
+	<cor codigo="C104" nome="Gérbera Rosa" hex="EAACB0"/>
+	<cor codigo="C241" nome="Rosa-neon" hex="FFB6C0"/>
+	<cor codigo="C111" nome="Flan de Morango" hex="EEA1A1"/>
+	<cor codigo="J026" nome="Molho Rosé" hex="D7B0AA"/>
+	<cor codigo="C244" nome="Figo" hex="D79C98"/>
+	<cor codigo="C113" nome="Bala de Iogurte" hex="F3A29B"/>
+	<cor codigo="C246" nome="Bromélia" hex="F3A298"/>
+	<cor codigo="C247" nome="Rosa Fumê" hex="D1A59E"/>
+	<cor codigo="V121" nome="Árvore dos Sonhos" hex="CFADA4"/>
+	<cor codigo="S135" nome="Amarílis" hex="F0BBAF"/>
+	<cor codigo="J134" nome="Creme de Papaia" hex="F3A292"/>
+	<cor codigo="C115" nome="Frapê de Pêssego" hex="F5A892"/>
+	<cor codigo="C119" nome="Açucena" hex="EAAE9D"/>
+	<cor codigo="B107" nome="Batom Cor de Boca" hex="E2BCB3"/>
+	<cor codigo="C174" nome="Bailarina" hex="C3ACA3"/>
+	<cor codigo="J121" nome="Camafeu" hex="D3AFA2"/>
+	<cor codigo="D124" nome="Limão-Cravo" hex="F9AE8B"/>
+	<cor codigo="D225" nome="Rosa Debutante" hex="D093B4"/>
+	<cor codigo="D226" nome="Hortênsia Rosa" hex="D390B9"/>
+	<cor codigo="D227" nome="Prímula Rosa" hex="E8A2C5"/>
+	<cor codigo="C102" nome="Ninfeia-Rosa" hex="E19BB6"/>
+	<cor codigo="D100" nome="Ternura" hex="D49AB1"/>
+	<cor codigo="N145" nome="Orquestra" hex="BC94A4"/>
+	<cor codigo="D231" nome="Surpresa de Amora" hex="B2909A"/>
+	<cor codigo="D232" nome="Poção do Amor" hex="CC869A"/>
+	<cor codigo="C098" nome="Sensação" hex="EBA6B9"/>
+	<cor codigo="C105" nome="Torta de Morango" hex="EEA9B6"/>
+	<cor codigo="P103" nome="Cupido" hex="C77889"/>
+	<cor codigo="D236" nome="Vermelho Oriental" hex="BE848F"/>
+	<cor codigo="D237" nome="Meia-Luz" hex="C5A7AC"/>
+	<cor codigo="D238" nome="Rosa Comportado" hex="BD8689"/>
+	<cor codigo="D239" nome="Anos Dourados" hex="E5AFB3"/>
+	<cor codigo="Z020" nome="Rosa Poema" hex="E9999C"/>
+	<cor codigo="D241" nome="Pitaia Rosa" hex="FF9CA3"/>
+	<cor codigo="D111" nome="Goiaba" hex="DE767C"/>
+	<cor codigo="E106" nome="Rosa Antiquário" hex="CFA5A4"/>
+	<cor codigo="E110" nome="Bossa Nova" hex="CC827F"/>
+	<cor codigo="D113" nome="Cravo Rosa" hex="E27A76"/>
+	<cor codigo="J135" nome="Flor de Romãnzeira" hex="EF8C7B"/>
+	<cor codigo="D247" nome="Flor-de-Lis" hex="D0948E"/>
+	<cor codigo="D248" nome="Tapeçaria" hex="A67D74"/>
+	<cor codigo="D249" nome="Vinho Rosé" hex="E79D90"/>
+	<cor codigo="D112" nome="Hibisco" hex="F08C7C"/>
+	<cor codigo="D115" nome="Calêndula" hex="EB8B71"/>
+	<cor codigo="D252" nome="Sempre-Viva" hex="E79B86"/>
+	<cor codigo="N123" nome="Argila" hex="D29E8C"/>
+	<cor codigo="D175" nome="Grão de Café" hex="A68C84"/>
+	<cor codigo="D255" nome="Couro" hex="CF9481"/>
+	<cor codigo="E124" nome="Suco de Acerola" hex="F09271"/>
+	<cor codigo="E099" nome="Dália Rosa" hex="BB769E"/>
+	<cor codigo="E226" nome="Ipê-Rosa" hex="C0719E"/>
+	<cor codigo="E227" nome="Pink" hex="DC86AE"/>
+	<cor codigo="D101" nome="Rosa Fantástico" hex="D684A6"/>
+	<cor codigo="E100" nome="Laço de Presente" hex="BC728D"/>
+	<cor codigo="E230" nome="Flor de Alcachofra" hex="AF8095"/>
+	<cor codigo="E231" nome="Tentação" hex="9D7B85"/>
+	<cor codigo="E232" nome="Gelatina de Framboesa" hex="BF6D87"/>
+	<cor codigo="Z021" nome="Tulipa Rosa" hex="DE83A1"/>
+	<cor codigo="D105" nome="Buquê de Rosas" hex="E68D9F"/>
+	<cor codigo="P102" nome="Pitaia Vermelha" hex="C35F7B"/>
+	<cor codigo="E236" nome="Vermelho Sedução" hex="AD6A74"/>
+	<cor codigo="E237" nome="Vela Aromatizada" hex="B58F96"/>
+	<cor codigo="E238" nome="Rosa Floral" hex="BE7C83"/>
+	<cor codigo="E239" nome="Boina Rosa" hex="DF979C"/>
+	<cor codigo="D104" nome="Bola de Chiclete" hex="D37986"/>
+	<cor codigo="E241" nome="Vermelho Ácido" hex="EE6B7A"/>
+	<cor codigo="E111" nome="Cravina Rosa" hex="CF5E61"/>
+	<cor codigo="D107" nome="Saia Justa" hex="BB8580"/>
+	<cor codigo="E244" nome="Rosa Blush" hex="B15F5A"/>
+	<cor codigo="E113" nome="Pimenta Rosa" hex="D4585B"/>
+	<cor codigo="E112" nome="Zimbro" hex="EC7C6E"/>
+	<cor codigo="E107" nome="Marrom Rosado" hex="AD7771"/>
+	<cor codigo="E248" nome="Chocolate Belga" hex="986B62"/>
+	<cor codigo="E249" nome="Chá de Maçã" hex="D17769"/>
+	<cor codigo="E250" nome="Coroa Imperial" hex="E66F61"/>
+	<cor codigo="E251" nome="Tafetá" hex="EA7E62"/>
+	<cor codigo="E252" nome="Sol da Tarde" hex="E5806B"/>
+	<cor codigo="E253" nome="Terra Roxa" hex="BB7561"/>
+	<cor codigo="E174" nome="Chocolate em Pó" hex="947970"/>
+	<cor codigo="E255" nome="Tamarindo" hex="B1735D"/>
+	<cor codigo="P124" nome="Begônia Alaranjada" hex="EA835F"/>
+	<cor codigo="P099" nome="Estojo de Beleza" hex="9F547E"/>
+	<cor codigo="P226" nome="Jantar Romântico" hex="AC5B88"/>
+	<cor codigo="P227" nome="Maravilha" hex="CD659F"/>
+	<cor codigo="E101" nome="Esmalte Rosa" hex="CB6E93"/>
+	<cor codigo="P098" nome="Lambada" hex="974B6B"/>
+	<cor codigo="P230" nome="Uva Rosada" hex="975B73"/>
+	<cor codigo="P231" nome="Geleia de Amora" hex="896872"/>
+	<cor codigo="E098" nome="Carmim" hex="AD5374"/>
+	<cor codigo="E102" nome="Rosa Chiclete" hex="C96386"/>
+	<cor codigo="P234" nome="Pluméria Rubra" hex="DE6F84"/>
+	<cor codigo="P109" nome="Frutas Vermelhas" hex="BB5469"/>
+	<cor codigo="P236" nome="Gérbera Vermelha" hex="A65363"/>
+	<cor codigo="P237" nome="Cortina de Teatro" hex="9D6C75"/>
+	<cor codigo="P110" nome="Uva Rubi" hex="A45A5F"/>
+	<cor codigo="P239" nome="Azaleia" hex="C6757C"/>
+	<cor codigo="E104" nome="Framboesa" hex="BC5567"/>
+	<cor codigo="P241" nome="Vermelho Escarlate" hex="D74B53"/>
+	<cor codigo="R105" nome="Maçã do Amor" hex="C1404C"/>
+	<cor codigo="P243" nome="Marrom-Glacê" hex="9F5D59"/>
+	<cor codigo="R111" nome="Nectarina" hex="B15151"/>
+	<cor codigo="P245" nome="Romã" hex="D04848"/>
+	<cor codigo="P112" nome="Melancia" hex="DC5C58"/>
+	<cor codigo="P107" nome="Hena" hex="915852"/>
+	<cor codigo="P248" nome="Deserto Vermelho" hex="8C5C54"/>
+	<cor codigo="P249" nome="Telha Nova" hex="C86355"/>
+	<cor codigo="R115" nome="Flamboyant" hex="CA4F43"/>
+	<cor codigo="E115" nome="Semente de Guaraná" hex="E16752"/>
+	<cor codigo="E114" nome="Primeiro Beijo" hex="D36955"/>
+	<cor codigo="P253" nome="Barro Vermelho" hex="B46350"/>
+	<cor codigo="P174" nome="Chocolate ao Leite" hex="7D635A"/>
+	<cor codigo="Y155" nome="Ferrugem" hex="A35940"/>
+	<cor codigo="R123" nome="Flor-de-São-João" hex="D96340"/>
+	<cor codigo="R225" nome="Luxúria" hex="8A3F68"/>
+	<cor codigo="R099" nome="Fúcsia" hex="9A4470"/>
+	<cor codigo="R227" nome="Rosa Choque" hex="BC5187"/>
+	<cor codigo="R228" nome="Magenta" hex="C1537D"/>
+	<cor codigo="R229" nome="Pecado Original" hex="96416B"/>
+	<cor codigo="R098" nome="Açaí" hex="834C63"/>
+	<cor codigo="R231" nome="Amora Silvestre" hex="5B3F46"/>
+	<cor codigo="R100" nome="Sapato de Salto" hex="9D3F63"/>
+	<cor codigo="P101" nome="Buquê de Noiva" hex="B45073"/>
+	<cor codigo="R234" nome="Doce Paixão" hex="C55676"/>
+	<cor codigo="R102" nome="Carmesim" hex="B44A63"/>
+	<cor codigo="R104" nome="Batom de Cereja" hex="914356"/>
+	<cor codigo="R237" nome="Vinho Tinto" hex="844955"/>
+	<cor codigo="R109" nome="Rubi" hex="91444C"/>
+	<cor codigo="R103" nome="Camu-Camu" hex="A04F58"/>
+	<cor codigo="R240" nome="Groselha" hex="AD485B"/>
+	<cor codigo="R241" nome="Vermelho-amor" hex="CD4244"/>
+	<cor codigo="R242" nome="Cereja" hex="A82939"/>
+	<cor codigo="R243" nome="Goiabada" hex="7B3E3C"/>
+	<cor codigo="R244" nome="Jaspe" hex="A73C3D"/>
+	<cor codigo="R245" nome="Rosa-Vermelha" hex="C83738"/>
+	<cor codigo="R112" nome="Morango" hex="C04042"/>
+	<cor codigo="Y053" nome="Buriti" hex="8E4F46"/>
+	<cor codigo="R116" nome="Telhado" hex="8F4C41"/>
+	<cor codigo="R249" nome="Antúrio" hex="AC443C"/>
+	<cor codigo="R113" nome="Rosa Mosqueta" hex="B93F36"/>
+	<cor codigo="P115" nome="Pitanga" hex="D25B48"/>
+	<cor codigo="R252" nome="Páprica" hex="C4583F"/>
+	<cor codigo="R119" nome="Grapefruit" hex="B1533D"/>
+	<cor codigo="R175" nome="Chocolate Meio Amargo" hex="614F48"/>
+	<cor codigo="R118" nome="Terracota" hex="9F4F39"/>
+	<cor codigo="R256" nome="Fogo" hex="D65839"/>
+</paleta>

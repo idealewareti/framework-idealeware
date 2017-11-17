@@ -1,0 +1,20 @@
+<div class="col-xs-12 col-md-4">
+    <div class="border">
+        <div class="address-header">
+            <b *ngIf="">{{(address.mainAddress ? 'Endereço Principal' : '&nbsp;')}}</b>
+            <div class="actions">
+                <a class="btn btn-clear btn-edit" [routerLink]="['/conta/enderecos/' + address.id]"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                <button [ngClass]="{'disabled': address.mainAddress}" class="btn btn-clear btn-remove" (click)="askForDelete()"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="address-details">
+            <b class="name">{{address.addressName}}</b>
+            <p>
+                {{address.addressLine1}}, {{address.number}}<br />
+                {{address.addressLine2}}<br *ngIf="address.addressLine2" />
+                {{address.district}}<br />
+                CEP {{address.zipCode}} - {{address.city}}/{{address.state}}
+            </p>
+        </div>
+    </div>
+</div>

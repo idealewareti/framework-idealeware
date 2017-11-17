@@ -34,11 +34,4 @@ export class Category {
         }
         return category;
     }
-
-    isSet(){
-        if(this.id)
-            return true;
-        else return false;
-    }
-
 }

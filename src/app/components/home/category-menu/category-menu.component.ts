@@ -24,10 +24,9 @@ export class CategoryMenuComponent implements OnInit {
 
     ngOnInit() {         
         this.service.getTree()
-        .then(categories => {
+        .subscribe(categories => {
             this.categories = categories;
-        })
-        .catch(error => {
+        }, error => {
             console.log(error);
         });
     }

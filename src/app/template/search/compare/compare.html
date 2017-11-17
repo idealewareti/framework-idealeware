@@ -1,0 +1,68 @@
+<main role="main" >
+    <div id="layout">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-xs-12 table-responsive">
+                    <table class="table" *ngIf="products.length > 0">
+                        <tbody>
+                            <tr>
+                                <th>Produto</th>
+                                <td *ngFor="let product of products">
+                                    <span class="thumb text-center">
+                                        <a [routerLink]="['/produto', product.skuBase.id]" [attr.title]="product.name">
+                                            <img [attr.src]="getCoverImage(product)" [attr.alt]="product.name" />
+                                        </a>
+                                    </span>
+                                    <h3 class="product-name">
+                                        <a [routerLink]="['/produto', product.skuBase.id]" [attr.title]="product.name">
+                                           {{product.name}}
+                                        </a>
+                                    </h3>
+                                    <span class="price-box">
+                                      <div *ngIf="product.skuBase.promotionalPrice > 0 && product.skuBase.price > 0">
+                                        <span class="old-price">
+                                            <span class="price-label">De:</span>
+                                            <span class="price">{{product.skuBase.price |  currencyFormat }}</span>
+                                        </span>
+                                        <span class="regular-price">
+                                            <span class="price-label">Por</span>
+                                            <span class="price">{{product.skuBase.promotionalPrice |  currencyFormat }}</span>
+                                        </span>
+                                      </div>
+                                      <div *ngIf="product.skuBase.promotionalPrice == 0 && product.skuBase.price > 0">
+                                         <span class="regular-price">
+                                            <span class="price-label">Por</span>
+                                            <span class="price">{{product.skuBase.price |  currencyFormat }}</span>
+                                         </span>
+                                    </div>
+                                    </span>
+                                    <div class="text-center">
+                                        <a [routerLink]="[getProductUrl(product)]" class="btn btn-success btn-buy"><i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                            <span *ngIf="product.skuBase.price > 0">Comprar</span>
+                                            <span *ngIf="product.skuBase.price < 1">Orçar</span>
+                                         </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Descrição</th>
+                                <td *ngFor="let product of products">{{product.briefDescription}}</td>
+                            </tr>
+                            <tr>
+                                <th>Especificações Técnicas</th>
+                                <td *ngFor="let product of products">
+                                    <dl class="specification" *ngFor="let information of product.technicalInformation">
+                                        <dt>{{information.name}}</dt>
+                                        <dd>{{information.description}}</dd>
+                                    </dl>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>

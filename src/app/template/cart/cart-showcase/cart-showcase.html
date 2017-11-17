@@ -1,0 +1,10 @@
+<div *ngIf="products.length > 0" class="showcase showcase-owl produtos-relacionados">
+    <h3 class="title">
+        <b>{{cartShowCase.name}}</b>
+    </h3>
+    <ul id="cartshowcase-items" class="showcase-items list-style-none owl-carousel owl-theme">
+        <li class="showcase-item" *ngFor="let product of products">
+            <app-product-grid-item [product]="product" [store]="getStore()"></app-product-grid-item>
+        </li>
+    </ul>
+</div>

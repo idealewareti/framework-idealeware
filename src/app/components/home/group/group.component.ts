@@ -24,16 +24,16 @@ export class GroupComponent implements OnInit {
 
     getGroups() {
         this.service.getAll()
-        .then(groups =>{
+        .subscribe(groups =>{
             this.groups = groups;
-        }).catch(erro => console.log(erro));
+        }, erro => console.log(erro));
     }
 
     isMobile(): boolean {
         if (isPlatformBrowser(this.platformId)) {
             return AppCore.isMobile(window);
         }
-        else return false;            
+        else return false;
     }
 
     getRoute(group: Group): string {

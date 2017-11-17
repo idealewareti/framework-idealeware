@@ -1,0 +1,26 @@
+<main role="main" class="container user-panel-page">
+    <div class="container">
+        <div class="row">
+            <div class="login-form">
+                <div class="col-md-6 col-sm-12 login-new-customer form-group">
+                    <a [routerLink]="['/cadastrar']" class="btn btn-lg btn-default btn-block">Sou um cliente novo? </a>
+                </div>
+                <div class="col-md-6 col-sm-12 login-fields">
+                    <form (submit)="submit($event)">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="E-mail ou CPF" [(ngModel)]="login.cpfEmail" name="cpfEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Senha" [(ngModel)]="login.password" name="password" required>
+                            <a [routerLink]="['/recuperar-senha']">Esqueci minha senha</a>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

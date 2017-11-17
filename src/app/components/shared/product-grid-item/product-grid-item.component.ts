@@ -49,7 +49,11 @@ export class ProductGridItemComponent implements OnInit {
 
     getCoverImage(): string {
         const mediaPath = `${this.store.link}/static/products`;
-        let coverImg: string = (this.sku.picture['showcase']) ?`${mediaPath}/${this.sku.picture.showcase}` : '/assets/images/no-image.jpg';
+        let coverImg: string;
+        if(this.sku.picture)
+            coverImg = (this.sku.picture['showcase']) ?`${mediaPath}/${this.sku.picture.showcase}` : '/assets/images/no-image.jpg';
+        else
+            coverImg = '/assets/images/no-image.jpg';
         return coverImg;
     }
 

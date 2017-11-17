@@ -1,0 +1,30 @@
+<main role="main" >
+    <div class="custom-paint-page-details">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <ol class="breadcrumb">
+                        <li><a [routerLink]="['/corespersonalizadas']">Cores Personalizadas</a></li>
+                        <li><a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer]" [attr.title]="manufacturer.name">{{manufacturer.name}}</a></li>
+                        <li *ngIf="variation" class="active">{{variation.name}}</li>
+                    </ol>
+                    <ul class="nav nav-pills nav-justified brand-selector">
+                        <li *ngFor="let option of variation.options" role="presentation" [ngClass]="{'active': isOptionSelected(option)}">
+                            <a href="#" (click)="selectOption(option, $event)">
+                                <img *ngIf="option.picture" [attr.src]="mediaPath + option.picture" [attr.alt]="option.name" class="img-responsive">
+                                <img *ngIf="!option.picture" [attr.src]="'/assets/images/no-image.jpg'" [attr.alt]="option.name" class="img-responsive">
+                                
+                                {{option.name}}
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="text-muted text-center" *ngIf="variation.options.length == 0">Nenhum produto encontrado</p>
+
+                </div>
+                <div class="form-group">
+                    <a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer]" class="btn btn-lg btn-default">Voltar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -11,6 +11,7 @@ import { Store } from '../../../models/store/store';
 import { AppCore } from '../../../app.core';
 import { StoreService } from '../../../services/store.service';
 import { ShowcaseGroup } from '../../../models/showcase/showcase-group';
+import { error } from 'util';
 
 @Component({
     selector: 'app-showcase',
@@ -19,15 +20,15 @@ import { ShowcaseGroup } from '../../../models/showcase/showcase-group';
 })
 export class ShowcaseComponent implements OnInit {
     banners: ShowCaseBanner[] = [];
-	stripeBanners: ShowCaseBanner[] = [];
-	halfBanners: ShowCaseBanner[] = [];
-	groups: ShowcaseGroup[] = [];
+    stripeBanners: ShowCaseBanner[] = [];
+    halfBanners: ShowCaseBanner[] = [];
+    groups: ShowcaseGroup[] = [];
     showcase: ShowCase = new ShowCase();
     store: Store = new Store();
 
     constructor(
         private titleService: Title,
-		private metaService: Meta,
+        private metaService: Meta,
         private service: ShowCaseService,
         private storeService: StoreService,
         private globals: Globals,
@@ -35,30 +36,29 @@ export class ShowcaseComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-       this.fetchStore()
-       .then(store => {
-           this.store = store;
-            return this.service.getShowCase();
-        })
-		.then(showcase => {
-			this.showcase = showcase;
-			this.banners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Full);
-			this.stripeBanners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Tarja);
-			this.halfBanners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Half);
+        this.fetchStore()
+            .then(store => {
+                this.store = store;
+                this.service.getShowCase()
+                    .subscribe(showcase => {
+                        this.showcase = showcase;
+                        this.banners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Full);
+                        this.stripeBanners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Tarja);
+                        this.halfBanners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Half);
 
-			let title = (this.showcase.metaTagTitle) ? this.showcase.metaTagTitle : this.showcase.name;
-			this.metaService.addTags([
-				{ name: 'title', content: this.showcase.metaTagTitle },
-				{ name: 'description', content: this.showcase.metaTagDescription }
-			]);
-            
-            this.titleService.setTitle(showcase.metaTagTitle);
-		})
-		.catch(error => console.log(error));
-	}
+                        let title = (this.showcase.metaTagTitle) ? this.showcase.metaTagTitle : this.showcase.name;
+                        this.metaService.addTags([
+                            { name: 'title', content: this.showcase.metaTagTitle },
+                            { name: 'description', content: this.showcase.metaTagDescription }
+                        ]);
+                        this.titleService.setTitle(showcase.metaTagTitle);
+                    }, error => console.log(error));
+            })
+            .catch(error => console.log(error));
+    }
 
-	ngOnDestroy() {
-		this.showcase = null;
+    ngOnDestroy() {
+        this.showcase = null;
         this.metaService.removeTag("name='title'");
         this.metaService.removeTag("name='description'");
     }
@@ -66,23 +66,23 @@ export class ShowcaseComponent implements OnInit {
     private fetchStore(): Promise<Store> {
         return new Promise((resolve, reject) => {
             this.storeService.getStore()
-            .subscribe(response  => {
-                let store: Store = new Store(response);
-                resolve(store);
-            }, error => {
-                reject(error);
-            });
+                .subscribe(response => {
+                    let store: Store = new Store(response);
+                    resolve(store);
+                }, error => {
+                    reject(error);
+                });
         });
     }
-    
+
     isMobile(): boolean {
         if (isPlatformBrowser(this.platformId)) {
             return AppCore.isMobile(window);
         }
-        else return false;            
+        else return false;
     }
 
-	getStore(): Store{
-		return this.store;
-	}
+    getStore(): Store {
+        return this.store;
+    }
 }

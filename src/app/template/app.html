@@ -1,27 +1,34 @@
 <!-- Header Checkout -->
-<header id="header-checkout" [ngClass]="{'hide': !isCheckout()}">
+<header id="header-checkout" [ngClass]="{'hide': !isCheckout()}" *ngIf="getStore()">
     <div class="container-fluid">
         <div class="row">
             <div class="brand overflow-hidden text-center">
-                <a [routerLink]="['/']"><img [attr.src]="mediaPath + '/store/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive"></a>
+                <a [routerLink]="['/']">
+                    <img [attr.src]="mediaPath + '/store/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive">
+                </a>
             </div>
         </div>
         <div class="row">
             <div class="col-md-6 col-sm-12 text-center">
-                <span><i class="fa fa-lock" aria-hidden="true"></i> Compra 100% segura</span>
+                <span>
+                    <i class="fa fa-lock" aria-hidden="true"></i> Compra 100% segura</span>
             </div>
             <div class="col-md-6 col-sm-12 text-center">
-                <span><i class="fa fa-phone" aria-hidden="true"></i> Televendas {{getStore().phone}}</span>
+                <span>
+                    <i class="fa fa-phone" aria-hidden="true"></i> Televendas {{getStore().phone}}</span>
             </div>
         </div>
     </div>
 </header>
 <!-- Header Normal -->
-<header id="header" [ngClass]="{'hide': isCheckout()}">
+<header id="header" [ngClass]="{'hide': isCheckout()}" *ngIf="getStore()">
     <nav class="nav-top navbar navbar-default hidden-xs hidden-sm">
         <div class="container">
             <div class="pull-left">
-                <span class="phone"><i class="fa fa-phone" aria-hidden="true"></i> Televendas <b>{{getStore().phone}}</b></span>
+                <span class="phone">
+                    <i class="fa fa-phone" aria-hidden="true"></i> Televendas
+                    <b>{{getStore().phone}}</b>
+                </span>
             </div>
             <div class="pull-right">
                 <div class="information-nav">
@@ -44,7 +51,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-mini-cart pull-right col-padding">
-                    <app-mini-cart></app-mini-cart>  
+                    <app-mini-cart [store]="getStore()"></app-mini-cart>
                 </div>
                 <div class="col-brand pull-left col-padding">
                     <h1 id="brand">
@@ -57,14 +64,16 @@
                 <div class="col-welcome pull-left col-padding">
                     <div id="welcome" *ngIf="!isLoggedIn()">
                         <p>
-                            Olá, Visitante <br/>
-                            <a class="login-enter" [routerLink]="['/login']" title="Entre">Entre</a> ou <a class="about-us"
-                                [routerLink]="['/cadastrar']" title="Cadastre-se">Cadastre-se</a>
+                            Olá, Visitante
+                            <br/>
+                            <a class="login-enter" [routerLink]="['/login']" title="Entre">Entre</a> ou
+                            <a class="about-us" [routerLink]="['/cadastrar']" title="Cadastre-se">Cadastre-se</a>
                         </p>
                     </div>
                     <div id="welcome" *ngIf="isLoggedIn()">
                         <p>
-                            Olá, {{customer.firstname_Companyname}} <br/>
+                            Olá, {{customer.firstname_Companyname}}
+                            <br/>
                             <a class="login-enter" [routerLink]="['/logout']" title="Sair">Sair</a>
                         </p>
                     </div>
@@ -73,7 +82,9 @@
                     <form id="form-search" action="/buscar" method="get" (submit)="searchFor($event)">
                         <fieldset>
                             <input id="auto-complete" type="text" placeholder="O que você procura?" name="q" [(ngModel)]="q" autocomplete="off" required>
-                            <button class="button button-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            <button class="button button-search" type="submit">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
                         </fieldset>
                     </form>
                 </div>
@@ -82,13 +93,14 @@
     </div>
 </header>
 <!-- Menu -->
-<nav class="navbar categories-nav navbar-static-top" [ngClass]="{'hide': isCheckout()}">
+<nav class="navbar categories-nav navbar-static-top" [ngClass]="{'hide': isCheckout()}" *ngIf="getStore()">
     <!-- <div class="container">
         <app-search-vehicle></app-search-vehicle>
     </div> -->
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="pull-left navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <button type="button" class="pull-left navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -108,10 +120,14 @@
                     <div class="mask"></div>
                     <form id="form-search-mobile" action="/buscar" method="get" (submit)="searchFor($event)">
                         <fieldset class="clearfix">
-                            <button (click)="searchFor($event)" type="submit" class="btn btn-search pull-right"><img src="assets/images/icon-search.svg" alt="Buscar" /></button>
-                            <button class="btn-close pull-left"><img src="assets/images/icon-close.svg" alt="Fechar" /></button>
+                            <button (click)="searchFor($event)" type="submit" class="btn btn-search pull-right">
+                                <img src="assets/images/icon-search.svg" alt="Buscar" />
+                            </button>
+                            <button class="btn-close pull-left">
+                                <img src="assets/images/icon-close.svg" alt="Fechar" />
+                            </button>
                             <div class="overflow-hidden">
-                                <input id="auto-complete" type="text" placeholder="O que você procura?"name="q" [(ngModel)]="q" autocomplete="off" >
+                                <input id="auto-complete" type="text" placeholder="O que você procura?" name="q" [(ngModel)]="q" autocomplete="off">
                             </div>
                         </fieldset>
                     </form>
@@ -126,9 +142,9 @@
     <router-outlet></router-outlet>
 </div>
 <!-- Footer -->
-<footer id="footer">
+<footer id="footer" *ngIf="getStore()">
     <!-- Newsletter -->
-    <!-- <app-newsletter *ngIf="!isCheckout()"></app-newsletter> -->
+    <app-newsletter *ngIf="!isCheckout()"></app-newsletter>
     <!-- /Newsletter -->
 
     <!-- Main Footer -->
@@ -149,28 +165,87 @@
                 <div class="list-footer col-xs-12 col-md-3 footer-call-center">
                     <h3 class="title">Central de Atendimento</h3>
                     <ul>
-                        <li><span>Televendas <b class="phone">{{getStore().phone}}</b></span></li>
+                        <li>
+                            <span>Televendas
+                                <b class="phone">{{getStore().phone}}</b>
+                            </span>
+                        </li>
                     </ul>
                 </div>
                 <div class="col-xs-12 col-md-4 footer-social-networks">
 
                     <div class="light-box">
-                        <iframe [attr.src]="facebookSafeUrl" width="100%" height="214" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+                        <iframe [attr.src]="facebookSafeUrl" width="100%" height="214" style="border:none;overflow:hidden" scrolling="no" frameborder="0"
+                            allowTransparency="true"></iframe>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- /Main Footer -->    
+    <!-- /Main Footer -->
 
-    
+    <!-- Footer secundário -->
+    <div *ngIf="!isCheckout()" id="secondary-footer">
+        <div class="container">
+            <div class="row">
+                <!-- Box SSL -->
+                <div class="col-md-2 col-sm-12">
+                    <div id="security-seal">
+                        <h3 class="title">Certificados</h3>
+                        <ul class="list-inline">
+                            <li>
+                                <div id="selo-alphassl"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- CreditCard Brands -->
+                <div *ngIf="hasPagSeguro()" class="col-md-2 col-sm-12 text-center">
+                    <img src="https://stc.pagseguro.uol.com.br/public/img/banners/seguranca/seguranca_125x125.gif" alt="Banner PagSeguro" title="Compre com pagSeguro e fique sossegado">
+                </div>
+                <div class="col-md-8 col-sm-12">
+                    <div *ngIf="hasMundipagg()" class="col-md-6 col-sm-12">
+                        <div id="payment-flags">
+                            <h3 class="title">Pague com</h3>
+                            <ul class="list-inline">
+                                <li *ngFor="let method of getMundipaggBrands()">
+                                    <img [attr.src]="'assets/images/' + method.icon" [attr.alt]="method.name">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div *ngIf="hasMercadoPago()" class="text-left col-md-6 col-sm-12">
+                        <img class="img-responsive" style="cursor: pointer" src="https://imgmp.mlstatic.com/org-img/MLB/MP/BANNERS/tipo2_468X60.jpg?v=1"
+                            alt="MercadoPago - Meios de pagamento" title="MercadoPago - Meios de pagamento" width="468" height="60"
+                            data-toggle="modal" data-target=".bs-mercadopago-modal-sm" />
+                        <div class="modal fade bs-mercadopago-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header clearfix">
+                                        <button class="btn-close pull-right" data-toggle="modal" data-target=".bs-mercadopago-modal-sm" title="fechar">
+                                            <img src="/assets/images/icon-close.svg" alt="Fechar" style="margin:left" />
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img class="center-block" src="https://www.mercadopago.com/org-img/MLB/design/2016/m_pago/banners/01_21/Educativo-passo_a_passo-10x.jpg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Footer secundário -->
     <div id="copyright">
         <div class="container text-center">
             <div class="items-copyright">
 
                 <p>© {{ date | date:'y'}} {{getStore().tradingName}}. Todos os direitos reservados.</p>
-                <p>CNPJ: {{getStore().cnpj}} / Inscrição Estadual: {{getStore().stateRegistration}} - {{getStore().addressLine1 + ((getStore().addressLine2)
-                    ? ' - ' + getStore().addressLine2 : '')}} - {{getStore().city}}/{{getStore().state}} - {{getStore().zipCode}}</p>
+                <p>CNPJ: {{getStore().cnpj}} / Inscrição Estadual: {{getStore().stateRegistration}} - {{getStore().addressLine1
+                    + ((getStore().addressLine2) ? ' - ' + getStore().addressLine2 : '')}} - {{getStore().city}}/{{getStore().state}}
+                    - {{getStore().zipCode}}</p>
 
                 <div class="signature">
                     Tecnologia:
@@ -182,4 +257,5 @@
         </div>
     </div>
 </footer>
-<!-- Conteúdo do rodapé -->    
+<!-- Conteúdo do rodapé -->
+<app-popup *ngIf="!isCheckout()" [store]="getStore()" ></app-popup>

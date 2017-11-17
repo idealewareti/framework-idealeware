@@ -1,0 +1,105 @@
+<main role="main" class="container checkout-page" *ngIf="logged">
+    
+    <ul class="checkout-tabs">
+        <li class="is-ok">
+            <span class="icon"><img src="assets/images/icon-checkout-identificacao.svg" alt=""></span>
+            <span class="text">Identificação</span>
+        </li>
+        <li>
+            <span class="icon"><img src="assets/images/icon-checkout-confirmacao.svg" alt=""></span>
+            <span class="text">Confirmação</span>
+        </li>
+    </ul>
+
+    <div class="row checkout-steps">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="step step-adress">
+                <div class="header">
+                    <span class="number">1</span>
+                    <span class="text">Identificação</span>
+                </div>
+                <div class="content">
+                    <h4>Dados de Contato</h4>
+                    <div class="adress-details">
+                        <strong *ngIf="customer.type == 1">{{customer.firstname_Companyname}} {{customer.lastname_Tradingname}}</strong>
+                        <strong *ngIf="customer.type == 2">{{customer.firstname_Companyname}}</strong>
+                        
+                        <p>
+                            E:mail: {{customer.email}}<br>
+                            Telefone: {{customer.phone}}<br>
+                            Celular: {{customer.celPhone}}
+                        </p>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xs-12 col-md-4" *ngIf="cart">
+            <div class="step step-finish">
+                <div class="header">
+                    <span class="number">2</span>
+                    <span class="text">Revisão do Pedidos</span>
+                </div>
+                <div class="content">
+                    <div class="scroll-product-list scroll-bar">
+                        <ul class="product-list">
+                            <li class="product-item" *ngFor="let item of cart.products">
+                                <span class="image">
+                                    <img *ngIf="hasPicture(item.sku)" [attr.src]="mediaPath + item.sku.picture.thumbnail" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
+                                    <img *ngIf="!hasPicture(item.sku)" [attr.src]="'/assets/images/no-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
+                                </span>
+                                <span class="details">
+                                    <b class="name">{{item.name}}</b>
+                                    <span class="sku" *ngFor="let variation of item.sku.variations">{{variation.name + ': ' + variation.option.name}}</span>
+                                    <span class="qty">Quantidade: {{item.quantity}}</span>
+                                </span>
+                               <span class="price" *ngIf="item.totalPrice > 0">
+                                    <span class="regular-price">{{item.totalPrice |  currencyFormat }}</span>
+                                </span>
+                            </li>
+                            <li class="product-item" *ngFor="let item of cart.services">
+                                <span class="details">
+                                    <b class="name">{{item.serviceType}}</b>
+                                    <span class="qty">Quantidade: {{item.quantity}}</span>
+                                </span>
+                                <span class="price">
+                                    <span class="regular-price">{{item.price * item.quantity |  currencyFormat }}</span>
+                                </span>
+                            </li>
+                            <li class="product-item" *ngFor="let item of cart.paints">
+                                <span class="image">
+                                    <img *ngIf="item.optionPicture" [attr.src]="mediaPathPaint + item.optionPicture" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
+                                    <img *ngIf="!item.optionPicture" [attr.src]="'/assets/images/no-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
+                                </span>
+                                <span class="details">
+                                    <b class="name">{{item.baseName}} {{item.colorName}}</b>
+                                    <b class="name">{{item.colorCode}}</b>
+                                    <b class="name">{{item.optionName}}</b>
+                                    <span class="color-block img-thumbnail" [ngStyle]="{'background-color': '#' + item.colorRgb}"></span>
+                                    <span class="qty">Quantidade: {{item.quantity}}</span>
+                                </span>
+                                <span class="price">
+                                    <span class="regular-price">{{item.totalUnitPrice |  currencyFormat }}</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-4" *ngIf="cart">
+            <div class="step step-finish">
+                <div class="header">
+                    <span class="number">3</span>
+                    <span class="text">Enviar Orçamento</span>
+                </div>
+            </div>
+            <a href="#" data-loading-text="Processando..." (click)="placeOrder($event)" class="btn btn-block btn-lg btn-success btn-checkout"><i class="fa fa-shopping-cart" aria-hidden="true"></i> <span>ENVIAR ORÇAMENTO</span></a>
+        </div>
+
+    </div>
+
+</main>

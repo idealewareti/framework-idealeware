@@ -1,0 +1,37 @@
+<!-- <div class="container">
+    <div id="banner-tarja">
+        <div class="container">
+            <ul class="tarja-slider list-style-none owl-carousel owl-theme">
+                <li *ngFor="let banner of bannersTop">
+                    <a [href]="(banner.url) ? banner.url : 'javascript:void(0)'">
+                        <img [attr.src]="mediaPath + banner.picture" [attr.alt]="banner.name" class="img-responsive">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div> -->
+
+<div id="banner-carousel" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators" *ngIf="bannersTop.length > 1">
+    <li data-target="#banner-carousel" *ngFor="let banner of bannersTop; let i = index" [attr.data-slide-to]="i" [ngClass]="{'active': i == 0}"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <div class="item" *ngFor="let banner of bannersTop; let i = index" [ngClass]="{'active': i == 0}">
+      <img [attr.src]="mediaPath + banner.picture" [attr.alt]="banner.name" class="img-responsive">
+    </div>
+  </div>
+
+  <!-- Controls -->
+   <a *ngIf="bannersTop.length > 1" class="left carousel-control" href="#banner-carousel" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Anterior</span>
+  </a>
+  <a *ngIf="bannersTop.length > 1" class="right carousel-control" href="#banner-carousel" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Próximo</span>
+  </a> 
+</div>

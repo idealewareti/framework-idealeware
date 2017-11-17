@@ -1,0 +1,17 @@
+<div>
+    <h2>Meus Endereços</h2>
+
+    <div class="orders-box">
+        <div class="row row-address">
+            <app-address-panel-list *ngFor="let address of addresses" [address]="address" (addressDeleted)="handleAdressDeleted($event)"></app-address-panel-list>
+            <div class="col-xs-12 col-md-4">
+                <div class="border">
+                    <a [routerLink]="['/conta/enderecos/novo']" class="btn-add-address">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        <span>Adicionar novo endereço</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

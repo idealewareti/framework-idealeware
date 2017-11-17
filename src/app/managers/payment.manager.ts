@@ -29,31 +29,69 @@ export class PaymentManager {
     }
     
     getAll(): Promise<Payment[]>{
-        return this.service.getAll();
+        return new Promise((resolve, reject) => {
+            this.service.getAll()
+            .subscribe(response => {
+                let payments = response.map(p => p = new Payment(p));
+                resolve(payments);
+            }, error => reject(error));
+        })
     }
 
-    getDefault(): Promise<Payment>{
-        return this.service.getDefault();
+    getDefault(): Promise<Payment> {
+        return new Promise((resolve, reject) => {
+            this.service.getDefault()
+            .subscribe(response => {
+                let payment:Payment = new Payment(response);
+                resolve(payment);
+
+            }, error => reject(error));
+        });
     }
 
     simulateInstallmentsBySkuId(skuId: string): Promise<Payment[]>{
-        return this.service.simulateInstallmentsBySkuId(skuId)
+        return new Promise((resolve, reject) => {
+            this.service.simulateInstallmentsBySkuId(skuId)
+            .subscribe(response => {
+                let simulator = response.map(p => p = new Payment(p));
+                resolve(simulator);
+            }, error => reject(error));
+        });
     }
 
     simulateInstallmentsBySkuIdDefault(skuId: string): Promise<Payment>{
-        let sessionId = this.getPagSeguroSession();
-        return this.service.simulateInstallmentsBySkuIdDefault(skuId, sessionId);
+        return new Promise((resolve, reject) => {
+            let sessionId = this.getPagSeguroSession();
+            this.service.simulateInstallmentsBySkuIdDefault(skuId, sessionId)
+            .subscribe(response => {
+                let simulator = new Payment(response);
+                resolve(simulator);
+            }, error => reject(error));
+        });
     }
 
     simulateInstallmentsByCartId(cartId: string): Promise<Payment[]>{
         if(isPlatformBrowser(this.platformId)) {
             let token = this.getToken();
-            return this.service.simulateInstallments(cartId, token);
+            return new Promise((resolve, reject) => {
+                this.service.simulateInstallments(cartId, token)
+                .subscribe(response => {
+                    let payments = response.map(p => p = new Payment(p));
+                    resolve(payments);
+                }, error => reject(error));
+            });
         }
     }
 
     getMercadoPagoMethods(): Promise<MercadoPagoPaymentMethod[]>{
-        return this.service.MercadoPagoGetPaymentsMethods();
+        return new Promise((resolve, reject) => {
+            this.service.MercadoPagoGetPaymentsMethods()
+            .subscribe(response => {
+               let payments = response.map(g => g = new MercadoPagoPaymentMethod(g));
+               resolve(payments);
+           }, error => reject(error));
+
+        })
     }
 
     getMercadoPagoPublicKey(): Promise<string>{
@@ -64,7 +102,12 @@ export class PaymentManager {
     }
 
     getMercadoPagoInstalments(methodId: string, totalPurchasePrice: number): Promise<MercadoPagoInstallmentResponse>{
-        return this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice);
+        return new Promise((resolve, reject) => {
+            this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice)
+            .subscribe(response => {
+                resolve(new MercadoPagoInstallmentResponse(response));
+            }, error => reject(error));
+        });
     }
 
     /*
@@ -225,7 +268,12 @@ export class PaymentManager {
     }
 
     getPagSeguroSession(): string{
-        return localStorage.getItem('pagseguro_session');
+        if(isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('pagseguro_session');
+        }
+        else {
+            return null;
+        }
     }
 
     getPagSeguroStoredSession(): Promise<string>{
@@ -280,7 +328,14 @@ export class PaymentManager {
     }
 
     getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Promise<PagSeguroSimulationResponse>{
-        return this.service.getPagSeguroInstallments(sessionId, amount, creditCardBrand, maxInstallmentNoInterest, isSandBox);
+        return new Promise((resolve, reject) => {
+            this.service.getPagSeguroInstallments(sessionId, amount, creditCardBrand, maxInstallmentNoInterest, isSandBox)
+            .subscribe(response => {
+                resolve(response);
+            }, error => {
+                reject(error);
+            });
+        });
     }
 
     getInstallmentText(gateway: Payment, method: PaymentMethod): string{

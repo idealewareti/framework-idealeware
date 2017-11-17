@@ -1,27 +1,21 @@
 import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { ProductAwaited } from "../models/product-awaited/product-awaited";
-import { environment } from "../../environments/environment.prod";
+import { environment } from "../../environments/environment";
 import { Http } from "@angular/http";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
-export class ProductAwaitedService{
+export class ProductAwaitedService {
     client: HttpClientHelper;
-    
+
     constructor(http: Http) {
         this.client = new HttpClientHelper(http);
     }
 
-    createProductAwaited(productAwaited: ProductAwaited): Promise<ProductAwaited>{
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_PRODUCTAWAITED}/productsAwaited`;
-            this.client.post(url, productAwaited)
-            .map(res => res.json())
-            .subscribe(response => {
-                let productsAwaited = new ProductAwaited(response);
-                resolve(productsAwaited);
-            }, error => reject(error));
-        });
+    createProductAwaited(productAwaited: ProductAwaited): Observable<ProductAwaited> {
+        let url = `${environment.API_PRODUCTAWAITED}/productsAwaited`;
+        return this.client.post(url, productAwaited)
+            .map(res => res.json());
     }
-
 }

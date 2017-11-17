@@ -1,0 +1,29 @@
+<div class="clearfix">
+    <h2 class="pull-left">Meus Vales</h2>
+    <!--<form class="search-orders pull-right">
+        <input type="search" name="search-orders" class="form-control">
+        <button class="btn btn-clear btn-search-orders"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+    </form>-->
+</div>
+
+<div class="orders-box table-responsive" *ngIf="coupons">
+    <table class="table-order-vouchers table table-striped">
+        <tbody>
+            <tr *ngFor="let coupon of coupons">
+                <td>
+                    <span>Código do Vale-Compras</span>
+                    <strong>{{coupon.code}}</strong>
+                    <span *ngIf="coupon.expired" class="label label-danger">Expirado</span>
+                </td>
+                <td>
+                    <span>Validade do Cupom</span>
+                    <strong *ngIf="coupon.endDate">{{coupon.endDate | date:'dd/MM/y'}}</strong>
+                    <span *ngIf="!coupon.endDate" class="text-muted">Sem data de validade</span>
+                </td>
+            </tr>
+            <tr *ngIf="coupons.length == 0">
+                <td colspan="2" class="text-muted text-center">Nenhum vale encontrado</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

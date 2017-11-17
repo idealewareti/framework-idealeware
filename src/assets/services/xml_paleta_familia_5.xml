@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><paleta>
+	<cor codigo="A327" nome="Estação das Chuvas" hex="DBEAEC"/>
+	<cor codigo="A328" nome="Azul Aquário" hex="D3E7E9"/>
+	<cor codigo="F010" nome="Paz" hex="CEDEDD"/>
+	<cor codigo="Z043" nome="Chuvisco Gelado" hex="D1E3E7"/>
+	<cor codigo="A331" nome="Ar Rarefeito" hex="D3DBDE"/>
+	<cor codigo="A332" nome="Salinas" hex="CDE5E7"/>
+	<cor codigo="A333" nome="Oceano Ártico" hex="CCE2EA"/>
+	<cor codigo="A334" nome="Oceano Antártico" hex="CADDE8"/>
+	<cor codigo="Z034" nome="Opala Cristal" hex="DCE8EB"/>
+	<cor codigo="D012" nome="Boneco de Neve" hex="D0D6DA"/>
+	<cor codigo="B082" nome="Tranquilidade" hex="C5D1DC"/>
+	<cor codigo="A338" nome="Azul Polar" hex="C6D7E5"/>
+	<cor codigo="A339" nome="Céu de Verão" hex="CBE4F0"/>
+	<cor codigo="A340" nome="Nuvem de Algodão" hex="DDE2EC"/>
+	<cor codigo="A341" nome="Ar Puro" hex="D8DCE0"/>
+	<cor codigo="A083" nome="Água Doce" hex="CED4DB"/>
+	<cor codigo="A343" nome="Estrela Cadente" hex="D8DAE0"/>
+	<cor codigo="A344" nome="Lua Azul" hex="CBD5E7"/>
+	<cor codigo="A345" nome="Valsa" hex="CFCFE3"/>
+	<cor codigo="A346" nome="Quartzo Branco" hex="DCDEE7"/>
+	<cor codigo="B011" nome="Prata Pura" hex="D2D1D5"/>
+	<cor codigo="A348" nome="Chá de Melissa" hex="DBD9EB"/>
+	<cor codigo="A349" nome="Pico Nevado" hex="DBDFED"/>
+	<cor codigo="B327" nome="Brisa do Mar" hex="C3E2E6"/>
+	<cor codigo="A070" nome="Céu Estrelado" hex="BDD6DA"/>
+	<cor codigo="B329" nome="Espuma de Sabão" hex="B4D2D5"/>
+	<cor codigo="B330" nome="Pirineus" hex="BDD1D6"/>
+	<cor codigo="B331" nome="Chuva do Campo" hex="C6D7DA"/>
+	<cor codigo="B070" nome="Pingo de Chuva" hex="BBD8DD"/>
+	<cor codigo="B333" nome="Azulejo de Casa" hex="C0E0EC"/>
+	<cor codigo="B334" nome="Azul Bebê" hex="B7D5E5"/>
+	<cor codigo="B080" nome="Espelho d'Água" hex="C4D5DE"/>
+	<cor codigo="B336" nome="Luz da Lua" hex="B8C3CC"/>
+	<cor codigo="N002" nome="Azul Marola" hex="AFC2CD"/>
+	<cor codigo="B078" nome="Pó de Diamante" hex="B8CDDD"/>
+	<cor codigo="Z037" nome="Opalina" hex="AAD0E8"/>
+	<cor codigo="C082" nome="Azul Calma" hex="BDCCDD"/>
+	<cor codigo="C023" nome="Água Gelada" hex="CCD4D9"/>
+	<cor codigo="B086" nome="Chuva de Prata" hex="C5CAD1"/>
+	<cor codigo="B083" nome="Lenço de Seda" hex="C3C9D9"/>
+	<cor codigo="B344" nome="Céu de Inverno" hex="BECAE4"/>
+	<cor codigo="H023" nome="Água-de-Cheiro" hex="BCBEDF"/>
+	<cor codigo="A084" nome="Sombra" hex="CCCDDA"/>
+	<cor codigo="B347" nome="Pelo de Coelho" hex="CAC8CD"/>
+	<cor codigo="B348" nome="Meu Diário" hex="CBC6DF"/>
+	<cor codigo="B349" nome="Patinação no Gelo" hex="C6CEE9"/>
+	<cor codigo="C327" nome="Matelassê" hex="98D8DE"/>
+	<cor codigo="D069" nome="Vidro Temperado" hex="A1C6C8"/>
+	<cor codigo="C329" nome="Rio Danúbio" hex="96B7BC"/>
+	<cor codigo="C330" nome="Água Mineral" hex="ADC9D0"/>
+	<cor codigo="C331" nome="Lago Congelado" hex="AFC7D2"/>
+	<cor codigo="C070" nome="Ágata Azul" hex="A6CAD6"/>
+	<cor codigo="C333" nome="Geleiras" hex="AEDBEB"/>
+	<cor codigo="C334" nome="Olhos Azuis" hex="9CC4DA"/>
+	<cor codigo="C074" nome="Porcelana Azul" hex="ADC2CD"/>
+	<cor codigo="C336" nome="Golfinho" hex="909EA8"/>
+	<cor codigo="C337" nome="Céu Nublado" hex="9BAFBF"/>
+	<cor codigo="C073" nome="Amanhecer" hex="A4C2D7"/>
+	<cor codigo="Z039" nome="Lagoa Azul" hex="8FC6E8"/>
+	<cor codigo="C078" nome="Miosótis" hex="9DB7D7"/>
+	<cor codigo="C151" nome="Azul Etéreo" hex="A5B5C5"/>
+	<cor codigo="C342" nome="Cerração" hex="A9B1BB"/>
+	<cor codigo="C343" nome="Sofia" hex="A7AEC7"/>
+	<cor codigo="C344" nome="Riacho Doce" hex="94B1DA"/>
+	<cor codigo="C084" nome="Quartzo Violeta" hex="A0ABD7"/>
+	<cor codigo="C085" nome="Estação de Esqui" hex="A3ABC4"/>
+	<cor codigo="D153" nome="Gris" hex="9F9DA9"/>
+	<cor codigo="C348" nome="Templo dos Deuses" hex="BCB9D5"/>
+	<cor codigo="C349" nome="Quarto de Bebê" hex="ADB7DF"/>
+	<cor codigo="D327" nome="Taiti" hex="79D2DA"/>
+	<cor codigo="E066" nome="Rio Serrano" hex="78B0B2"/>
+	<cor codigo="D329" nome="Mar do Norte" hex="86A9AF"/>
+	<cor codigo="D330" nome="Lago Grey" hex="85A4AD"/>
+	<cor codigo="D331" nome="Rio Ebro" hex="92B6C1"/>
+	<cor codigo="H009" nome="Porto Seguro" hex="7AB5CB"/>
+	<cor codigo="D333" nome="Azul-Piscina" hex="87C8E0"/>
+	<cor codigo="D334" nome="Azul Guache" hex="7EAFC9"/>
+	<cor codigo="D335" nome="Onda do Mar" hex="94B4C4"/>
+	<cor codigo="D336" nome="Nimbus" hex="788792"/>
+	<cor codigo="D337" nome="Tricô" hex="869CB1"/>
+	<cor codigo="D073" nome="Quartzo Azul" hex="7EA3BF"/>
+	<cor codigo="D339" nome="Azul Rei" hex="62ABDB"/>
+	<cor codigo="D077" nome="Céu de Brigadeiro" hex="7DA6CE"/>
+	<cor codigo="S003" nome="Ilha Azul" hex="8597AA"/>
+	<cor codigo="E152" nome="Trovoada" hex="7F889C"/>
+	<cor codigo="D343" nome="Patagônia" hex="8B97B6"/>
+	<cor codigo="D078" nome="Centáurea-Azul" hex="6590CA"/>
+	<cor codigo="D084" nome="Floreira de Violetas" hex="8A95CB"/>
+	<cor codigo="D085" nome="Sossego Noturno" hex="969DBA"/>
+	<cor codigo="D347" nome="Mousse de Uva" hex="85829A"/>
+	<cor codigo="D348" nome="Flor de Melissa" hex="A79FC4"/>
+	<cor codigo="D349" nome="Uva Tempranillo" hex="919DD1"/>
+	<cor codigo="E327" nome="Apatita" hex="43BECA"/>
+	<cor codigo="E067" nome="Maré Cheia" hex="3F9296"/>
+	<cor codigo="E329" nome="Azul Mineral" hex="688F95"/>
+	<cor codigo="E330" nome="Rio Reno" hex="63858E"/>
+	<cor codigo="E331" nome="Fiorde Tropical" hex="6A9BAC"/>
+	<cor codigo="J009" nome="Lago Argentino" hex="5FA3BC"/>
+	<cor codigo="E333" nome="Azul Glacial" hex="58AFD5"/>
+	<cor codigo="E334" nome="Oceano Atlântico" hex="5D9BB8"/>
+	<cor codigo="E335" nome="Banho de Espuma" hex="6B93A7"/>
+	<cor codigo="E336" nome="Sino de Igreja" hex="61727E"/>
+	<cor codigo="L002" nome="Veludo Azul" hex="7591A6"/>
+	<cor codigo="E073" nome="Constelação" hex="6B92B1"/>
+	<cor codigo="E339" nome="Azul-royal" hex="3590C7"/>
+	<cor codigo="D080" nome="Planeta Azul" hex="558EBB"/>
+	<cor codigo="P074" nome="Jeans Lavado" hex="607D99"/>
+	<cor codigo="E342" nome="Submarino" hex="717887"/>
+	<cor codigo="E343" nome="Cruzeiro Marítimo" hex="6E7DA1"/>
+	<cor codigo="E078" nome="Safira" hex="396CAD"/>
+	<cor codigo="E083" nome="Plumas" hex="777FBD"/>
+	<cor codigo="E085" nome="Uva Malbec" hex="71799D"/>
+	<cor codigo="E347" nome="Odalisca" hex="706C85"/>
+	<cor codigo="E348" nome="Lilás" hex="8F8CB7"/>
+	<cor codigo="E084" nome="Azul Violáceo" hex="797AB3"/>
+	<cor codigo="P327" nome="Martim-Pescador" hex="0096A3"/>
+	<cor codigo="P067" nome="Azul Petróleo" hex="0A747C"/>
+	<cor codigo="P329" nome="Azul Ilusão" hex="5C8489"/>
+	<cor codigo="P330" nome="Azul Náutico" hex="4F727A"/>
+	<cor codigo="P069" nome="Mapa Astral" hex="41828E"/>
+	<cor codigo="P070" nome="Lago Sarmiento" hex="3194AE"/>
+	<cor codigo="P333" nome="Curaçau Blue" hex="20A5D6"/>
+	<cor codigo="P334" nome="Azul Retrô" hex="3D87AA"/>
+	<cor codigo="P335" nome="Azul Infinito" hex="40738B"/>
+	<cor codigo="P336" nome="Azul Diesel" hex="536A79"/>
+	<cor codigo="P073" nome="Uniforme Escolar" hex="547793"/>
+	<cor codigo="R072" nome="Caneta Azul" hex="356C92"/>
+	<cor codigo="P339" nome="Arara-Azul" hex="1376AF"/>
+	<cor codigo="D079" nome="Borboleta Azul" hex="3D88C4"/>
+	<cor codigo="R073" nome="Horizonte Azul" hex="496B88"/>
+	<cor codigo="P075" nome="Baleia-Azul" hex="5E6979"/>
+	<cor codigo="P343" nome="Sodalita" hex="566C9B"/>
+	<cor codigo="R078" nome="Beija-Flor" hex="3D5884"/>
+	<cor codigo="P083" nome="Paetês" hex="545A9C"/>
+	<cor codigo="P085" nome="Pássaro Azulão" hex="4F5782"/>
+	<cor codigo="E086" nome="Papel-Carbono" hex="626480"/>
+	<cor codigo="P348" nome="Crochê" hex="7B79A9"/>
+	<cor codigo="P084" nome="Uva Merlot" hex="666194"/>
+	<cor codigo="R327" nome="Topo do Mundo" hex="00818F"/>
+	<cor codigo="R067" nome="Mapa-Múndi" hex="006A73"/>
+	<cor codigo="R329" nome="Azul Aviação" hex="426B72"/>
+	<cor codigo="R330" nome="Imensidão Azul" hex="425C63"/>
+	<cor codigo="R069" nome="Lago Profundo" hex="1A7182"/>
+	<cor codigo="R070" nome="Netuno" hex="007892"/>
+	<cor codigo="R333" nome="Azul Átomo" hex="007FB1"/>
+	<cor codigo="R334" nome="Madrugada" hex="2D6C89"/>
+	<cor codigo="R335" nome="Cassino" hex="12587B"/>
+	<cor codigo="R336" nome="Azul Noturno" hex="475661"/>
+	<cor codigo="R074" nome="Anoitecer" hex="4E6982"/>
+	<cor codigo="R079" nome="Calça Jeans" hex="2B4F70"/>
+	<cor codigo="R339" nome="Oceano Pacífico" hex="205D91"/>
+	<cor codigo="E079" nome="Lápis-Lazúli" hex="1E72B2"/>
+	<cor codigo="R080" nome="Baile de Máscaras" hex="355677"/>
+	<cor codigo="R151" nome="Escuridão" hex="465264"/>
+	<cor codigo="R343" nome="Veleiro" hex="36558B"/>
+	<cor codigo="R076" nome="Azul-Marinho" hex="3C485C"/>
+	<cor codigo="R083" nome="Universo Paralelo" hex="454A87"/>
+	<cor codigo="R346" nome="Azul Cobalto" hex="3A477C"/>
+	<cor codigo="R085" nome="Índigo Blue" hex="3D415F"/>
+	<cor codigo="R348" nome="Flor de Açafrão" hex="655E9B"/>
+	<cor codigo="R084" nome="Boca de Leão" hex="514D78"/>
+</paleta>

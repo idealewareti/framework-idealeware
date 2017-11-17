@@ -747,7 +747,6 @@ input:focus, button:focus {
 }
 
 #banner-tarja .box {
-  padding: 25px 0;
   background-color: #F2F2F2;
 }
 
@@ -792,7 +791,7 @@ input:focus, button:focus {
   border-bottom: 1px solid #D9D9D9;
 }
 
-#list-brands ul a {
+#list-brands a {
   display: block;
   text-align: center;
   opacity: .2;
@@ -805,12 +804,10 @@ input:focus, button:focus {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  color: transparent;
-  /* width: 220px; */
-  /* height: 50px; */
+  color: transparent;  
 }
 
-#list-brands ul a:hover {
+#list-brands a:hover {
   opacity: 1;
   -webkit-filter: grayscale(0);
   filter: grayscale(0);

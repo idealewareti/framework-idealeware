@@ -1,0 +1,223 @@
+<main role="main" class="container user-panel-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-details">
+                <!--<div class="row">
+                    <div class="alert alert-danger" role="alert" *ngIf="errorMessage() != null">{{errorMessage()}}</div>
+                </div>-->
+
+                <form [formGroup]="myForm" class="form-horizontal label-left" (submit)="signUp($event)">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="form-group">
+                                <label for="type" class="col-sm-4 control-label">Tipo de Cadastro</label>
+                                <div class="col-sm-8">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li role="presentation"  [ngClass]="{'active': customer.type === 1}"><a href="#" (click)="changeCustomerType(1, $event)">Pessoa Física</a></li>
+                                        <li role="presentation"  [ngClass]="{'active': customer.type === 2}"><a href="#" (click)="changeCustomerType(2, $event)">Pessoa Jurídica</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+                            <div class="row">
+                                <h2>Dados Cadastrais</h2>
+                            </div>
+                            <div class="row">
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('firstname_Companyname')}">
+                                    <label for="firstname_Companyname" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Nome' : 'Nome da Empresa'}}</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="firstname_Companyname" name="firstname_Companyname" formControlName="firstname_Companyname" class="form-control" [(ngModel)]="customer.firstname_Companyname" required>
+                                        <span *ngIf="hasError('firstname_Companyname')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('lastname_Tradingname')}">
+                                    <label for="lastname_Tradingname" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Sobrenome' : 'Nome Fantasia'}}</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" formControlName="lastname_Tradingname" [(ngModel)]="customer.lastname_Tradingname" required>
+                                        <span *ngIf="hasError('lastname_Tradingname')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!-- CPF/CNPJ -->
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': errorCPF_CNPJ()}">
+                                    <label for="cpf_Cnpj" class="col-sm-4 control-label">{{(customer.type == 1) ? 'CPF' : 'CNPJ'}}</label>
+                                    <div class="col-sm-8">
+                                        <input cpfMask type="text" [attr.maxlength]="(customer.type == 1 ? 14 : 18)" class="form-control" required formControlName="cpf_Cnpj" [attr.placeholder]="(customer.type == 1 ? '000.000.000-00' : '00.000.000/0000-00')" [attr.data-type]="customer.type" [(ngModel)]="customer.cpf_Cnpj">
+                                        <span *ngIf="hasError('cpf_Cnpj')" class="help-block">O campo CNPJ é obrigatório</span>
+                                        <span *ngIf="(customer.type == 2 && !validCNPJ() && validCNPJ() != null)" class="text-danger">CNPJ Inválido</span>
+                                        <span *ngIf="(customer.type == 1 && !validCPF() && validCPF() != null)" class="text-danger">CPF Inválido</span>
+                                    </div>
+                                </div>
+                                <!--RG-->
+                                <div class="form-group col-md-6">
+                                    <label for="rg_Ie" class="col-sm-4 control-label">{{(customer.type == 1) ? 'RG' : 'Inscrição Estadual'}}</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="rg_Ie" [(ngModel)]="customer.rg_Ie" formControlName="rg_Ie">
+                                    </div>
+                                    <span *ngIf="hasError('rg_Ie')" class="help-block">O campo é obrigatório</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group required col-md-6" *ngIf="customer.type == 1" [ngClass]="{'has-error': hasError('gender')}">
+                                    <label for="gender" class="col-sm-4 control-label">Sexo</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" formControlName="gender" [(ngModel)]="customer.gender" required>
+                                            <option *ngFor="let gender of genders" [value]="gender.value">{{gender.label}}</option>
+                                        </select>
+                                        <span *ngIf="hasError('gender')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                                <div class="form-group required col-md-6" *ngIf="customer.type == 1" [ngClass]="{'has-error': hasError('birthdate')}">
+                                    <label for="birthdate" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Data de Nascimento' : 'Data de Fundação'}}</label>
+                                    <div class="col-sm-8">
+                                        <input type="date" class="form-control" formControlName="birthdate" placeholder="00/00/0000" maxlength="10" [(ngModel)]="customer.birthdate">
+                                        <span *ngIf="hasError('birthdate')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('phone')}">
+                                    <label for="phone" class="col-sm-4 control-label">Telefone</label>
+                                    <div class="col-sm-8">
+                                        <input phoneMask type="tel" maxlength="15" class="form-control" formControlName="phone" placeholder="(00) 0000-0000" [(ngModel)]="customer.phone" required>
+                                        <span *ngIf="hasError('phone')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6" [ngClass]="{'has-error': hasError('celPhone')}">
+                                    <label for="celPhone" class="col-sm-4 control-label">Telefone 2</label>
+                                    <div class="col-sm-8">
+                                        <input phoneMask type="tel" maxlength="15" class="form-control" formControlName="celPhone" placeholder="(00) 00000-0000" [(ngModel)]="customer.celPhone">
+                                        <span *ngIf="hasError('celPhone')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-12">
+                            <div class="row">
+                                <h2>Dados de Entrega</h2>
+                            </div>
+                            <div class="row">
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('zipCode')}">
+                                    <label for="zipCode" class="col-sm-3 control-label">CEP</label>
+                                    <div class="col-sm-6">
+                                        <input zipcodeMask (change)="getDne($event)" maxlength="9" type="text" class="form-control" formControlName="zipCode" placeholder="00000-000" required [(ngModel)]="customer.addresses[0].zipCode">
+                                        <span *ngIf="hasError('zipCode')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <a href="http://www.buscacep.correios.com.br/sistemas/buscacep/buscaCep.cfm" target="_blank" class="help-cep">
+                                            Não sei<br> meu CEP
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('addressType')}">
+                                    <label for="addressType" class="col-sm-3 control-label">Tipo de Endereço</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" formControlName="addressType" [(ngModel)]="customer.addresses[0].addressType" required>
+                                            <option *ngFor="let type of addressTypes" [value]="type.value">{{type.label}}</option>
+                                        </select>
+                                        <span *ngIf="hasError('addressType')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('addressLine1')}">
+                                    <label for="addressLine1" class="col-sm-3 control-label">Endereço</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" formControlName="addressLine1" placeholder="" required [(ngModel)]="customer.addresses[0].addressLine1">
+                                        <span *ngIf="hasError('addressLine1')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6 required" [ngClass]="{'has-error': hasError('number')}">
+                                    <label for="number" class="col-sm-3 control-label">Número</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" formControlName="number" placeholder="" [(ngModel)]="customer.addresses[0].number">
+                                        <span *ngIf="hasError('number')" class="help-block">O campo é obrigatório</span>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="addressLine2" class="col-sm-3 control-label">Complemento</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" formControlName="addressLine2" placeholder="" [(ngModel)]="customer.addresses[0].addressLine2">
+                                    </div>
+                                </div>
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('district')}">
+                                    <label for="district" class="col-sm-3 control-label">Bairro</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" formControlName="district" placeholder="" required [(ngModel)]="customer.addresses[0].district">
+                                        <span *ngIf="hasError('district')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('city')}">
+                                    <label for="city" class="col-sm-3 control-label">Cidade</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" formControlName="city" placeholder="" required [(ngModel)]="customer.addresses[0].city">
+                                        <span *ngIf="hasError('city')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                                <div class="form-group required col-md-6" [ngClass]="{'has-error': hasError('state')}">
+                                    <label for="state" class="col-sm-3 control-label">Estado</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" formControlName="state" required [(ngModel)]="customer.addresses[0].state">
+                                            <option value="" disabled>Selecione</option>
+                                            <option *ngFor="let state of states" [value]="state.value">{{state.label}}</option>
+                                        </select>
+                                        <span *ngIf="hasError('state')" class="help-block">O campo é obrigatório</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <h2>Dados de Acesso</h2>
+                            <div class="form-group required" [ngClass]="{'has-error': hasError('email')}">
+                                <label for="email" class="col-sm-3 control-label">E-mail</label>
+                                <div class="col-sm-9">
+                                    <input type="email" class="form-control" formControlName="email" placeholder="seu@email.com.br" required [(ngModel)]="customer.email">
+                                    <span *ngIf="hasError('email')" class="help-block">O campo é obrigatório</span>
+                                </div>
+                            </div>
+                            <div class="form-group required" [ngClass]="{'has-error': hasError('password')}">
+                                <label for="password" class="col-sm-3 control-label">Senha</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" formControlName="password" required [(ngModel)]="customer.password">
+                                    <span *ngIf="hasError('password')" class="text-danger">A senha precisa ser forte. Recomendamos que contenha seis dígitos, letras e um números.</span>
+                                </div>
+                            </div>
+                            <div class="form-group required" [ngClass]="{'has-error': hasError('confirmPassword')}">
+                                <label for="password" class="col-sm-3 control-label"> Confirmar Senha</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" formControlName="confirmPassword" required [(ngModel)]="confirmPassword">
+                                    <span *ngIf="hasError('confirmPassword')" class="text-danger">As senhas devem ser iguais</span>
+                                    
+                                </div>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" checked="checked" formControlName="receivePromotionalAndNews" [(ngModel)]="customer.receivePromotionalAndNews"> Desejo receber e-mails promocionais
+                                </label>
+                            </div>
+                            <div>
+                                <div class="col-sm-12 col-md-6 col-xs-12 form-group">
+                                    <a [routerLink]="['/login']" [ngClass]="{'btn-lg btn-block': isMobile()}" class="btn btn-default">Voltar</a>
+                                </div>
+                                <div class="col-sm-12 col-md-6 col-xs-12 form-group">
+                                    <button type="submit" [ngClass]="{'btn-lg btn-block': isMobile()}" class="btn btn-success pull-right">Cadastrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>

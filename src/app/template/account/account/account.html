@@ -1,0 +1,41 @@
+<main role="main" class="container user-panel-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-3 col-nav">
+                <ul class="nav" *ngIf="store.modality == 1">
+                    <li class="user-info">
+                        <span>Olá, <b>{{customer.firstname_Companyname}}</b></span>
+                        <span class="mail">{{customer.email}}</span>
+                        <a [routerLink]="['/logout']" class="btn-exit">Sair</a>
+                    </li>
+                    <li *ngFor="let module of modules" [ngClass]="{ 'active': (module.module == actual.module) }">
+                        <a [routerLink]="['/conta/' + module.module]">{{module.title}}</a>
+                    </li>
+                </ul>
+
+                <ul class="nav" *ngIf="store.modality == 0">
+                    <li class="user-info">
+                        <span>Olá, <b>{{customer.firstname_Companyname}}</b></span>
+                        <span class="mail">{{customer.email}}</span>
+                        <a [routerLink]="['/logout']" class="btn-exit">Sair</a>
+                    </li>
+                    <li [ngClass]="{ 'active': (actual.module == 'home') }">
+                        <a [routerLink]="['/conta/home']">Minhas Conta</a>
+                    </li>
+                    <li [ngClass]="{ 'active': (actual.module == 'dados-cadastrais') }">
+                        <a [routerLink]="['/conta/dados-cadastrais']">Meus Dados Cadastrais</a>
+                    </li>
+                    <li [ngClass]="{ 'active': (actual.module == 'enderecos') }">
+                        <a [routerLink]="['/conta/enderecos']">Meus Endereços</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-9 col-sm-12 col-details">
+                <section class="col-sm-12">
+                    <router-outlet></router-outlet>
+                </section>
+            </div>
+        </div>
+    </div>
+
+</main>

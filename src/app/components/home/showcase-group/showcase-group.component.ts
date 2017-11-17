@@ -23,10 +23,9 @@ export class ShowcaseGroupComponent implements OnInit {
 
     ngOnInit() {
         this.productService.getProductsFromShowcaseGroup(this.group.id)
-		.then(products => {
+		.subscribe(products => {
 			this.group.products = products;
-		})
-		.catch(error => {
+		}, error => {
             console.log(error);
         });
     }

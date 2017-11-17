@@ -5,7 +5,10 @@
             <span class="badge badge-success">{{getNumItemsInCart()}}</span>
             <span class="name-cart visible-md-inline-block  visible-lg-inline-block">Meu Carrinho</span>
         </a>
-        <div id="header-cart" *ngIf="getCart()">
+        <div id="header-cart" *ngIf="!cartReady">
+            <app-wait-loader></app-wait-loader>
+        </div>
+        <div id="header-cart" *ngIf="cartReady">
             <ul class="header-cart-items scroll-bar" *ngIf="getNumItemsInCart() > 0">
                 <li *ngFor="let item of getCart().products" class="header-cart-item clearfix">
                     <span class="actions pull-right">
@@ -16,8 +19,7 @@
                     </span>
                     <span class="thumb pull-left">
                         <a [routerLink]="[getRoute(item)]" class="link-product">
-                            <img *ngIf="item.sku.picture" [attr.src]="getPicture(item.sku)" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
-                            <img *ngIf="!item.sku.picture" [attr.src]="'/assets/images/no-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
+                            <img [attr.src]="getPicture(item.sku)" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
                         </a>
                     </span>
                     <span class="details overflow-hidden">
@@ -39,8 +41,7 @@
                     </span>
                     <span class="thumb pull-left">
                         <a [routerLink]="['/corespersonalizadas/', paint.manufacturer, paint.colorCode, paint.optionId]" class="link-product">
-                            <img *ngIf="paint.optionPicture" [attr.src]="mediaPathPaint + paint.optionPicture" class="img-responsive image" [attr.alt]="paint.name" width="50" height="50">
-                            <img *ngIf="!paint.optionPicture" [attr.src]="'/assets/images/no-image.jpg'" width="100" height="100" class="img-responsive image" [attr.alt]="paint.name" width="50" height="50">
+                            <img [attr.src]="getPaintPicture(paint)" class="img-responsive image" [attr.alt]="paint.name" width="50" height="50">
                         </a>
                     </span>
                     <span class="details overflow-hidden">
@@ -54,7 +55,7 @@
                     </span>
                 </li>
             </ul>
-            <div class="header-cart-footer">
+            <div class="header-cart-footer" *ngIf="getNumItemsInCart() > 0">
                 <div class="header-cart-subtotal">
                     <strong>Subtotal: <span class="price">{{getSubTotal() |  currencyFormat }}</span></strong>
                 </div>
@@ -62,6 +63,9 @@
                     <a *ngIf="modality > -1" [routerLink]="['/']" class="btn btn-block btn-default btn-lg btn-continue">{{(modality == 1) ? 'Continuar Comprando' : 'Continuar orçando'}}</a>
                     <app-checkout-button [cart]="getCart()"></app-checkout-button>
                 </div>
+            </div>
+            <div class="header-cart-footer" *ngIf="getNumItemsInCart() == 0">
+                Seu carrinho está vazio
             </div>
         </div>
     </div>

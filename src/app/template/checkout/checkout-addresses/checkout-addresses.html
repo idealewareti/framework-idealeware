@@ -1,0 +1,80 @@
+<div class="step step-adress">
+    <div class="header">
+        <span class="number">1</span>
+        <span class="text">Endereços</span>
+    </div>
+    <div class="content">
+        <h4>Endereço de Entrega</h4>
+        <div class="adress-details">
+            <strong>{{shippingAddressOrDefault().addressName}}</strong>
+            <p>
+                {{shippingAddressOrDefault().addressLine1}}
+                {{(shippingAddressOrDefault().number) ? ', ' + shippingAddressOrDefault().number : ''}}<br>
+                {{shippingAddressOrDefault().addressLine2}}<br>
+                {{shippingAddressOrDefault().district}}<br>
+                {{shippingAddressOrDefault().zipCode}}
+                 -  
+                 {{shippingAddressOrDefault().city + '/' + shippingAddressOrDefault().state}}<br>
+            </p>
+        </div>
+        <div class="select-other text-center">
+            <a href="#" (click)="showMyAddresses($event)">Selecionar outro</a>
+        </div>
+        <div class="step" *ngIf="showShippingAddresses">
+            <div class="content">
+                <div class="radio" *ngFor="let address of addresses">
+                    <label for="" (click)="setShippingAddress(address, $event)">
+                        <strong>{{address.addressName}}</strong>
+                        <p>
+                            {{address.addressLine1}}
+                            {{(address.number) ? ', ' + address.number : ''}}<br>
+                            {{address.addressLine2}}<br>
+                            {{address.district}}<br>
+                            {{address.zipCode}}
+                            -  
+                            {{address.city + '/' + address.state}}<br>
+                        </p>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <h4>Endereço de Cobrança</h4>
+        <div class="adress-details">
+            <strong>{{billingAddressOrDefault().addressName}}</strong>
+            <p>
+                {{billingAddressOrDefault().addressLine1}}
+                {{(billingAddressOrDefault().number) ? ', ' + billingAddressOrDefault().number : ''}}<br>
+                {{billingAddressOrDefault().addressLine2}}<br>
+                {{billingAddressOrDefault().district}}<br>
+                {{billingAddressOrDefault().zipCode}}
+                 -  
+                 {{billingAddressOrDefault().city + '/' + billingAddressOrDefault().state}}<br>
+            </p>
+        </div>
+         <div class="select-other text-center">
+            <a href="#" (click)="showMyAddresses($event, true)">Selecionar outro</a>
+        </div>
+        <div class="step" *ngIf="showBillingAddresses">
+            <div class="content">
+                <div class="radio" *ngFor="let address of addresses">
+                    <label for="" (click)="setBillingAddress(address, $event)">
+                        <strong>{{address.addressName}}</strong>
+                        <p>
+                            {{address.addressLine1}}
+                            {{(address.number) ? ', ' + address.number : ''}}<br>
+                            {{address.addressLine2}}<br>
+                            {{address.district}}<br>
+                            {{address.zipCode}}
+                            -  
+                            {{address.city + '/' + address.state}}<br>
+                        </p>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <a [routerLink]="['/conta/enderecos/novo']" class="btn btn-block btn-default">INSERIR NOVO ENDEREÇO</a>
+    </div>
+</div>

@@ -1,0 +1,88 @@
+<div id="avaliations" *ngIf="product">
+    <h3 class="title clearfix"><b>AVALIAÇÕES DOS CLIENTES</b></h3>
+
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <h4>Avalie este produto</h4>
+            <form (submit)="createRating($event)" [formGroup]="ratingForm">
+                <div class="form-group">
+                    <div id="avaliations">
+                        <div class="avaliations-list text-center">
+                            <div class="rating-box clearfix text-center">
+                                <div class="rating-stars">
+                                    Sua nota:
+                                    <span class="star">
+                                        <a href="#" (click)="addStar($event, 1)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 1, 'fa-star-o':productsRatingCreate.customers.note < 1}" aria-hidden="true"></i></a>
+                                        <a href="#" (click)="addStar($event, 2)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 2, 'fa-star-o':productsRatingCreate.customers.note < 2}" aria-hidden="true"></i></a>
+                                        <a href="#" (click)="addStar($event, 3)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 3, 'fa-star-o':productsRatingCreate.customers.note < 3}" aria-hidden="true"></i></a>
+                                        <a href="#" (click)="addStar($event, 4)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note >= 4, 'fa-star-o':productsRatingCreate.customers.note < 4}" aria-hidden="true"></i></a>
+                                        <a href="#" (click)="addStar($event, 5)"><i class="fa" [ngClass]="{'fa-star':productsRatingCreate.customers.note == 5, 'fa-star-o':productsRatingCreate.customers.note != 5}" aria-hidden="ture"></i></a>       
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group box-ratingTitle required" [ngClass]="{'has-error': hasError('ratingTitle')}">
+                    <label for="name">Título</label>
+                    <input type="text" formControlName="ratingTitle" name="ratingTitle" [(ngModel)]="productsRatingCreate.customers.ratingTitle" class="form-control form-input" placeholder="Título" required>
+                    <span *ngIf="hasError('ratingTitle')" class="help-block">Informe o Título</span>
+                </div>
+
+                <div class="form-group box-comment required" [ngClass]="{'has-error': hasError('ratingComment')}">
+                    <label for="name" class="col-md-12">Comentário</label>
+                    <textarea class="form-control" formControlName="ratingComment" name="text" maxlength="5000" cols="50" [(ngModel)]="productsRatingCreate.customers.comment" name="comment" rows="4" placeholder="Digite aqui seu comentário..." required></textarea>
+                    <span *ngIf="hasError('ratingComment')" class="help-block">Informe um Comentário</span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="btn-productsrating" class="btn btn-success" data-loading-text="Enviando...">Enviar avaliação</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+            
+        </div>
+    </div>
+
+    <div class="avaliations-list" *ngIf="productsRating.customers.length > 0">
+        <div class="rating-box clearfix">
+            <div class="rating-stars pull-left">
+                <span class="star">
+                        <i class="fa" [ngClass]="{'fa-star':totalNote > 0, 'fa-star-o':totalNote < 1}" aria-hidden="true"></i>
+                        <i class="fa" [ngClass]="{'fa-star':totalNote > 1, 'fa-star-o':totalNote < 2}" aria-hidden="true"></i>
+                        <i class="fa" [ngClass]="{'fa-star':totalNote > 2, 'fa-star-o':totalNote < 3}" aria-hidden="true"></i>
+                        <i class="fa" [ngClass]="{'fa-star':totalNote > 3, 'fa-star-o':totalNote < 4}" aria-hidden="true"></i>
+                        <i class="fa" [ngClass]="{'fa-star':totalNote > 4, 'fa-star-o':totalNote < 5}" aria-hidden="true"></i>        
+                </span>
+                <span class="qty">{{productsRating.customers.length}}</span>
+            </div>
+            <!--TODO Ver o que seria essa ferramenta e implementar-->
+            <!--<select name="rating-order" class="pull-left" id="rating-order">
+                <option valeu="">Avaliações mais recentes</option>
+            </select>-->
+        </div>
+        <ul class="avaliations">
+            <li class="avaliations-item" *ngFor="let customer of productsRating.customers">
+                <span class="title">{{customer.ratingTitle}}</span>
+                <span class="rating">
+                    <span class="star">
+                        <i class="fa" [ngClass]="{'fa-star':customer.note > 0, 'fa-star-o':customer.note < 1}" aria-hidden="true"></i>
+                        <i class="fa" [ngClass]="{'fa-star':customer.note > 1, 'fa-star-o':customer.note < 2}" aria-hidden="true"></i>
+                        <i class="fa" [ngClass]="{'fa-star':customer.note > 2, 'fa-star-o':customer.note < 3}" aria-hidden="true"></i>
+                        <i class="fa" [ngClass]="{'fa-star':customer.note > 3, 'fa-star-o':customer.note < 4}" aria-hidden="true"></i>
+                        <i class="fa" [ngClass]="{'fa-star':customer.note > 4, 'fa-star-o':customer.note < 5}" aria-hidden="true"></i>        
+                    </span>
+                </span>
+                <span class="text">{{customer.comment}}</span>
+                <span class="author">{{customer.name}} - {{customer.approvedDate | date:'dd/MM/y'}}</span>
+            </li>
+        </ul>
+    </div>
+
+    <p *ngIf="productsRating.customers.length == 0" class="text-center">
+        Não existem avaliações para este produto.
+    </p>
+</div>
+
+<app-login-embed [openModal]="loginModal" (modalIsOpened)="handleModalLogin($event)" (isLogged)="handleLogin($event)"></app-login-embed>

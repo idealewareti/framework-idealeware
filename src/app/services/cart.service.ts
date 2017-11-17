@@ -8,6 +8,7 @@ import { Service } from "../models/product-service/product-service";
 import { CartShowCase } from "../models/cart-showcase/cart-showcase";
 import { Shipping } from "../models/shipping/shipping";
 import { Http } from "@angular/http";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
 export class CartService {
@@ -17,240 +18,130 @@ export class CartService {
         this.client = new HttpClientHelper(http);
     }
 
-    getCart(cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            if (!cartId) reject('Carrinho não encontrado');
-            else {
-                let url = `${environment.API_CART}/cart/${cartId}`;
-                this.client.get(url)
-                .map(res => res.json())
-                .subscribe(response => {
-                    let cart = new Cart(response);
-                    resolve(cart);
-                }, error => {                        
-                    reject(error);
-                });
+    getCart(cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/cart/${cartId}`;
+        return this.client.get(url)
+        .map(res => res.json())
+    }
+
+    createCart(cart: Cart, isPaint: boolean = false, sessionId: string = null, zipCode: number = 0): Observable<Cart> {
+        let item = {};
+        if(isPaint){
+            item = {
+                "paint": {
+                    "id": cart.paints[0].id,
+                    "manufacturer": cart.paints[0].manufacturer,
+                    "quantity": cart.paints[0].quantity
+                },
+                "zipCode": zipCode,
+                "sessionId": sessionId
             }
-        });
-    }
-
-    createCart(cart: Cart, isPaint: boolean = false, sessionId: string = null, zipCode: number = 0): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let item = {};
-            if(isPaint){
-                item = {
-                    "paint": {
-                        "id": cart.paints[0].id,
-                        "manufacturer": cart.paints[0].manufacturer,
-                        "quantity": cart.paints[0].quantity
-                    },
-                    "zipCode": zipCode,
-                    "sessionId": sessionId
-                }
+        }
+        else{
+            item = {
+                "product": {
+                    "skuId": cart.products[0].sku.id,
+                    "quantity": cart.products[0].quantity,
+                    "feature": cart.products[0].sku.feature
+                },
+                "zipCode": zipCode,
+                "sessionId": sessionId
             }
-            else{
-                item = {
-                    "product": {
-                        "skuId": cart.products[0].sku.id,
-                        "quantity": cart.products[0].quantity,
-                        "feature": cart.products[0].sku.feature
-                    },
-                    "zipCode": zipCode,
-                    "sessionId": sessionId
-                }
-            }
-            let url = `${environment.API_CART}/cart`;
-            this.client.post(url, item)
+        }
+        let url = `${environment.API_CART}/cart`;
+        return this.client.post(url, item)
             .map(res => res.json())
-            .subscribe(response => {
-                let cart = new Cart(response);
-                resolve(cart);
-            }, error => reject(error));
-        });
     }
 
-    sendToCart(item: any, cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/cart/${cartId}/products`;
-            this.client.post(url, item)
+    sendToCart(item: any, cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/cart/${cartId}/products`;
+        return this.client.post(url, item)
+            .map(res => res.json());
+    }
+
+    sendServiceToCart(item, cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/cart/${cartId}/services`;
+        return this.client.post(url, item)
+            .map(res => res.json());
+    }
+
+    updateItem(item: CartItem, cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/Cart/${cartId}/Products/${item.productItemId}/Quantity/${item.quantity}`;
+        return this.client.put(url, item)
+            .map(res => res.json());
+    }
+
+    deleteItem(item: CartItem, cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/Cart/${cartId}/Products/${item.productItemId}`;
+        return this.client.delete(url)
             .map(res => res.json())
-            .subscribe(cart => {
-                resolve(new Cart(cart))
-            }, error => reject(error));
-    })
     }
 
-    sendServiceToCart(item, cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/cart/${cartId}/services`;
-            this.client.post(url, item)
+    deleteService(serviceId: string, cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/Cart/${cartId}/Services/${serviceId}`;
+        return this.client.delete(url)
             .map(res => res.json())
-            .subscribe(cart => {
-                resolve(new Cart(cart))
-            }, error => reject(error));
-        })
     }
 
-    updateItem(item: CartItem, cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/Products/${item.productItemId}/Quantity/${item.quantity}`;
-            this.client.put(url, item)
-            .map(res => res.json())
-            .subscribe(cart => {
-                resolve(new Cart(cart));
-            }, error => reject(error));
-        })
+    updateItemService(item: Service, cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/Cart/${cartId}/Services/${item.id}/Quantity/${item.quantity}`;
+        return this.client.put(url, item)
+            .map(res => res.json());
     }
 
-    deleteItem(item: CartItem, cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/Products/${item.productItemId}`;
-            this.client.delete(url)
-            .map(res => res.json())
-            .subscribe(cart => {
-                resolve(new Cart(cart));
-            }, error => reject(error));
-        });
+    setCustomerToCart(cartId: string, token: Token): Observable<Cart> {
+        let url = `${environment.API_CART}/Cart/${cartId}/Customer`;
+        return this.client.post(url, null, token)
+            .map(res => res.json());
     }
 
-    deleteService(serviceId: string, cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/Services/${serviceId}`;
-            this.client.delete(url)
-            .map(res => res.json())
-            .subscribe(cart => {
-                resolve(new Cart(cart));
-            }, error => reject(error));
-        });
+    setShipping(shipping: Shipping, cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/cart/${cartId}/shipping`;
+        return this.client.post(url, shipping)
+            .map(res => res.json());
     }
 
-    updateItemService(item: Service, cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/Services/${item.id}/Quantity/${item.quantity}`;
-            this.client.put(url, item)
-            .map(res => res.json())
-            .subscribe(cart => {
-                resolve(new Cart(cart));
-            }, error => reject(error));
-        })
+    addDeliveryAddress(cartId: string, addressId: string, token: Token): Observable<Cart> {
+        let url = `${environment.API_CART}/Cart/${cartId}/DeliveryAddress/${addressId}`;
+        return this.client.post(url, null, token)
+        .map(res => res.json())
     }
 
-
-    /* Cart Showcase */
-    getCartShowCase(): Promise<CartShowCase> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CARTSHOWCASE}/cartshowcase`;
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                resolve(new CartShowCase(response));
-            }, error => reject(error));
-        });
-
+    addBillingAddress(cartId: string, addressId: string, token: Token): Observable<Cart> {
+        let url = `${environment.API_CART}/Cart/${cartId}/BillingAddress/${addressId}`;
+        return this.client.post(url, null, token)
+            .map(res => res.json());
     }
 
-    setCustomerToCart(cartId: string, token: Token): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            if (cartId) {
-                let url = `${environment.API_CART}/Cart/${cartId}/Customer`;
-                this.client.post(url, null, token)
-                .map(res => res.json())
-                .subscribe(response => {
-                    let cart = new Cart(response);
-                    resolve(cart);
-                }, error => reject(error));
-            }
-            else {
-                resolve(new Cart());
-            }
-        })
-    }
-
-    setShipping(shipping: Shipping, cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/cart/${cartId}/shipping`;
-            this.client.post(url, shipping)
-            .map(res => res.json())
-            .subscribe(response => {
-                let cart = new Cart(response);
-                resolve(cart);
-            }, error => reject(error));
-        });
-    }
-
-    addDeliveryAddress(cartId: string, addressId: string, token: Token): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/DeliveryAddress/${addressId}`;
-            this.client.post(url, null, token)
-            .map(res => res.json())
-            .subscribe(response => {
-                let cart = new Cart(response);
-                resolve(cart);
-            }, error => reject(error));
-        });
-    }
-
-    addBillingAddress(cartId: string, addressId: string, token: Token): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/BillingAddress/${addressId}`;
-            this.client.post(url, null, token)
-            .map(res => res.json())
-            .subscribe(response => {
-                let cart = new Cart(response);
-                resolve(cart);
-            }, error => reject(error));
-
-        });
-    }
-
-    deleteCart(cartId: string): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}`;
-            this.client.delete(url)
-            .map(res => {
-                resolve(new Cart());
-            }, error => reject(error));
-        });
+    deleteCart(cartId: string): Observable<Cart> {
+        let url = `${environment.API_CART}/Cart/${cartId}`;
+        return this.client.delete(url)
+            .map(res => res.json());
     }
 
 
     /* Custom Paint */
-    addPaint(paintId: string, manufacturer: string, quantity: number, cartId: string): Promise<Cart>{
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/Paints/`;
-            let item = {
-                "id": paintId,
-                "manufacturer": manufacturer,
-                "quantity": quantity
-            };
-            this.client.post(url, item)
-            .map(res => res.json())
-            .subscribe(response => {
-                resolve(new Cart(response));
-            }, error => reject(error));
-        });
+    addPaint(paintId: string, manufacturer: string, quantity: number, cartId: string): Observable<Cart>{
+        let url = `${environment.API_CART}/Cart/${cartId}/Paints/`;
+        let item = {
+            "id": paintId,
+            "manufacturer": manufacturer,
+            "quantity": quantity
+        };
+        return this.client.post(url, item)
+            .map(res => res.json());
     }
 
-    updatePaint(paint: CartItem, cartId: string): Promise<Cart>{
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/Paints/${paint.id}/Quantity/${paint.quantity}`;
-            this.client.put(url, null)
-            .map(res => res.json())
-            .subscribe(response => {
-                resolve(new Cart(response));
-            }, error => reject(error));
-        });
+    updatePaint(paint: CartItem, cartId: string): Observable<Cart>{
+        let url = `${environment.API_CART}/Cart/${cartId}/Paints/${paint.id}/Quantity/${paint.quantity}`;
+        return this.client.put(url, null)
+            .map(res => res.json());
     }
 
-    deletePaint(paint: CartItem, cartId: string): Promise<Cart>{
-         return new Promise((resolve, reject) => {
-            let url = `${environment.API_CART}/Cart/${cartId}/Paints/${paint.id}`;
-            this.client.delete(url)
-            .map(res => res.json())
-            .subscribe(cart => {
-                resolve(new Cart(cart));
-            }, error => reject(error));
-        });
+    deletePaint(paint: CartItem, cartId: string): Observable<Cart>{
+        let url = `${environment.API_CART}/Cart/${cartId}/Paints/${paint.id}`;
+        return this.client.delete(url)
+            .map(res => res.json());
     }
 
 }

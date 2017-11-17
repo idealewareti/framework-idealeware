@@ -26,6 +26,7 @@ export class ShowcaseBannerComponent implements OnInit {
                     dots: true,
                     autoplay: true,
                     infinite: true,
+                    arrows: false,
                 });
             }
         }            

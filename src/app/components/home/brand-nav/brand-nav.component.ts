@@ -5,6 +5,7 @@ import { Store } from '../../../models/store/store';
 import { Brand } from '../../../models/brand/brand';
 import { BrandService } from '../../../services/brand.service';
 import { AppCore } from '../../../app.core';
+import { Subscriber } from 'rxjs/Subscriber';
 
 declare var $: any;
 
@@ -16,27 +17,26 @@ declare var $: any;
 export class BrandNavComponent implements OnInit {
     @Input() store: Store = new Store();
     allBrands: Brand[] = [];
-	brands: Brand[] = [];
-    
+    brands: Brand[] = [];
+
     constructor(
         private service: BrandService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
-    ngOnInit() { 
+    ngOnInit() {
         this.service.getAll()
-		.then(brands => {
-			this.allBrands = brands;
-			this.removeBrandWithoutPicture();
-		})
-		.catch(e => {
-            console.log(e);
-        });
+            .subscribe(brands => {
+                this.allBrands = brands;
+                this.removeBrandWithoutPicture();
+            }, e => {
+                console.log(e);
+            });
     }
 
     ngAfterViewChecked() {
         if (isPlatformBrowser(this.platformId)) {
-            if(this.brands.length > 0 && $('.showcase-brands.slick-slider .slick-track').children('.slick-slide').length == 0) {
+            if (this.brands.length > 0 && $('.showcase-brands.slick-slider .slick-track').children('.slick-slide').length == 0) {
                 $('.showcase-brands').slick({
                     infinite: true,
                     autoplay: true,
@@ -44,15 +44,15 @@ export class BrandNavComponent implements OnInit {
                     slidesToScroll: 5
                 });
             }
-        }            
+        }
     }
 
-    private removeBrandWithoutPicture(){
-		this.allBrands.forEach(brand => {
-			if(brand.picture)
-				this.brands.push(brand);
-		});
-	}
+    private removeBrandWithoutPicture() {
+        this.allBrands.forEach(brand => {
+            if (brand.picture)
+                this.brands.push(brand);
+        });
+    }
 
     getRoute(brand: Brand): string {
         return `/marcas/${brand.id}/${AppCore.getNiceName(brand.name)}`;

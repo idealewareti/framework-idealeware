@@ -1,0 +1,9 @@
+<div *ngIf="!isMobile()" class="container">
+    <ul class="side-banners">
+        <li *ngFor="let banner of bannersSide">
+            <a [href]="(banner.url) ? banner.url : 'javascript:void(0)'">
+                <img height="250" width="250" [attr.src]="mediaPath + banner.picture" [attr.alt]="banner.name" class="img-responsive" />
+            </a>
+        </li>
+    </ul>
+</div>

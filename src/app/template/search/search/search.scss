@@ -1,0 +1,18 @@
+
+
+.facet-categories ul{
+    border: 0 !important;
+}
+  
+.facet-brands{
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.filter-left a[aria-expanded="true"] .fa-caret-right, .filter-left a[aria-expanded="false"] .fa-caret-down{
+  display: none;
+}
+
+.filter-left a[aria-expanded="false"] .fa-caret-right, .filter-left a[aria-expanded="true"] .fa-caret-down{
+  display: inline-block;
+}

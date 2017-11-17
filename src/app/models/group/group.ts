@@ -10,21 +10,17 @@ export class Group{
     metaTagDescription: string;
     products: Product[];
 
-    constructor(object = null){
-        if(object) return this.CreateFromResponse(object);
-    }
+    // CreateFromResponse(object){
+    //     let model = new Group();
 
-    CreateFromResponse(object){
-        let model = new Group();
-
-        for(var k in object){
-            if(k == 'products'){
-                model.products = object.products.map(p => p = new Product(p));
-            }
-            else{
-                model[k] = object[k];
-            }
-        }
-        return model;
-    }
+    //     for(var k in object){
+    //         if(k == 'products'){
+    //             model.products = object.products.map(p => p = new Product(p));
+    //         }
+    //         else{
+    //             model[k] = object[k];
+    //         }
+    //     }
+    //     return model;
+    // }
 }

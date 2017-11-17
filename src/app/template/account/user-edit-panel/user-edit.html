@@ -1,0 +1,103 @@
+<form class="form-horizontal label-left" [formGroup]="userEditForm" (submit)="updateAccount($event)">
+    <div class="row">
+        <div class="col-xs-12 col-md-6">
+            <h2>Dados Cadastrais</h2>
+            <div class="form-group required" [ngClass]="{'has-error': hasError('firstname_Companyname')}">
+                <label for="firstname_Companyname" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Nome' : 'Razão Social'}}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" formControlName="firstname_Companyname" [(ngModel)]="customer.firstname_Companyname" required>
+                    <span *ngIf="hasError('firstname_Companyname')" class="help-block">O campo é obrigatório</span>
+                </div>
+            </div>
+            <div class="form-group required" [ngClass]="{'has-error': hasError('lastname_Tradingname')}">
+                <label for="lastname_Tradingname" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Sobrenome' : 'Nome Fantasia'}}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" formControlName="lastname_Tradingname" [(ngModel)]="customer.lastname_Tradingname" required>
+                    <span *ngIf="hasError('lastname_Tradingname')" class="help-block">O campo é obrigatório</span>
+                </div>
+            </div>
+
+             <!--<div class="form-group" *ngIf="customer.type == 1">
+                <label for="cpf_Cnpj" class="col-sm-4 control-label">CPF</label>
+                <div class="col-sm-8">
+                    <input maxlength="14" disabled="disabled" cpfMask type="text" class="form-control" [(ngModel)]="customer.cpf_Cnpj" placeholder="000.000.000-00" required>
+                    <span *ngIf="!validCPF()" class="form-control alert-danger">CPF Inválido</span>
+                </div>
+            </div>
+            <div class="form-group" *ngIf="customer.type != 1">
+                <label for="cpf_Cnpj" class="col-sm-4 control-label">CNPJ</label>
+                <div class="col-sm-8">
+                    <input maxlength="18" cpfMask type="text" class="form-control" formControlName="cpf_Cnpj" [(ngModel)]="customer.cpf_Cnpj" placeholder="000.000.000-00" required disabled>
+                    <span *ngIf="!validCNPJ()" class="form-control alert-danger">CNPJ Inválido</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="rg_Ie" class="col-sm-4 control-label">{{(customer.type == 1) ? 'RG' : 'Inscrição Estadual'}}</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" formControlName="rg_Ie" [(ngModel)]="customer.rg_Ie" disabled>
+                </div>
+            </div>-->
+
+
+            <!--<div class="form-group required" *ngIf="customer.type == 1">
+                <label for="gender" class="col-sm-4 control-label">Sexo</label>
+                <div class="col-sm-8">
+                    <select class="form-control" formControlName="gender" [(ngModel)]="customer.gender">
+                        <option disabled>Selecione</option>
+                        <option *ngFor="let gender of genders" [value]="gender.value" >{{gender.label}}</option>
+                    </select>
+                </div>
+            </div>-->
+            <!--<div class="form-group required" *ngIf="customer.type == 1">
+                <label for="birthdate" class="col-sm-4 control-label">Data de Nascimento</label>
+                <div class="col-sm-8">
+                    <input type="date" class="form-control" formControlName="birthdate" [(ngModel)]="birthdate" (change)="textToDate($event)" placeholder="00/00/0000" required>
+                </div>
+            </div>-->
+            <div class="form-group required" [ngClass]="{'has-error': hasError('phone')}">
+                <label for="phone" class="col-sm-4 control-label">Telefone 1</label>
+                <div class="col-sm-8">
+                    <input phoneMask type="text" class="form-control" formControlName="phone" [(ngModel)]="customer.phone" placeholder="(00) 0000-0000" required>
+                    <span *ngIf="hasError('phone')" class="help-block">O campo é obrigatório</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="celPhone" class="col-sm-4 control-label">Telefone 2</label>
+                <div class="col-sm-8">
+                    <input phoneMask type="text" class="form-control" formControlName="celPhone" [(ngModel)]="customer.celPhone" placeholder="(00) 00000-0000">
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <h2>Dados de Acesso</h2>
+            <div class="form-group required">
+                <label for="email" class="col-sm-3 control-label">E-mail</label>
+                <div class="col-sm-9">
+                    <input type="email" class="form-control" formControlName="email" [(ngModel)]="customer.email" placeholder="seu@email.com.br" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-3 control-label">Senha</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" formControlName="password" [(ngModel)]="customer.password" required>
+                </div>
+                <span *ngIf="!strongPassword()" class="form-control alert-danger">Senha fraca</span>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" formControlName="receivePromotionalAndNews" [(ngModel)]="customer.receivePromotionalAndNews"> Desejo receber e-mails promocionais
+                        </label>
+                    </div>
+                    <!--<div class="checkbox">
+                        <label>
+                            <input type="checkbox"> Desejo receber SMS promocionais
+                        </label>
+                    </div>-->
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+        </div>
+    </div>
+</form>
