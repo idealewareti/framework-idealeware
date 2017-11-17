@@ -4,6 +4,8 @@
 - Implementação do Angular Universal
 - Adicionadas melhorias para SEO
 - Nova estrutura da loja
+- Suporte a SASS
+- Nova camada de template, contendo os arquivos HTML e SCSS de cada componente
 
 ## 1.3.1
 - Filtro Avançado -> Melhoria para exibição de Marcas e Categorias na busca
