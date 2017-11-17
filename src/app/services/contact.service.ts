@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '../helpers/httpclient'
 import { Title } from '@angular/platform-browser';
-import { AppSettings } from 'app/app.settings';
-import { Contact } from "app/models/contact/contact";
+import { Http } from '@angular/http';
+import { HttpClientHelper } from '../helpers/http.helper';
+import { Contact } from '../models/contact/contact';
+import { environment } from '../../environments/environment';
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
-export class ContactService{
-    constructor(private client: HttpClient){ }
+export class ContactService {
+    client: HttpClientHelper;
 
-    sendContact(contact: Contact): Promise<Contact>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_CONTACT}/contacts`;
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
 
-            this.client.post(url, contact)
+    sendContact(contact: Contact): Observable<Contact> {
+        let url = `${environment.API_CONTACT}/contacts`;
+        return this.client.post(url, contact)
             .map(res => res.json)
-            .subscribe(response => {
-                resolve(new Contact(response));
-            }, error => reject(error));
-        });
     }
 }

@@ -1,4 +1,4 @@
-import { EnumBannerType } from "app/enums/banner-type.enum";
+import { EnumBannerType } from "../../enums/banner-type.enum";
 
 export class ShowCaseBanner {
     id: string;

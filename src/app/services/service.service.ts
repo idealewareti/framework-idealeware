@@ -1,23 +1,22 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '../helpers/httpclient'
-import { Title } from '@angular/platform-browser';
-import { AppSettings } from 'app/app.settings';
 import { Service } from "../models/product-service/product-service";
+import { HttpClientHelper } from '../helpers/http.helper';
+import { Http } from '@angular/http';
+import { environment } from '../../environments/environment';
+import { Observable } from 'rxjs/Observable';
+
 @Injectable()
 export class ServiceService {
-    
-    constructor(private client: HttpClient) { }
+    client: HttpClientHelper;
 
-    public getService(services: Service[], cep: string): Promise<Service[]> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_SERVICE}/services/` + cep;
-            this.client.post(url, services)
-                .map(res => res.json())
-                .subscribe(response => {
-                    let services = response.map(s => s = new Service(s));
-                    resolve(services);
-                }, error => reject(error));
-        });
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
+
+    public getService(services: Service[], cep: string): Observable<Service[]> {
+        let url = `${environment.API_SERVICE}/services/${cep}`;
+        return this.client.post(url, services)
+            .map(res => res.json());
     }
 
 }

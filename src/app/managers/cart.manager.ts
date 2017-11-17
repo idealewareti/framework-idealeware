@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { CartService } from '../services/cart.service';
 import { ProductService } from '../services/product.service';
 import { CartItem } from '../models/cart/cart-item';
@@ -7,7 +7,9 @@ import { Product } from '../models/product/product';
 import { Sku } from '../models/product/sku';
 import { Shipping } from "../models/shipping/shipping";
 import { Service } from "../models/product-service/product-service";
-import { CustomPaintCombination } from "app/models/custom-paint/custom-paint-combination";
+import { CustomPaintCombination } from "../models/custom-paint/custom-paint-combination";
+import { Token } from '../models/customer/token';
+import { isPlatformBrowser } from '@angular/common';
 
 declare var toastr: any;
 
@@ -16,47 +18,76 @@ export class CartManager {
     private cart: Cart;
     private serviceProduct: Service[] = [];
 
-    constructor(
-        private service: CartService
-    ) { }
+    constructor(private service: CartService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
-    public getCart(): Promise<Cart> {
+    private getToken(): Token {
+        let token = new Token();
+        if(isPlatformBrowser(this.platformId)) {
+            token.accessToken = localStorage.getItem('auth');
+            token.createdDate = new Date(localStorage.getItem('auth_create'));
+            token.expiresIn = Number(localStorage.getItem('auth_expires'));
+            token.tokenType = 'Bearer';
+        }
+        return token;
+    }
+
+    private getZipcode(): number {
+        if(isPlatformBrowser(this.platformId)) {
+            if (localStorage.getItem('customer_zipcode'))
+                return Number(localStorage.getItem('customer_zipcode').replace('-', ''));
+            return 0;
+        }
+        return 0;         
+    }
+
+    private getSessionId(): string {
+        if(isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('session_id');
+        }
+        return null;
+    }
+
+    setCartId(id: string) {
+        if(isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('cart_id', id);
+        }
+    }
+
+    getCartId(): string {
+        if(isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('cart_id');
+        }            
+        return null;
+    }
+
+    getCart(cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            if (!this.service.getCartId()) {
-                localStorage.removeItem('shopping_cart');
+            if (!cartId) {
+                console.log('Carrinho não encontrado');
                 resolve(new Cart());
             }
             else {
-                this.service.getCart()
-                .then(cart => {
-                    localStorage.setItem('shopping_cart', JSON.stringify(cart));
+                this.service.getCart(cartId)
+                .subscribe(cart => {
                     resolve(cart);
-                })
-                .catch(e => reject(e));
+                }, error => {
+                    reject(error);
+                });
             }
         });
     }
 
-    public getCartId(): string {
-        return this.service.getCartId();
-    }
-
-    public getSessionId(): string {
-        return this.service.getSessionId();
-    }
-
-    purchase(product: Product, sku: Sku, quantity: number, feature: string): Promise<Cart> {
+    purchase(cartId: string, product: Product, sku: Sku, quantity: number, feature: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            if (this.service.getCartId()) {
+            if (cartId) {
                 console.log('Cart exists');
-                this.service.getCart()
+                this.getCart(cartId)
                 .then(cart => {
                     console.log('Adding item to cart');
-                    return this.addItem(sku.id, quantity, feature);
+                    return this.addItem(cartId, sku.id, quantity, feature);
                 })
                 .then(cart => {
                     console.log('Item added to cart');
-                    localStorage.setItem('shopping_cart', JSON.stringify(cart));
                     resolve(cart);
                 })
                 .catch(error => reject(error));
@@ -70,23 +101,22 @@ export class CartManager {
                 this.createCart(cart)
                 .then(response => {
                     console.log('Cart successful created');
-                    localStorage.setItem('shopping_cart', JSON.stringify(cart));
-                    resolve(cart);
+                    resolve(response);
                 })
                 .catch(error => reject(error));
             }
         });
     }
 
-    purchasePaint(paint: CustomPaintCombination, manufacturer: string, quantity: number): Promise<Cart>{
+    purchasePaint(cartId: string, paint: CustomPaintCombination, manufacturer: string, quantity: number): Promise<Cart>{
         return new Promise((resolve, reject) => {
             console.log('Checking if cart exists');
-            if (this.service.getCartId()) {
+            if (cartId) {
                 console.log('Cart exists');
-                this.service.getCart()
+                this.getCart(cartId)
                 .then(cart => {
                     console.log('Adding item to cart');
-                    return this.addPaint(paint.id, manufacturer, quantity);
+                    return this.addPaint(paint.id, manufacturer, quantity, cart.id);
                 })
                 .then(cart => {
                     console.log('Item added to cart');
@@ -114,167 +144,144 @@ export class CartManager {
         });
     }
 
-    addPaint(paintId: string, manufacturer: string, quantity: number): Promise<Cart>{
-        return this.service.addPaint(paintId, manufacturer, quantity);
+    addPaint(paintId: string, manufacturer: string, quantity: number, cartId: string): Promise<Cart>{
+        return new Promise((resolve, reject) => {
+            this.service.addPaint(paintId, manufacturer, quantity, cartId)
+            .subscribe(cart => {
+               resolve(cart);
+            }, error => reject(error));
+        });
     }
 
-    addItem(skuId: string, quantity: number, feature: string): Promise<Cart> {
+    addItem(cartId: string, skuId: string, quantity: number, feature: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let item = {
                 "skuId": skuId,
                 "quantity": quantity,
                 "feature": feature
             };
-            this.service.sendToCart(item)
-            .then(cart => {
-                localStorage.setItem('shopping_cart', JSON.stringify(cart));
-                resolve(cart);
-            })
-            .catch(error => reject(error));
+            this.service.sendToCart(item, cartId)
+            .subscribe(cart => {
+                resolve(cart)
+            }, error => reject(error));
         });
     }
 
-    addService(serviceId: string, quantity: number): Promise<Cart> {
+    addService(serviceId: string, quantity: number, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let item = {
                 "serviceId": serviceId,
                 "quantity": quantity
             };
-            this.service.sendServiceToCart(item)
-            .then(cart => {
-                localStorage.setItem('shopping_cart', JSON.stringify(cart));
-                resolve(cart);
-            })
-            .catch(error => reject(error));
+            this.service.sendServiceToCart(item, cartId)
+            .subscribe(cart => {
+                resolve(cart)
+            }, error => reject(error));            
         });
     }
 
     createCart(cart: Cart, isPaint: boolean = false): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            this.service.createCart(cart, isPaint)
-            .then(response => {
+            let session_id: string = this.getSessionId();
+            let zipCode: number = this.getZipcode();
+            this.service.createCart(cart, isPaint, session_id, zipCode)
+            .subscribe(response => {
+                this.setCartId(response.id);
                 resolve(response);
-            })
-            .catch(error => reject(error));
+            }, error => reject(error));
         });
     }
 
-    updateItem(item: CartItem): Promise<Cart> {
+    updateItem(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            if (item.quantity != null && item.quantity > 0) {
-                this.service.updateItem(item)
-                .then(cart => {
-                    localStorage.setItem('shopping_cart', JSON.stringify(cart));
-                    resolve(cart);
-                })
-                .catch(error => reject(error));
-            }
-            else{
-                let cart = new Cart(JSON.parse(localStorage.getItem('shopping_cart')));
+            this.service.updateItem(item, cartId)
+            .subscribe(cart => {
                 resolve(cart);
-            }
-
+            }, error => reject(error));
         });
     }
 
-    updateItemService(item: Service): Promise<Cart> {
+    updateItemService(item: Service, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            this.service.updateItemService(item)
-            .then(cart => {
-                localStorage.setItem('shopping_cart', JSON.stringify(cart));
+            this.service.updateItemService(item, cartId)
+            .subscribe(cart => {
                 resolve(cart);
-            })
-            .catch(error => reject(error));
+            }, error => reject(error));
         });
     }
 
-    updatePaint(item: CartItem): Promise<Cart>{
+    updatePaint(item: CartItem, cartId: string): Promise<Cart>{
         return new Promise((resolve, reject) => {
-            this.service.updatePaint(item)
-            .then(cart => {
-                localStorage.setItem('shopping_cart', JSON.stringify(cart));
+            this.service.updatePaint(item, cartId)
+            .subscribe(cart => {
                 resolve(cart);
-            })
-            .catch(error => reject(error));
+            }, error => reject(error));
         });
     }
 
-    deleteItem(item: CartItem): Promise<Cart> {
+    deleteItem(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            this.service.deleteItem(item)
-            .then(cart => {
-                if (cart.products.length > 0 || cart.paints) {
-                toastr['warning']('Produto removido do carrinho');
-                    localStorage.setItem('shopping_cart', JSON.stringify(cart));
-                    return cart;
-                }
-            })
-            .then((cart) => {
-                if (cart == null || cart.id == null) {
-                    this.service.deleteCart(this.getCartId.toString());
-                    localStorage.removeItem('shopping_cart');
-                    localStorage.removeItem('cart_id');
-                }
+            this.service.deleteItem(item, cartId)
+            .subscribe(cart => {
                 resolve(cart);
-            })
-            .catch(error => reject(error));
+            }, error => reject(error));
         });
     }
 
-    deleteService(serviceId: string): Promise<Cart> {
+    deleteService(serviceId: string, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            this.service.deleteService(serviceId)
-            .then(cart => {
-                toastr['warning']('Serviço removido do carrinho');
-                localStorage.setItem('shopping_cart', JSON.stringify(cart));
+            this.service.deleteService(serviceId, cartId)
+            .subscribe(cart => {
                 resolve(cart);
-            })
-            .catch(error => reject(error));
+            }, error => reject(error));
         });
     }
 
-    deletePaint(item: CartItem): Promise<Cart> {
+    deletePaint(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            this.service.deletePaint(item)
-            .then(cart => {
-
-                if (cart.paints.length > 0 || cart.products) {
-                    localStorage.setItem('shopping_cart', JSON.stringify(cart));
-                    return cart;
-                }
-            })
-            .then((cart) => {
-                if (cart == null || cart.id == null) {
-                    this.service.deleteCart(this.getCartId.toString());
-                    localStorage.removeItem('shopping_cart');
-                    localStorage.removeItem('cart_id');
-                }
+            this.service.deletePaint(item, cartId)
+            .subscribe(cart => {
                 resolve(cart);
-            })
-            .catch(error => reject(error));
+            }, error => reject(error));
         });
     }
 
-    setShipping(shipping: Shipping): Promise<Cart> {
+    setShipping(shipping: Shipping, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            this.service.setShipping(shipping)
-            .then(cart => {
-                localStorage.setItem('shopping_cart', JSON.stringify(cart));
+            this.service.setShipping(shipping, cartId)
+            .subscribe(cart => {
                 resolve(cart);
-            })
-            .catch(error => reject(error));
+            }, error => reject(error));
         });
     }
 
-    setCustomerToCart(): Promise<Cart>{
-        return this.service.setCustomerToCart();
+    setCustomerToCart(cartId: string): Promise<Cart>{
+        return new Promise((resolve, reject) => {
+            let token = this.getToken();
+            this.service.setCustomerToCart(cartId, token)
+            .subscribe(cart => {
+                resolve(cart);
+            }, error => reject(error));
+        })
     }
 
     addDeliveryAddress(cartId: string, addressId: string): Promise<Cart>{
-        return this.service.addDeliveryAddress(cartId, addressId);
+        return new Promise((resolve, reject) => {
+            let token = this.getToken();
+            this.service.addDeliveryAddress(cartId, addressId, token)
+            .subscribe(cart => {
+                resolve(cart);
+            }, error => reject(error));
+        });
     }
 
     addBillingAddress(cartId: string, addressId: string): Promise<Cart>{
-        return this.service.addBillingAddress(cartId, addressId);
+        return new Promise((resolve, reject) => {
+            let token = this.getToken();
+            this.service.addBillingAddress(cartId, addressId, token)
+            .subscribe(cart => {
+                resolve(cart);
+            }, error => reject(error));
+        });
     }
 }

@@ -1,79 +1,41 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '../helpers/httpclient';
-import {AppSettings} from 'app/app.settings';
-import {Token} from '../models/customer/token';
+import { Injectable } from '@angular/core';
+import { Token } from '../models/customer/token';
 import { Order } from '../models/order/order';
 import { Cart } from "../models/cart/cart";
+import { HttpClientHelper } from '../helpers/http.helper';
+import { Http } from '@angular/http';
+import { environment } from '../../environments/environment';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
-export class OrderService{
-    
-    private token: Token;
-    
-    constructor(private client: HttpClient){}
+export class OrderService {
+    client: HttpClientHelper;
 
-    private getToken(){
-        this.token = new Token();
-        this.token.accessToken = localStorage.getItem('auth');
-        this.token.createdDate = new Date(localStorage.getItem('auth_create'));
-        this.token.expiresIn = Number(localStorage.getItem('auth_expires'));
-        this.token.tokenType = 'Bearer';
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
     }
 
-    public hasToken(): boolean{
-        if(localStorage.getItem('auth')) return true;
-        else return false;
+    getOrder(id: string, token: Token): Observable<Order> {
+        let url = `${environment.API_ORDER}/order/${id}`;
+        return this.client.get(url, token)
+            .map(res => res.json());
     }
 
-    public getOrder(id: string): Promise<Order>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_ORDER}/order/${id}`;
-            this.getToken();
-            this.client.get(url, this.token)
-            .map(res => res.json())
-            .subscribe(response => {
-                let order = new Order(response);
-                resolve(order);
-            }, error => reject(error));
-        });
+    getOrders(token: Token): Observable<Order[]> {
+        let url = `${environment.API_ORDER}/order/customer`
+        return this.client.get(url, token)
+            .map(res => res.json());
     }
 
-    public getOrders(): Promise<Order[]>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_ORDER}/order/customer`
-            this.getToken();
-            this.client.get(url, this.token)
-                .map(res => res.json())
-                .subscribe(response => {
-                    let orders = response.map(order => order = new Order(order));
-                    resolve(orders);
-                }, error => reject(error));
-        });
+    placeOrder(cartId: string, token: Token): Observable<Order> {
+        let url = `${environment.API_ORDER}/Order/${cartId}`;
+        return this.client.post(url, null, token)
+            .map(res => res.json());
     }
 
-    public placeOrder(cartId: string): Promise<Order>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_ORDER}/Order/${cartId}`;
-            this.getToken();
-            this.client.post(url, null, this.token)
-            .map(res => res.json())
-            .subscribe(response => {
-                let order = new Order(response);
-                resolve(order);
-            }, error => reject(error));
-        });
-    }
-
-    public validateOrder(cartId: string): Promise<Cart>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_ORDERVALIDATION}/OrderValidation/${cartId}`;
-            this.getToken();
-            this.client.post(url, null, this.token)
-            .map(res => res.json())
-            .subscribe(response => {
-                let cart = new Cart(response);
-                resolve(cart);
-            }, error => reject(error));
-        });
+    validateOrder(cartId: string, token: Token): Observable<Cart> {
+        let url = `${environment.API_ORDERVALIDATION}/OrderValidation/${cartId}`;
+        return this.client.post(url, null, token)
+            .map(res => res.json());
     }
 }

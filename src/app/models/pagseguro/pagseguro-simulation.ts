@@ -1,4 +1,4 @@
-import { PagSeguroSimulationBrands } from "app/models/pagseguro/pagseguro.simulation-brands";
+import { PagSeguroSimulationBrands } from "./pagseguro.simulation-brands";
 
 export class PagSeguroSimulationResponse {
     error: boolean;

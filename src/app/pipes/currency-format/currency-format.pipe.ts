@@ -6,14 +6,13 @@ import { CurrencyPipe } from "@angular/common";
 })
 export class CurrencyFormatPipe implements PipeTransform {
 
-    transform(value: number, currencyCode: string = 'BRL', symbolDisplay: boolean = true, digits?: string): string {
-        
+    transform(value: number, currencyCode: string = 'BRL', symbolDisplay: string = 'symbol-narrow', digits?: string): string {
         if (!value) {
             return '';
         }
 
-        let currencyPipe: CurrencyPipe = new CurrencyPipe('pt-BR');
-        let newValue: string = currencyPipe.transform(value, currencyCode, symbolDisplay, digits);
+        let currencyPipe: CurrencyPipe = new CurrencyPipe('pt_BR');
+        let newValue: string = currencyPipe.transform(value, currencyCode, null, digits);
 
         return newValue.replace('$', '$ ');
     }

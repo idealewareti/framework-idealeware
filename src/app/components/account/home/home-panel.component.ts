@@ -1,71 +1,87 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Customer } from "app/models/customer/customer";
-import { Store } from "app/models/store/store";
-import { StoreService } from "app/services/store.service";
+import { Component, OnInit, Input, Inject, PLATFORM_ID } from '@angular/core';
+import { Customer } from "../../../models/customer/customer";
+import { Store } from "../../../models/store/store";
+import { StoreService } from "../../../services/store.service";
 import { Router } from "@angular/router";
-import { CustomerService } from "app/services/customer.service";
-import { Order } from "app/models/order/order";
+import { CustomerService } from "../../../services/customer.service";
+import { Order } from "../../../models/order/order";
 import { Title } from "@angular/platform-browser";
-import { AppSettings } from "app/app.settings";
+import { Token } from '../../../models/customer/token';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
-    selector: 'home-panel',
-    templateUrl: '../../../views/account-home.component.html',
+    selector: 'app-home-panel',
+    templateUrl: '../../../template/account/account-home/account-home.html',
+    styleUrls: ['../../../template/account/account-home/account-home.scss']
 })
 export class AccountHomeComponent implements OnInit {
     customer: Customer = new Customer();
     store: Store;
     public lastOrder: Order = null;
     private logged: boolean;
-    
+
     constructor(
         private service: CustomerService,
         private storeService: StoreService,
         private parentRouter: Router,
-        titleService: Title
+        titleService: Title,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {
-        AppSettings.setTitle('Minha Conta', titleService);
-     }
+        titleService.setTitle('Minha Conta');
+    }
 
     ngOnInit() {
         this.getStore()
-        .then(store => {
-            return this.getCustomer();
-        })
-        .catch(error => {
-            this.parentRouter.navigateByUrl('/login');
-        })
-     }
+            .then(store => {
+                return this.getCustomer();
+            })
+            .catch(error => {
+                this.parentRouter.navigateByUrl('/login');
+            })
+    }
 
-     getCustomer() : Promise<Customer>{
+    private getToken(): Token {
+        let token = new Token();
+        if (isPlatformBrowser(this.platformId)) {
+            token = new Token();
+            token.accessToken = localStorage.getItem('auth');
+            token.createdDate = new Date(localStorage.getItem('auth_create'));
+            token.expiresIn = Number(localStorage.getItem('auth_expires'));
+            token.tokenType = 'Bearer';
+        }
+        return token;
+    }
+
+    getCustomer(): Promise<Customer> {
         return new Promise((resolve, reject) => {
-            if(this.logged) {
+            if (this.logged) {
                 resolve(this.customer);
             }
-            else{
-                this.service.getUser()
-                .then(customer => {
-                    this.customer = customer;
-                    this.logged = true;
-                    resolve(customer)
-                })
-                .catch((error) => {
-                    this.logged = false;
-                    reject(error);
-                });
+            else {
+                let token: Token = this.getToken();
+                this.service.getUser(token)
+                    .subscribe(customer => {
+                        this.customer = customer;
+                        this.logged = true;
+                        resolve(customer)
+                    }), (error) => {
+                        this.logged = false;
+                        reject(error);
+                    };
             }
         });
     }
 
-    isLogged(){
+    isLogged() {
         return this.logged;
     }
 
-    getStore():Promise<Store> {
+    getStore(): Promise<Store> {
         return new Promise((resolve, reject) => {
-            if(this.store)
+            if (this.store)
                 resolve(this.store);
-            this.storeService.getInfo()
+
+            this.fetchStore()
                 .then(store => {
                     this.store = store;
                     resolve(store);
@@ -76,5 +92,17 @@ export class AccountHomeComponent implements OnInit {
                 });
         });
 
+    }
+
+    private fetchStore(): Promise<Store> {
+        return new Promise((resolve, reject) => {
+            this.storeService.getStore()
+                .subscribe(response => {
+                    let store: Store = new Store(response);
+                    resolve(store);
+                }, error => {
+                    reject(error);
+                });
+        });
     }
 }

@@ -1,5 +1,5 @@
 import { VariationOption } from "./product-variation-option";
-import { EnVariationType } from "app/enums/variationtype.enum";
+import { EnVariationType } from "../../enums/variationtype.enum";
 
 export class Variation {
 

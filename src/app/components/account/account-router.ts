@@ -1,13 +1,14 @@
 import { NgModule }     from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AccountComponent } from "app/components/account/account.component";
-import { AccountHomeComponent } from "app/components/account/home/home-panel.component";
-import { UserEditComponent } from "app/components/account/user-edit-panel/user-edit.component";
-import { OrderPanelComponent } from "app/components/account/orders-panel/orders-panel.component";
-import { MyOrderPanelComponent } from "app/components/account/myorder-panel/myorder-panel.component";
-import { AddressPanelComponent } from "app/components/account/address-panel/address-panel.component";
-import { AddressEditComponent } from "app/components/account/address-edit-panel/address-edit.component";
-import { VouncherPanelComponent } from "app/components/account/vouncher-panel/vouncher-panel.component";
+import { AccountComponent } from './account.component';
+import { AccountHomeComponent } from './home/home-panel.component';
+import { UserEditComponent } from './user-edit-panel/user-edit.component';
+import { AddressPanelComponent } from './address-panel/address-panel.component';
+import { MyOrderPanelComponent } from './myorder-panel/myorder-panel.component';
+import { AddressEditComponent } from './address-edit-panel/address-edit.component';
+import { OrderPanelComponent } from './orders-panel/orders-panel.component';
+import { VouncherPanelComponent } from './vouncher-panel/vouncher-panel.component';
+
 
 
 const routes: Routes = [

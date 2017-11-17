@@ -1,4 +1,4 @@
-import { CustomPaintOption } from "app/models/custom-paint/custom-paint-option";
+import { CustomPaintOption } from "./custom-paint-option";
 
 export class CustomPaintVariation {
     manufacturer: string;

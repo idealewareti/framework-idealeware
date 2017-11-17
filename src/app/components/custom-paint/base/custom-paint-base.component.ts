@@ -1,23 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
 import { Title } from "@angular/platform-browser";
-import { AppSettings } from "app/app.settings";
 import { ActivatedRoute, Router } from "@angular/router";
-import { CustomPaintManufacturer } from "app/models/custom-paint/custom-paint-manufacturer";
-import { CustomPaintService } from "app/services/custom-paint.service";
-import { CustomPaintCombination } from "app/models/custom-paint/custom-paint-combination";
-import { CartManager } from "app/managers/cart.manager";
-import { Store } from "app/models/store/store";
-import { StoreService } from "app/services/store.service";
-import { Globals } from "app/models/globals";
-import { EnumStoreModality } from 'app/enums/store-modality.enum';
+import { CustomPaintManufacturer } from "../../../models/custom-paint/custom-paint-manufacturer";
+import { CustomPaintService } from "../../../services/custom-paint.service";
+import { CustomPaintCombination } from "../../../models/custom-paint/custom-paint-combination";
+import { CartManager } from "../../../managers/cart.manager";
+import { Store } from "../../../models/store/store";
+import { StoreService } from "../../../services/store.service";
+import { Globals } from "../../../models/globals";
+import { EnumStoreModality } from '../../../enums/store-modality.enum';
+import { isPlatformBrowser } from '@angular/common';
 
 declare var swal: any;
 
 @Component({
     moduleId: module.id,
-    selector: 'custom-paint-base',
-    templateUrl: '../../../views/custom-paint-base.component.html',
-    styleUrls: ['../../../styles/custom-paint-base.component.css']
+    selector: 'app-custom-paint-base',
+    templateUrl: '../../../template/custom-paint/custom-paint-base/custom-paint-base.html',
+    styleUrls: ['../../../template/custom-paint/custom-paint-base/custom-paint-base.scss']
 })
 export class CustomPaintBaseComponent implements OnInit {
     manufacturer: CustomPaintManufacturer = new CustomPaintManufacturer();
@@ -29,14 +29,14 @@ export class CustomPaintBaseComponent implements OnInit {
     mediaPath: string;
 
     constructor(
-        private service: CustomPaintService, 
+        private service: CustomPaintService,
         private storeService: StoreService,
         private titleService: Title,
         private route: ActivatedRoute,
         private parentRouter: Router,
         private manager: CartManager,
-        private globals: Globals
-
+        private globals: Globals,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
@@ -44,75 +44,76 @@ export class CustomPaintBaseComponent implements OnInit {
         this.modality = this.globals.store.modality;
 
         this.route.params
-        .map(params => params)
-        .subscribe((params) => {
-            this.manufacuterId = params['manufacturer'];
-            this.colorCode = params['color'];
-            this.optionId = params['option'];
-            this.getManufacturer(this.manufacuterId);
-            this.getPaints(this.manufacuterId, this.colorCode, this.optionId);
-        });
+            .map(params => params)
+            .subscribe((params) => {
+                this.manufacuterId = params['manufacturer'];
+                this.colorCode = params['color'];
+                this.optionId = params['option'];
+                this.getManufacturer(this.manufacuterId);
+                this.getPaints(this.manufacuterId, this.colorCode, this.optionId);
+            });
     }
 
     /* Loaders */
-    getManufacturer(id: string){
+    getManufacturer(id: string) {
         this.service.getManufacturers()
-        .then(manufacturers => {
-            this.manufacturer = manufacturers.filter(m => m.manufacturer === id)[0];
-            AppSettings.setTitle(`Cores Personalizadas ${this.manufacturer.name} - Selecione seu produto`, this.titleService);
+            .subscribe(manufacturers => {
+                this.manufacturer = manufacturers.filter(m => m.manufacturer === id)[0];
+                this.titleService.setTitle(`Cores Personalizadas ${this.manufacturer.name} - Selecione seu produto`);
 
-        })
-        .catch(error => console.log(error));
+            }, error => console.log(error));
     }
 
-    getPaints(manufacturer: string, colorCode: string, optionId: string){
+    getPaints(manufacturer: string, colorCode: string, optionId: string) {
         this.service.getPaints(manufacturer, colorCode, optionId)
-        .then(paints => {
-            this.paints = paints;
-        })
-        .catch(error => {
-            console.log(error);
-        });
+            .subscribe(paints => {
+                this.paints = paints;
+            }, error => {
+                console.log(error);
+            });
     }
 
     showValues(): boolean {
         if (this.modality == EnumStoreModality.Ecommerce)
             return true;
-        else if (this.modality == EnumStoreModality.Budget && this.globals.store.settings.find(s => s.type == 3 && s.status == true)) 
+        else if (this.modality == EnumStoreModality.Budget && this.globals.store.settings.find(s => s.type == 3 && s.status == true))
             return true;
         else return false;
     }
 
-    coverImg(paint: CustomPaintCombination): string{
-        if(paint.picture)
+    coverImg(paint: CustomPaintCombination): string {
+        if (paint.picture)
             return `${this.mediaPath}/${paint.picture}`;
         else
             return '/assets/images/no-image.jpg';
     }
 
     /* Actions */
-    purchase(paint: CustomPaintCombination, event = null){
-        if(event)
-            event.preventDefault();
+    purchase(paint: CustomPaintCombination, event = null) {
+        if (isPlatformBrowser(this.platformId)) {
 
-        this.manager.purchasePaint(paint, this.manufacturer.manufacturer, 1)
-        .then(cart => {
-            this.parentRouter.navigateByUrl('/carrinho');
-        })
-        .catch(error => {
-            let message = '';
-            if(error.status === 0)
-                message = 'Conexão perdida';
-            else if(error.status === 500)
-                message = 'Erro no servidor';
-            else if(error.text().split('|').length > 1)
-                message = error.text().split('|')[1].replace(/"/g, '');
-            else
-                message = error.text().replace(/"/g, '');
-            
-            console.log(error);
-            
-            swal('Erro ao adicionar ao carrinho', message, 'error');
-        });
+            if (event)
+                event.preventDefault();
+
+            this.manager.purchasePaint(localStorage.getItem('cart_id'), paint, this.manufacturer.manufacturer, 1)
+                .then(cart => {
+                    this.parentRouter.navigateByUrl('/carrinho');
+                })
+                .catch(error => {
+                    let message = '';
+                    if (error.status === 0)
+                        message = 'Conexão perdida';
+                    else if (error.status === 500)
+                        message = 'Erro no servidor';
+                    else if (error.text().split('|').length > 1)
+                        message = error.text().split('|')[1].replace(/"/g, '');
+                    else
+                        message = error.text().replace(/"/g, '');
+
+                    console.log(error);
+
+                    swal('Erro ao adicionar ao carrinho', message, 'error');
+                });
+        }
     }
 }

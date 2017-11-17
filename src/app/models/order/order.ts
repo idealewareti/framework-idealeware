@@ -8,8 +8,8 @@ import { Coupon } from "../coupon/coupon";
 import { Payment } from "../payment/payment";
 import { HistoryStatus } from "./history-status";
 import { Shipping } from "../shipping/shipping";
-import { OrderStatusEnum } from "app/enums/order-status.enum";
-import { Paint } from "app/models/custom-paint/custom-paint";
+import { Paint } from "../custom-paint/custom-paint";
+import { OrderStatusEnum } from "../../enums/order-status.enum";
 
 export class Order {
     id: string;
@@ -39,58 +39,58 @@ export class Order {
     totalPaintsPrice: number;
     orderPrice: number;
 
-    constructor(object = null) {
-        if (object) return this.createFromResponse(object);
-    }
+    // constructor(object = null) {
+    //     if (object) return this.createFromResponse(object);
+    // }
 
-    public createFromResponse(response): Order {
-        let model = new Order();
+    // public createFromResponse(response): Order {
+    //     let model = new Order();
 
-        for (var k in response) {
+    //     for (var k in response) {
 
-            if (k == 'products' && response[k]) {
-                model.products = response.products.map(product => product = new Product(product));
-            }
-            else if (k == 'services' && response[k]) {
-                model.services = response.services.map(service => service = new Service(service));
-            }
-            else if (k == 'paints' && response[k]) {
-                model[k] = response[k].map(paint => paint = new Paint(paint));
-            }
-            else if (k == 'coupons' && response[k]) {
-                model.coupons = response.coupons.map(coupon => coupon = new Coupon(coupon));
-            }
-            else if (k == 'historyStatus' && response[k]) {
-                model.historyStatus = response.historyStatus.map(status => status = new HistoryStatus(status));
-            }
-            else if (k == 'ip') {
-                model.ip = new CustomerIp(response[k]);
-            }
-            else if (k == 'customer') {
-                model.customer = new Customer(response[k]);
-            }
-            else if (k == 'deliveryAddress') {
-                model.deliveryAddress = new CustomerAddress(response[k]);
-            }
-            else if (k == 'billingAddress') {
-                model.deliveryAddress = new CustomerAddress(response[k]);
-            }
-            else if (k == 'shipping') {
-                model.shipping = new Shipping(response[k]);
-            }
-            else if (k == 'payment') {
-                model.payment = new Payment(response[k]);
-            }
-            else if (k == 'createdDate') {
-                model.createdDate = new Date(response[k]);
-            }
-            else {
-                model[k] = response[k];
-            }
-        }
+    //         if (k == 'products' && response[k]) {
+    //             model.products = response.products.map(product => product = new Product(product));
+    //         }
+    //         else if (k == 'services' && response[k]) {
+    //             model.services = response.services.map(service => service = new Service(service));
+    //         }
+    //         else if (k == 'paints' && response[k]) {
+    //             model[k] = response[k].map(paint => paint = new Paint(paint));
+    //         }
+    //         else if (k == 'coupons' && response[k]) {
+    //             model.coupons = response.coupons.map(coupon => coupon = new Coupon(coupon));
+    //         }
+    //         else if (k == 'historyStatus' && response[k]) {
+    //             model.historyStatus = response.historyStatus.map(status => status = new HistoryStatus(status));
+    //         }
+    //         else if (k == 'ip') {
+    //             model.ip = new CustomerIp(response[k]);
+    //         }
+    //         else if (k == 'customer') {
+    //             model.customer = new Customer(response[k]);
+    //         }
+    //         else if (k == 'deliveryAddress') {
+    //             model.deliveryAddress = new CustomerAddress(response[k]);
+    //         }
+    //         else if (k == 'billingAddress') {
+    //             model.deliveryAddress = new CustomerAddress(response[k]);
+    //         }
+    //         else if (k == 'shipping') {
+    //             model.shipping = new Shipping(response[k]);
+    //         }
+    //         else if (k == 'payment') {
+    //             model.payment = new Payment(response[k]);
+    //         }
+    //         else if (k == 'createdDate') {
+    //             model.createdDate = new Date(response[k]);
+    //         }
+    //         else {
+    //             model[k] = response[k];
+    //         }
+    //     }
 
-        return model;
-    }
+    //     return model;
+    // }
 
 
     public labelStatus(): string {

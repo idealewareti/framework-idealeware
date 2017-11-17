@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { CustomPaintColor } from "app/models/custom-paint/custom-paint-color";
-import { CustomPaintService } from "app/services/custom-paint.service";
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CustomPaintColor } from "../../../models/custom-paint/custom-paint-color";
+import { CustomPaintService } from "../../../services/custom-paint.service";
 import { Title } from "@angular/platform-browser";
-import { AppSettings } from "app/app.settings";
 import { ActivatedRoute, Router } from "@angular/router";
-import { CustomPaintManufacturer } from "app/models/custom-paint/custom-paint-manufacturer";
-import { CustomPaintVariation } from "app/models/custom-paint/custom-paint-variation";
-import { CustomPaintOption } from "app/models/custom-paint/custom-paint-option";
-import { Globals } from "app/models/globals";
+import { CustomPaintManufacturer } from "../../../models/custom-paint/custom-paint-manufacturer";
+import { CustomPaintVariation } from "../../../models/custom-paint/custom-paint-variation";
+import { CustomPaintOption } from "../../../models/custom-paint/custom-paint-option";
+import { Globals } from "../../../models/globals";
+import { isPlatformBrowser } from '@angular/common';
 
 declare var swal: any;
 
 @Component({
     moduleId: module.id,
-    selector: 'custom-paint-variation',
-    templateUrl: '../../../views/custom-paint-variation.component.html',
+    selector: 'app-custom-paint-variation',
+    templateUrl: '../../../template/custom-paint/custom-paint-variation/custom-paint-variation.html',
+    styleUrls: ['../../../template/custom-paint/custom-paint-variation/custom-paint-variation.scss']
 })
 export class CustomPaintVariationComponent implements OnInit {
     manufacturer: CustomPaintManufacturer = new CustomPaintManufacturer();
@@ -25,49 +26,48 @@ export class CustomPaintVariationComponent implements OnInit {
     mediaPath: string;
 
     constructor(
-        private service: CustomPaintService, 
+        private service: CustomPaintService,
         private titleService: Title,
         private route: ActivatedRoute,
         private parentRouter: Router,
-        private globals: Globals
+        private globals: Globals,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
         this.mediaPath = `${this.globals.store.link}/static/custompaint/`;
-        
+
         this.route.params
-        .map(params => params)
-        .subscribe((params) => {
-            this.manufacuterId = params['manufacturer'];
-            this.colorCode = params['color'];
-            this.getManufacturer(this.manufacuterId);
-            this.getVariation(this.manufacuterId);
-        });
+            .map(params => params)
+            .subscribe((params) => {
+                this.manufacuterId = params['manufacturer'];
+                this.colorCode = params['color'];
+                this.getManufacturer(this.manufacuterId);
+                this.getVariation(this.manufacuterId);
+            });
     }
 
     /* Loaders */
-    getManufacturer(id: string){
+    getManufacturer(id: string) {
         this.service.getManufacturers()
-        .then(manufacturers => {
-            this.manufacturer = manufacturers.filter(m => m.manufacturer === id)[0];
-            AppSettings.setTitle(`Cores Personalizadas ${this.manufacturer.name} - Selecione o tamanho`, this.titleService);
+            .subscribe(manufacturers => {
+                this.manufacturer = manufacturers.filter(m => m.manufacturer === id)[0];
+                this.titleService.setTitle(`Cores Personalizadas ${this.manufacturer.name} - Selecione o tamanho`);
 
-        })
-        .catch(error => console.log(error));
+            }, error => console.log(error));
     }
 
-    getVariation(id: string){
+    getVariation(id: string) {
         this.service.getVariations(id)
-        .then(variation => {
-            this.variation = variation;
-        })
-        .catch(error => {
-            console.log(error);
-        })
+            .subscribe(variation => {
+                this.variation = variation;
+            }, error => {
+                console.log(error);
+            })
     }
 
-    selectOption(option: CustomPaintOption, event = null){
-        if(event)
+    selectOption(option: CustomPaintOption, event = null) {
+        if (event)
             event.preventDefault();
 
         this.optionSelected = option;
@@ -75,25 +75,26 @@ export class CustomPaintVariationComponent implements OnInit {
         this.nextStep(null);
     }
 
-    isOptionSelected(option: CustomPaintOption): boolean{
-        if(this.optionSelected && this.optionSelected.id == option.id)
+    isOptionSelected(option: CustomPaintOption): boolean {
+        if (this.optionSelected && this.optionSelected.id == option.id)
             return true;
         else
             return false;
     }
 
-    nextStep(event){
-        if(event)
-            event.preventDefault();
-        
-        if(!this.optionSelected){
-            swal('Erro', 'Nenhuma opção selecionada', 'error');
-            return;
-        }
-        else{
-            let url: string = `/corespersonalizadas/${this.manufacturer.manufacturer}/${this.colorCode}/${this.optionSelected.id}`;
-            this.parentRouter.navigateByUrl(url);
-        }
+    nextStep(event) {
+        if (isPlatformBrowser(this.platformId)) {
+            if (event)
+                event.preventDefault();
 
+            if (!this.optionSelected) {
+                swal('Erro', 'Nenhuma opção selecionada', 'error');
+                return;
+            }
+            else {
+                let url: string = `/corespersonalizadas/${this.manufacturer.manufacturer}/${this.colorCode}/${this.optionSelected.id}`;
+                this.parentRouter.navigateByUrl(url);
+            }
+        }
     }
 }

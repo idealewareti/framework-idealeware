@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CustomPaintColor } from "app/models/custom-paint/custom-paint-color";
+import { CustomPaintColor } from '../../models/custom-paint/custom-paint-color';
 
 @Pipe({name: 'customcolorFilter'})
 export class CustomPaintFilterPipe implements PipeTransform {

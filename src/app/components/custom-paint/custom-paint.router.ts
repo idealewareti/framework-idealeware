@@ -1,10 +1,10 @@
 import { NgModule }     from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { CustomPaintComponent } from "app/components/custom-paint/custom-paint.component";
-import { CustomPaintManufacturerComponent } from "app/components/custom-paint/manufacturer/custom-paint-manufacturer.component";
-import { CustomPaintColorComponent } from "app/components/custom-paint/color/custom-paint-color.component";
-import { CustomPaintVariationComponent } from "app/components/custom-paint/variations/custom-paint-variation.component";
-import { CustomPaintBaseComponent } from "app/components/custom-paint/base/custom-paint-base.component";
+import { CustomPaintManufacturerComponent } from './manufacturer/custom-paint-manufacturer.component';
+import { CustomPaintColorComponent } from './color/custom-paint-color.component';
+import { CustomPaintVariationComponent } from './variations/custom-paint-variation.component';
+import { CustomPaintBaseComponent } from './base/custom-paint-base.component';
+import { CustomPaintComponent } from './custom-paint.component';
 
 
 const routes: Routes = [

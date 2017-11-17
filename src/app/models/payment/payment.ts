@@ -1,6 +1,6 @@
 import { PaymentMethod } from "./payment-method";
-import { PaymentSetting } from "app/models/payment/payment-setting";
-import { EnumPaymentType } from "app/enums/payment-type.enum";
+import { EnumPaymentType } from "../../enums/payment-type.enum";
+import { PaymentSetting } from "./payment-setting";
 
 export class Payment {
     id: string;

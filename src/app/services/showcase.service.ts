@@ -1,31 +1,22 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '../helpers/httpclient'
-import {Title} from '@angular/platform-browser';
-import {AppSettings} from 'app/app.settings';
-import {ShowCase} from '../models/showcase/showcase';
-import {Product} from '../models/product/product';
+import { Injectable } from "@angular/core";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { ShowCase } from "../models/showcase/showcase";
+import { environment } from "../../environments/environment";
+import { Http } from "@angular/http";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
 export class ShowCaseService{
-
-    constructor(private client: HttpClient){}
-
-    getShowCase() : Promise<ShowCase>{
-   		return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_SHOWCASE}/showcases`;
-            let showcase = new ShowCase();
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                let showcase = new ShowCase(response);
-                resolve(showcase);
-                
-            }, error => {
-                console.log(error);
-                reject(error);
-            });
-        });
-           
+    client: HttpClientHelper;
+    
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
     }
 
+    getShowCase(): Observable<ShowCase>{
+        let url = `${environment.API_SHOWCASE}/showcases`;
+        let showcase = new ShowCase();
+        return this.client.get(url)
+        .map(res => res.json())
+    }
 }

@@ -1,23 +1,22 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '../helpers/httpclient'
 import { Title } from '@angular/platform-browser';
-import { AppSettings } from 'app/app.settings';
 import { PopUp } from "../models/popup/popup";
+import { HttpClientHelper } from '../helpers/http.helper';
+import { Http } from '@angular/http';
+import { environment } from '../../environments/environment.prod';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class PopUpService {
+    client: HttpClientHelper;
 
-    constructor(private client: HttpClient) { }
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
 
-    public getPopUp(): Promise<PopUp> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_POPUP}/popup`;
-            this.client.get(url)
-                .map(res => res.json())
-                .subscribe(response => {
-                    let popup = new PopUp(response);
-                    resolve(popup)
-                }, error => reject(error));
-        });
+    getPopUp(): Observable<PopUp> {
+        const url = `${environment.API_POPUP}/popup`;
+        return this.client.get(url)
+            .map(res => res.json());
     }
 }

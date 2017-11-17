@@ -1,0 +1,46 @@
+<span class="border" [attr.id]="'sku_' + sku.id">
+    <span class="flags"></span>
+    <span class="thumb">
+        <a [routerLink]="[getRoute()]" [attr.title]="product.name">
+            <img [attr.src]="getCoverImage()" [attr.alt]="product.name" class="img-responsive"/>
+        </a>
+    </span>
+    <h3 class="product-name">
+        <a [routerLink]="[getRoute()]" [attr.title]="product.name">
+            {{product.name}}
+        </a>
+    </h3>
+    <span class="price-box" *ngIf="price > 0">
+        <div *ngIf="promotionalPrice > 0">
+            <span class="old-price">
+                <span class="price-label">De:</span>
+                <span class="price">{{price |  currencyFormat }}</span>
+            </span>
+            <span class="regular-price">
+                <span class="price-label">Por</span>
+                <span class="price">{{promotionalPrice |  currencyFormat }}</span>
+                <span class="parcelamento" *ngIf="product.installmentText">ou em até {{ product.installmentText }}</span>
+            </span>
+        </div>
+        <div *ngIf="promotionalPrice == 0">
+            <span class="regular-price">
+                <span class="price-label"></span>
+                <span class="price">{{price |  currencyFormat }}</span>
+                <span class="parcelamento" *ngIf="product.installmentText">ou em até {{ product.installmentText }}</span>
+            </span>
+        </div>
+    </span>
+    <span class="comparar" *ngIf="showCompare">
+        <a href="#" [ngClass]="{'checked': isComparing(product.id)}" (click)="addToCompare($event, product)">
+            <i [ngClass]="{'fa-square-o': !isComparing(product.id), 'fa-check-square-o': isComparing(product.id)}" class="fa" aria-hidden="true"></i> Comparar
+        </a>
+    </span>
+    <a *ngIf="isAvailable()" [routerLink]="[getRoute()]" class="btn btn-success btn-buy hidden-xs">
+        <i class="fa fa-shopping-cart" aria-hidden="true"></i>  
+        <span *ngIf="!isBudget()">Comprar</span>
+        <span *ngIf="isBudget()">Orçar</span>
+    </a>
+    <a *ngIf="!isAvailable()" [routerLink]="[getRoute()]" class="btn btn-danger btn-buy hidden-xs">
+        <span>Produto Indisponível</span>
+    </a>
+</span>    

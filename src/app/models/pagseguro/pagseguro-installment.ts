@@ -1,4 +1,4 @@
-import { Installment } from "app/models/payment/installment";
+import { Installment } from "../payment/installment";
 
 export class PagseguroInstallment {
     

@@ -1,25 +1,22 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "app/helpers/httpclient";
-import { Redirect301Route } from "app/models/redirect301/redirect301-route";
-import { AppSettings } from "app/app.settings";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { Http } from "@angular/http";
+import { Redirect301Route } from "../models/redirect301/redirect301-route";
+import { Observable } from "rxjs/Observable";
+import { environment } from "../../environments/environment";
 
 @Injectable()
-export class Redirect301Service{
+export class Redirect301Service {
 
-    constructor(private client: HttpClient){}
+    client: HttpClientHelper;
 
-    getAll(): Promise<Redirect301Route[]>{
-        return new Promise((resolve, reject) =>{
-            let url: string = `${AppSettings.API_REDIRECT301}/redirect301`;
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                let routes: Redirect301Route[] = [];
-                routes = response.map(r => r = new Redirect301Route(r.redirectFrom, r.redirectTo));
-                resolve(routes);
-            }, error => {
-                reject(error);
-            })
-        });
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
+    }
+
+    getAll(): Observable<Redirect301Route[]> {
+        const url: string = `${environment.API_REDIRECT301}/redirect301`;
+        return this.client.get(url)
+            .map(res => res.json());
     }
 }

@@ -1,43 +1,31 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "app/helpers/httpclient";
-import { EnVariationType } from "app/enums/variationtype.enum";
-import { AppSettings } from "app/app.settings";
-import { RelatedProductGroup } from "app/models/related-products/related-product-group";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { Http } from "@angular/http";
+import { EnVariationType } from "../enums/variationtype.enum";
+import { RelatedProductGroup } from "../models/related-products/related-product-group";
+import { RelatedProductSearch } from "../models/related-products/related-product-search";
+import { environment } from "../../environments/environment.prod";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
-export class RelatedProductsService{
+export class RelatedProductsService {
 
-    constructor(private client: HttpClient){}
+    client: HttpClientHelper;
 
-    getRelatedProducts(
-        name: string = null,
-        nameProduct: string = null,
-        codeProduct: string = null, 
-        variation: EnVariationType = null, 
-        page: number = null, 
-        pageSize: number = null
-    ): Promise<RelatedProductGroup[]>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_RELATEDPRODUCTS}/group?name=${name}&nameProduct=${nameProduct}&codeProduct=${codeProduct}&variation=${variation}&page=${page}&pageSize=${pageSize}`;
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                let groups = response.map(p => p = new RelatedProductGroup(p));
-                resolve(groups);
-            }, error => reject(error));
-        });
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
     }
 
-    getRelatedProductGroupById(id: string): Promise<RelatedProductGroup>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_RELATEDPRODUCTS}/RelatedProducts/group/${id}`;
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                let group = new RelatedProductGroup(response);
-                resolve(group);
-            }, error => reject(error));
-        });
+    getRelatedProducts(relatedProductSearch: RelatedProductSearch, page: number = null, pageSize: number = null): Observable<RelatedProductGroup[]> {
+        const url = `${environment.API_RELATEDPRODUCTS}/group?name=${relatedProductSearch.name}&nameProduct=${relatedProductSearch.nameProduct}&codeProduct=${relatedProductSearch.codeProduct}&variation=${relatedProductSearch.variation}&page=${page}&pageSize=${pageSize}`;
+        return this.client.get(url)
+            .map(res => res.json());
+    }
+
+    getRelatedProductGroupById(id: string): Observable<RelatedProductGroup> {
+        const url = `${environment.API_RELATEDPRODUCTS}/RelatedProducts/group/${id}`;
+        return this.client.get(url)
+            .map(res => res.json());
     }
 
 }

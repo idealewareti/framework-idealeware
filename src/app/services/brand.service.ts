@@ -1,35 +1,28 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '../helpers/httpclient'
-import {Title} from '@angular/platform-browser';
-import {AppSettings} from 'app/app.settings';
-import {Brand} from '../models/brand/brand';
+import { Injectable } from "@angular/core";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { Brand } from "../models/brand/brand";
+import { environment } from "../../environments/environment";
+import { Http } from "@angular/http";
+import { Observable } from "rxjs/Observable";
+
 
 @Injectable()
-export class BrandService{
+export class BrandService {
+    client: HttpClientHelper;
 
-    constructor(private client: HttpClient){ }
-
-    public getAll(): Promise<Brand[]>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_BRAND}/brands`;
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                let brands = response.map(b => new Brand(b));
-                resolve(brands);
-
-            }, error => reject(error));
-        })
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
     }
 
-    getBrand(id: string): Promise<Brand>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_BRAND}/brands/${id}`
-            this.client.get(url)
+    getAll(): Observable<Brand[]> {
+        let url = `${environment.API_BRAND}/brands`;
+        return this.client.get(url)
             .map(res => res.json())
-            .subscribe(response => {
-                resolve(new Brand(response));
-            }, error => reject(error));
-        })
+    }
+
+    getBrand(id: string): Observable<Brand> {
+        let url = `${environment.API_BRAND}/brands/${id}`
+        return  this.client.get(url)
+            .map(res => res.json())
     }
 }

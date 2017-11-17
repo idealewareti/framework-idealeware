@@ -1,41 +1,29 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '../helpers/httpclient'
-import { AppSettings } from 'app/app.settings';
+import { Injectable } from "@angular/core";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { environment } from "../../environments/environment";
 import { Payment } from "../models/payment/payment";
 import { Token } from "../models/customer/token";
-import { CreditCard } from "../models//payment/credit-card";
+import { CreditCard } from "../models/payment/credit-card";
+import { PagSeguroSimulationResponse } from "../models/pagseguro/pagseguro-simulation";
 import { PagseguroCreditCard } from "../models/pagseguro/pagseguro-card";
-import { MercadoPagoPaymentMethod } from "app/models/mercadopago/mercadopago-paymentmethod";
-import { MercadoPagoInstallmentResponse } from "app/models/mercadopago/mercadopago-installment-response";
-import { MercadoPagoCreditCard } from "app/models/mercadopago/mercadopago-creditcard";
-import { PagSeguroSimulationResponse } from "app/models/pagseguro/pagseguro-simulation";
+import { MercadoPagoCreditCard } from "../models/mercadopago/mercadopago-creditcard";
+import { MercadoPagoPaymentMethod } from "../models/mercadopago/mercadopago-paymentmethod";
+import { MercadoPagoInstallmentResponse } from "../models/mercadopago/mercadopago-installment-response";
+import { Http } from "@angular/http";
+import { Observable } from "rxjs/Observable";
 
 @Injectable()
 export class PaymentService {
+    client: HttpClientHelper;
 
-    private token: Token;
-
-    constructor(private client: HttpClient) { }
-
-    private getToken() {
-        this.token = new Token();
-        this.token.accessToken = localStorage.getItem('auth');
-        this.token.createdDate = new Date(localStorage.getItem('auth_create'));
-        this.token.expiresIn = Number(localStorage.getItem('auth_expires'));
-        this.token.tokenType = 'Bearer';
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
     }
 
-    getAll(): Promise<Payment[]> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments`;
-            this.client.get(url)
+    getAll(): Observable<Payment[]> {
+        let url = `${environment.API_PAYMENTS}/payments`;
+        return this.client.get(url)
             .map(res => res.json())
-            .subscribe(response => {
-                let payments = response.map(p => p = new Payment(p));
-                resolve(payments);
-
-            }, error => reject(error));
-        });
     }
 
     /**
@@ -44,24 +32,16 @@ export class PaymentService {
      * @returns {Promise<Payment>} 
      * @memberof PaymentService
      */
-    getDefault(): Promise<Payment>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/default`;
-            this.client.get(url)
+    getDefault(): Observable<Payment> {
+        let url = `${environment.API_PAYMENTS}/payments/default`;
+        return this.client.get(url)
             .map(res => res.json())
-            .subscribe(response => {
-                let payment:Payment = new Payment(response);
-                resolve(payment);
-
-            }, error => reject(error));
-        });
     }
 
-    bankSlipTransaction(cartId: string): Promise<string> {
+    bankSlipTransaction(cartId: string, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.getToken();
-            let url = `${AppSettings.API_PAYMENTS}/payments/BankSlipTransaction/${cartId}`;
-            this.client.post(url, null, this.token)
+            let url = `${environment.API_PAYMENTS}/payments/BankSlipTransaction/${cartId}`;
+            this.client.post(url, null, token)
                 .map(res => {
                     if (res.status == 200) resolve(res.text());
                     return res.json();
@@ -72,11 +52,10 @@ export class PaymentService {
         });
     }
 
-    creditCardTransaction(cartId, creditcard: CreditCard): Promise<string> {
+    creditCardTransaction(cartId, creditcard: CreditCard, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.getToken();
-            let url = `${AppSettings.API_PAYMENTS}/payments/CreditCardTransaction/${cartId}`;
-            this.client.post(url, creditcard, this.token)
+            let url = `${environment.API_PAYMENTS}/payments/CreditCardTransaction/${cartId}`;
+            this.client.post(url, creditcard, token)
                 .map(res => {
                     if (res.status == 200) resolve(res.text());
                     return res.json();
@@ -87,50 +66,36 @@ export class PaymentService {
         });
     }
 
-    simulateInstallments(cartId: string): Promise<Payment[]> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/PaymentSimulation/Cart/${cartId}`;
-            this.getToken();
-            this.client.get(url, this.token)
-                .map(res => res.json())
-                .subscribe(response => {
-                    let payments = response.map(p => p = new Payment(p));
-                    resolve(payments);
-                }, error => reject(error));
-        })
-    }
-
-    simulateInstallmentsBySkuId(skuId: string): Promise<Payment[]> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/PaymentSimulation/Product/${skuId}`;
-            this.client.get(url)
-                .map(res => res.json())
-                .subscribe(response => {
-                    let simulator = response.map(p => p = new Payment(p));
-                    resolve(simulator);
-                }, error => reject(error));
-        });
-    }
-
-    simulateInstallmentsBySkuIdDefault(skuId: string, sessionId: string = null): Promise<Payment>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/PaymentSimulation/Product/${skuId}/Default?sessionId=${sessionId}`;
-            this.client.get(url)
+    simulateInstallments(cartId: string, token: Token): Observable<Payment[]> {
+        let url = `${environment.API_PAYMENTS}/payments/PaymentSimulation/Cart/${cartId}`;
+        return this.client.get(url, token)
             .map(res => res.json())
-            .subscribe(response => {
-                let simulator = new Payment(response);
-                resolve(simulator);
-            }, error => reject(error));
-        });
     }
 
-    createPagSeguroSession(): Promise<string> {
+    simulateInstallmentsBySkuId(skuId: string): Observable<Payment[]> {
+        let url = `${environment.API_PAYMENTS}/payments/PaymentSimulation/Product/${skuId}`;
+        return this.client.get(url)
+            .map(res => res.json())
+    }
+
+    /**
+     * Gera uma simulação do parcelamento
+     * @param {string} skuId 
+     * @param {string} [sessionId=null] Sessão do Pagseguro
+     * @returns {Promise<Payment>} 
+     * @memberof PaymentService
+     */
+    simulateInstallmentsBySkuIdDefault(skuId: string, sessionId: string = null): Observable<Payment> {
+        let url = `${environment.API_PAYMENTS}/payments/PaymentSimulation/Product/${skuId}/Default?sessionId=${sessionId}`;
+        return this.client.get(url)
+            .map(res => res.json())
+    }
+
+    createPagSeguroSession(token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/PagSeguro/Session`;
-            this.getToken();
-            this.client.get(url, this.token)
+            let url = `${environment.API_PAYMENTS}/payments/PagSeguro/Session`;
+            this.client.get(url, token)
                 .map(res => {
-                    localStorage.setItem('pagseguro_session', res.text())
                     resolve(res.text());
                 })
                 .subscribe(response => {
@@ -141,11 +106,9 @@ export class PaymentService {
 
     createPagSeguroSessionSimulator(): Promise<string> {
         return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/PagSeguro/Session/Simulator`;
-            this.getToken();
-            this.client.get(url, this.token)
+            let url = `${environment.API_PAYMENTS}/payments/PagSeguro/Session/Simulator`;
+            this.client.get(url)
                 .map(res => {
-                    localStorage.setItem('pagseguro_session', res.text())
                     resolve(res.text());
                 })
                 .subscribe(response => {
@@ -154,68 +117,21 @@ export class PaymentService {
         });
     }
 
-    getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Promise<PagSeguroSimulationResponse>{
-        return new Promise((resolve, reject) => {
-            let urlProduction = `https://pagseguro.uol.com.br/checkout/v2/installments.json?sessionId=${sessionId}&amount=${amount}&creditCardBrand=${creditCardBrand}&maxInstallmentNoInterest=${maxInstallmentNoInterest}`;
-            let urlSandbox = `https://sandbox.pagseguro.uol.com.br/checkout/v2/installments.json?sessionId=${sessionId}&amount=${amount}&creditCardBrand=${creditCardBrand}&maxInstallmentNoInterest=${maxInstallmentNoInterest}`;
-
-            this.client.get(isSandBox ? urlSandbox : urlProduction)
+    getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Observable<PagSeguroSimulationResponse> {
+        let urlProduction = `https://pagseguro.uol.com.br/checkout/v2/installments.json?sessionId=${sessionId}&amount=${amount}&creditCardBrand=${creditCardBrand}&maxInstallmentNoInterest=${maxInstallmentNoInterest}`;
+        let urlSandbox = `https://sandbox.pagseguro.uol.com.br/checkout/v2/installments.json?sessionId=${sessionId}&amount=${amount}&creditCardBrand=${creditCardBrand}&maxInstallmentNoInterest=${maxInstallmentNoInterest}`;
+        return this.client.get(isSandBox ? urlSandbox : urlProduction)
             .map(res => res.json())
-            .subscribe(response => {
-                resolve(response);
-            }, error => {
-                reject(error);
-            });
-        })
     }
 
-    PagseguroBankSlip(cartId: string, hash: string): Promise<string> {
+    PagseguroBankSlip(cartId: string, hash: string, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/PagSeguro/BankSlip/${cartId}?SenderHash=${hash}`;
-            this.getToken();
-            this.client.post(url, null, this.token)
+            let url = `${environment.API_PAYMENTS}/payments/PagSeguro/BankSlip/${cartId}?SenderHash=${hash}`;
+            this.client.post(url, null, token)
                 .map(res => {
-
-                    if (res.status == 200)
+                    if (res.status == 200) {
                         resolve(res.text());
-
-                    return res.json();
-                })
-                .subscribe(response => {
-                    resolve(response);
-
-                }, error => reject(error));
-        });
-    }
-
-    PagseguroCreditCard(cartId: string, hash: string, creditCard: PagseguroCreditCard): Promise<string> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/PagSeguro/CreditCard/${cartId}/?SenderHash=${hash}`;
-            this.getToken();
-            this.client.post(url, creditCard, this.token)
-                .map(res => {
-
-                    if (res.status == 200)
-                        resolve(res.text());
-
-                    return res.json();
-                })
-                .subscribe(response => {
-                    resolve(response);
-
-                }, error => reject(error));
-        });
-    }
-
-    pickUpStoreTransaction(cartId: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/PickUpStore/${cartId}/`;
-            this.getToken();
-            this.client.post(url, null, this.token)
-                .map(res => {
-                    if (res.status == 200)
-                        resolve(res.text());
-
+                    }
                     return res.json();
                 })
                 .subscribe(response => {
@@ -224,17 +140,48 @@ export class PaymentService {
         });
     }
 
-    delivertPayment(cartId: string, changeFor: number = null): Promise<string> {
+    PagseguroCreditCard(cartId: string, hash: string, creditCard: PagseguroCreditCard, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/DeliveryPayment/${cartId}/`;
+            let url = `${environment.API_PAYMENTS}/payments/PagSeguro/CreditCard/${cartId}/?SenderHash=${hash}`;
+            this.client.post(url, creditCard, token)
+                .map(res => {
+                    if (res.status == 200) {
+                        resolve(res.text());
+                    }
+                    return res.json();
+                })
+                .subscribe(response => {
+                    resolve(response);
+                }, error => reject(error));
+        });
+    }
+
+    pickUpStoreTransaction(cartId: string, token: Token): Promise<string> {
+        return new Promise((resolve, reject) => {
+            let url = `${environment.API_PAYMENTS}/payments/PickUpStore/${cartId}/`;
+            this.client.post(url, null, token)
+                .map(res => {
+                    if (res.status == 200) {
+                        resolve(res.text());
+                    }
+                    return res.json();
+                })
+                .subscribe(response => {
+                    resolve(response);
+                }, error => reject(error));
+        });
+    }
+
+    delivertPayment(cartId: string, token: Token, changeFor: number = null): Promise<string> {
+        return new Promise((resolve, reject) => {
+            let url = `${environment.API_PAYMENTS}/payments/DeliveryPayment/${cartId}/`;
             changeFor = (changeFor) ? changeFor : 0;
             let body = { type: 'Money', changeFor: changeFor };
-            this.getToken();
-            this.client.post(url, body, this.token)
+            this.client.post(url, body, token)
                 .map(res => {
-                    if (res.status == 200)
+                    if (res.status == 200) {
                         resolve(res.text());
-
+                    }
                     return res.json();
                 })
                 .subscribe(response => {
@@ -243,15 +190,14 @@ export class PaymentService {
         });
     }
 
-    GetMercadoPagoPublicKey(): Promise<string> {
+    GetMercadoPagoPublicKey(token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/MercadoPago/PublicKey/`;
-            this.getToken();
-            this.client.get(url, this.token)
+            let url = `${environment.API_PAYMENTS}/payments/MercadoPago/PublicKey/`;
+            this.client.get(url, token)
                 .map(res => {
-                    if (res.status == 200)
+                    if (res.status == 200) {
                         resolve(res.text());
-
+                    }
                     return res.json();
                 })
                 .subscribe(response => {
@@ -260,37 +206,14 @@ export class PaymentService {
         });
     }
 
-
-    MercadoPagoCreditCard(cartId: string, creditCard: MercadoPagoCreditCard): Promise<string> {
+    MercadoPagoCreditCard(cartId: string, creditCard: MercadoPagoCreditCard, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/MercadoPago/CreditCard/${cartId}`;
-            this.getToken();
-            this.client.post(url, creditCard, this.token)
+            let url = `${environment.API_PAYMENTS}/payments/MercadoPago/CreditCard/${cartId}`;
+            this.client.post(url, creditCard, token)
                 .map(res => {
-
-                    if (res.status == 200)
+                    if (res.status == 200) {
                         resolve(res.text());
-
-                    return res.json();
-                })
-                .subscribe(response => {
-                    resolve(response);
-
-                }, error => reject(error));
-        });
-    }   
-
-
-    MercadoPagoBankSlip(cartId: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/MercadoPago/BankSlip/${cartId}`;
-            this.getToken();
-            this.client.post(url, null, this.token)
-                .map(res => {
-
-                    if (res.status == 200)
-                        resolve(res.text());
-
+                    }
                     return res.json();
                 })
                 .subscribe(response => {
@@ -300,28 +223,32 @@ export class PaymentService {
         });
     }
 
-
-    MercadoPagoGetPaymentsMethods(): Promise<MercadoPagoPaymentMethod[]> {
+    MercadoPagoBankSlip(cartId: string, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/MercadoPago/PaymentMethods`;
-            this.client.get(url)
-                .map(res => res.json())
+            let url = `${environment.API_PAYMENTS}/payments/MercadoPago/BankSlip/${cartId}`;
+            this.client.post(url, null, token)
+                .map(res => {
+                    if (res.status == 200) {
+                        resolve(res.text());
+                    }
+                    return res.json();
+                })
                 .subscribe(response => {
-                    let payments = response.map(g => g = new MercadoPagoPaymentMethod(g));
-                    resolve(payments);
+                    resolve(response);
+
                 }, error => reject(error));
         });
     }
 
+    MercadoPagoGetPaymentsMethods(): Observable<MercadoPagoPaymentMethod[]> {
+        let url = `${environment.API_PAYMENTS}/payments/MercadoPago/PaymentMethods`;
+        return this.client.get(url)
+            .map(res => res.json())
+    }
 
-    MercadoPagoGetInstalments(payment_method_id:string, amount:number ): Promise<MercadoPagoInstallmentResponse> {
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_PAYMENTS}/payments/MercadoPago/Installments/${payment_method_id}/${amount}`;
-            this.client.get(url)
-                .map(res => res.json())
-                .subscribe(response => {
-                    resolve(new MercadoPagoInstallmentResponse(response));
-                }, error => reject(error));
-        });
+    MercadoPagoGetInstalments(payment_method_id: string, amount: number): Observable<MercadoPagoInstallmentResponse> {
+        let url = `${environment.API_PAYMENTS}/payments/MercadoPago/Installments/${payment_method_id}/${amount}`;
+        return this.client.get(url)
+            .map(res => res.json())
     }
 }

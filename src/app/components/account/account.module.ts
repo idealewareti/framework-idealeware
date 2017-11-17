@@ -1,18 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AccountComponent } from "app/components/account/account.component";
-import { CustomerService } from "app/services/customer.service";
-import { OrderService } from "app/services/order.service";
-import { CouponService } from "app/services/coupon.service";
 import { RouterModule } from "@angular/router";
-import { AccountRoutingModule } from "app/components/account/account-router";
-import { AccountHomeModule } from "app/components/account/home/home-panel.module";
-import { UserEditModule } from "app/components/account/user-edit-panel/user-edit.module";
-import { OrderPanelModule } from "app/components/account/orders-panel/orders-panel.module";
-import { MyOrderPanelModule } from "app/components/account/myorder-panel/myorder-panel.module";
-import { AddressPanelModule } from "app/components/account/address-panel/address-panel.module";
-import { AddressEditModule } from "app/components/account/address-edit-panel/address-edit.module";
-import { VouncherPanelModule } from "app/components/account/vouncher-panel/vouncher-panel.module";
+import { AccountComponent } from './account.component';
+import { AccountRoutingModule } from './account-router';
+import { AccountHomeModule } from './home/home-panel.module';
+import { UserEditModule } from './user-edit-panel/user-edit.module';
+import { MyOrderPanelModule } from './myorder-panel/myorder-panel.module';
+import { OrderPanelModule } from './orders-panel/orders-panel.module';
+import { AddressEditModule } from './address-edit-panel/address-edit.module';
+import { AddressPanelModule } from './address-panel/address-panel.module';
+import { VouncherPanelModule } from './vouncher-panel/vouncher-panel.module';
+import { CustomerService } from '../../services/customer.service';
+import { OrderService } from '../../services/order.service';
+import { CouponService } from '../../services/coupon.service';
+
 
 @NgModule({
     declarations: [ AccountComponent ],

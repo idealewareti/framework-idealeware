@@ -1,19 +1,20 @@
-import { Component, OnInit, AfterViewChecked } from '@angular/core';
-import { CustomPaintColor } from "app/models/custom-paint/custom-paint-color";
-import { CustomPaintService } from "app/services/custom-paint.service";
+import { Component, OnInit, AfterViewChecked, PLATFORM_ID, Inject } from '@angular/core';
+import { CustomPaintColor } from "../../../models/custom-paint/custom-paint-color";
+import { CustomPaintService } from "../../../services/custom-paint.service";
 import { Title } from "@angular/platform-browser";
-import { AppSettings } from "app/app.settings";
 import { ActivatedRoute, Router } from "@angular/router";
-import { CustomPaintManufacturer } from "app/models/custom-paint/custom-paint-manufacturer";
-import { CustomPaintFamily } from "app/models/custom-paint/custom-paint-family";
+import { CustomPaintManufacturer } from "../../../models/custom-paint/custom-paint-manufacturer";
+import { CustomPaintFamily } from "../../../models/custom-paint/custom-paint-family";
+import { isPlatformBrowser } from '@angular/common';
 
 declare var $: any;
 declare var swal: any;
 
 @Component({
     moduleId: module.id,
-    selector: 'custom-paint-color',
-    templateUrl: '../../../views/custom-paint-color.component.html',
+    selector: 'app-custom-paint-color',
+    templateUrl: '../../../template/custom-paint/custom-paint-color/custom-paint-color.html',
+    styleUrls: ['../../../template/custom-paint/custom-paint-color/custom-paint-color.scss']
 })
 export class CustomPaintColorComponent implements OnInit {
     private colorsLoaded: boolean = false;
@@ -26,10 +27,11 @@ export class CustomPaintColorComponent implements OnInit {
     familySelected: CustomPaintFamily = null;
 
     constructor(
-        private service: CustomPaintService, 
+        private service: CustomPaintService,
         private titleService: Title,
         private route: ActivatedRoute,
         private parentRouter: Router,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
@@ -39,112 +41,116 @@ export class CustomPaintColorComponent implements OnInit {
                 this.manufacuterId = params['manufacturer'];
                 this.getColors(this.manufacuterId);
                 this.getManufacturer(this.manufacuterId);
-        });
+            });
     }
 
-     ngAfterViewChecked() {
-         if(this.colorsLoaded){
-            $('[data-toggle="popover"]').popover();
-            this.colorsLoaded = false;
-         }
-     }
-
-     nextStep(event = null): any{
-         if(event)
-            event.preventDefault();
-        
-        if(!this.colorSelected){
-            swal('Erro', 'Nenhuma cor selecionada', 'error');
-            return;
+    ngAfterViewChecked() {
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.colorsLoaded) {
+                $('[data-toggle="popover"]').popover();
+                this.colorsLoaded = false;
+            }
         }
-        else{
-            let url: string = `/corespersonalizadas/${this.manufacturer.manufacturer}/${this.colorSelected.code}`;
-            this.parentRouter.navigateByUrl(url);
-        }
-     }
+    }
 
-    /* Loaders */     
-    getColors(manufacuter: string){
+    nextStep(event = null): any {
+        if (isPlatformBrowser(this.platformId)) {
+            if (event)
+                event.preventDefault();
+
+            if (!this.colorSelected) {
+                swal('Erro', 'Nenhuma cor selecionada', 'error');
+                return;
+            }
+            else {
+                let url: string = `/corespersonalizadas/${this.manufacturer.manufacturer}/${this.colorSelected.code}`;
+                this.parentRouter.navigateByUrl(url);
+            }
+        }
+    }
+
+    /* Loaders */
+    getColors(manufacuter: string) {
+        if (isPlatformBrowser(this.platformId)) {
         this.service.getColorsFromManufacturer(manufacuter)
-        .then(colors => {
-            this.colors = colors;
-            this.colorsLoaded = true;
-            this.getFamilies();
-        })
-        .catch(error => {
-            console.log(error);
-            swal(error.text());
-        });
+            .subscribe(colors => {
+                this.colors = colors;
+                this.colorsLoaded = true;
+                this.getFamilies();
+            }, error => {
+                console.log(error);
+                swal(error.text());
+            });
+        }
     }
 
-    getManufacturer(id: string){
+    getManufacturer(id: string) {
         this.service.getManufacturers()
-        .then(manufacturers => {
-            this.manufacturer = manufacturers.filter(m => m.manufacturer === id)[0];
-            AppSettings.setTitle(`Cores Personalizadas ${this.manufacturer.name} -Selecione a cor`, this.titleService);
+            .subscribe(manufacturers => {
+                this.manufacturer = manufacturers.filter(m => m.manufacturer === id)[0];
+                this.titleService.setTitle(`Cores Personalizadas ${this.manufacturer.name} -Selecione a cor`);
 
-        })
-        .catch(error => console.log(error));
+            }, error => console.log(error));
     }
 
-    getFamilies(){
+    getFamilies() {
         let unique: CustomPaintColor[] = []
-        this.colors.forEach(c => {if(unique.findIndex(u => u.familyName === c.familyName) == -1) unique.push(c);})
-        if(unique.length > 0){
+        this.colors.forEach(c => { if (unique.findIndex(u => u.familyName === c.familyName) == -1) unique.push(c); })
+        if (unique.length > 0) {
             unique.forEach(u => {
-                this.families.push(new CustomPaintFamily({name: u.familyName, code: u.familyCode, position: u.familyPosition}));
+                this.families.push(new CustomPaintFamily({ name: u.familyName, code: u.familyCode, position: u.familyPosition }));
             });
         }
     }
 
     /* Helpers */
-    paintBackground(color: string): string{
-        if(/^\S{6}$/.test(color))
+    paintBackground(color: string): string {
+        if (/^\S{6}$/.test(color))
             return `#${color}`;
         else
             return `rgb(${color})`;
     }
 
-    colorPopOver(color: CustomPaintColor): string{
+    colorPopOver(color: CustomPaintColor): string {
         return `<span style="display: inline-block; width: 20px; height: 20px; background-color: ${this.paintBackground(color.rgb)}"></span> <strong>Código:</strong> ${color.code}`;
     }
 
-    colorBox(color: CustomPaintColor): string{
+    colorBox(color: CustomPaintColor): string {
         return `<span class="color-block" style="background-color: ${this.paintBackground(color.rgb)}"></span> ${color.name} (${color.code})`;
     }
 
-    isFamilySelected(family: CustomPaintFamily): boolean{
-        if(this.familySelected && this.familySelected.code == family.code)
+    isFamilySelected(family: CustomPaintFamily): boolean {
+        if (this.familySelected && this.familySelected.code == family.code)
             return true;
         else return false;
     }
 
     /* Filters */
-    searchColors(): CustomPaintColor[]{
+    searchColors(): CustomPaintColor[] {
         this.colorsLoaded = true;
         let colors: CustomPaintColor[] = [];
-        if(this.findColor)
+        if (this.findColor)
             colors = this.colors.filter(color => (color.name.toLowerCase().indexOf(this.findColor.toLowerCase()) !== -1) || (color.code.toLowerCase().indexOf(this.findColor.toLowerCase()) !== -1));
-        else 
+        else
             colors = this.colors;
-        if(this.familySelected)
+        if (this.familySelected)
             return colors.filter(color => color.familyCode == this.familySelected.code);
         else return colors;
     }
 
     /* Handlers */
-    selectColor(color: CustomPaintColor, event = null){
-        if(event)
+    selectColor(color: CustomPaintColor, event = null) {
+        if (event)
             event.preventDefault();
-        
+
         this.colorSelected = color;
     }
 
-    selectFamily(family: CustomPaintFamily, event = null){
-        if(event)
+    selectFamily(family: CustomPaintFamily, event = null) {
+        if (event)
             event.preventDefault();
-        
-        if(this.isFamilySelected(family))
+
+        if (this.isFamilySelected(family))
             this.familySelected = null;
         else
             this.familySelected = family;

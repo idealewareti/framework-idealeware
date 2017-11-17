@@ -1,7 +1,7 @@
 import { Payment } from "./payment";
 import { PaymentMethod } from "./payment-method";
 import { PagseguroOption } from "../pagseguro/pagseguro-option";
-import { MercadoPagoPaymentMethod } from "app/models/mercadopago/mercadopago-paymentmethod";
+import { MercadoPagoPaymentMethod } from "../mercadopago/mercadopago-paymentmethod";
 
 export class PaymentSelected {
     payment: Payment;

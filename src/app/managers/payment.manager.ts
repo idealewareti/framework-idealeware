@@ -1,55 +1,113 @@
-import { Injectable } from "@angular/core";
-import { PaymentService } from "app/services/payment.service";
-import { Payment } from "app/models/payment/payment";
-import { PaymentMethodTypeEnum } from "app/enums/payment-method-type.enum";
-import { Sku } from "app/models/product/sku";
-import { PagseguroInstallment } from "app/models/pagseguro/pagseguro-installment";
-import { PaymentMethod } from "app/models/payment/payment-method";
-import { MercadoPagoError } from "app/models/mercadopago/mercadopago-error";
-import { PaymentSetting } from "app/models/payment/payment-setting";
-import { PagSeguroSimulationResponse } from "app/models/pagseguro/pagseguro-simulation";
-import { EnumPaymentType } from "app/enums/payment-type.enum";
-import { MercadoPagoPaymentMethod } from "app/models/mercadopago/mercadopago-paymentmethod";
-import { MercadoPagoInstallmentResponse } from "app/models/mercadopago/mercadopago-installment-response";
-
-declare var PagSeguroDirectPayment: any;
+import { Injectable, Inject, PLATFORM_ID } from "@angular/core";
+import { PaymentService } from "../services/payment.service";
+import { Sku } from "../models/product/sku";
+import { Payment } from "../models/payment/payment";
+import { MercadoPagoPaymentMethod } from "../models/mercadopago/mercadopago-paymentmethod";
+import { MercadoPagoInstallmentResponse } from "../models/mercadopago/mercadopago-installment-response";
+import { PaymentMethodTypeEnum } from "../enums/payment-method-type.enum";
+import { EnumPaymentType } from "../enums/payment-type.enum";
+import { PaymentMethod } from "../models/payment/payment-method";
+import { PaymentSetting } from "../models/payment/payment-setting";
+import { MercadoPagoError } from "../models/mercadopago/mercadopago-error";
+import { PagSeguroSimulationResponse } from "../models/pagseguro/pagseguro-simulation";
+import { isPlatformBrowser } from "@angular/common";
+import { Token } from "../models/customer/token";
 
 @Injectable()
-export class PaymentManager{
-    
-    constructor(private service: PaymentService){}
+export class PaymentManager {
+    constructor(private service: PaymentService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
+    private getToken(): Token {
+        let token = new Token();
+        if(isPlatformBrowser(this.platformId)) {
+            token.accessToken = localStorage.getItem('auth');
+            token.createdDate = new Date(localStorage.getItem('auth_create'));
+            token.expiresIn = Number(localStorage.getItem('auth_expires'));
+            token.tokenType = 'Bearer';
+        }
+        return token;
+    }
+    
     getAll(): Promise<Payment[]>{
-        return this.service.getAll();
+        return new Promise((resolve, reject) => {
+            this.service.getAll()
+            .subscribe(response => {
+                let payments = response.map(p => p = new Payment(p));
+                resolve(payments);
+            }, error => reject(error));
+        })
     }
 
-    getDefault(): Promise<Payment>{
-        return this.service.getDefault();
+    getDefault(): Promise<Payment> {
+        return new Promise((resolve, reject) => {
+            this.service.getDefault()
+            .subscribe(response => {
+                let payment:Payment = new Payment(response);
+                resolve(payment);
+
+            }, error => reject(error));
+        });
     }
 
     simulateInstallmentsBySkuId(skuId: string): Promise<Payment[]>{
-        return this.service.simulateInstallmentsBySkuId(skuId)
+        return new Promise((resolve, reject) => {
+            this.service.simulateInstallmentsBySkuId(skuId)
+            .subscribe(response => {
+                let simulator = response.map(p => p = new Payment(p));
+                resolve(simulator);
+            }, error => reject(error));
+        });
     }
 
     simulateInstallmentsBySkuIdDefault(skuId: string): Promise<Payment>{
-        let sessionId = this.getPagSeguroSession();
-        return this.service.simulateInstallmentsBySkuIdDefault(skuId, sessionId);
+        return new Promise((resolve, reject) => {
+            let sessionId = this.getPagSeguroSession();
+            this.service.simulateInstallmentsBySkuIdDefault(skuId, sessionId)
+            .subscribe(response => {
+                let simulator = new Payment(response);
+                resolve(simulator);
+            }, error => reject(error));
+        });
     }
 
     simulateInstallmentsByCartId(cartId: string): Promise<Payment[]>{
-        return this.service.simulateInstallments(cartId);
+        if(isPlatformBrowser(this.platformId)) {
+            let token = this.getToken();
+            return new Promise((resolve, reject) => {
+                this.service.simulateInstallments(cartId, token)
+                .subscribe(response => {
+                    let payments = response.map(p => p = new Payment(p));
+                    resolve(payments);
+                }, error => reject(error));
+            });
+        }
     }
 
     getMercadoPagoMethods(): Promise<MercadoPagoPaymentMethod[]>{
-        return this.service.MercadoPagoGetPaymentsMethods();
+        return new Promise((resolve, reject) => {
+            this.service.MercadoPagoGetPaymentsMethods()
+            .subscribe(response => {
+               let payments = response.map(g => g = new MercadoPagoPaymentMethod(g));
+               resolve(payments);
+           }, error => reject(error));
+
+        })
     }
 
     getMercadoPagoPublicKey(): Promise<string>{
-        return this.service.GetMercadoPagoPublicKey();
+        if(isPlatformBrowser(this.platformId)) {
+            let token = this.getToken();
+            return this.service.GetMercadoPagoPublicKey(token);
+        }
     }
 
     getMercadoPagoInstalments(methodId: string, totalPurchasePrice: number): Promise<MercadoPagoInstallmentResponse>{
-        return this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice);
+        return new Promise((resolve, reject) => {
+            this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice)
+            .subscribe(response => {
+                resolve(new MercadoPagoInstallmentResponse(response));
+            }, error => reject(error));
+        });
     }
 
     /*
@@ -199,7 +257,10 @@ export class PaymentManager{
     */
     
     createPagSeguroSession(): Promise<string>{
-        return this.service.createPagSeguroSession();
+        if(isPlatformBrowser(this.platformId)) {
+            let token = this.getToken();
+            return this.service.createPagSeguroSession(token);
+        }
     }
 
     createPagSeguroSessionSimulator(): Promise<string>{
@@ -207,20 +268,30 @@ export class PaymentManager{
     }
 
     getPagSeguroSession(): string{
-        return localStorage.getItem('pagseguro_session');
+        if(isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('pagseguro_session');
+        }
+        else {
+            return null;
+        }
     }
 
     getPagSeguroStoredSession(): Promise<string>{
         return new Promise((resolve, reject) => {
-            let session: string =  this.getPagSeguroSession();
-            if(session)
-                resolve(session);
-            else{
-                let auth: string = localStorage.getItem('auth');
-                if(auth)
-                    return this.createPagSeguroSession();
-                else
-                    return this.createPagSeguroSessionSimulator();
+            if(isPlatformBrowser(this.platformId)) {
+                let session: string =  this.getPagSeguroSession();
+                if(session)
+                    resolve(session);
+                else{
+                    let auth: string = localStorage.getItem('auth');
+                    if(auth)
+                        return this.createPagSeguroSession();
+                    else
+                        return this.createPagSeguroSessionSimulator();
+                }
+            }
+            else {
+                resolve(null);
             }
         })
     }
@@ -238,26 +309,6 @@ export class PaymentManager{
         let productPrice: number  = (sku.promotionalPrice > 0) ? sku.promotionalPrice : sku.price;
 
         return new Promise((resolve, reject) => {
-            // if(payment.name.toLowerCase() == 'pagseguro'){
-            //     this.createPagSeguroSessionSimulator()
-            //     .then(session => this.getPagSeguroInstallments(session, productPrice, cardBrand, noInterestInstallmentQuantity, true))
-            //     .then(response => {
-            //         let installments: PagseguroInstallment[] = response.installments[cardBrand];
-            //         let method = new PaymentMethod();
-            //         method.name = 'Visa'
-            //         installments.forEach(i => {
-            //             method.installment.push(i.convertToInstallment());
-            //         });
-                    
-            //         payment.paymentMethods.push(method);
-            //         resolve(payment);
-            //     })
-            //     .catch(error => {
-            //         console.log(error);
-            //         reject('Não foi possível obter o parcelamento');
-            //     });
-            // }
-            // else{
                 this.simulateInstallmentsBySkuId(sku.id)
                 .then(payments => {
                     if(this.isMundiPagg(payment)){
@@ -277,17 +328,14 @@ export class PaymentManager{
     }
 
     getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Promise<PagSeguroSimulationResponse>{
-        return this.service.getPagSeguroInstallments(sessionId, amount, creditCardBrand, maxInstallmentNoInterest, isSandBox);
-        // return new Promise((resolve, reject) => {
-        //     PagSeguroDirectPayment.setSessionId(sessionId);
-        //     PagSeguroDirectPayment.getInstallments({
-        //         amount: amount,
-        //         creditCardBrand: creditCardBrand, 
-        //         maxInstallmentNoInterest: maxInstallmentNoInterest, 
-        //         success: response => resolve(new PagSeguroSimulationResponse(response)), 
-        //         error: response => reject(response)
-        //     });
-        // });
+        return new Promise((resolve, reject) => {
+            this.service.getPagSeguroInstallments(sessionId, amount, creditCardBrand, maxInstallmentNoInterest, isSandBox)
+            .subscribe(response => {
+                resolve(response);
+            }, error => {
+                reject(error);
+            });
+        });
     }
 
     getInstallmentText(gateway: Payment, method: PaymentMethod): string{

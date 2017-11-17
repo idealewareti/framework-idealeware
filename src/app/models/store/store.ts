@@ -1,5 +1,5 @@
-import { StoreSetting } from "./storeSetting";
-import { EnumStoreModality } from "app/enums/store-modality.enum";
+import { StoreSetting } from "./store-setting";
+import { EnumStoreModality } from "../../enums/store-modality.enum";
 
 export class Store {
     domain: string;
@@ -31,6 +31,7 @@ export class Store {
             this.logo = null;
             this.companyName = null;
             this.tradingName =  null;
+            this.phone = null;
         }
     }
 

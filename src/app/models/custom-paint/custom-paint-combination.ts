@@ -1,6 +1,6 @@
-import { CustomPaintColor } from "app/models/custom-paint/custom-paint-color";
-import { CustomPaintVariationReference } from "app/models/custom-paint/custom-paint-combination-variation";
-import { Paint } from "app/models/custom-paint/custom-paint";
+import { CustomPaintColor } from "./custom-paint-color";
+import { CustomPaintVariationReference } from "./custom-paint-combination-variation";
+import { Paint } from "./custom-paint";
 
 export class CustomPaintCombination {
     

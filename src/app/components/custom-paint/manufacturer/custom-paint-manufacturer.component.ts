@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomPaintManufacturer } from "app/models/custom-paint/custom-paint-manufacturer";
-import { CustomPaintService } from "app/services/custom-paint.service";
+import { CustomPaintManufacturer } from "../../../models/custom-paint/custom-paint-manufacturer";
+import { CustomPaintService } from "../../../services/custom-paint.service";
 import { Title } from "@angular/platform-browser";
-import { AppSettings } from "app/app.settings";
-import { Globals } from 'app/models/globals';
+import { Globals } from '../../../models/globals';
 
 @Component({
     moduleId: module.id,
-    selector: 'custom-paint-manufacturer',
-    templateUrl: '../../../views/custom-paint-manufacturer.component.html',
+    selector: 'app-custom-paint-manufacturer',
+    templateUrl: '../../../template/custom-paint/custom-paint-manufacturer/custom-paint-manufacturer.html',
+    styleUrls: ['../../../template/custom-paint/custom-paint-manufacturer/custom-paint-manufacturer.scss']
 })
 export class CustomPaintManufacturerComponent implements OnInit {
     manufacturers: CustomPaintManufacturer[] = [];
@@ -22,14 +22,14 @@ export class CustomPaintManufacturerComponent implements OnInit {
 
     ngOnInit() {
         this.mediaPath = `${this.globals.store.link}/static/custompaint/`;
-        AppSettings.setTitle('Cores Personalizadas', this.titleService);
+        this.titleService.setTitle('Cores Personalizadas');
         this.getManufacturers();
      }
 
     getManufacturers(){
         this.service.getManufacturers()
-        .then(manufacturers => this.manufacturers = manufacturers)
-        .catch(error => console.log(error));
+        .subscribe(manufacturers => this.manufacturers = manufacturers,
+            error => console.log(error));
     }
 
 

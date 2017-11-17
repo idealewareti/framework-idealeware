@@ -2,9 +2,9 @@ import {CartItem} from './cart-item';
 import {Customer} from '../customer/customer';
 import { CustomerAddress } from '../customer/customer-address';
 import { Coupon } from "../coupon/coupon";
-import { Shipping } from "app/models/shipping/shipping";
-import { Service } from "app/models/product-service/product-service";
-import { Paint } from "app/models/custom-paint/custom-paint";
+import { Paint } from '../custom-paint/custom-paint';
+import { Service } from '../product-service/product-service';
+import { Shipping } from '../shipping/shipping';
 
 export class Cart{
   id: string;

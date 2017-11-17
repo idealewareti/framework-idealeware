@@ -1,33 +1,26 @@
-import { Injectable}  from '@angular/core';
-import { HttpClient } from '../helpers/httpclient';
-import { AppSettings } from 'app/app.settings';
-import { Store } from '../models/store/store';
+import { Injectable } from "@angular/core";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { environment } from "../../environments/environment";
+import { Store } from "../models/store/store";
+import { Observable } from "rxjs/Observable";
+import { Http } from "@angular/http";
 
 @Injectable()
 export class StoreService{
+    client: HttpClientHelper;
 
-    constructor(private client: HttpClient){}
-
-    setUp(): Promise<string>{
-        return new Promise((resolve, reject) => {
-            if(AppSettings.DOMAIN != localStorage.getItem('store_domain'))
-                localStorage.clear();
-            
-            localStorage.setItem('store_domain', AppSettings.DOMAIN);
-            resolve(AppSettings.DOMAIN);
-        });
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
     }
 
-    getInfo(): Promise<Store>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_STORE}/store`;
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                resolve(new Store(response));
-            }, error => reject(error));
-        });
+    /**
+     * Retorna as informações da loja
+     * @returns {Observable<Store>} 
+     * @memberof StoreService
+     */
+    getStore(): Observable<Store>{
+        let url: string = `${environment.API_STORE}/store`;
+        return this.client.get(url)
+        .map(res => res.json());        
     }
-
-    
 }

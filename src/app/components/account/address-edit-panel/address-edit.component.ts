@@ -1,20 +1,22 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppTexts } from 'app/app.texts';
-import { CustomerAddress } from 'app/models/customer/customer-address';
-import { CustomerService } from 'app/services/customer.service';
-import { DneAddressService } from "app/services/dneaddress.service";
 import { Title } from "@angular/platform-browser";
-import { AppSettings } from "app/app.settings";
+import { CustomerAddress } from '../../../models/customer/customer-address';
+import { CustomerService } from '../../../services/customer.service';
+import { AppTexts } from '../../../app.texts';
+import { DneAddressService } from '../../../services/dneaddress.service';
+import { isPlatformBrowser } from '@angular/common';
+import { Token } from '../../../models/customer/token';
 
 declare var swal: any;
 declare var toastr: any;
 
 @Component({
     moduleId: module.id,
-    selector: 'edit-address',
-    templateUrl: '../../../views/address-edit.component.html',
+    selector: 'app-edit-address',
+    templateUrl: '../../../template/account/address-edit-panel/address-edit.html',
+    styleUrls: ['../../../template/account/address-edit-panel/address-edit.scss']
 })
 export class AddressEditComponent implements OnInit {
     @Input() tabId: string;
@@ -31,6 +33,7 @@ export class AddressEditComponent implements OnInit {
         private parentRouter: Router,
         private route: ActivatedRoute,
         private titleService: Title,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.address = new CustomerAddress();
         this.myForm = builder.group({
@@ -55,7 +58,7 @@ export class AddressEditComponent implements OnInit {
         }
         else {
             this.isEdit = false;
-            AppSettings.setTitle('Cadastar Novo Endereço', this.titleService);
+            this.titleService.setTitle('Cadastar Novo Endereço');
         }
     }
 
@@ -65,85 +68,83 @@ export class AddressEditComponent implements OnInit {
         else this.save();
     }
 
+    private getToken(): Token {
+        let token = new Token();
+        if (isPlatformBrowser(this.platformId)) {
+            token = new Token();
+            token.accessToken = localStorage.getItem('auth');
+            token.createdDate = new Date(localStorage.getItem('auth_create'));
+            token.expiresIn = Number(localStorage.getItem('auth_expires'));
+            token.tokenType = 'Bearer';
+        }
+        return token;
+    }
+
     private save() {
-        this.service.saveAddress(this.address)
-            .then(address => {
-                swal({
-                    title: 'Sucesso!',
-                    text: `Endereço ${address.addressName} cadastrado com sucesso!`,
-                    type: 'success',
-                    confirmButtonText: 'OK'
-                });
-                this.parentRouter.navigateByUrl(`/conta/enderecos`)
-            })
-            .catch(error => {
-                swal({
-                    title: 'Erro ao cadastrar novo endereço',
-                    text: error,
-                    type: 'success',
-                    confirmButtonText: 'OK'
-                });
-                console.log(error);
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            let token: Token = this.getToken();
+            this.service.saveAddress(this.address, token)
+                .subscribe(address => {
+                    swal('Sucesso!', `Endereço ${address.addressName} cadastrado com sucesso!`, 'success');
+                    this.parentRouter.navigateByUrl(`/conta/enderecos`)
+                }), error => {
+                    swal('Erro ao cadastrar novo endereço', error, 'error');
+                    console.log(error);
+                };
+        }
     }
 
     private update() {
-        this.service.updateAddress(this.address)
-            .then(address => {
-                swal({
-                    title: 'Sucesso!',
-                    text: `Endereço ${address.addressName} alterado com sucesso!`,
-                    type: 'success',
-                    confirmButtonText: 'OK'
+        if (isPlatformBrowser(this.platformId)) {
+            let token: Token = this.getToken();
+            this.service.updateAddress(this.address, token)
+                .subscribe(address => {
+                    swal('Sucesso!', `Endereço ${address.addressName} alterado com sucesso!`, 'success');
+                    this.parentRouter.navigateByUrl(`/conta/enderecos`)
+                }), (error => {
+                    swal('Erro ao cadastrar novo endereço', error, 'error');
+                    console.log(error);
                 });
-                this.parentRouter.navigateByUrl(`/conta/enderecos`)
-            })
-            .catch(error => {
-                swal({
-                    title: 'Erro ao cadastrar novo endereço',
-                    text: error,
-                    type: 'success',
-                    confirmButtonText: 'OK'
-                });
-                console.log(error);
-            });
+        }
     }
 
     private getAddress() {
-        this.service.getUser()
-            .then(user => {
-                this.address = user.addresses.filter(a => a.id == this.tabId)[0]
-                AppSettings.setTitle('Editar Endereço', this.titleService);
-            })
-            .catch(error => {
-                swal(error);
-                this.parentRouter.navigateByUrl(`/conta/enderecos`)
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            let token: Token = this.getToken();
+            this.service.getUser(token)
+                .subscribe(user => {
+                    this.address = user.addresses.filter(a => a.id == this.tabId)[0]
+                    this.titleService.setTitle('Editar Endereço');
+                }), error => {
+                    swal(error);
+                    this.parentRouter.navigateByUrl(`/conta/enderecos`)
+                };
+        }
     }
 
     getDne(event) {
-        event.preventDefault();
-        if (this.address != null && this.address.zipCode) {
-            toastr['info']('Localizando o endereço');
-
-            this.dneService.getAddress(this.address.zipCode)
-                .then(response => {
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            if (this.address != null && this.address.zipCode) {
+                toastr['info']('Localizando o endereço');
+                this.dneService.getAddress(this.address.zipCode)
+                    .subscribe(response => {
                         this.address.district = response.neighborhoods;
                         this.address.city = response.city;
                         this.address.addressLine1 = response.street;
                         this.address.state = response.state;
-                    if(response.street){
-                        toastr['success']('Endereço encontrado');
-                    }
-                    else{
-                        toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
-                    }
+                        if (response.street) {
+                            toastr['success']('Endereço encontrado');
+                        }
+                        else {
+                            toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
+                        }
 
-                })
-                .catch(error => { 
-                    toastr['error']('Endereço não encontrado, preencha os campos manualmente');
-                    console.log(error) 
-                });
+                    }), error => {
+                        toastr['error']('Endereço não encontrado, preencha os campos manualmente');
+                        console.log(error)
+                    };
+            }
         }
     }
 }

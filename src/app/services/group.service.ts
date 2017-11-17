@@ -1,36 +1,28 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '../helpers/httpclient'
-import {Title} from '@angular/platform-browser';
-import {AppSettings} from 'app/app.settings';
-import {Group} from '../models/group/group';
+import { Injectable } from "@angular/core";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { Group } from "../models/group/group";
+import { environment } from "../../environments/environment";
+import { Http } from "@angular/http";
+import { Observable } from "rxjs/Observable";
+
 
 @Injectable()
 export class GroupService{
-    constructor(private client: HttpClient){}
+    client: HttpClientHelper;
 
-    getAll(): Promise<Group[]>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_GROUP}/groups`;
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                let groups = response.map(g => g = new Group(g));
-                resolve(groups);
-            }, error => reject(error));
-        });
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
     }
 
-    getById(id): Promise<Group>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_GROUP}/groups/${id}`;
-            this.client.get(url)
-            .map(res => res.json())
-            .subscribe(response => {
-                let group = new Group(response);
-                resolve(group);
-            }, error => reject(error));
-        });
+    getAll(): Observable<Group[]>{
+        let url = `${environment.API_GROUP}/groups`;
+        return this.client.get(url)
+        .map(res => res.json())
     }
 
-    
+    getById(id): Observable<Group>{
+        let url = `${environment.API_GROUP}/groups/${id}`;
+        return this.client.get(url)
+        .map(res => res.json())
+    }
 }

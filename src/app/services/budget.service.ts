@@ -1,32 +1,24 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '../helpers/httpclient'
-import {Title} from '@angular/platform-browser';
-import {AppSettings} from 'app/app.settings';
-import { Token } from "../models/customer/token";
-import { AppTexts } from "app/app.texts";
+import { HttpClientHelper } from "../helpers/http.helper";
+import { Injectable } from "@angular/core";
+import { Http } from "@angular/http";
+import { Observable } from "rxjs/Observable";
 import { Budget } from "../models/budget/budget";
+import { environment } from "../../environments/environment";
+import { Token } from "../models/customer/token";
+
 
 @Injectable()
-export class BudgetService{
+export class BudgetService {
 
-    constructor(private client: HttpClient){ }
+    client: HttpClientHelper;
 
-    private getToken(): Token{
-        let token = new Token();
-        token.accessToken = localStorage.getItem('auth'); 
-        token.tokenType = 'Bearer';
-        return token;
+    constructor(http: Http) {
+        this.client = new HttpClientHelper(http);
     }
 
-    public createBudget(cartId: string): Promise<Budget>{
-        return new Promise((resolve, reject) => {
-            let url = `${AppSettings.API_BUDGET}/budgets/${cartId}`;
-            this.client.post(url, null, this.getToken())
-            .map(res => res.json())
-            .subscribe(response => {
-                let budget = new Budget(response);
-                resolve(budget);
-            }, error => reject(error));
-        });
+    public createBudget(cartId: string, token: Token): Observable<Budget> {
+        let url = `${environment.API_BUDGET}/budgets/${cartId}`;
+        return this.client.post(url, null, token)
+            .map(res => res.json());
     }
 }

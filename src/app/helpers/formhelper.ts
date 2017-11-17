@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core'
+import { Injectable } from '@angular/core'
 import { FormGroup, AbstractControl } from '@angular/forms';
 
 
@@ -6,10 +6,12 @@ import { FormGroup, AbstractControl } from '@angular/forms';
 export class FormHelper {
     public updateForm(form: FormGroup, values: any) {
         for (var controlName in form.controls) {
-            if (values.hasOwnProperty(controlName))
+            if (values.hasOwnProperty(controlName)) {
                 (<AbstractControl>form.controls[controlName]).updateValueAndValidity(values[controlName]);
-            else
+            }
+            else {
                 (<AbstractControl>form.controls[controlName]).updateValueAndValidity(null);
+            }
         }
     }
 
