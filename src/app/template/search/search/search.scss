@@ -1,9 +1,7 @@
-
-
 .facet-categories ul{
-    border: 0 !important;
+  border: 0 !important;
 }
-  
+
 .facet-brands{
   max-height: 300px;
   overflow-y: auto;
@@ -15,4 +13,16 @@
 
 .filter-left a[aria-expanded="false"] .fa-caret-right, .filter-left a[aria-expanded="true"] .fa-caret-down{
   display: inline-block;
+}
+
+.facet-categories .highlight h5 a {
+  color: #337ab7;
+}
+
+.facet-categories .highlight h5 a:hover {
+  color: #d9edf7;
+}
+
+.filter-by h5 a {
+  font-size: 16px;
 }
