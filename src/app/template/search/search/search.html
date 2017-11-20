@@ -9,15 +9,19 @@
                 <!-- Filter Box -->
                 <div class="filter-box hidden-lg hidden-md">
                     <div class="clearfix" id="filterby-title">
-                        <button class="btn-filter pull-left"><img src="assets/images/icon-filter.svg" alt="" /> Filtrar por</button>
+                        <button class="btn-filter pull-left">
+                            <img src="assets/images/icon-filter.svg" alt="" /> Filtrar por</button>
                     </div>
                     <div id="filter" style="display: none;">
                         <div class="filter-header">
                             <div class="clearfix">
-                                <button class="btn-close pull-left"><img src="assets/images/icon-close.svg" alt="Fechar"></button>
+                                <button class="btn-close pull-left">
+                                    <img src="assets/images/icon-close.svg" alt="Fechar">
+                                </button>
                                 <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
                             </div>
-                            <b><img src="assets/images/icon-filter.svg" alt=""> Filtrar por</b>
+                            <b>
+                                <img src="assets/images/icon-filter.svg" alt=""> Filtrar por</b>
                         </div>
                         <ul class="lvl1">
                             <li class="lvl1-item">
@@ -29,7 +33,9 @@
                                     <div>
                                         <div class="filter-header">
                                             <div class="clearfix">
-                                                <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                                <button class="btn-back pull-left">
+                                                    <img src="assets/images/icon-back.svg" alt="Voltar">
+                                                </button>
                                                 <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
                                             </div>
                                         </div>
@@ -39,15 +45,16 @@
                                                 <ul class="lvl2-items">
                                                     <li class="lvl2-item">
                                                         <label (click)="addFilter($event, 'category', category.id)">
-                                                            <input type="checkbox" [checked]="isChecked('category', category.id)" [value]="category.id" class="v-middle"> 
-                                                            <span class="v-middle">Tudo em <strong>{{category.name}}</strong>
+                                                            <input type="checkbox" [checked]="isChecked('category', category.id)" [value]="category.id" class="v-middle">
+                                                            <span class="v-middle">Tudo em
+                                                                <strong>{{category.name}}</strong>
                                                             </span>
                                                             <span *ngIf="category.quantity > 0" class="badge">{{category.quantity}}</span>
                                                         </label>
                                                     </li>
                                                     <li class="lvl2-item" *ngFor="let lvl2 of category.children">
                                                         <label (click)="addFilter($event, 'category', lvl2.id)">
-                                                            <input type="checkbox" [checked]="isChecked('category', lvl2.id)" [value]="lvl2.id" class="v-middle"> 
+                                                            <input type="checkbox" [checked]="isChecked('category', lvl2.id)" [value]="lvl2.id" class="v-middle">
                                                             <span class="v-middle">{{lvl2.name}}</span>
                                                             <span *ngIf="lvl2.quantity > 0" class="badge">{{lvl2.quantity}}</span>
                                                         </label>
@@ -66,14 +73,17 @@
                                 <div class="lvl2">
                                     <div class="filter-header">
                                         <div class="clearfix">
-                                            <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                            <button class="btn-back pull-left">
+                                                <img src="assets/images/icon-back.svg" alt="Voltar">
+                                            </button>
                                             <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
                                         </div>
                                     </div>
                                     <ul class="lvl2-items">
                                         <li class="lvl2-item" *ngFor="let brand of brands">
                                             <label (click)="addFilter($event, 'brand', brand.id)">
-                                                <input type="checkbox" [checked]="isChecked('brand', brand.id)" [value]="brand.id" class="v-middle"> <span class="v-middle">{{brand.name}}</span>
+                                                <input type="checkbox" [checked]="isChecked('brand', brand.id)" [value]="brand.id" class="v-middle">
+                                                <span class="v-middle">{{brand.name}}</span>
                                                 <span *ngIf="brand.quantity > 0" class="badge">{{brand.quantity}}</span>
                                             </label>
                                         </li>
@@ -88,14 +98,17 @@
                                 <div class="lvl2">
                                     <div class="filter-header">
                                         <div class="clearfix">
-                                            <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                            <button class="btn-back pull-left">
+                                                <img src="assets/images/icon-back.svg" alt="Voltar">
+                                            </button>
                                             <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
                                         </div>
                                     </div>
                                     <ul class="lvl2-items">
                                         <li class="lvl2-item" *ngFor="let brand of brands">
                                             <label (click)="addFilter($event, 'brand', brand.id)">
-                                                <input type="checkbox" [checked]="isChecked('brand', brand.id)" [value]="brand.id" class="v-middle"> <span class="v-middle">{{brand.name}}</span>
+                                                <input type="checkbox" [checked]="isChecked('brand', brand.id)" [value]="brand.id" class="v-middle">
+                                                <span class="v-middle">{{brand.name}}</span>
                                                 <span *ngIf="brand.quantity > 0" class="badge">{{brand.quantity}}</span>
                                             </label>
                                         </li>
@@ -110,14 +123,17 @@
                                 <div class="lvl2">
                                     <div class="filter-header">
                                         <div class="clearfix">
-                                            <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                            <button class="btn-back pull-left">
+                                                <img src="assets/images/icon-back.svg" alt="Voltar">
+                                            </button>
                                             <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
                                         </div>
                                     </div>
                                     <ul class="lvl2-items">
                                         <li class="lvl2-item" *ngFor="let variation of variations">
                                             <label (click)="addFilter($event, 'variation', variation.id)">
-                                                <input type="checkbox" [checked]="isChecked('variation', variation.id)" [value]="variation.id" class="v-middle"> <span class="v-middle">{{variation.name}}</span>
+                                                <input type="checkbox" [checked]="isChecked('variation', variation.id)" [value]="variation.id" class="v-middle">
+                                                <span class="v-middle">{{variation.name}}</span>
                                                 <span *ngIf="variation.quantity > 0" class="badge">{{variation.quantity}}</span>
                                             </label>
                                         </li>
@@ -132,14 +148,17 @@
                                 <div class="lvl2">
                                     <div class="filter-header">
                                         <div class="clearfix">
-                                            <button class="btn-back pull-left"><img src="assets/images/icon-back.svg" alt="Voltar"></button>
+                                            <button class="btn-back pull-left">
+                                                <img src="assets/images/icon-back.svg" alt="Voltar">
+                                            </button>
                                             <a href="#" (click)="clearFilter($event)" class="btn-clear-all pull-right">Remover Filtros</a>
                                         </div>
                                     </div>
                                     <ul class="lvl2-items">
                                         <li class="lvl2-item" *ngFor="let option of options">
                                             <label (click)="addFilter($event, 'option', option.id)">
-                                                <input type="checkbox" [checked]="isChecked('option', option.id)" [value]="option.id" class="v-middle"> <span class="v-middle">{{option.name}}</span>
+                                                <input type="checkbox" [checked]="isChecked('option', option.id)" [value]="option.id" class="v-middle">
+                                                <span class="v-middle">{{option.name}}</span>
                                                 <span *ngIf="option.quantity > 0" class="badge">{{option.quantity}}</span>
                                             </label>
                                         </li>
@@ -154,36 +173,43 @@
                 <!-- Filter Sidebar -->
                 <div class="col-md-3 col-sm-12 filter-left hidden-xs">
                     <!-- Filtrar por Categorias -->
-                    <div class="filter-by nav" *ngIf="showFilter(categories)">
+                    <div class="filter-by nav">
                         <h3 class="title">Filtrar por</h3>
-                        <div class="filter-items categorias">
+                        <div *ngIf="categoriesArranged;then has_categories else hasno_categories" class="filter-items categorias"></div>
+
+                        <ng-template #has_categories>
                             <h4 class="caption">Categorias</h4>
-                            <ul class="facet-categories"  id="collapse-categories">
-                                <li *ngFor="let category of categories">
+                            <ul class="facet-categories" id="collapse-categories">
+                                <li *ngFor="let category of categories" [ngClass]="{'highlight': isChecked('category', category.id)}">
                                     <h5>
-                                        <a [attr.href]="'#collapse-category-' + category.id" [attr.id]="'#collapse-header-category-' + category.id" data-parent="#collapse-categories" data-toggle="collapse" role="button" aria-expanded="false" [attr.aria-controls]="'collapse-category-' + category.id">
+                                        <a [routerLink]="[getRoute('category', category)]" (click)="addFilter($event, 'category', category.id)" [attr.id]="'#collapse-header-category-' + category.id"
+                                            data-parent="#collapse-categories" data-toggle="collapse" role="button" [attr.aria-expanded]="isChecked('category', category.id)"
+                                            [attr.aria-controls]="'collapse-category-' + category.id">
                                             <i class="fa fa-caret-right" aria-hidden="true"></i>
                                             <i class="fa fa-caret-down" aria-hidden="true"></i>
                                             {{category.name}}
-                                            <small *ngIf="category.quantity > 0">({{category.quantity}})</small>
+                                            <!-- <small *ngIf="category.quantity > 0">({{category.quantity}})</small> -->
                                         </a>
                                     </h5>
-                                    <div class="collapse" [attr.id]="'collapse-category-' + category.id" [attr.aria-labelledby]="'#collapse-header-category-' + category.id">
+                                    <div class="collapse" [ngClass]="{'in': isChecked('category', category.id)}" [attr.id]="'collapse-category-' + category.id"
+                                        [attr.aria-labelledby]="'#collapse-header-category-' + category.id">
                                         <ul *ngIf="category.children.length > 0">
                                             <li *ngFor="let child of category.children">
-                                                <a [ngClass]="{'checked': isChecked('category', child.id)}" [routerLink]="['/categoria', child.id, child.niceName]"
-                                                    (click)="addFilter($event, 'category', child.id)">
-                                                    <i [ngClass]="{'fa-square-o': !isChecked('category', child.id), 'fa-check-square-o': isChecked('category', child.id)}" class="fa" aria-hidden="true"></i>
+                                                <a [ngClass]="{'checked': isChecked('category', child.id)}" [routerLink]="[getRoute('category', child)]" (click)="addFilter($event, 'category', child.id)">
+                                                    <i [ngClass]="{'fa-square-o': !isChecked('category', child.id), 'fa-check-square-o': isChecked('category', child.id)}" class="fa"
+                                                        aria-hidden="true"></i>
                                                     {{child.name}}
                                                     <small *ngIf="child.quantity > 0" class="text-info">({{child.quantity}})</small>
                                                 </a>
                                             </li>
                                         </ul>
-
                                     </div>
                                 </li>
                             </ul>
-                        </div>
+                        </ng-template>
+                        <ng-template #hasno_categories>
+                            <app-wait-loader></app-wait-loader>
+                        </ng-template>
                     </div>
                     <!-- Filtrar por Marcas -->
                     <div class="filter-by nav" *ngIf="showFilter(brands)">
@@ -191,8 +217,9 @@
                             <b class="caption">Marcas</b>
                             <ul class="facet-brands mCustomScrollbar">
                                 <li *ngFor="let brand of brands">
-                                    <a [ngClass]="{'checked': isChecked('brand', brand.id)}" [routerLink]="['/marcas', brand.id, brand.niceName]" (click)="addFilter($event, 'brand', brand.id)">
-                                        <i [ngClass]="{'fa-square-o': !isChecked('brand', brand.id), 'fa-check-square-o': isChecked('brand', brand.id)}" class="fa" aria-hidden="true"></i> 
+                                    <a [ngClass]="{'checked': isChecked('brand', brand.id)}" [routerLink]="[getRoute('brand', brand)]" (click)="addFilter($event, 'brand', brand.id)">
+                                        <i [ngClass]="{'fa-square-o': !isChecked('brand', brand.id), 'fa-check-square-o': isChecked('brand', brand.id)}" class="fa"
+                                            aria-hidden="true"></i>
                                         {{brand.name}}
                                         <small *ngIf="brand.quantity > 0" class="text-info">({{brand.quantity}})</small>
                                     </a>
@@ -206,8 +233,9 @@
                             <b class="caption">Opções</b>
                             <ul>
                                 <li *ngFor="let option of options">
-                                    <a [ngClass]="{'checked': isChecked('option', option.id)}" [routerLink]="['/buscar', {options: option.id}]" (click)="addFilter($event, 'option', option.id)">
-                                        <i [ngClass]="{'fa-square-o': !isChecked('option', option.id), 'fa-check-square-o': isChecked('option', option.id)}" class="fa" aria-hidden="true"></i> 
+                                    <a [ngClass]="{'checked': isChecked('option', option.id)}" [routerLink]="[getRoute('option', option)]" (click)="addFilter($event, 'option', option.id)">
+                                        <i [ngClass]="{'fa-square-o': !isChecked('option', option.id), 'fa-check-square-o': isChecked('option', option.id)}" class="fa"
+                                            aria-hidden="true"></i>
                                         {{option.name}}
                                         <small *ngIf="option.quantity > 0" class="text-info">({{option.quantity}})</small>
                                     </a>
@@ -218,7 +246,7 @@
                     <div class="filter-by nav" *ngIf="totalItens() > 0 && showValues()">
                         <div class="filter-items">
                             <b class="caption">Filtrar por Preço</b>
-                            
+
                             <div class="form-group col-md-6">
                                 <label for="" class="control-label">Valor mínimo</label>
                                 <input type="text" [attr.min]="priceRange.minimumPrice" [(ngModel)]="minimumPrice" class="form-control">
@@ -228,7 +256,7 @@
                                 <label for="" class="control-label">Valor máximo</label>
                                 <input type="text" [attr.min]="priceRange.minimumPrice" [(ngModel)]="maximumPrice" class="form-control">
                             </div>
-                            
+
                             <div class="col-md-12">
                                 <a href="#" class="btn btn-sm btn-default" (click)="filterByPriceRange($event)">Aplicar Filtro</a>
                                 <a href="#" class="btn btn-sm btn-danger" (click)="removeFilterByPriceRange($event)">Remover Filtro</a>
@@ -242,22 +270,29 @@
                     <div class="row row-order-by clearfix">
                         <div class="order-by">
                             <form class="form-inline" *ngIf="!loading">
-                                <select *ngIf="totalItens() > 0 && showValues()" class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
-                                    <option *ngFor="let option of orderSearchOptionsEcommerce" [value]="option.value">{{option.label}}</option>
-                                </select>
-                                <select *ngIf="totalItens() > 0 && !showValues()" class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
-                                    <option *ngFor="let option of orderSearchOptionsCatalog" [value]="option.value">{{option.label}}</option>
-                                </select>
-                                <span class="results-found-text">{{resultsFound()}}</span>
+                                <div class="form-group col-md-6 col-sm-12">
+                                    <select *ngIf="totalItens() > 0 && showValues()" class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
+                                        <option *ngFor="let option of orderSearchOptionsEcommerce" [value]="option.value">{{option.label}}</option>
+                                    </select>
+                                    <select *ngIf="totalItens() > 0 && !showValues()" class="form-control" name="orderBy" [(ngModel)]="sort" (change)="changeOrdernation($event)">
+                                        <option *ngFor="let option of orderSearchOptionsCatalog" [value]="option.value">{{option.label}}</option>
+                                    </select>
+                                    <span class="results-found-text">{{resultsFound()}}</span>
+
+                                </div>
+                                <div *ngIf="searchInput.name" class="col-md-6 col-sm-12 form-group text-right results-found-text">
+                                    Filtrando por:
+                                    <a class="label label-info" (click)="removeFilterQuery($event)">
+                                        <i class="fa fa-times" aria-hidden="true"></i> {{searchInput.name}}
+                                    </a>
+                                </div>
+
                             </form>
                         </div>
                     </div>
-                    <div class="row search-catalog" *ngIf="!loading">
-
-                        <div class="" *ngIf="products">
-                            <div class="col-md-4 col-sm-12" *ngFor="let product of products">
-                                <app-product-grid-item [product]="product" [store]="getStore()" showCompare="true"></app-product-grid-item>
-                            </div>
+                    <div class="row search-catalog" *ngIf="!loading && products">
+                        <div class="col-md-4 col-sm-12" *ngFor="let product of products">
+                            <app-product-grid-item [product]="product" [store]="getStore()" showCompare="true"></app-product-grid-item>
                         </div>
                     </div>
                     <div class="row">
@@ -285,7 +320,10 @@
                 Você pode comparar até 3 produtos
             </span>
             <div class="pull-right col-sm-2">
-                <button type="button" (click)="closeCompare()"><span aria-hidden="true">&times;</span><span class="sr-only">Fechar</span></button>
+                <button type="button" (click)="closeCompare()">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Fechar</span>
+                </button>
             </div>
         </div>
         <div class="col-md-1 col-sm-2">

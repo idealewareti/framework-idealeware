@@ -3,7 +3,7 @@ import { Meta, Title, SafeResourceUrl, DomSanitizer } from '@angular/platform-br
 import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
 import { Store } from './models/store/store';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Cart } from './models/cart/cart';
 import { Institutional } from './models/institutional/institutional';
 import { AppCore } from './app.core';
@@ -57,6 +57,7 @@ export class AppComponent implements OnInit {
   *********************************************************************************************************
   */
   constructor(
+    private route: ActivatedRoute,
     private title: Title,
     private meta: Meta,
     private globals: Globals,
@@ -215,7 +216,13 @@ export class AppComponent implements OnInit {
    * @memberof AppComponent
    */
   private getUrl() {
-    this.router.events.subscribe((url: any) => this.path = url['url']);
+    this.router.events.subscribe((url: any) => {
+      this.path = url['url'];
+
+      if(this.path && !this.path.includes('q=')) {
+        this.q = '';
+      }
+    });
   }
 
   /*
@@ -260,15 +267,15 @@ export class AppComponent implements OnInit {
   Actions
   *********************************************************************************************************
   */
-  searchFor(event){
+  searchFor(event) {
     if (isPlatformBrowser(this.platformId)) {
       event.preventDefault();
       $('#search-box #form-search').css('top', '-100%');
-      $('#search-box .mask').fadeOut(300, function(){
-          $('#search-box').hide();
+      $('#search-box .mask').fadeOut(300, function () {
+        $('#search-box').hide();
       });
-      this.router.navigate(['/buscar', {'q': this.q}]);
-    }      
+      this.router.navigate(['/buscar', { 'q': this.q }]);
+    }
   }
 
   setSessionId() {

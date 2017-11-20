@@ -34,13 +34,14 @@ declare var $: any;
     styleUrls: ['../../../template/search/search/search.scss']
 })
 export class SearchComponent implements OnInit {
+    loading: boolean = true;
+    showAll: boolean = false;
+    categoriesArranged: boolean = false;
     path: string;
     id: string;
     niceName: string;
     module: string;
-    loading: boolean = true;
     filterModel: Filter;
-    showAll: boolean = false;
     orderBy: string = null;
     sortBy: string[] = [];
     pageSize: number = 9;
@@ -221,38 +222,54 @@ export class SearchComponent implements OnInit {
         this.setFilter();
     }
 
-    buildUrl(reload: boolean = false): string {
-        let url = '';
-        if (this.module == 'category' && !reload)
-            url = `/categoria/${this.category.id}/${AppCore.getNiceName(this.category.name)}`;
-        else if (this.module == 'brand' && !reload)
-            url = `/marcas/${this.brand.id}/${AppCore.getNiceName(this.brand.name)}`;
-        else if (this.module == 'group' && !reload)
-            url = `/grupo/${this.group.id}/${AppCore.getNiceName(this.group.name)}`;
+    createFilterUrl(moduleName: string, id: string, name: string, reload: boolean = false, searchInput: Search = null, maximumPrice: number, minimumPrice:number, sort: EnumSort = null): string {
+        let url: string = '';
+        if (moduleName == 'category' && !reload) {
+            url = `/categoria/${id}/${AppCore.getNiceName(name)}`;
+        }
+        else if (moduleName == 'brand' && !reload) {
+            url = `/marcas/${id}/${AppCore.getNiceName(name)}`;
+        }
+        else if (moduleName == 'group' && !reload) {
+            url = `/grupo/${id}/${AppCore.getNiceName(name)}`;
+        }
         else {
             url = '/buscar';
-            if (this.searchInput && this.searchInput.name)
-                url += `;q=${encodeURIComponent(this.searchInput.name)}`;
-            if (this.searchInput.categories.length > 0)
-                url += `;categories=${this.searchInput.categories.toString()}`;
-            if (this.searchInput.brands.length > 0)
-                url += `;brands=${this.searchInput.brands.toString()}`;
-            if (this.searchInput.variations.length > 0)
-                url += `;variations=${this.searchInput.variations.toString()}`;
-            if (this.searchInput.options.length > 0)
-                url += `;options=${this.searchInput.options.toString()}`;
-            if (this.searchInput.groups.length > 0)
-                url += `;groups=${this.searchInput.groups.toString()}`;
-            if (this.searchInput.priceRange.maximumPrice > 0)
-                url += `;maximumPrice=${this.maximumPrice}`;
-            if (this.searchInput.priceRange.minimumPrice > 0)
-                url += `;minimumPrice=${this.minimumPrice}`;
+            if (searchInput && searchInput.name) {
+                url += `;q=${encodeURIComponent(searchInput.name)}`;
+            }
+            if (searchInput.categories.length > 0) {
+                url += `;categories=${searchInput.categories.toString()}`;
+            }
+            if (searchInput.brands.length > 0) {
+                url += `;brands=${searchInput.brands.toString()}`;
+            }
+            if (searchInput.variations.length > 0) {
+                url += `;variations=${searchInput.variations.toString()}`;
+            }
+            if (searchInput.options.length > 0) {
+                url += `;options=${searchInput.options.toString()}`;
+            }
+            if (searchInput.groups.length > 0) {
+                url += `;groups=${searchInput.groups.toString()}`;
+            }
+            if (searchInput.priceRange.maximumPrice > 0) {
+                url += `;maximumPrice=${maximumPrice.toFixed(2)}`;
+            }
+            if (searchInput.priceRange.minimumPrice > 0) {
+                url += `;minimumPrice=${minimumPrice}`;
+            }
         }
-
-        if (this.sort)
-            url += `;sort=${this.sort}`
-
+        if (sort) {
+            url += `;sort=${sort}`
+        }
         return url;
+    }
+
+    buildUrl(reload: boolean = false): string {
+        let id: string = (this['module']) ? this['module']['id'] : '';
+        let name: string = (this['module']) ? this['module']['name'] : '';
+        return this.createFilterUrl(this.module, id, name, reload, this.searchInput, Number.parseFloat(this.maximumPrice), Number.parseFloat(this.minimumPrice), (this.sort) ? this.sort : null);
     }
 
     setFilter() {
@@ -275,27 +292,40 @@ export class SearchComponent implements OnInit {
 
     isChecked(collection, id): boolean {
         if (collection == 'brand') {
-            if (this.searchInput.brands.findIndex(brand => brand == id) > -1)
-                return true
-            else return false;
+            if (this.searchInput.brands.findIndex(brand => brand == id) > -1) {
+                return true;
+            }
+            else {
+                return false;
+            } 
         }
         else if (collection == 'category') {
-            if (this.searchInput.categories.findIndex(category => category == id) > -1)
-                return true
-            else return false;
+            if (this.searchInput.categories.findIndex(category => category == id) > -1) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else if (collection == 'variation') {
-            if (this.searchInput.variations.findIndex(variation => variation == id) > -1)
-                return true
-            else return false;
+            if (this.searchInput.variations.findIndex(variation => variation == id) > -1) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else if (collection == 'option') {
-            if (this.searchInput.options.findIndex(option => option == id) > -1)
-                return true
-            else return false;
+            if (this.searchInput.options.findIndex(option => option == id) > -1) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-
-        else return false;
+        else {
+            return false;
+        }
     }
 
     /* Fillers */
@@ -479,8 +509,9 @@ export class SearchComponent implements OnInit {
         this.filterModel = new Filter();
         this.searchInput.categories.forEach(id => {
             let found = this.categories.filter(x => x.id == id)[0];
-            if (found)
+            if (found) {
                 this.filterModel.categories.push(found);
+            }
 
             this.categories.forEach(c => {
                 this.findChildrenCategory(c, id);
@@ -489,7 +520,9 @@ export class SearchComponent implements OnInit {
 
         this.searchInput.brands.forEach(id => {
             let brand = this.brands.filter(x => x.id == id)[0];
-            if (brand) this.filterModel.brands.push(brand);
+            if (brand) {
+                this.filterModel.brands.push(brand);
+            }
         });
 
         this.searchInput.variations.forEach(id => {
@@ -625,28 +658,32 @@ export class SearchComponent implements OnInit {
     }
 
     resultsFound(): string {
-        if (this.pagination.TotalCount == 1)
+        if (this.pagination.TotalCount == 1) {
             return `${this.pagination.TotalCount} produto`;
-        else if (this.pagination.TotalCount > 1)
+        }
+        else if (this.pagination.TotalCount > 1) {
             return `${this.pagination.TotalCount} produtos`;
-        else
+        }
+        else {
             return `Nenhum produto`;
+        }
     }
 
     totalItens(): number {
-        if (this.pagination)
+        if (this.pagination) {
             return this.pagination.TotalCount;
-        else
+        }
+        else {
             return 0;
+        }
     }
 
     navigate(page: number, event = null) {
-        if (event)
+        if (event) {
             event.preventDefault();
-
+        }
         let url = this.buildUrl()
         url = `${url};page=${page}`;
-
         this.parentRouter.navigateByUrl(url);
     }
 
@@ -659,11 +696,9 @@ export class SearchComponent implements OnInit {
 
     filterBox() {
         if (isPlatformBrowser(this.platformId)) {
-
             $('.btn-filter').click(function (event) {
                 $('.showcase-department, #filterby-title').hide();
                 $('#filter').fadeIn();
-
                 return false;
             });
             $('#filter .lvl1-link').click(function (event) {
@@ -683,17 +718,22 @@ export class SearchComponent implements OnInit {
                 return false;
             });
         }
-        else
+        else {
             return false;
+        }
     }
 
     showFilter(collection: any[]): boolean {
-        if (!collection)
+        if (!collection) {
             return false;
+        }
         else {
-            if (collection.length > 0)
+            if (collection.length > 0) {
                 return true;
-            else return false;
+            }
+            else {
+                return false;
+            }
         }
     }
 
@@ -708,19 +748,18 @@ export class SearchComponent implements OnInit {
         this.priceRange = results.facetPrice;
         this.maximumPrice = results.facetPrice.maximumPrice.toFixed(2).replace('.', ',');
         this.minimumPrice = results.facetPrice.minimumPrice.toFixed(2).replace('.', ',');
-
         this.arrangeCategories(results.facetCategories);
         this.buildFilterModel();
     }
 
     arrangeCategories(facetCategories: Category[]) {
+        this.categoriesArranged = false;
         this.categoryApi.getTree()
             .subscribe(categories => {
                 facetCategories.forEach(category => {
                     let found: Category = categories.find(c => c.id == category.id);
                     if (found) {
                         category.children = [];
-                        category.children.push(category);
                         found.children.forEach(child => {
                             let childFound: Category = facetCategories.find(f => f.id == child.id);
                             if (childFound)
@@ -729,7 +768,11 @@ export class SearchComponent implements OnInit {
 
                         this.categories.push(category);
                     }
-                })
+                });
+                this.categoriesArranged = true;
+            }, error => {
+                console.log(error);
+                this.categoriesArranged = true;
             });
 
     }
@@ -767,11 +810,55 @@ export class SearchComponent implements OnInit {
     }
 
     removeFilterByPriceRange(event = null) {
-        if (event)
+        if (event) {
             event.preventDefault();
+        }
         this.searchInput.priceRange = new PriceRange(0, 0);
         this.listProducts(this.page, null);
 
+    }
+
+    removeFilterQuery(event = null) {
+        if (event) {
+            event.preventDefault();
+        }
+        this.searchInput.name = null;
+        this.setFilter();
+    }
+
+    hasReload(searchInput: Search): boolean {
+        if(searchInput.name) {
+            return true;
+        }
+        if(searchInput.brands.length > 0) {
+            return true;
+        }
+        if(searchInput.categories.length > 0) {
+            return true;
+        }
+        if(searchInput.options.length > 0) {
+            return true;
+        }
+        if(searchInput.variations.length > 0) {
+            return true;
+        }
+        if(searchInput.sort) {
+            return true;
+        }
+        if(searchInput.priceRange && searchInput.priceRange.maximumPrice) {
+            return true;
+        }
+        if(searchInput.priceRange && searchInput.priceRange.minimumPrice) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    getRoute(collection: string, filter: any): string {    
+        let reload: boolean = false;
+        return this.createFilterUrl(collection, filter.id, filter.name, reload, this.searchInput, Number.parseFloat(this.maximumPrice), Number.parseFloat(this.minimumPrice), (this.sort) ? this.sort : null);
     }
 
 }
