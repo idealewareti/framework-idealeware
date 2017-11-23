@@ -19,6 +19,7 @@ import { PaymentManager } from './managers/payment.manager';
 import { PaymentMethod } from './models/payment/payment-method';
 import { GoogleService } from './services/google.service';
 import { CustomerManager } from './managers/customer.manager';
+import { Token } from './models/customer/token';
 
 declare var $: any;
 declare var ga: any;
@@ -108,10 +109,6 @@ export class AppComponent implements OnInit {
   ngAfterContentChecked() {
     this.getUrl();
     this.getCustomer();
-    if (this.globals.store && !this.ssl) {
-      this.ssl = this.addSSL();
-    }
-
     if (isPlatformBrowser(this.platformId)) {
       $('#btn-search').click(function (event) {
         $('#search-box .mask').hide();
@@ -133,10 +130,14 @@ export class AppComponent implements OnInit {
   }
 
   ngAfterViewChecked() {
+    this.keepHttps();
     this.checkSessionId();
     this.getUrl();
     this.addPagseguro();
     this.addMercadoPago();
+    if (this.store && !this.ssl) {
+      this.ssl = this.addSSL();
+    }
     if (this.isMobile()) {
       if (isPlatformBrowser(this.platformId)) {
         if (!$('body').hasClass('mobile-body'))
@@ -202,6 +203,7 @@ export class AppComponent implements OnInit {
       this.paymentService.getAll()
         .subscribe(payments => {
           this.payments = payments;
+          this.createPagseguroSession();
           resolve(payments);
         }, error => {
           console.log(error._body);
@@ -219,7 +221,7 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe((url: any) => {
       this.path = url['url'];
 
-      if(this.path && !this.path.includes('q=')) {
+      if (this.path && !this.path.includes('q=')) {
         this.q = '';
       }
     });
@@ -385,13 +387,51 @@ export class AppComponent implements OnInit {
 
   addSSL(): boolean {
     if (isPlatformBrowser(this.platformId)) {
-      var element = $('img[name=ss_imgTag]').detach();
-      var element2 = $('#ss_siteSeal_fin_SZ115-55_image_en_V0000_S001').detach();
-      $('#selo-alphassl').append(element);
-      $('#selo-alphassl').append(element2);
-      return true;
+      let children = $('#index-seal-ssl').children();
+      if (children.length == 4) {
+        for (let i = 0; i < children.length; i++) {
+          let c = children[i];
+          $('#selo-alphassl').append(c);
+        }
+        return true;
+      }
+      else {
+        return false;
+      }
     }
     return false;
+  }
+
+  keepHttps() {
+    if (isPlatformBrowser(this.platformId)) {
+      if (location.href.indexOf("https://") == -1 && location.hostname != 'localhost' && !/^\d+[.]/.test(location.hostname)) {
+        location.href = location.href.replace("http://", "https://");
+      }
+    }      
+  }
+
+  createPagseguroSession() {
+    if (isPlatformBrowser(this.platformId)) {
+      if (this.customerManager.hasToken()) {
+        let token: Token = this.customerManager.getToken();
+        this.paymentService.createPagSeguroSession(token)
+          .then(sessionId => {
+            localStorage.setItem('pagseguro_session', sessionId);
+          })
+          .catch(error => {
+            console.log(`ERRO AO GERAR A SESSÃO DO PAGSEGURO: ${error}`);
+          });
+      }
+      else {
+        this.paymentManager.createPagSeguroSessionSimulator()
+          .then(sessionId => {
+            localStorage.setItem('pagseguro_session', sessionId);
+          })
+          .catch(error => {
+            console.log(`ERRO AO GERAR A SESSÃO DO PAGSEGURO: ${error}`);
+          });
+      }
+    }
   }
 
 }

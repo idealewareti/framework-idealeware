@@ -263,12 +263,12 @@ export class ProductComponent {
                 if (this.product.name.toLowerCase().indexOf('tinta') !== -1 && this.store.domain === 'ecommerce') {
                     this.product.selfColor = true;
                 }
-                
-                if (product.video && product.video.videoEmbed)
-                this.videoSafeUrl = this.createSafeUrl(this.product.video.videoEmbed);
-                if (product.fileGuide)
-                this.fileGuideSafeUrl = this.createSafeUrl(`javascript:window.open('${this.mediaPath}${product.fileGuide}');`);
-                
+                if (product.videoEmbed) {
+                    this.videoSafeUrl = this.createSafeUrl(this.product.videoEmbed);
+                }
+                if (product.fileGuide) {
+                    this.fileGuideSafeUrl = this.createSafeUrl(`javascript:window.open('${this.mediaPath}${product.fileGuide}');`);
+                }
                 this.setCurrentSku(id);
                 if (this.isProductRelated()) {
                     this.relatedService.getRelatedProductGroupById(this.product.relatedProductsId)
@@ -525,7 +525,7 @@ export class ProductComponent {
     }
 
     hasVideo(): boolean {
-        if(this.product && this.product.video) {
+        if(this.product && this.product.videoEmbed) {
             return true;
         }
         return false;

@@ -4,7 +4,6 @@ import {Category} from '../category/category';
 import {Service} from '../product-service/product-service';
 import { Brand } from "../brand/brand";
 import { TechnicalInformation } from "./product-technical-information";
-import { ProductVideo } from "./product-video";
 
 export class Product {
     id: string;
@@ -17,7 +16,6 @@ export class Product {
     technicalInformation: TechnicalInformation[] = [];
     brand: Brand;
     installmentLimit: number;
-    video: ProductVideo = new ProductVideo();
     plusFreight: number;
     daysProcessing: number;
     file: string;
@@ -43,4 +41,6 @@ export class Product {
     showInstallment : boolean;
     installmentText: string;
     fileGuide: string;
+    videoEmbed: string;
+    videoUrl: string;
 }

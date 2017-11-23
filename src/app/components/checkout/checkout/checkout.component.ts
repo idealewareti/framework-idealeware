@@ -118,7 +118,7 @@ export class CheckoutComponent implements OnInit {
 
     }
 
-    ngAfterContentInit() {
+    ngAfterViewChecked() {
         if (this.store && this.store.modality == EnumStoreModality.Budget) {
             this.parentRouter.navigateByUrl('/orcamento');
         }

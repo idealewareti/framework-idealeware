@@ -19,7 +19,7 @@ export class CustomerManager{
     ){}
 
 
-    private getToken(): Token {
+    getToken(): Token {
         let token = new Token();
         if(isPlatformBrowser(this.platformId)) {
             token = new Token();
@@ -117,8 +117,7 @@ export class CustomerManager{
                 .catch(error => {
                     reject(error);
                 });
-            })
-           
+            }, error => reject(error));
         })
     }
 

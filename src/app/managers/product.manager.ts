@@ -52,14 +52,6 @@ export class ProductManager {
             else if(k == 'technicalInformation'){
                 product.technicalInformation = object.technicalInformation.map(c => c = new TechnicalInformation(c));
             }
-            else if (k == 'videoUrl')
-            {
-                product.video.videoUrl = object[k];
-            }
-            else if(k == 'videoEmbed')
-            {
-                product.video.videoEmbed = object[k];
-            }
             else{
                 product[k] = object[k];
             }

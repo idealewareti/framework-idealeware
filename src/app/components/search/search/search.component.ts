@@ -267,8 +267,25 @@ export class SearchComponent implements OnInit {
     }
 
     buildUrl(reload: boolean = false): string {
-        let id: string = (this['module']) ? this['module']['id'] : '';
-        let name: string = (this['module']) ? this['module']['name'] : '';
+        let id: string = '';
+        let name: string = '';
+        
+        switch (this.module) {
+            case 'category':
+                id = this.id;
+                name = this.category.name;
+                break;
+            case 'brand':
+                id = this.id;
+                name = this.brand.name;
+                break;
+            case 'group':
+                id = this.id;
+                name = this.group.name;
+                break;
+            default:
+                break;
+        }
         return this.createFilterUrl(this.module, id, name, reload, this.searchInput, Number.parseFloat(this.maximumPrice), Number.parseFloat(this.minimumPrice), (this.sort) ? this.sort : null);
     }
 

@@ -1,0 +1,14 @@
+
+
+.border {
+    padding: 20px 15px;
+  }
+  
+.border h3.product-name {
+    text-overflow: ellipsis;
+    max-height: 55px;
+    min-height: 55px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}

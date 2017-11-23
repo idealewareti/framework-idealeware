@@ -360,7 +360,7 @@ export class PaymentManager {
         else{ //else if(gateway.name.toLowerCase() == 'pagseguro'){
             let index = method.installment.length -1;
             maxInstallment = method.installment[index].number;
-            let installmentValue = method.installment[index].installmentPrice.toString().replace('.', ',')
+            let installmentValue = method.installment[index].installmentPrice.toFixed(2).replace('.', ',')
             return `${maxInstallment}x de R$ ${installmentValue}`;
         }
         
