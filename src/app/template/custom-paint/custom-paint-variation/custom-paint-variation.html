@@ -11,9 +11,7 @@
                     <ul class="nav nav-pills nav-justified brand-selector">
                         <li *ngFor="let option of variation.options" role="presentation" [ngClass]="{'active': isOptionSelected(option)}">
                             <a href="#" (click)="selectOption(option, $event)">
-                                <img *ngIf="option.picture" [attr.src]="mediaPath + option.picture" [attr.alt]="option.name" class="img-responsive">
-                                <img *ngIf="!option.picture" [attr.src]="'/assets/images/no-image.jpg'" [attr.alt]="option.name" class="img-responsive">
-                                
+                                <img [attr.src]="getOptionPicture(option)" [attr.alt]="option.name" class="img-responsive">
                                 {{option.name}}
                             </a>
                         </li>

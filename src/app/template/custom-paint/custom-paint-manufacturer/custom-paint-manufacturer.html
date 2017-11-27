@@ -4,7 +4,7 @@
             <ul class="row">
                 <div *ngFor="let manufacturer of manufacturers" [ngClass]="getColWidth()" role="presentation">
                     <a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer]">
-                        <img [attr.src]="mediaPath + manufacturer.picture" [attr.alt]="manufacturer.name" class="img-responsive center-block">
+                        <img [attr.src]="getManufacturerPicture(manufacturer)" [attr.alt]="manufacturer.name" class="img-responsive center-block">
                         <div class="text-center">
                             {{manufacturer.name}}
                         </div>

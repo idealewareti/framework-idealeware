@@ -85,24 +85,21 @@ export class AppComponent implements OnInit {
     if (!this.getSessionId()) {
       this.setSessionId();
     }
-
-    this.service.getStore()
-      .subscribe(response => {
-        let store: Store = new Store(response);
+    this.fetchStore()
+      .then(store => {
         this.globals.store = store;
         this.store = store;
         this.mediaPath = `${this.globals.store.link}/static`;
         this.getInstitutionals();
         this.getGoogle();
-
         if (this.store.modality == EnumStoreModality.Ecommerce) {
           this.getPayments();
         }
-
         this.facebookSafeUrl = this.getFacebookUrl();
-
-      }, error => {
+      })
+      .catch(error => {
         console.log(error);
+        this.router.navigate(['/erro-500']);
       });
   }
 
@@ -407,7 +404,7 @@ export class AppComponent implements OnInit {
       if (location.href.indexOf("https://") == -1 && location.hostname != 'localhost' && !/^\d+[.]/.test(location.hostname)) {
         location.href = location.href.replace("http://", "https://");
       }
-    }      
+    }
   }
 
   createPagseguroSession() {
@@ -432,6 +429,17 @@ export class AppComponent implements OnInit {
           });
       }
     }
+  }
+
+  private fetchStore(): Promise<Store> {
+    return new Promise((resolve, reject) => {
+      this.service.getStore()
+        .subscribe(response => {
+          resolve(response);
+        }, error => {
+          reject(error);
+        });
+    });
   }
 
 }

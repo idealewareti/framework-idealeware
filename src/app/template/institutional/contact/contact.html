@@ -1,7 +1,4 @@
 <div class="contact-page-form">
-    <div class="page-header">
-        <h1>Fale Conosco</h1>
-    </div>
     <div class="row">
         <div *ngIf="messageSent" class="alert alert-success" role="alert">Sua mensagem foi enviada com sucesso!</div>
         <form *ngIf="!messageSent" [formGroup]="contactForm" (submit)="submit($event)">

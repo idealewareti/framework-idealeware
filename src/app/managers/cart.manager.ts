@@ -10,6 +10,7 @@ import { Service } from "../models/product-service/product-service";
 import { CustomPaintCombination } from "../models/custom-paint/custom-paint-combination";
 import { Token } from '../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
+import { Paint } from '../models/custom-paint/custom-paint';
 
 declare var toastr: any;
 
@@ -20,6 +21,12 @@ export class CartManager {
 
     constructor(private service: CartService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
+    /**
+     * Retorna o Bearer Token baseado no token armazenado no localStorage
+     * @private
+     * @returns {Token} 
+     * @memberof CartManager
+     */
     private getToken(): Token {
         let token = new Token();
         if(isPlatformBrowser(this.platformId)) {
@@ -31,6 +38,12 @@ export class CartManager {
         return token;
     }
 
+    /**
+     * Retorna o CEP armazenado no localStorage
+     * @private
+     * @returns {number} 
+     * @memberof CartManager
+     */
     private getZipcode(): number {
         if(isPlatformBrowser(this.platformId)) {
             if (localStorage.getItem('customer_zipcode'))
@@ -40,6 +53,12 @@ export class CartManager {
         return 0;         
     }
 
+    /**
+     * Retorna o ID da Session armazenado no localStorage
+     * @private
+     * @returns {string} 
+     * @memberof CartManager
+     */
     private getSessionId(): string {
         if(isPlatformBrowser(this.platformId)) {
             return localStorage.getItem('session_id');
@@ -47,12 +66,22 @@ export class CartManager {
         return null;
     }
 
+    /**
+     * Salva o ID do carrinho na localStorage
+     * @param {string} id 
+     * @memberof CartManager
+     */
     setCartId(id: string) {
         if(isPlatformBrowser(this.platformId)) {
             localStorage.setItem('cart_id', id);
         }
     }
 
+    /**
+     * Retorna o ID do carrinho armazenado no localStorage
+     * @returns {string} 
+     * @memberof CartManager
+     */
     getCartId(): string {
         if(isPlatformBrowser(this.platformId)) {
             return localStorage.getItem('cart_id');
@@ -60,6 +89,13 @@ export class CartManager {
         return null;
     }
 
+    /**
+     * Retorna o carrinho pela API
+     * 
+     * @param {string} cartId ID do carrinho
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     getCart(cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             if (!cartId) {
@@ -77,6 +113,18 @@ export class CartManager {
         });
     }
 
+    /**
+     * Adiciona um produto ao carrinho
+     * Se não houver um carrinho existente, um novo será criado
+     * 
+     * @param {string} cartId ID do carrinho
+     * @param {Product} product Produto à ser a adicionado ao carrinho
+     * @param {Sku} sku SKU selecionado
+     * @param {number} quantity Quantidade de produtos
+     * @param {string} feature Detalhes adicionais (opcional)
+     * @returns {Promise<Cart>} Carrinho com produto
+     * @memberof CartManager
+     */
     purchase(cartId: string, product: Product, sku: Sku, quantity: number, feature: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             if (cartId) {
@@ -108,6 +156,17 @@ export class CartManager {
         });
     }
 
+    /**
+     * Adciona uma tinta ao carrinho
+     * Se não houver um carrinho existente, um novo será criado
+     * 
+     * @param {string} cartId ID do carrinho
+     * @param {CustomPaintCombination} paint  Tinta
+     * @param {string} manufacturer Fornecedor da titna
+     * @param {number} quantity Quantidade
+     * @returns {Promise<Cart>} Carrinho
+     * @memberof CartManager
+     */
     purchasePaint(cartId: string, paint: CustomPaintCombination, manufacturer: string, quantity: number): Promise<Cart>{
         return new Promise((resolve, reject) => {
             console.log('Checking if cart exists');
@@ -128,7 +187,7 @@ export class CartManager {
             else {
                 console.log(`Cart doen't exists`);
                 let cart = new Cart();
-                let cartItem = paint.exportAsPaint();
+                let cartItem = this.exportAsPaint(paint);
                 cartItem.quantity = quantity;
                 cartItem.manufacturer = manufacturer;
                 cart.paints.push(cartItem);
@@ -144,6 +203,16 @@ export class CartManager {
         });
     }
 
+    /**
+     * Adiciona uma tinta a um carrinho já existente
+     * 
+     * @param {string} paintId 
+     * @param {string} manufacturer 
+     * @param {number} quantity 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     addPaint(paintId: string, manufacturer: string, quantity: number, cartId: string): Promise<Cart>{
         return new Promise((resolve, reject) => {
             this.service.addPaint(paintId, manufacturer, quantity, cartId)
@@ -153,6 +222,16 @@ export class CartManager {
         });
     }
 
+    /**
+     * Adiciona um produto à um carrinho já existente
+     * 
+     * @param {string} cartId 
+     * @param {string} skuId 
+     * @param {number} quantity 
+     * @param {string} feature 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     addItem(cartId: string, skuId: string, quantity: number, feature: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let item = {
@@ -167,6 +246,15 @@ export class CartManager {
         });
     }
 
+    /**
+     * Adiciona um serviço à um carrino já existente
+     * 
+     * @param {string} serviceId 
+     * @param {number} quantity 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     addService(serviceId: string, quantity: number, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let item = {
@@ -180,6 +268,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Cria um carrinho na API
+     * 
+     * @param {Cart} cart 
+     * @param {boolean} [isPaint=false] 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     createCart(cart: Cart, isPaint: boolean = false): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let session_id: string = this.getSessionId();
@@ -192,6 +288,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Atualiza um produto já adicionado ao carrinho
+     * 
+     * @param {CartItem} item 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     updateItem(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.updateItem(item, cartId)
@@ -201,6 +305,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Atualiza um serviço já adicionado ao carrinho
+     * 
+     * @param {Service} item 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     updateItemService(item: Service, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.updateItemService(item, cartId)
@@ -210,6 +322,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Atualiza uma tinta já adicionada ao carrinho
+     * 
+     * @param {CartItem} item 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     updatePaint(item: CartItem, cartId: string): Promise<Cart>{
         return new Promise((resolve, reject) => {
             this.service.updatePaint(item, cartId)
@@ -219,6 +339,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Remove um produto do carrinho
+     * 
+     * @param {CartItem} item 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     deleteItem(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.deleteItem(item, cartId)
@@ -228,6 +356,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Remove um serviço do carrinho
+     * 
+     * @param {string} serviceId 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     deleteService(serviceId: string, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.deleteService(serviceId, cartId)
@@ -237,6 +373,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Remove uma tinta do carrinho
+     * 
+     * @param {CartItem} item 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     deletePaint(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.deletePaint(item, cartId)
@@ -246,6 +390,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Adiciona frete calculado ao carrinho
+     * 
+     * @param {Shipping} shipping 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     setShipping(shipping: Shipping, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.setShipping(shipping, cartId)
@@ -255,6 +407,13 @@ export class CartManager {
         });
     }
 
+    /**
+     * Associa um cliente à um carrinho
+     * 
+     * @param {string} cartId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     setCustomerToCart(cartId: string): Promise<Cart>{
         return new Promise((resolve, reject) => {
             let token = this.getToken();
@@ -265,6 +424,14 @@ export class CartManager {
         })
     }
 
+    /**
+     * Adiciona endereço de entrega ao carrinho
+     * 
+     * @param {string} cartId 
+     * @param {string} addressId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     addDeliveryAddress(cartId: string, addressId: string): Promise<Cart>{
         return new Promise((resolve, reject) => {
             let token = this.getToken();
@@ -275,6 +442,14 @@ export class CartManager {
         });
     }
 
+    /**
+     * Adiciona endereço de cobrança ao carrinho
+     * 
+     * @param {string} cartId 
+     * @param {string} addressId 
+     * @returns {Promise<Cart>} 
+     * @memberof CartManager
+     */
     addBillingAddress(cartId: string, addressId: string): Promise<Cart>{
         return new Promise((resolve, reject) => {
             let token = this.getToken();
@@ -282,6 +457,28 @@ export class CartManager {
             .subscribe(cart => {
                 resolve(cart);
             }, error => reject(error));
+        });
+    }
+
+    /**
+     * Transforma um objeto CustomPaintCombination em objeto Paint
+     * 
+     * @param {CustomPaintCombination} combination 
+     * @returns {Paint} 
+     * @memberof CartManager
+     */
+    exportAsPaint(combination: CustomPaintCombination): Paint{
+        return new Paint({
+            id: combination.id,
+            baseName: combination.name,
+            colorCode: combination.color.code,
+            colorName: combination.color.name,
+            colorRgb: combination.color.rgb,
+            manufacturer: combination.color.manufacturer,
+            optionCode: combination.code,
+            optionId: combination.variation.optionId,
+            optionName: combination.variation.optionName,
+            optionPicture: combination.variation.optionPicture
         });
     }
 }

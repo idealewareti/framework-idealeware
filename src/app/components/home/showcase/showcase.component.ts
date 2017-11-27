@@ -11,7 +11,7 @@ import { Store } from '../../../models/store/store';
 import { AppCore } from '../../../app.core';
 import { StoreService } from '../../../services/store.service';
 import { ShowcaseGroup } from '../../../models/showcase/showcase-group';
-import { error } from 'util';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-showcase',
@@ -32,6 +32,7 @@ export class ShowcaseComponent implements OnInit {
         private service: ShowCaseService,
         private storeService: StoreService,
         private globals: Globals,
+        private router: Router,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
@@ -54,7 +55,10 @@ export class ShowcaseComponent implements OnInit {
                         this.titleService.setTitle(showcase.metaTagTitle);
                     }, error => console.log(error));
             })
-            .catch(error => console.log(error));
+            .catch(error => {
+                console.log(error);
+                this.router.navigate(['/erro-500']);
+            });
     }
 
     ngOnDestroy() {

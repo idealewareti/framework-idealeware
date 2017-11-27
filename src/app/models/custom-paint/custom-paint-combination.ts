@@ -18,7 +18,7 @@ export class CustomPaintCombination {
             return this.CreateFromResponse(object);
     }
 
-    public CreateFromResponse(object) : CustomPaintCombination{
+    CreateFromResponse(object) : CustomPaintCombination{
         let model = new CustomPaintCombination();
 
         for (var k in object){
@@ -34,27 +34,5 @@ export class CustomPaintCombination {
 
         return model;
     }
-
-    public exportAsPaint(): Paint{
-        return new Paint({
-            id: this.id,
-            baseName: this.name,
-            colorCode: this.color.code,
-            colorName: this.color.name,
-            colorRgb: this.color.rgb,
-            manufacturer: this.color.manufacturer,
-            optionCode: this.code,
-            optionId: this.variation.optionId,
-            optionName: this.variation.optionName,
-            optionPicture: this.variation.optionPicture
-        });
-    }
-
-
-    getColor(): string{
-        if(/^\S{6}$/.test(this.color.rgb))
-            return `#${this.color.rgb}`;
-        else
-            return `rgb(${this.color.rgb})`;
-    }
+    
 }

@@ -811,6 +811,14 @@ export class SearchComponent implements OnInit {
         else return false;
     }
 
+    isHiddenVariation(): boolean {
+        let type = this.store.settings.find(s => s.type == 4);
+        if (type)
+            return type.status;
+        else
+            return false;
+    }
+
     showValues(): boolean {
         if (!this.isCatalog())
             return true;

@@ -10,6 +10,7 @@ import { StoreService } from "../../../services/store.service";
 import { Globals } from "../../../models/globals";
 import { EnumStoreModality } from '../../../enums/store-modality.enum';
 import { isPlatformBrowser } from '@angular/common';
+import { CustomPaintColor } from '../../../models/custom-paint/custom-paint-color';
 
 declare var swal: any;
 
@@ -27,6 +28,7 @@ export class CustomPaintBaseComponent implements OnInit {
     modality: number = 1;
     paints: CustomPaintCombination[] = [];
     mediaPath: string;
+    store: Store;
 
     constructor(
         private service: CustomPaintService,
@@ -35,17 +37,25 @@ export class CustomPaintBaseComponent implements OnInit {
         private route: ActivatedRoute,
         private parentRouter: Router,
         private manager: CartManager,
-        private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) { }
+    ) {
+
+        this.mediaPath = 'static/custompaint';
+    }
 
     ngOnInit() {
-        this.mediaPath = `${this.globals.store.link}/static/custompaint`;
-        this.modality = this.globals.store.modality;
 
         this.route.params
             .map(params => params)
             .subscribe((params) => {
+                this.fetchStore()
+                    .then(store => {
+                        this.store = store;
+                        this.modality = this.store.modality;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
                 this.manufacuterId = params['manufacturer'];
                 this.colorCode = params['color'];
                 this.optionId = params['option'];
@@ -74,26 +84,30 @@ export class CustomPaintBaseComponent implements OnInit {
     }
 
     showValues(): boolean {
-        if (this.modality == EnumStoreModality.Ecommerce)
+        if (this.modality == EnumStoreModality.Ecommerce) {
             return true;
-        else if (this.modality == EnumStoreModality.Budget && this.globals.store.settings.find(s => s.type == 3 && s.status == true))
+        }
+        else if (this.modality == EnumStoreModality.Budget && this.store.settings.find(s => s.type == 3 && s.status == true)) {
             return true;
+        }
         else return false;
     }
 
-    coverImg(paint: CustomPaintCombination): string {
-        if (paint.picture)
-            return `${this.mediaPath}/${paint.picture}`;
-        else
+    getPaintPicture(paint: CustomPaintCombination): string {
+        if (paint.picture) {
+            return `${this.store.link}/${this.mediaPath}/${paint.picture}`;
+        }
+        else {
             return '/assets/images/no-image.jpg';
+        }
     }
 
     /* Actions */
     purchase(paint: CustomPaintCombination, event = null) {
         if (isPlatformBrowser(this.platformId)) {
-
-            if (event)
+            if (event) {
                 event.preventDefault();
+            }
 
             this.manager.purchasePaint(localStorage.getItem('cart_id'), paint, this.manufacturer.manufacturer, 1)
                 .then(cart => {
@@ -115,5 +129,25 @@ export class CustomPaintBaseComponent implements OnInit {
                     swal('Erro ao adicionar ao carrinho', message, 'error');
                 });
         }
+    }
+
+    private fetchStore(): Promise<Store> {
+        return new Promise((resolve, reject) => {
+            this.storeService.getStore()
+                .subscribe(response => {
+                    let store: Store = new Store(response);
+                    resolve(store);
+                }, error => {
+                    reject(error);
+                });
+        });
+    }
+
+
+    getColor(color: CustomPaintColor): string {
+        if (/^\S{6}$/.test(color.rgb))
+            return `#${color.rgb}`;
+        else
+            return `rgb(${color.rgb})`;
     }
 }

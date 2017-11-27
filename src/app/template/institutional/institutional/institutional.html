@@ -1,16 +1,17 @@
 <main role="main" class="product-page" *ngIf="institutional">
-   <div class="product-page-details">
+    <div class="product-page-details">
         <div class="container">
-            <div class="row row-first">
-                <div class="col-details">
-                    <h2>{{institutional.title}}</h2>
-                    <div class="description-text" [innerHTML]="institutional.content"></div>
-                    
+            <div class="row">
+                <div class="page-header">
+                    <h1>{{institutional.title}}</h1>
                 </div>
             </div>
-            <div class="row" *ngIf="isContactPage()">   
+            <div class="row row-first">
+                <div class="description-text" [innerHTML]="institutional.content"></div>
+            </div>
+            <div class="row" *ngIf="isContactPage()">
                 <app-contact></app-contact>
             </div>
         </div>
-   </div>
+    </div>
 </main>
