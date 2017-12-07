@@ -24,7 +24,7 @@ export class CartService {
         .map(res => res.json())
     }
 
-    createCart(cart: Cart, isPaint: boolean = false, sessionId: string = null, zipCode: number = 0): Observable<Cart> {
+    createCart(cart: Cart, isPaint: boolean = false, sessionId: string = null, zipCode: number = 0, origin: string = null): Observable<Cart> {
         let item = {};
         if(isPaint){
             item = {
@@ -34,6 +34,7 @@ export class CartService {
                     "quantity": cart.paints[0].quantity
                 },
                 "zipCode": zipCode,
+                "origin": origin,
                 "sessionId": sessionId
             }
         }
@@ -45,6 +46,7 @@ export class CartService {
                     "feature": cart.products[0].sku.feature
                 },
                 "zipCode": zipCode,
+                "origin": origin,
                 "sessionId": sessionId
             }
         }

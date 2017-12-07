@@ -61,7 +61,6 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
         private manager: PaymentManager,
         formBuilder: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object
-
     ) {
         this.creditCardForm = formBuilder.group({
             cardNumber: ['', Validators.required],
@@ -176,8 +175,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
         let content = e.clipboardData.getData('text/plain');
         setTimeout(() => {
             this.creditCard.creditCardNumber = "";
-            this.creditCardForm.controls.creditCardNumber.setValue("");
-            
+            if(this.creditCardForm.controls['creditCardNumber']) {
+                this.creditCardForm.controls.creditCardNumber.setValue("");
+            }
             if (isPlatformBrowser(this.platformId)) {
                 $('#cardNumber').val('');
             }            

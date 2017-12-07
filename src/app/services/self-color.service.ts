@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Product } from "../models/product/product";
 import { SelfColor } from "../models/self-color/self-color";
 import { SelfColorFamily } from "../models/self-color/self-color-family";
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 import { HttpClientHelper } from '../helpers/http.helper';
 import { Http } from '@angular/http';
 

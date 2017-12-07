@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { PopUp } from "../models/popup/popup";
 import { HttpClientHelper } from '../helpers/http.helper';
 import { Http } from '@angular/http';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()

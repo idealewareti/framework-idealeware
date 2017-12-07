@@ -11,6 +11,7 @@ import { CustomPaintCombination } from "../models/custom-paint/custom-paint-comb
 import { Token } from '../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
 import { Paint } from '../models/custom-paint/custom-paint';
+import { AppCore } from '../app.core';
 
 declare var toastr: any;
 
@@ -29,7 +30,7 @@ export class CartManager {
      */
     private getToken(): Token {
         let token = new Token();
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             token.accessToken = localStorage.getItem('auth');
             token.createdDate = new Date(localStorage.getItem('auth_create'));
             token.expiresIn = Number(localStorage.getItem('auth_expires'));
@@ -45,12 +46,12 @@ export class CartManager {
      * @memberof CartManager
      */
     private getZipcode(): number {
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             if (localStorage.getItem('customer_zipcode'))
                 return Number(localStorage.getItem('customer_zipcode').replace('-', ''));
             return 0;
         }
-        return 0;         
+        return 0;
     }
 
     /**
@@ -60,7 +61,7 @@ export class CartManager {
      * @memberof CartManager
      */
     private getSessionId(): string {
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             return localStorage.getItem('session_id');
         }
         return null;
@@ -72,7 +73,7 @@ export class CartManager {
      * @memberof CartManager
      */
     setCartId(id: string) {
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('cart_id', id);
         }
     }
@@ -83,9 +84,9 @@ export class CartManager {
      * @memberof CartManager
      */
     getCartId(): string {
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             return localStorage.getItem('cart_id');
-        }            
+        }
         return null;
     }
 
@@ -104,11 +105,11 @@ export class CartManager {
             }
             else {
                 this.service.getCart(cartId)
-                .subscribe(cart => {
-                    resolve(cart);
-                }, error => {
-                    reject(error);
-                });
+                    .subscribe(cart => {
+                        resolve(cart);
+                    }, error => {
+                        reject(error);
+                    });
             }
         });
     }
@@ -130,15 +131,15 @@ export class CartManager {
             if (cartId) {
                 console.log('Cart exists');
                 this.getCart(cartId)
-                .then(cart => {
-                    console.log('Adding item to cart');
-                    return this.addItem(cartId, sku.id, quantity, feature);
-                })
-                .then(cart => {
-                    console.log('Item added to cart');
-                    resolve(cart);
-                })
-                .catch(error => reject(error));
+                    .then(cart => {
+                        console.log('Adding item to cart');
+                        return this.addItem(cartId, sku.id, quantity, feature);
+                    })
+                    .then(cart => {
+                        console.log('Item added to cart');
+                        resolve(cart);
+                    })
+                    .catch(error => reject(error));
             }
             else {
                 console.log(`Cart doen't exists`);
@@ -147,11 +148,11 @@ export class CartManager {
                 cart.products.push(cartItem);
                 console.log('Creating new cart');
                 this.createCart(cart)
-                .then(response => {
-                    console.log('Cart successful created');
-                    resolve(response);
-                })
-                .catch(error => reject(error));
+                    .then(response => {
+                        console.log('Cart successful created');
+                        resolve(response);
+                    })
+                    .catch(error => reject(error));
             }
         });
     }
@@ -167,23 +168,23 @@ export class CartManager {
      * @returns {Promise<Cart>} Carrinho
      * @memberof CartManager
      */
-    purchasePaint(cartId: string, paint: CustomPaintCombination, manufacturer: string, quantity: number): Promise<Cart>{
+    purchasePaint(cartId: string, paint: CustomPaintCombination, manufacturer: string, quantity: number): Promise<Cart> {
         return new Promise((resolve, reject) => {
             console.log('Checking if cart exists');
             if (cartId) {
                 console.log('Cart exists');
                 this.getCart(cartId)
-                .then(cart => {
-                    console.log('Adding item to cart');
-                    return this.addPaint(paint.id, manufacturer, quantity, cart.id);
-                })
-                .then(cart => {
-                    console.log('Item added to cart');
-                    localStorage.setItem('shopping_cart', JSON.stringify(cart));
-                    resolve(cart);
-                })
-                .catch(error => reject(error));
-        }
+                    .then(cart => {
+                        console.log('Adding item to cart');
+                        return this.addPaint(paint.id, manufacturer, quantity, cart.id);
+                    })
+                    .then(cart => {
+                        console.log('Item added to cart');
+                        localStorage.setItem('shopping_cart', JSON.stringify(cart));
+                        resolve(cart);
+                    })
+                    .catch(error => reject(error));
+            }
             else {
                 console.log(`Cart doen't exists`);
                 let cart = new Cart();
@@ -193,12 +194,12 @@ export class CartManager {
                 cart.paints.push(cartItem);
                 console.log('Creating new cart');
                 this.createCart(cart, true)
-                .then(response => {
-                    console.log('Cart successful created');
-                    localStorage.setItem('shopping_cart', JSON.stringify(cart));
-                    resolve(cart);
-                })
-                .catch(error => reject(error));
+                    .then(response => {
+                        console.log('Cart successful created');
+                        localStorage.setItem('shopping_cart', JSON.stringify(cart));
+                        resolve(cart);
+                    })
+                    .catch(error => reject(error));
             }
         });
     }
@@ -213,12 +214,12 @@ export class CartManager {
      * @returns {Promise<Cart>} 
      * @memberof CartManager
      */
-    addPaint(paintId: string, manufacturer: string, quantity: number, cartId: string): Promise<Cart>{
+    addPaint(paintId: string, manufacturer: string, quantity: number, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.addPaint(paintId, manufacturer, quantity, cartId)
-            .subscribe(cart => {
-               resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -240,9 +241,9 @@ export class CartManager {
                 "feature": feature
             };
             this.service.sendToCart(item, cartId)
-            .subscribe(cart => {
-                resolve(cart)
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart)
+                }, error => reject(error));
         });
     }
 
@@ -262,9 +263,9 @@ export class CartManager {
                 "quantity": quantity
             };
             this.service.sendServiceToCart(item, cartId)
-            .subscribe(cart => {
-                resolve(cart)
-            }, error => reject(error));            
+                .subscribe(cart => {
+                    resolve(cart)
+                }, error => reject(error));
         });
     }
 
@@ -280,11 +281,12 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             let session_id: string = this.getSessionId();
             let zipCode: number = this.getZipcode();
-            this.service.createCart(cart, isPaint, session_id, zipCode)
-            .subscribe(response => {
-                this.setCartId(response.id);
-                resolve(response);
-            }, error => reject(error));
+            let origin = this.getOrigin();
+            this.service.createCart(cart, isPaint, session_id, zipCode, origin)
+                .subscribe(response => {
+                    this.setCartId(response.id);
+                    resolve(response);
+                }, error => reject(error));
         });
     }
 
@@ -299,9 +301,9 @@ export class CartManager {
     updateItem(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.updateItem(item, cartId)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -316,9 +318,9 @@ export class CartManager {
     updateItemService(item: Service, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.updateItemService(item, cartId)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -330,12 +332,12 @@ export class CartManager {
      * @returns {Promise<Cart>} 
      * @memberof CartManager
      */
-    updatePaint(item: CartItem, cartId: string): Promise<Cart>{
+    updatePaint(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.updatePaint(item, cartId)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -350,9 +352,9 @@ export class CartManager {
     deleteItem(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.deleteItem(item, cartId)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -367,9 +369,9 @@ export class CartManager {
     deleteService(serviceId: string, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.deleteService(serviceId, cartId)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -384,9 +386,9 @@ export class CartManager {
     deletePaint(item: CartItem, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.deletePaint(item, cartId)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -401,9 +403,9 @@ export class CartManager {
     setShipping(shipping: Shipping, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.setShipping(shipping, cartId)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -414,13 +416,13 @@ export class CartManager {
      * @returns {Promise<Cart>} 
      * @memberof CartManager
      */
-    setCustomerToCart(cartId: string): Promise<Cart>{
+    setCustomerToCart(cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let token = this.getToken();
             this.service.setCustomerToCart(cartId, token)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         })
     }
 
@@ -432,13 +434,13 @@ export class CartManager {
      * @returns {Promise<Cart>} 
      * @memberof CartManager
      */
-    addDeliveryAddress(cartId: string, addressId: string): Promise<Cart>{
+    addDeliveryAddress(cartId: string, addressId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let token = this.getToken();
             this.service.addDeliveryAddress(cartId, addressId, token)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -450,13 +452,13 @@ export class CartManager {
      * @returns {Promise<Cart>} 
      * @memberof CartManager
      */
-    addBillingAddress(cartId: string, addressId: string): Promise<Cart>{
+    addBillingAddress(cartId: string, addressId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let token = this.getToken();
             this.service.addBillingAddress(cartId, addressId, token)
-            .subscribe(cart => {
-                resolve(cart);
-            }, error => reject(error));
+                .subscribe(cart => {
+                    resolve(cart);
+                }, error => reject(error));
         });
     }
 
@@ -467,7 +469,7 @@ export class CartManager {
      * @returns {Paint} 
      * @memberof CartManager
      */
-    exportAsPaint(combination: CustomPaintCombination): Paint{
+    exportAsPaint(combination: CustomPaintCombination): Paint {
         return new Paint({
             id: combination.id,
             baseName: combination.name,
@@ -480,5 +482,18 @@ export class CartManager {
             optionName: combination.variation.optionName,
             optionPicture: combination.variation.optionPicture
         });
+    }
+
+    isMobile(): boolean {
+        if (isPlatformBrowser(this.platformId)) {
+            return AppCore.isMobile(window);
+        }
+        else return false;
+    }
+
+    getOrigin(): string {
+        if (this.isMobile())
+            return "mobile";
+        return "desktop";
     }
 }

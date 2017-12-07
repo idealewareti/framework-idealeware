@@ -2,7 +2,7 @@
     <span class="flags"></span>
     <span class="thumb">
         <a [routerLink]="[getRoute()]" [attr.title]="product.name">
-            <img [attr.src]="getCoverImage()" [attr.alt]="product.name" class="img-responsive"/>
+            <img [attr.src]="getCoverImage()" [attr.alt]="product.name" class="img-responsive" (mouseenter)="setCoverImage(true)"  (mouseleave)="setCoverImage(false)">
         </a>
     </span>
     <h3 class="product-name">

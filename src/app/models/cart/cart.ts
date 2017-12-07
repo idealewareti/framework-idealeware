@@ -24,6 +24,7 @@ export class Cart{
   totalPurchasePrice: number;
   sessionId: string;
   zipCode: string;
+  origin: string;
 
   constructor(object = null){
       if(object) return this.createFromResponse(object);

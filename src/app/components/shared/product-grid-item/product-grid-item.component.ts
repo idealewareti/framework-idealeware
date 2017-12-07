@@ -47,13 +47,32 @@ export class ProductGridItemComponent implements OnInit {
         return `/${AppCore.getNiceName(this.product.name)}-${this.sku.id}`;
     }
 
+    setCoverImage(alternative: boolean) {
+        this.alternative = alternative;
+    }
+
     getCoverImage(): string {
         const mediaPath = `${this.store.link}/static/products`;
         let coverImg: string;
-        if(this.sku.picture)
-            coverImg = (this.sku.picture['showcase']) ?`${mediaPath}/${this.sku.picture.showcase}` : '/assets/images/no-image.jpg';
-        else
-            coverImg = '/assets/images/no-image.jpg';
+        if(this.alternative) {
+            if(this.sku.alternativePicture) {
+                coverImg = (this.sku.alternativePicture['showcase']) ?`${mediaPath}/${this.sku.alternativePicture.showcase}` : '/assets/images/no-image.jpg';
+            }
+            else if(this.sku.picture) {
+                coverImg = (this.sku.picture['showcase']) ?`${mediaPath}/${this.sku.picture.showcase}` : '/assets/images/no-image.jpg';
+            }
+            else {
+                coverImg = '/assets/images/no-image.jpg';
+            }
+        }
+        else {
+            if(this.sku.picture) {
+                coverImg = (this.sku.picture['showcase']) ?`${mediaPath}/${this.sku.picture.showcase}` : '/assets/images/no-image.jpg';
+            }
+            else {
+                coverImg = '/assets/images/no-image.jpg';
+            }
+        }
         return coverImg;
     }
 

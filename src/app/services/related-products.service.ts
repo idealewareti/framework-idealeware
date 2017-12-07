@@ -4,7 +4,7 @@ import { Http } from "@angular/http";
 import { EnVariationType } from "../enums/variationtype.enum";
 import { RelatedProductGroup } from "../models/related-products/related-product-group";
 import { RelatedProductSearch } from "../models/related-products/related-product-search";
-import { environment } from "../../environments/environment.prod";
+import { environment } from "../../environments/environment";
 import { Observable } from "rxjs/Observable";
 
 @Injectable()

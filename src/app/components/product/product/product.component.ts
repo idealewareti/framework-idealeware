@@ -572,4 +572,26 @@ export class ProductComponent {
             return `${this.store.link}/static/store/${this.store.logo}`;
         }
     }
+
+    /**
+     * Exibe ou oculta o estoque baseado na configuração da loja
+     * Default: false
+     * @returns 
+     * @memberof ProductComponent
+     */
+    showStock(): boolean {
+        if(this.store) {
+            if(this.isCatalog()) {
+                return false;
+            }
+            else {
+                let showStock = this.store.settings.find(s => s.type == 5);
+                if(showStock && showStock.status) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return false;
+    }
 }

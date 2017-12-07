@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  envName: 'Production',
 
   API_AUTHENTICATE: 'https://api-pub-authenticate.prd.idealeware.com.br',
   API_BANNER: 'https://api-pub-banner.prd.idealeware.com.br',
@@ -18,7 +19,7 @@ export const environment = {
   API_GROUP: 'https://api-pub-group.prd.idealeware.com.br',
   API_INSTITUTIONAL: 'https://api-pub-institutional.prd.idealeware.com.br',
   API_INTELIPOST: 'https://api-pub-intelipost.prd.idealeware.com.br',
-  API_ORDER: 'https://api-pub-order.prd.idealeware.com.br', 
+  API_ORDER: 'https://api-pub-order.prd.idealeware.com.br',
   API_ORDERVALIDATION: 'https://api-pub-ordervalidation.prd.idealeware.com.br',
   API_PAYMENTS: 'https://api-pub-payments.prd.idealeware.com.br',
   API_POPUP: 'https://api-pub-popup.prd.idealeware.com.br',
