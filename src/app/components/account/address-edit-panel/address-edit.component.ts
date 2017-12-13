@@ -21,10 +21,11 @@ declare var toastr: any;
 export class AddressEditComponent implements OnInit {
     @Input() tabId: string;
     readonly states = AppTexts.BRAZILIAN_STATES;
-    readonly addressTypes = AppTexts.ADDRESS_TYPES;
+    public readonly addressTypes = AppTexts.ADDRESS_TYPES;
     myForm: FormGroup;
     address: CustomerAddress;
     isEdit: boolean = false;
+
 
     constructor(
         builder: FormBuilder,
@@ -145,6 +146,45 @@ export class AddressEditComponent implements OnInit {
                         console.log(error)
                     };
             }
+        }
+    }
+
+    hasError(key: string): boolean {
+        let error: boolean = (this.myForm.controls[key].touched && this.myForm.controls[key].invalid);
+        return error;
+    }
+
+    invalidForm(): boolean {
+        if (this.myForm.invalid) {
+            let errors = [];
+            for (let i in this.myForm.controls) {
+                if ((<any>this.myForm.controls[i]).invalid)
+                    errors.push(i)
+            }
+
+            if (errors.length == 0)
+                return false;
+            else return true;
+        }
+        else return false;
+    }
+
+    addresse(event) {
+        event.preventDefault();
+
+        if (this.invalidForm()) {
+            swal({
+                title: 'Falha ao cadastrar',
+                text: 'Os campos informados com * são obrigatórios',
+                type: "error",
+                confirmButtonText: "OK"
+            });
+
+            for (let i in this.myForm.controls) {
+                (<any>this.myForm.controls[i])._touched = true;
+            }
+        }else{
+            this.save();
         }
     }
 }

@@ -5,6 +5,7 @@ export class Store {
     domain: string;
     link: string;
     logo: string;
+    logoMobile: string;
     companyName: string;
     tradingName: string;
     cnpj: string;
@@ -22,6 +23,7 @@ export class Store {
     country: string;
     modality: EnumStoreModality;
     settings: StoreSetting[] = [];
+    imageFivIcon: string[] = [];
 
     public constructor(object = null) {
         if (object) return this.createFromResponse(object);

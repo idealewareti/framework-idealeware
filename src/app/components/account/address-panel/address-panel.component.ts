@@ -6,6 +6,7 @@ import { CustomerService } from '../../../services/customer.service';
 import { Title } from "@angular/platform-browser";
 import { isPlatformBrowser } from '@angular/common';
 import { Token } from '../../../models/customer/token';
+import { FormGroup } from '@angular/forms';
 
 declare var swal: any;
 
@@ -18,6 +19,7 @@ declare var swal: any;
 export class AddressPanelComponent implements OnInit {
     @Input() tabId: string;
     addresses: CustomerAddress[] = [];
+    myForm: FormGroup;
 
     constructor(private service: CustomerService, private titleService: Title,
         @Inject(PLATFORM_ID) private platformId: Object) {
@@ -64,4 +66,5 @@ export class AddressPanelComponent implements OnInit {
             this.addresses.splice(index, 1);
         }
     }
+
 }
