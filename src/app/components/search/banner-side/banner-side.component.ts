@@ -4,6 +4,7 @@ import { BannerService } from "../../../services/banner.service";
 import { Globals } from "../../../models/globals";
 import { isPlatformBrowser } from "@angular/common";
 import { AppCore } from "../../../app.core";
+import { Store } from "../../../models/store/store";
 
 @Component({
     moduleId: module.id,
@@ -15,20 +16,19 @@ export class BannerSideComponent implements OnChanges {
     @Input() module: string = null;
     @Input() moduleId: string = null;
     @Input() place: number;
+    @Input() store: Store;
     bannersSide: Banner[] = [];
 
     mediaPath: string;
 
     constructor(
         private service: BannerService,
-        private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
-        this.mediaPath = `${this.globals.store.link}/static/banners/`;
     }
-
+    
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-
+        this.mediaPath = `${this.store.link}/static/banners/`;
         if (changes['moduleId'].currentValue != changes['moduleId'].previousValue) {
             switch (this.module) {
                 case 'category':
