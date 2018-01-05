@@ -12,18 +12,15 @@ import { Token } from '../../../models/customer/token';
     templateUrl: '../../../template/account/orders-panel/orders-panel.html',
     styleUrls: ['../../../template/account/orders-panel/orders-panel.scss']
 })
-export class OrderPanelComponent{
+export class OrderPanelComponent {
     @Input() tabId: string;
     orders: Order[] = [];
-    
-    constructor(private service: OrderService, private titleService: Title,
-        @Inject(PLATFORM_ID) private platformId: Object){
-        
-    }
+
+    constructor(private service: OrderService, private titleService: Title, @Inject(PLATFORM_ID) private platformId: Object) {}
 
     private getToken(): Token {
         let token = new Token();
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             token = new Token();
             token.accessToken = localStorage.getItem('auth');
             token.createdDate = new Date(localStorage.getItem('auth_create'));
@@ -33,24 +30,24 @@ export class OrderPanelComponent{
         return token;
     }
 
-    ngOnInit(){
+    ngOnInit() {
         this.service.getOrders(this.getToken())
-        .subscribe(orders => {
-            this.orders = orders;
-        }),(error => console.log(error));
-        
+            .subscribe(orders => {
+                this.orders = orders;
+            }), (error => console.log(error));
+
         this.titleService.setTitle('Meus Pedidos');
     }
 
-    showList(){
-        if(this.tabId) return false;
+    showList() {
+        if (this.tabId) return false;
         else return true;
     }
 
-    statusClass(order: Order): string{
-        if(order.status == OrderStatusEnum.CanceledOrder)
+    statusClass(order: Order): string {
+        if (order.status == OrderStatusEnum.CanceledOrder)
             return 'status-red';
-        else if(order.status == OrderStatusEnum.PendingOrder)
+        else if (order.status == OrderStatusEnum.PendingOrder)
             return 'status-yellow';
         else return 'status-green';
 

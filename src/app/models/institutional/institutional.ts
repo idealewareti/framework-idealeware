@@ -8,13 +8,13 @@ export class Institutional {
     status: boolean;
     allowDelete: boolean;
 
-    constructor(object = null){
-        if(object) return this.CreateFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.CreateFromResponse(object);
     }
 
-    CreateFromResponse(object){
+    CreateFromResponse(object) {
         let model = new Institutional();
-        for(var k in object){
+        for (var k in object) {
             model[k] = object[k];
         }
         return model;

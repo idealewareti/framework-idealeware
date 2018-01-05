@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+- Melhorias de performance
+- Resolvido o flickering na loja
+
 ## 2.0.0
 - Implementação do Angular Universal
 - Adicionadas melhorias para SEO

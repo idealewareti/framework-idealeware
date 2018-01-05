@@ -23,7 +23,7 @@ export class ProductGalleryComponent implements OnInit, OnChanges {
     mediaPath: string;
     private zoomChecked = false;
 
-    constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+    constructor( @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit() {
         this.pictures = this.sku.pictures;
@@ -104,7 +104,7 @@ export class ProductGalleryComponent implements OnInit, OnChanges {
         }
     }
 
-    getPictureUrl(picture: ProductPicture):string {
+    getPictureUrl(picture: ProductPicture): string {
         return `${this.store.link}/static/products/${picture.showcase}`;
     }
 

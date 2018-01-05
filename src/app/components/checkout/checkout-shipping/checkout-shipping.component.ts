@@ -115,7 +115,7 @@ export class CheckoutShippingComponent implements OnChanges {
                 delivery.deliveryEstimatedDateMax = this.addToDate(new Date(), 'day', branch.replenishmentTime);
                 shipping.deliveryInformation = delivery;
             }
-            
+
             if (isPlatformBrowser(this.platformId)) {
                 this.manager.setShipping(shipping, localStorage.getItem('cart_id'))
                     .then(cart => {

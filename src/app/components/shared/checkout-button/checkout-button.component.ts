@@ -3,7 +3,8 @@ import { PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Cart } from '../../../models/cart/cart';
 import { Router } from '@angular/router';
-import $ from 'jquery/dist/jquery';
+
+declare var $: any;
 
 @Component({
     selector: 'app-checkout-button',
@@ -18,41 +19,41 @@ export class CheckoutButtonComponent implements OnInit {
     constructor(
         private parentRouter: Router,
         @Inject(PLATFORM_ID) private platformId: Object
-    ){}
+    ) { }
 
-    ngOnInit(){}
+    ngOnInit() { }
 
-    ngAfterViewChecked(){
+    ngAfterViewChecked() {
         if (isPlatformBrowser(this.platformId)) {
-            if(this.cart && this.getNumItemsInCart() == 0) {
+            if (this.cart && this.getNumItemsInCart() == 0) {
                 $('.btn-checkout').addClass('disabled');
             }
             else {
                 $('.btn-checkout').removeClass('disabled');
             }
-        }            
+        }
     }
 
-    checkout(event){
+    checkout(event) {
         event.preventDefault();
         if (isPlatformBrowser(this.platformId)) {
             let auth: string = localStorage.getItem('auth');
-            if(auth){
+            if (auth) {
                 this.parentRouter.navigateByUrl('/checkout');
             }
-            else{
+            else {
                 this.parentRouter.navigateByUrl('/login;step=checkout');
             }
         }
     }
 
     getNumItemsInCart(): number {
-        if(this.cart){
+        if (this.cart) {
             let numItems = 0;
             numItems += (this.cart.products) ? this.cart.products.length : 0;
             numItems += (this.cart.services) ? this.cart.services.length : 0;
             numItems += (this.cart.paints) ? this.cart.paints.length : 0;
-            return  numItems;
+            return numItems;
         }
         else return 0;
     }

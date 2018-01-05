@@ -21,7 +21,7 @@
     </div>
 </header>
 <!-- Header Normal -->
-<header id="header" [ngClass]="{'hide': isCheckout()}" *ngIf="getStore()">
+<header id="header" [ngClass]="{'hide': isCheckout()}">
     <nav class="nav-top navbar navbar-default hidden-xs hidden-sm">
         <div class="container">
             <div class="pull-left">
@@ -93,7 +93,7 @@
     </div>
 </header>
 <!-- Menu -->
-<nav class="navbar categories-nav navbar-static-top" [ngClass]="{'hide': isCheckout()}" *ngIf="getStore()">
+<nav class="navbar categories-nav navbar-static-top" [ngClass]="{'hide': isCheckout()}">
     <!-- <div class="container">
         <app-search-vehicle></app-search-vehicle>
     </div> -->
@@ -127,7 +127,7 @@
                                 <img src="assets/images/icon-close.svg" alt="Fechar" />
                             </button>
                             <div class="overflow-hidden">
-                                <input id="auto-complete" type="text" placeholder="O que você procura?" name="q" [(ngModel)]="q" autocomplete="off">
+                                <input id="auto-complete-mobile" type="text" placeholder="O que você procura?" name="q" [(ngModel)]="q" autocomplete="off">
                             </div>
                         </fieldset>
                     </form>

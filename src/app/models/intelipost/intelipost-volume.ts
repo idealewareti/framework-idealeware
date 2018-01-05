@@ -1,4 +1,4 @@
-export class IntelipostVolume{
+export class IntelipostVolume {
     width: number;
     height: number;
     length: number;
@@ -6,14 +6,14 @@ export class IntelipostVolume{
     costOfGoods: number;
     description: string;
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    public createFromResponse(response): IntelipostVolume{
+    public createFromResponse(response): IntelipostVolume {
         let model = new IntelipostVolume();
-        
-        for (var k in response){
+
+        for (var k in response) {
             model[k] = response[k];
         }
 

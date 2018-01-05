@@ -1,11 +1,11 @@
 # Trabalhando com Angular 
 
-## O que será necessário instalar:
+## O que serÃ¡ necessÃ¡rio instalar:
 
 NodeJS
 https://nodejs.org/en/
 
-Angular CLI (Compilador oficial do Angular 4), após o NodeJS instalado digite no Terminal/Prompt de Comando
+Angular CLI (Compilador oficial do Angular 4), apÃ³s o NodeJS instalado digite no Terminal/Prompt de Comando
 > `npm install -g @angular/cli`
 
 Visual Studio Code
@@ -14,24 +14,24 @@ https://code.visualstudio.com/
 
 ## A estrutura do projeto
 
-O nosso frontend segue o seguinte padrão:
+O nosso frontend segue o seguinte padrÃ£o:
 
-Pasta/Arquivo            | Descrição
+Pasta/Arquivo            | DescriÃ§Ã£o
 ------------------------ | ------------------------------------------------------------------------------------
 /dist 						       |    _Arquivos compilados do projeto. Criada quando o projeto for compilado_
-/node_modules 					 |			_Dependências do projeto. Criado quando o NPM baixar as dependências_
-/package.json						 |			_Configurações dos pacotes do NodeJS no projeto_
-/src										 |			_Todo código-fonte_
-/src/app 								 |			_Aonde todo o código fonte se encontra_
+/node_modules 					 |			_DependÃªncias do projeto. Criado quando o NPM baixar as dependÃªncias_
+/package.json						 |			_ConfiguraÃ§Ãµes dos pacotes do NodeJS no projeto_
+/src										 |			_Todo cÃ³digo-fonte_
+/src/app 								 |			_Aonde todo o cÃ³digo fonte se encontra_
 /src/app/app.component.ts| 		_Componente principal do projeto_
-/src/app/app.config 		 |			_Configurações do cliente_
-/src/app/app.module.ts 	 |			_Módulo do projeto, importa todos os módulos, serviços, componentes, etc_
-/src/app/index.html			 |		_Página do projeto_
+/src/app/app.config 		 |			_ConfiguraÃ§Ãµes do cliente_
+/src/app/app.module.ts 	 |			_MÃ³dulo do projeto, importa todos os mÃ³dulos, serviÃ§os, componentes, etc_
+/src/app/index.html			 |		_PÃ¡gina do projeto_
 /src/app/components      |     _Componentes do projeto_
 /src/app/managers   |   _Gerenciadores de funcionalidades_
-/src/app/services        |     _Providers do projetos que irão se comunicar com as API's_
+/src/app/services        |     _Providers do projetos que irÃ£o se comunicar com as API's_
 /src/app/views 					 |			_HTML das views dos componentes_
-/src/assets			 				 |			_Arquivos estáticos: , Imagens e etc_
+/src/assets			 				 |			_Arquivos estÃ¡ticos: , Imagens e etc_
 /src/scripts                   |       _Scripts adicionais da loja_
 /src/styles                   |       _Estilos CSS da loja_
 /src/app/template       |   _Template da loja: HTML e folhas de estilo SASS_
@@ -41,17 +41,17 @@ Pasta/Arquivo            | Descrição
 
 Pelo Powershell ou Prompt de Comando, entre na pasta do projeto, e execute os comandos:
 
-Para baixar as dependências do projeto
+Para baixar as dependÃªncias do projeto
 > `npm install`
 
-Para iniciar o servidor. O caminho padrão que estamos usando é: http://localhost:4200
+Para iniciar o servidor. O caminho padrÃ£o que estamos usando Ã©: http://localhost:4200
 > `ng serve` 
 
-## Gerando a publicação
+## Gerando a publicaÃ§Ã£o
 
-Para publicação, basta digitar no terminal 
+Para publicaÃ§Ã£o, basta digitar no terminal 
 > `npm run build:ssr`
 
 Para visualizar uma loja rodando com Server-Side Rendering (Angular Universal)
-(Este comando necessita que a publicação seja gerada e irá ser executado em http://localhost na porta definida em app.config.ts)
+(Este comando necessita que a publicaÃ§Ã£o seja gerada e irÃ¡ ser executado em http://localhost na porta definida em app.config.ts)
 > `npm run serve:ssr`

@@ -183,7 +183,7 @@ export class AddressEditComponent implements OnInit {
             for (let i in this.myForm.controls) {
                 (<any>this.myForm.controls[i])._touched = true;
             }
-        }else{
+        } else {
             this.save();
         }
     }

@@ -1,4 +1,4 @@
-export class BudgetCustomer{
+export class BudgetCustomer {
     id: string;
     firstname_Companyname: string;
     lastname_Tradingname: string;
@@ -20,18 +20,18 @@ export class BudgetCustomer{
     deliveryCity: string;
     deliveryState: string;
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    createFromResponse(object): BudgetCustomer{
+    createFromResponse(object): BudgetCustomer {
         let model = new BudgetCustomer();
 
-        for(var k in object){
+        for (var k in object) {
             model[k] = object[k];
         }
-  
+
         return model;
     }
-    
+
 }

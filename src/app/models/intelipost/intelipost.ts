@@ -8,18 +8,18 @@ export class Intelipost {
     locale: string;
     content: IntelipostContent;
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    public createFromResponse(response): Intelipost{
+    public createFromResponse(response): Intelipost {
         let model = new Intelipost();
-        
-        for (var k in response){
-            if(k == 'content'){
+
+        for (var k in response) {
+            if (k == 'content') {
                 model.content = new IntelipostContent(response.content);
             }
-            else{
+            else {
                 model[k] = response[k];
             }
         }

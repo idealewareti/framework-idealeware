@@ -1,5 +1,4 @@
-export enum EnumPaymentType
-    {
-        Online = 1,
-        Offline = 2
-    }
+export enum EnumPaymentType {
+    Online = 1,
+    Offline = 2
+}

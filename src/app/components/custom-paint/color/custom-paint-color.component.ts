@@ -72,15 +72,15 @@ export class CustomPaintColorComponent implements OnInit {
     /* Loaders */
     getColors(manufacuter: string) {
         if (isPlatformBrowser(this.platformId)) {
-        this.service.getColorsFromManufacturer(manufacuter)
-            .subscribe(colors => {
-                this.colors = colors;
-                this.colorsLoaded = true;
-                this.getFamilies();
-            }, error => {
-                console.log(error);
-                swal(error.text());
-            });
+            this.service.getColorsFromManufacturer(manufacuter)
+                .subscribe(colors => {
+                    this.colors = colors;
+                    this.colorsLoaded = true;
+                    this.getFamilies();
+                }, error => {
+                    console.log(error);
+                    swal(error.text());
+                });
         }
     }
 

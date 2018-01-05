@@ -208,7 +208,7 @@
                             </ul>
                         </ng-template>
                         <ng-template #hasno_categories>
-                            <app-wait-loader></app-wait-loader>
+                            <app-wait-loader *ngIf="categories != null"></app-wait-loader>
                         </ng-template>
                     </div>
                     <!-- Filtrar por Marcas -->
@@ -263,7 +263,7 @@
                             </div>
                         </div>
                     </div>
-                    <app-banner-side *ngIf="id" [module]="module" [moduleId]="id" [store]="getStore()" [place]="2"></app-banner-side>
+                    <app-banner-side *ngIf="id" [module]="module" [moduleId]="id" [place]="2"></app-banner-side>
                 </div>
                 <!-- Results -->
                 <div class="col-md-9 col-sm-12 main-content">

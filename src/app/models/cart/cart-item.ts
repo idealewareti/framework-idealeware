@@ -1,6 +1,6 @@
-import {ProductPicture} from '../product/product-picture';
-import {Product} from '../product/product';
-import {Sku} from '../product/sku';
+import { ProductPicture } from '../product/product-picture';
+import { Product } from '../product/product';
+import { Sku } from '../product/sku';
 import { CustomPaintCombination } from '../custom-paint/custom-paint-combination';
 
 export class CartItem {
@@ -34,26 +34,26 @@ export class CartItem {
     optionWidth: number;
     variationName: string;
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    createFromResponse(object){
+    createFromResponse(object) {
         let model = new CartItem();
 
-        for(var k in object){
-            if(k == 'sku'){
+        for (var k in object) {
+            if (k == 'sku') {
                 model.sku = new Sku(object.sku);
             }
-            else{
+            else {
                 model[k] = object[k];
             }
         }
-  
+
         return model;
     }
 
-    createFromProduct(product: Product, sku: Sku, feature: string, quantity: number): CartItem{
+    createFromProduct(product: Product, sku: Sku, feature: string, quantity: number): CartItem {
         let item = new CartItem();
         item.productItemId = product.id;
         item.name = product.name;
@@ -71,12 +71,12 @@ export class CartItem {
         return item;
     }
 
-    createFromPaint(paint: CustomPaintCombination, manufacturer: string, quantity: number): CartItem{
+    createFromPaint(paint: CustomPaintCombination, manufacturer: string, quantity: number): CartItem {
         let item = new CartItem();
         item.id = paint.id;
         item.manufacturer = manufacturer;
         item.quantity = quantity;
-        
+
         return item;
     }
 }

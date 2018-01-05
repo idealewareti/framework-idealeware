@@ -13,7 +13,7 @@ const routes: Routes = [
     children: [
       { path: '',    component: CustomPaintManufacturerComponent },
       { path: ':manufacturer', component: CustomPaintColorComponent },
-      { path: ':manufacturer/:color', component: CustomPaintVariationComponent },
+      { path: ':manufacturer/:color', component: CustomPaintBaseComponent },
       { path: ':manufacturer/:color/:option', component: CustomPaintBaseComponent },
     ]
   }

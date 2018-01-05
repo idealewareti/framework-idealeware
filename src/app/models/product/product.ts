@@ -27,6 +27,8 @@ export class Product {
     shippingCompanies: Object[] = [];
     crossSelling: Object[] = [];
     upSelling: Object[] = [];
+    crossSellingComplete: Product[] = [];
+    upSellingComplete: Product[] = [];
     services: Service[] = [];
     pictures: ProductPicture[] = [];
     areaSizer: number;

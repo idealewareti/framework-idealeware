@@ -1,49 +1,103 @@
-<main role="main" >
+<main role="main">
     <div class="custom-paint-page-details">
         <div class="container">
             <div class="row">
                 <ol class="breadcrumb">
-                    <li><a [routerLink]="['/corespersonalizadas']">Cores Personalizadas</a></li>
-                    <li><a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer]" [attr.title]="manufacturer.name">{{manufacturer.name}}</a></li>
-                    <li><a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer, colorCode]" title="Variações">Variações</a></li>
+                    <li>
+                        <a [routerLink]="['/corespersonalizadas']">Cores Personalizadas</a>
+                    </li>
+                    <li>
+                        <a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer]" [attr.title]="manufacturer.name">{{manufacturer.name}}</a>
+                    </li>
+                    <li>
+                        <a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer, colorCode]" title="Variações">Variações</a>
+                    </li>
                     <li class="active">Escolha o produto</li>
                 </ol>
-                <div class="showcase showcase-catalog">
-                    <ul class="showcase-items list-style-none" *ngIf="paints.length > 0">
-                        <li class="showcase-item" *ngFor="let paint of paints">
-                            <span  class="border">
-                                <span class="thumb">
-                                    <div class="img-circle pull-right custom-paint-color-sample" [ngStyle]="{'background-color': getColor(paint)}" [attr.title]="paint.color.name + ' ' + paint.color.code"></div>
-                                    <a href="javascript:void(0)" [attr.title]="paint.name">
-                                        <img [attr.src]="getPaintPicture(paint)" [attr.alt]="paint.name" >
-                                    </a>
+            </div>
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <form [formGroup]="filterForm" class="form-inline">
+                            <div class="form-group">
+                                <label for="filterOptionId">Filtrar por tamanho</label>
+                                <select class="form-control" name="filterOptionId" id="filterOptionId" formControlName="filterOptionId" [(ngModel)]="optionId" (change)="changeOption($event)">
+                                    <option *ngFor="let option of variation.options" [selected]="optionId == option.id" [attr.value]="option.id">{{option.name}}</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row paints-showcase" *ngIf="filterPaints().length > 0">
+                <div *ngFor="let paint of filterPaints(); let i=index" class="col-md-4 col-sm-6 col-xs-12">
+                    <span class="border">
+                        <span class="thumb">
+                            <div class="img-circle pull-right custom-paint-color-sample" [ngStyle]="{'background-color': getColor(paint)}" [attr.title]="paint.color.name + ' ' + paint.color.code"></div>
+                            <a href="javascript:void(0)" [attr.title]="paint.name">
+                                <img [attr.src]="getPaintPicture(paint)" [attr.alt]="paint.name">
+                            </a>
+                        </span>
+                        <h3 class="product-name">
+                            <a href="javascript:void(0)" [attr.title]="paint.name">
+                                {{paint.name}}
+                            </a>
+                        </h3>
+                        <span class="price-box" *ngIf="showValues() && paint.price > 0">
+                            <div>
+                                <span class="regular-price">
+                                    <span class="price-label"></span>
+                                    <span class="price">{{paint.price | currencyFormat }}</span>
                                 </span>
-                                <h3 class="product-name">
-                                    <a href="javascript:void(0)" [attr.title]="paint.name">
-                                        {{paint.name}}
-                                    </a>
-                                </h3>
-                                <span class="price-box" *ngIf="showValues() && paint.price > 0">
-                                    <div>
-                                        <span class="regular-price">
-                                            <span class="price-label"></span>
-                                            <span class="price">{{paint.price | currencyFormat }}</span>
-                                        </span>
-                                    </div>
-                                </span>
-                                <a href="#" (click)="purchase(paint, $event)" class="btn btn-success btn-buy">
-                                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>  
-                                    <span *ngIf="modality == 1">Comprar</span>
-                                    <span *ngIf="modality != 1">Orçamento</span>
-                                </a>
-                            </span>
+                            </div>
+                        </span>
+                        <a href="#" (click)="purchase(paint, $event)" class="btn btn-success btn-buy">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                            <span *ngIf="modality == 1">Comprar</span>
+                            <span *ngIf="modality != 1">Orçamento</span>
+                        </a>
+                    </span>
+                </div>
+            </div>
+            <div class="row" *ngIf="filterPaints().length == 0">
+                <p class="text-muted text-center">Nenhum produto encontrado</p>
+            </div>
+            <div class="row" *ngIf="numPages() > 0">
+                <nav class="pull-right">
+                    <ul class="pagination pagination-md">
+                        <li class="page-item">
+                            <a class="page-link previous" href="#" aria-label="Previous" (click)="navigate(1, $event)">
+                                <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link previous" [ngClass]="{'disabled': page <= 1}" href="#" aria-label="Previous" (click)="navigate(page - 1, $event)">
+                                <i class="fa fa-angle-left" aria-hidden="true"></i>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                        <li *ngFor="let p of pages" [ngClass]="{'active': page == p.id}" class="page-item">
+                            <a class="page-link" href="#" (click)="navigate(p.id, $event)" [attr.title]="p.id">{{p.name}}</a>
+                        </li>
+                        <li class="page-item" [ngClass]="{'disabled': page >= numPages()}">
+                            <a class="page-link next" href="#" aria-label="Next" If="(page + 1) < numPages()" (click)="navigate(page + 1, $event)">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link next-end" href="#" aria-label="Next End" (click)="navigate(numPages(), $event)">
+                                <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                <span class="sr-only">Next end</span>
+                            </a>
                         </li>
                     </ul>
-
-                    <p class="text-muted text-center" *ngIf="paints.length == 0">Nenhum produto encontrado</p>
-                </div>
+                </nav>
+            </div>
+            <div class="row">
                 <div class="form-group">
-                    <a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer, colorCode]" class="btn btn-lg btn-default">Voltar</a>
+                    <a [routerLink]="['/corespersonalizadas', manufacturer.manufacturer]" class="btn btn-lg btn-default">Voltar</a>
                 </div>
             </div>
         </div>

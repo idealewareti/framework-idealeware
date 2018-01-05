@@ -6,8 +6,8 @@ import { ValidatorFn, AbstractControl, Validators } from "@angular/forms";
 })
 export class EmailValidatorDirective {
     private valFn = Validators.nullValidator;
-    
-    ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+
+    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         const change = changes['forbiddenName'];
         if (change) {
             const val: string | RegExp = change.currentValue;
@@ -18,16 +18,16 @@ export class EmailValidatorDirective {
         }
     }
 
-    validate(control: AbstractControl): {[key: string]: any} {
+    validate(control: AbstractControl): { [key: string]: any } {
         return this.valFn(control);
     }
 }
 
 export function validEmail(): ValidatorFn {
-    return (control: AbstractControl): {[key: string]: any} => {
+    return (control: AbstractControl): { [key: string]: any } => {
         const email = control.value;
         const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         const valid = regex.test(email);
-        return !valid ? {'invalidEmail': {email}} : null;
+        return !valid ? { 'invalidEmail': { email } } : null;
     };
 }

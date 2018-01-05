@@ -18,17 +18,17 @@ export class PopUpComponent implements OnInit {
     mediaPath: string;
     private popupEnabled: boolean = false;
     @Input() store: Store;
-    
+
     constructor(private service: PopUpService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit() {
         this.getPopUp();
     }
-    
+
     ngAfterContentChecked() {
-        if(!this.mediaPath && this.store) {
+        if (!this.mediaPath && this.store) {
             this.mediaPath = `${this.store.link}/static/popups/`;
-        }       
+        }
     }
 
     getPopUpPicture(): string {
@@ -37,18 +37,18 @@ export class PopUpComponent implements OnInit {
 
     getPopUp() {
         this.service.getPopUp()
-        .subscribe(response => {
-            if (response && response.id) {
-                this.popUpAssortment = response;
-            }
-            else {
-                this.popUpAssortment = null;
-            } 
-        }, error => console.log(error));
+            .subscribe(response => {
+                if (response && response.id) {
+                    this.popUpAssortment = response;
+                }
+                else {
+                    this.popUpAssortment = null;
+                }
+            }, error => console.log(error));
     }
 
     ngAfterViewChecked() {
-        if(!this.popupEnabled){
+        if (!this.popupEnabled) {
             this.showPopupModal();
         }
     }
@@ -63,6 +63,6 @@ export class PopUpComponent implements OnInit {
                     });
                 });
             }
-        }            
+        }
     }
 }

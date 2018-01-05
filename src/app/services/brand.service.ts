@@ -22,7 +22,7 @@ export class BrandService {
 
     getBrand(id: string): Observable<Brand> {
         let url = `${environment.API_BRAND}/brands/${id}`
-        return  this.client.get(url)
+        return this.client.get(url)
             .map(res => res.json())
     }
 }

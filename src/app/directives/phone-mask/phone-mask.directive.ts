@@ -5,26 +5,26 @@ import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 })
 export class PhoneMaskDirective {
 
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef) { }
 
   @HostListener('keyup', ['$event']) inputChanged(event) {
     let phone = event.target.value;
-    
+
     if (phone) {
       phone = phone.replace(/\D/g, '');
     }
 
-    if(phone.length >= 4 && phone.length <= 6){
+    if (phone.length >= 4 && phone.length <= 6) {
       phone = phone.replace(/\D/g, '');
       phone = phone.replace(/^(\d{0,2})(.*)/, '($1) $2')
     }
 
-    else if(phone.length > 6 && phone.length <= 10){
+    else if (phone.length > 6 && phone.length <= 10) {
       phone = phone.replace(/\D/g, '');
       phone = phone.replace(/^(\d{0,2})(\d{0,4})(.\d)/, '($1) $2-$3')
     }
 
-    else if(phone.length > 10){
+    else if (phone.length > 10) {
       phone = phone.replace(/\D/g, '');
       phone = phone.replace(/^(\d{0,2})(\d{0,5})(.\d)/, '($1) $2-$3')
     }

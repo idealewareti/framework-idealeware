@@ -1,6 +1,6 @@
-import {ModelReference} from '../model-reference';
+import { ModelReference } from '../model-reference';
 
-export class Banner{
+export class Banner {
     id: string;
     name: string;
     url: string;
@@ -14,24 +14,24 @@ export class Banner{
     status: boolean;
 
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    public createFromResponse(response): Banner{
+    public createFromResponse(response): Banner {
         let model = new Banner();
-        
-        for (var k in response){
-            if(k == 'categories'){
+
+        for (var k in response) {
+            if (k == 'categories') {
                 model.categories = response[k].map(c => c = new ModelReference(c));
             }
-            else if(k == 'brands'){
+            else if (k == 'brands') {
                 model.brands = response[k].map(c => c = new ModelReference(c));
             }
-            else if(k == 'groups'){
+            else if (k == 'groups') {
                 model.groups = response[k].map(c => c = new ModelReference(c));
             }
-            else{
+            else {
                 model[k] = response[k];
             }
         }

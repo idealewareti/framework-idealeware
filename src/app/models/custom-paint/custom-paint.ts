@@ -1,4 +1,4 @@
-export class Paint{
+export class Paint {
     id: string;
     baseName: string;
     colorCode: string;
@@ -20,7 +20,7 @@ export class Paint{
     totalDiscountPrice: number;
     totalPrice: number;
 
-     constructor(object = null) {
+    constructor(object = null) {
         if (object) return this.createFromResponse(object);
     }
 

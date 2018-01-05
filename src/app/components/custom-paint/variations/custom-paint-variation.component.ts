@@ -9,6 +9,7 @@ import { CustomPaintOption } from "../../../models/custom-paint/custom-paint-opt
 import { isPlatformBrowser } from '@angular/common';
 import { Store } from '../../../models/store/store';
 import { StoreService } from '../../../services/store.service';
+import { AppConfig } from '../../../app.config';
 
 declare var swal: any;
 
@@ -34,7 +35,7 @@ export class CustomPaintVariationComponent implements OnInit {
         private route: ActivatedRoute,
         private parentRouter: Router,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) { 
+    ) {
         this.mediaPath = 'static/custompaint';
     }
 
@@ -45,12 +46,12 @@ export class CustomPaintVariationComponent implements OnInit {
                 this.manufacuterId = params['manufacturer'];
                 this.colorCode = params['color'];
                 this.fetchStore()
-                .then(store => {
-                    this.store = store;
-                })
-                .catch(error => {
-                    console.log(error);
-                })
+                    .then(store => {
+                        this.store = store;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
                 this.getManufacturer(this.manufacuterId);
                 this.getVariation(this.manufacuterId);
             });
@@ -109,11 +110,25 @@ export class CustomPaintVariationComponent implements OnInit {
     }
 
     private fetchStore(): Promise<Store> {
+        if (isPlatformBrowser(this.platformId)) {
+            let store: Store = JSON.parse(sessionStorage.getItem('store'));
+            if (store && store.domain == AppConfig.DOMAIN) {
+                return new Promise((resolve, reject) => {
+                    resolve(store);
+                });
+            }
+        }
+        return this.fetchStoreFromApi();
+    }
+
+    private fetchStoreFromApi(): Promise<Store> {
         return new Promise((resolve, reject) => {
             this.storeService.getStore()
                 .subscribe(response => {
-                    let store: Store = new Store(response);
-                    resolve(store);
+                    if (isPlatformBrowser(this.platformId)) {
+                        sessionStorage.setItem('store', JSON.stringify(response));
+                    }
+                    resolve(response);
                 }, error => {
                     reject(error);
                 });
@@ -121,7 +136,7 @@ export class CustomPaintVariationComponent implements OnInit {
     }
 
     getOptionPicture(option: CustomPaintOption): string {
-        if(option.picture) {
+        if (option.picture) {
             return `${this.store.link}/${this.mediaPath}/${option.picture}`;
         }
         else {

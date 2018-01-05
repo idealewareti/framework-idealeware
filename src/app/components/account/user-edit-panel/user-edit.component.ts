@@ -118,7 +118,7 @@ export class UserEditComponent implements OnInit {
                     }), (error => {
                         swal('Erro ao atualizar o cadastro', error.text(), 'error');
                     }
-                );
+                    );
             }
         }
     }

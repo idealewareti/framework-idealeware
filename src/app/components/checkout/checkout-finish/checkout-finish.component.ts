@@ -19,40 +19,40 @@ export class CheckoutFinishComponent implements OnInit {
 
     constructor(
         private service: OrderService,
-        private route:ActivatedRoute,
-        private parentRouter: Router, 
+        private route: ActivatedRoute,
+        private parentRouter: Router,
         private titleService: Title,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
-         this.route.params
-        .map(params => params)
-        .subscribe((params) => {
-            let id = params['id'];
-            this.titleService.setTitle('Seu Pedido Foi Gerado');
+        this.route.params
+            .map(params => params)
+            .subscribe((params) => {
+                let id = params['id'];
+                this.titleService.setTitle('Seu Pedido Foi Gerado');
 
-            this.service.getOrder(id, this.getToken())
-            .subscribe(order => {
-                this.order = order;
-            }, error => {
-                console.log(error);
-                this.parentRouter.navigateByUrl('/');
-            })
+                this.service.getOrder(id, this.getToken())
+                    .subscribe(order => {
+                        this.order = order;
+                    }, error => {
+                        console.log(error);
+                        this.parentRouter.navigateByUrl('/');
+                    })
 
-        });
-     }
+            });
+    }
 
-    isBankSlip(): boolean{
+    isBankSlip(): boolean {
         let check = false;
         this.order.payment.paymentMethods.forEach(m => {
-            if(m.type == 2)
+            if (m.type == 2)
                 check = true;
         });
         return check;
     }
 
-    getBankSlipUrl(): string{
+    getBankSlipUrl(): string {
         let url = this.order.payment.paymentMethods.filter(m => m.type == 2)[0].bankSlipUrl;
         return url;
     }
@@ -68,5 +68,5 @@ export class CheckoutFinishComponent implements OnInit {
         }
         return token;
     }
-    
+
 }

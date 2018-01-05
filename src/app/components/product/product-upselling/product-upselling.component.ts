@@ -18,9 +18,8 @@ declare var $: any;
 })
 export class ProductUpSellingComponent implements OnChanges {
 
-    @Input() references: Object[];
+    @Input() products: Product[];
     @Input() store: Store;
-    products: Product[] = [];
 
     constructor(
         private service: ProductService,
@@ -28,10 +27,8 @@ export class ProductUpSellingComponent implements OnChanges {
     ) { }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (!changes['references'].firstChange)
+        if (!changes['products'].firstChange)
             this.destroyCarousel();
-        this.products = [];
-        this.getProducts();
     }
 
     ngOnDestroy() {
@@ -40,18 +37,6 @@ export class ProductUpSellingComponent implements OnChanges {
 
     ngAfterViewChecked() {
         this.buildCarousel();
-    }
-
-    private getProducts(): Promise<{}> {
-        return new Promise((resolve, reject) => {
-            if (this.products.length == 0) {
-                this.service.getProducts(this.references)
-                    .subscribe(response => {
-                        this.products = response;
-                        resolve();
-                    }, error => reject(error));
-            }
-        });
     }
 
     private buildCarousel() {

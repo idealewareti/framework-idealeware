@@ -161,6 +161,13 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
                 installmentLimitMin = product.installmentLimit;
         });
 
+        if (this.payment.name.toLowerCase() == "pagseguro") {
+            let pagseguroMin = Number.parseInt(this.payment.settings.find(a => a.name == "InstallmentLimit").value);
+            if (pagseguroMin < installmentLimitMin) {
+                installmentLimitMin = pagseguroMin;
+            }
+        }
+
         return installmentLimitMin;
     }
 
@@ -175,12 +182,12 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
         let content = e.clipboardData.getData('text/plain');
         setTimeout(() => {
             this.creditCard.creditCardNumber = "";
-            if(this.creditCardForm.controls['creditCardNumber']) {
+            if (this.creditCardForm.controls['creditCardNumber']) {
                 this.creditCardForm.controls.creditCardNumber.setValue("");
             }
             if (isPlatformBrowser(this.platformId)) {
                 $('#cardNumber').val('');
-            }            
+            }
         }, 0);
     }
 
@@ -468,7 +475,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
                 maxInstallmentNoInterest: this.PagseguroNoInterestInstallmentQuantity(),
                 success: response => {
                     let installments = response.installments[this.creditCard.creditCardBrand].map(i => i = new PagseguroInstallment(i));
-                    this.getMinInstallments();
+                    let minInstalments = this.getMinInstallments();
                     this.pagseguro.methods.forEach(m => {
                         let option = m.options.filter(o => o.name == this.creditCard.creditCardBrand.toUpperCase())[0];
                         if (option) {
@@ -477,6 +484,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
                         }
                     });
                     // this.loaderService.done();
+                    if (minInstalments < Number.MAX_SAFE_INTEGER) {
+                        installments.splice(minInstalments, installments.length);
+                    }
                     resolve(installments)
                 },
                 error: response => {

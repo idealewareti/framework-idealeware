@@ -3,13 +3,13 @@ import { NG_VALIDATORS, Validator, AbstractControl, ValidatorFn, Validators } fr
 
 @Directive({
     selector: 'strongPassword',
-    providers: [{provide: NG_VALIDATORS, useExisting: StrongPasswordDirective, multi: true}]
+    providers: [{ provide: NG_VALIDATORS, useExisting: StrongPasswordDirective, multi: true }]
 })
-export class StrongPasswordDirective{
+export class StrongPasswordDirective {
     @Input() password: string;
     private valFn = Validators.nullValidator;
-    
-    ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+
+    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
         const change = changes['forbiddenName'];
         if (change) {
             const val: string | RegExp = change.currentValue;
@@ -21,15 +21,15 @@ export class StrongPasswordDirective{
         }
     }
 
-    validate(control: AbstractControl): {[key: string]: any} {
+    validate(control: AbstractControl): { [key: string]: any } {
         return this.valFn(control);
     }
 }
 
 export function strongPasswordValidator(passwordRegex: RegExp): ValidatorFn {
-    return (control: AbstractControl): {[key: string]: any} => {
+    return (control: AbstractControl): { [key: string]: any } => {
         const password = control.value;
         const no = passwordRegex.test(password);
-        return !no ? {'strongPassword': {password}} : null;
+        return !no ? { 'strongPassword': { password } } : null;
     };
 }

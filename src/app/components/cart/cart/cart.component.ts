@@ -17,6 +17,7 @@ import { AppCore } from '../../../app.core';
 import { error } from 'util';
 import { Paint } from '../../../models/custom-paint/custom-paint';
 import { Shipping } from '../../../models/shipping/shipping';
+import { AppConfig } from '../../../app.config';
 
 //declare var $: any;
 declare var S: any;
@@ -50,7 +51,7 @@ export class CartComponent {
     ngOnInit() {
         if (isPlatformBrowser(this.platformId)) {
             window.scrollTo(0, 0);
-            
+
             let cartId = localStorage.getItem('cart_id');
             this.fetchStore()
                 .then(store => {
@@ -272,9 +273,28 @@ export class CartComponent {
     }
 
     private fetchStore(): Promise<Store> {
+        if (isPlatformBrowser(this.platformId)) {
+            let store: Store = JSON.parse(sessionStorage.getItem('store'));
+            if (store && store.domain == AppConfig.DOMAIN) {
+                return new Promise((resolve, reject) => {
+                    resolve(store);
+                });
+            }
+        }
+        return this.fetchStoreFromApi();
+    }
+
+    private fetchStoreFromApi(): Promise<Store> {
         return new Promise((resolve, reject) => {
             this.storeService.getStore()
-                .subscribe(store => resolve(store), error => reject(error));
+                .subscribe(response => {
+                    if (isPlatformBrowser(this.platformId)) {
+                        sessionStorage.setItem('store', JSON.stringify(response));
+                    }
+                    resolve(response);
+                }, error => {
+                    reject(error);
+                });
         });
     }
 
@@ -288,7 +308,7 @@ export class CartComponent {
     }
 
     getPaintPicture(paint: Paint): string {
-        if(paint && paint.optionPicture) {
+        if (paint && paint.optionPicture) {
             return `${this.store.link}/static/custompaint/${paint.optionPicture}`;
         }
         else {

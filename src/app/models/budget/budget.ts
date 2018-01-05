@@ -11,29 +11,29 @@ export class Budget {
     dateCreate: Date;
     statusCurrent: number;
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    createFromResponse(object): Budget{
+    createFromResponse(object): Budget {
         let model = new Budget();
 
-        for(var k in object){
-            if(k == 'situation'){
+        for (var k in object) {
+            if (k == 'situation') {
                 model.situation = object.situation.map(s => s = new BudgetSituation(s));
             }
-            else if(k == 'customer'){
+            else if (k == 'customer') {
                 model.customer = new BudgetCustomer(object.customer)
             }
-            else if(k == 'product' && object[k]){
+            else if (k == 'product' && object[k]) {
                 model.product = object.product.map(p => p = new BudgetProduct(p));
             }
-            else{
+            else {
                 model[k] = object[k];
             }
         }
-  
+
         return model;
     }
-    
+
 }

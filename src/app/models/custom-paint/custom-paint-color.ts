@@ -1,4 +1,4 @@
-export class CustomPaintColor{
+export class CustomPaintColor {
     code: string;
     name: string;
     rgb: string;
@@ -8,15 +8,15 @@ export class CustomPaintColor{
     familyCode: number;
     familyPosition: number;
 
-    constructor(object = null){
-        if(object)
+    constructor(object = null) {
+        if (object)
             return this.CreateFromResponse(object);
     }
 
-    public CreateFromResponse(object) : CustomPaintColor{
+    public CreateFromResponse(object): CustomPaintColor {
         let model = new CustomPaintColor();
 
-        for (var k in object){
+        for (var k in object) {
             model[k] = object[k];
         }
 

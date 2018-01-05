@@ -5,10 +5,10 @@ import { Token } from "../models/customer/token";
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class HttpClientHelper{
+export class HttpClientHelper {
     headers: Headers;
 
-    constructor(private http: Http){
+    constructor(private http: Http) {
         this.headers = new Headers();
     }
 
@@ -24,7 +24,8 @@ export class HttpClientHelper{
         this.headers.append('Content-Type', 'application/json');
         this.headers.append('Access-Control-Allow-Origin', '*');
         this.headers.append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
-        this.headers.append('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token');
+        this.headers.append('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token, X-Pagination');
+        this.headers.append('Access-Control-Expose-Headers', 'X-Pagination');
         this.headers.append('Cache-control', 'no-cache');
         this.headers.append('Cache-control', 'no-store');
         this.headers.append('Expires', '0');
@@ -32,12 +33,12 @@ export class HttpClientHelper{
         this.headers.append('Domain', domain);
         this.headers.append('storeId', domain);
         this.headers.append('ZipCode', zipcode);
-    
+
         params.forEach(param => {
-          this.headers.append(param['key'], param['value']);
+            this.headers.append(param['key'], param['value']);
         });
 
-        if(token){
+        if (token) {
             this.authorize(token);
         }
     }
@@ -47,7 +48,7 @@ export class HttpClientHelper{
      * @param {Token} token 
      * @memberof HttpClientHelper
      */
-    authorize(token: Token){
+    authorize(token: Token) {
         this.headers.append('Authorization', `${token.tokenType} ${token.accessToken}`);
     }
 
@@ -65,7 +66,7 @@ export class HttpClientHelper{
      */
     get(url, token: Token = null, params = []): Observable<any> {
         this.setHeaders(params, token);
-        return this.http.get(url, {headers: this.headers});
+        return this.http.get(url, { headers: this.headers });
     }
 
     /**
@@ -79,7 +80,7 @@ export class HttpClientHelper{
     post(url, data, token: Token = null): Observable<any> {
         this.setHeaders([], token);
         return this.http.post(url, data, {
-        headers: this.headers
+            headers: this.headers
         });
     }
 
@@ -94,7 +95,7 @@ export class HttpClientHelper{
     put(url, data, token: Token = null): Observable<any> {
         this.setHeaders([], token);
         return this.http.put(url, data, {
-        headers: this.headers
+            headers: this.headers
         });
     }
 
@@ -108,7 +109,7 @@ export class HttpClientHelper{
     delete(url, token: Token = null): Observable<any> {
         this.setHeaders([], null);
         return this.http.delete(url, {
-        headers: this.headers
+            headers: this.headers
         });
     }
 }

@@ -59,16 +59,7 @@
         "tsconfig": "tsconfig.server.json",
         "testTsconfig": "tsconfig.spec.json",
         "prefix": "app",
-        "styles": [
-          "../node_modules/bootstrap/dist/css/bootstrap.min.css",
-          "../node_modules/font-awesome/css/font-awesome.min.css",
-          "../node_modules/sweetalert2/dist/sweetalert2.min.css",
-          "../node_modules/toastr/build/toastr.min.css",
-          "../node_modules/slick-carousel/slick/slick.css",
-          "../node_modules/owl.carousel/dist/assets/owl.carousel.min.css",
-          "../node_modules/owl.carousel/dist/assets/owl.theme.default.css",
-          "styles/style.scss"
-        ],
+        "styles": [],
         "scripts": [
           "../node_modules/jquery/dist/jquery.min.js",
           "../node_modules/bootstrap/dist/js/bootstrap.min.js",

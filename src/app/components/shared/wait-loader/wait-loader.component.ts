@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class WaitLoaderComponent implements OnInit {
     @Input() small: boolean = false;
-    
+
     constructor() { }
 
     ngOnInit() { }

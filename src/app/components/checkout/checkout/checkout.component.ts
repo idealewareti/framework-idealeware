@@ -520,7 +520,7 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     hasPaymentMethodSelected(cartId: string): boolean {
-        if ((this.methodSelected &&  this.methodSelected['id'])
+        if ((this.methodSelected && this.methodSelected['id'])
             || this.paymentSelected.pagseguro
             || this.paymentSelected.mercadopago
             || this.isPickUpStorePayment(this.paymentSelected.payment)
@@ -1015,7 +1015,7 @@ export class CheckoutComponent implements OnInit {
                 .subscribe(cart => {
                     resolve(new Cart(cart));
                 }, error => reject(error));
-            
+
         });
     }
 

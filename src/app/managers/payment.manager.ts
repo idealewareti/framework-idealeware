@@ -19,7 +19,7 @@ export class PaymentManager {
 
     private getToken(): Token {
         let token = new Token();
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             token.accessToken = localStorage.getItem('auth');
             token.createdDate = new Date(localStorage.getItem('auth_create'));
             token.expiresIn = Number(localStorage.getItem('auth_expires'));
@@ -27,86 +27,86 @@ export class PaymentManager {
         }
         return token;
     }
-    
-    getAll(): Promise<Payment[]>{
+
+    getAll(): Promise<Payment[]> {
         return new Promise((resolve, reject) => {
             this.service.getAll()
-            .subscribe(response => {
-                let payments = response.map(p => p = new Payment(p));
-                resolve(payments);
-            }, error => reject(error));
+                .subscribe(response => {
+                    let payments = response.map(p => p = new Payment(p));
+                    resolve(payments);
+                }, error => reject(error));
         })
     }
 
     getDefault(): Promise<Payment> {
         return new Promise((resolve, reject) => {
             this.service.getDefault()
-            .subscribe(response => {
-                let payment:Payment = new Payment(response);
-                resolve(payment);
+                .subscribe(response => {
+                    let payment: Payment = new Payment(response);
+                    resolve(payment);
 
-            }, error => reject(error));
+                }, error => reject(error));
         });
     }
 
-    simulateInstallmentsBySkuId(skuId: string): Promise<Payment[]>{
+    simulateInstallmentsBySkuId(skuId: string): Promise<Payment[]> {
         return new Promise((resolve, reject) => {
             this.service.simulateInstallmentsBySkuId(skuId)
-            .subscribe(response => {
-                let simulator = response.map(p => p = new Payment(p));
-                resolve(simulator);
-            }, error => reject(error));
+                .subscribe(response => {
+                    let simulator = response.map(p => p = new Payment(p));
+                    resolve(simulator);
+                }, error => reject(error));
         });
     }
 
-    simulateInstallmentsBySkuIdDefault(skuId: string): Promise<Payment>{
+    simulateInstallmentsBySkuIdDefault(skuId: string): Promise<Payment> {
         return new Promise((resolve, reject) => {
             let sessionId = this.getPagSeguroSession();
             this.service.simulateInstallmentsBySkuIdDefault(skuId, sessionId)
-            .subscribe(response => {
-                let simulator = new Payment(response);
-                resolve(simulator);
-            }, error => reject(error));
+                .subscribe(response => {
+                    let simulator = new Payment(response);
+                    resolve(simulator);
+                }, error => reject(error));
         });
     }
 
-    simulateInstallmentsByCartId(cartId: string): Promise<Payment[]>{
-        if(isPlatformBrowser(this.platformId)) {
+    simulateInstallmentsByCartId(cartId: string): Promise<Payment[]> {
+        if (isPlatformBrowser(this.platformId)) {
             let token = this.getToken();
             return new Promise((resolve, reject) => {
                 this.service.simulateInstallments(cartId, token)
-                .subscribe(response => {
-                    let payments = response.map(p => p = new Payment(p));
-                    resolve(payments);
-                }, error => reject(error));
+                    .subscribe(response => {
+                        let payments = response.map(p => p = new Payment(p));
+                        resolve(payments);
+                    }, error => reject(error));
             });
         }
     }
 
-    getMercadoPagoMethods(): Promise<MercadoPagoPaymentMethod[]>{
+    getMercadoPagoMethods(): Promise<MercadoPagoPaymentMethod[]> {
         return new Promise((resolve, reject) => {
             this.service.MercadoPagoGetPaymentsMethods()
-            .subscribe(response => {
-               let payments = response.map(g => g = new MercadoPagoPaymentMethod(g));
-               resolve(payments);
-           }, error => reject(error));
+                .subscribe(response => {
+                    let payments = response.map(g => g = new MercadoPagoPaymentMethod(g));
+                    resolve(payments);
+                }, error => reject(error));
 
         })
     }
 
-    getMercadoPagoPublicKey(): Promise<string>{
-        if(isPlatformBrowser(this.platformId)) {
+    getMercadoPagoPublicKey(): Promise<string> {
+        if (isPlatformBrowser(this.platformId)) {
             let token = this.getToken();
             return this.service.GetMercadoPagoPublicKey(token);
         }
     }
 
-    getMercadoPagoInstalments(methodId: string, totalPurchasePrice: number): Promise<MercadoPagoInstallmentResponse>{
+    getMercadoPagoInstalments(methodId: string, totalPurchasePrice: number): Promise<MercadoPagoInstallmentResponse> {
         return new Promise((resolve, reject) => {
             this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice)
-            .subscribe(response => {
-                resolve(new MercadoPagoInstallmentResponse(response));
-            }, error => reject(error));
+                .subscribe(response => {
+                    resolve(new MercadoPagoInstallmentResponse(response));
+                }, error => reject(error));
         });
     }
 
@@ -114,73 +114,73 @@ export class PaymentManager {
     ** Validações de pagamentos - INICIO
     */
 
-    hasMercadoPago(payments: Payment[]): boolean{
-        if(payments.findIndex(p => p.name.toLowerCase() == 'mercadopago') > -1)
+    hasMercadoPago(payments: Payment[]): boolean {
+        if (payments.findIndex(p => p.name.toLowerCase() == 'mercadopago') > -1)
             return true;
         else return false;
     }
 
-    getMercadoPago(payments: Payment[]): Payment{
+    getMercadoPago(payments: Payment[]): Payment {
         return payments.find(p => p.name.toLowerCase() == 'mercadopago');
     }
 
-    isMercadoPago(paymentSelected: Payment, payments: Payment[]): boolean{
+    isMercadoPago(paymentSelected: Payment, payments: Payment[]): boolean {
         let mercadopago = this.getMercadoPago(payments);
-        if(paymentSelected && mercadopago && paymentSelected.id == mercadopago.id)
+        if (paymentSelected && mercadopago && paymentSelected.id == mercadopago.id)
             return true;
         else return false;
     }
 
-    hasPagSeguro(payments: Payment[]): boolean{
-        if(payments.findIndex(p => p.name.toLowerCase() == 'pagseguro') > -1)
+    hasPagSeguro(payments: Payment[]): boolean {
+        if (payments.findIndex(p => p.name.toLowerCase() == 'pagseguro') > -1)
             return true;
         else return false;
     }
 
-    getPagSeguro(payments: Payment[]): Payment{
+    getPagSeguro(payments: Payment[]): Payment {
         return payments.find(p => p.name.toLowerCase() == 'pagseguro');
     }
 
-    isPagSeguro(paymentSelected: Payment, payments: Payment[]): boolean{
+    isPagSeguro(paymentSelected: Payment, payments: Payment[]): boolean {
         let pagseguro = this.getPagSeguro(payments);
-        if(paymentSelected && pagseguro && paymentSelected.id  == pagseguro.id)
+        if (paymentSelected && pagseguro && paymentSelected.id == pagseguro.id)
             return true;
         else return false;
     }
 
-    hasMundipagg(payments: Payment[]): boolean{
-        if(payments.findIndex(p => p.name.toLowerCase() == 'mundipagg') > -1)
+    hasMundipagg(payments: Payment[]): boolean {
+        if (payments.findIndex(p => p.name.toLowerCase() == 'mundipagg') > -1)
             return true;
         else
             return false;
     }
 
-    getMundipagg(payments: Payment[]): Payment[]{
+    getMundipagg(payments: Payment[]): Payment[] {
         return payments.filter(p => p.name.toLowerCase() == 'mundipagg');
     }
 
-    hasMundipaggBankslip(payments: Payment[]): boolean{
-        if(this.hasMundipagg(payments)){
+    hasMundipaggBankslip(payments: Payment[]): boolean {
+        if (this.hasMundipagg(payments)) {
             let payment = this.getMundipagg(payments).find(p => p.paymentMethods.length == 1);
 
-            if(payment && payment.paymentMethods[0].type == PaymentMethodTypeEnum.BankSlip)
+            if (payment && payment.paymentMethods[0].type == PaymentMethodTypeEnum.BankSlip)
                 return true;
             else return false;
         }
         else return false;
     }
 
-    getMundipaggBankslip(payments: Payment[]): Payment{
+    getMundipaggBankslip(payments: Payment[]): Payment {
         return payments
             .filter(p => p.name.toLowerCase() == 'mundipagg')
             .find(m => m.paymentMethods.findIndex(method => method.name.toLowerCase() == 'boleto') > -1);
     }
 
-    isMundipaggBankslip(paymentSelected: Payment, payments: Payment[]): boolean{
+    isMundipaggBankslip(paymentSelected: Payment, payments: Payment[]): boolean {
         let mundipagg = this.getMundipaggBankslip(payments);
-        
-        if(paymentSelected
-            && mundipagg 
+
+        if (paymentSelected
+            && mundipagg
             && paymentSelected.paymentMethods.length > 0
             && paymentSelected.paymentMethods[0].id == mundipagg.paymentMethods[0].id
         )
@@ -188,10 +188,10 @@ export class PaymentManager {
         else return false;
     }
 
-    hasMundipaggCreditCard(payments: Payment[]): boolean{
-        if(this.hasMundipagg(payments)){
+    hasMundipaggCreditCard(payments: Payment[]): boolean {
+        if (this.hasMundipagg(payments)) {
             let mundipaggs = this.getMundipagg(payments);
-            if(mundipaggs.findIndex(m => m.paymentMethods.findIndex(method => method.type == PaymentMethodTypeEnum.CreditCard) > -1) > -1)
+            if (mundipaggs.findIndex(m => m.paymentMethods.findIndex(method => method.type == PaymentMethodTypeEnum.CreditCard) > -1) > -1)
                 return true;
             else
                 return false;
@@ -199,55 +199,55 @@ export class PaymentManager {
         else return false;
     }
 
-    getMundipaggCreditCard(payments: Payment[]): Payment{
+    getMundipaggCreditCard(payments: Payment[]): Payment {
         return payments
             .filter(p => p.name.toLowerCase() == 'mundipagg')
             .find(m => m.paymentMethods.findIndex(method => method.type == PaymentMethodTypeEnum.CreditCard) > -1);
     }
 
-    isMundipaggCreditCard(paymentSelected: Payment, payments: Payment[]): boolean{
+    isMundipaggCreditCard(paymentSelected: Payment, payments: Payment[]): boolean {
         let mundipagg = this.getMundipaggCreditCard(payments);
 
-        if(paymentSelected && mundipagg && paymentSelected.id == mundipagg.id && !this.isMundipaggBankslip(paymentSelected, payments))
+        if (paymentSelected && mundipagg && paymentSelected.id == mundipagg.id && !this.isMundipaggBankslip(paymentSelected, payments))
             return true;
         else return false;
     }
 
-    isMundiPagg(paymentSelected: Payment): boolean{
-        if(paymentSelected && paymentSelected.name && paymentSelected.name.toLowerCase() == 'mundipagg')
+    isMundiPagg(paymentSelected: Payment): boolean {
+        if (paymentSelected && paymentSelected.name && paymentSelected.name.toLowerCase() == 'mundipagg')
             return true;
         else return false;
     }
 
-    getDeliveryPayment(payments: Payment[]): Payment{
+    getDeliveryPayment(payments: Payment[]): Payment {
         return payments.find(p => p.type == EnumPaymentType.Offline && p.name.toLowerCase() == 'pagamento na entrega');
     }
 
-    hasDeliveryPayment(payments: Payment[]): boolean{
+    hasDeliveryPayment(payments: Payment[]): boolean {
         return (this.getDeliveryPayment(payments) ? true : false);
     }
 
-    isDeliveryPayment(payment: Payment, payments: Payment[]): boolean{
-        if(this.hasDeliveryPayment(payments) && payment){
+    isDeliveryPayment(payment: Payment, payments: Payment[]): boolean {
+        if (this.hasDeliveryPayment(payments) && payment) {
             return (payment.id == this.getDeliveryPayment(payments).id) ? true : false;
         }
         else return false
     }
 
-    getPickUpStorePayment(payments: Payment[]): Payment{
+    getPickUpStorePayment(payments: Payment[]): Payment {
         return payments.find(p => p.name.toLowerCase() == 'pagamento na loja');
     }
 
-    hasPickUpStorePayment(payments: Payment[]): boolean{
+    hasPickUpStorePayment(payments: Payment[]): boolean {
         let payment = this.getPickUpStorePayment(payments);
-        if(payment)
+        if (payment)
             return true;
         else return false;
     }
 
-    isPickUpStorePayment(payment: Payment, payments: Payment[]): boolean{
+    isPickUpStorePayment(payment: Payment, payments: Payment[]): boolean {
         let pickUpStore: Payment = this.getPickUpStorePayment(payments);
-        if(pickUpStore && payment.id == pickUpStore.id)
+        if (pickUpStore && payment.id == pickUpStore.id)
             return true;
         else return false;
     }
@@ -255,20 +255,20 @@ export class PaymentManager {
     /*
     ** Validações de pagamentos - FIM
     */
-    
-    createPagSeguroSession(): Promise<string>{
-        if(isPlatformBrowser(this.platformId)) {
+
+    createPagSeguroSession(): Promise<string> {
+        if (isPlatformBrowser(this.platformId)) {
             let token = this.getToken();
             return this.service.createPagSeguroSession(token);
         }
     }
 
-    createPagSeguroSessionSimulator(): Promise<string>{
+    createPagSeguroSessionSimulator(): Promise<string> {
         return this.service.createPagSeguroSessionSimulator();
     }
 
-    getPagSeguroSession(): string{
-        if(isPlatformBrowser(this.platformId)) {
+    getPagSeguroSession(): string {
+        if (isPlatformBrowser(this.platformId)) {
             return localStorage.getItem('pagseguro_session');
         }
         else {
@@ -276,15 +276,15 @@ export class PaymentManager {
         }
     }
 
-    getPagSeguroStoredSession(): Promise<string>{
+    getPagSeguroStoredSession(): Promise<string> {
         return new Promise((resolve, reject) => {
-            if(isPlatformBrowser(this.platformId)) {
-                let session: string =  this.getPagSeguroSession();
-                if(session)
+            if (isPlatformBrowser(this.platformId)) {
+                let session: string = this.getPagSeguroSession();
+                if (session)
                     resolve(session);
-                else{
+                else {
                     let auth: string = localStorage.getItem('auth');
-                    if(auth)
+                    if (auth)
                         return this.createPagSeguroSession();
                     else
                         return this.createPagSeguroSessionSimulator();
@@ -299,24 +299,24 @@ export class PaymentManager {
     /*
     ** Simulador de Parcelas - INÍCIO
     */
-    getInstallments(sku: Sku): Promise<Payment>{
+    getInstallments(sku: Sku): Promise<Payment> {
         return this.simulateInstallmentsBySkuIdDefault(sku.id);
     }
 
-    simulateInstallments(sku: Sku, payment: Payment): Promise<Payment>{
+    simulateInstallments(sku: Sku, payment: Payment): Promise<Payment> {
         let cardBrand: string = 'visa';
         let noInterestInstallmentQuantity: number = Number.parseInt(payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
-        let productPrice: number  = (sku.promotionalPrice > 0) ? sku.promotionalPrice : sku.price;
+        let productPrice: number = (sku.promotionalPrice > 0) ? sku.promotionalPrice : sku.price;
 
         return new Promise((resolve, reject) => {
-                this.simulateInstallmentsBySkuId(sku.id)
+            this.simulateInstallmentsBySkuId(sku.id)
                 .then(payments => {
-                    if(this.isMundiPagg(payment)){
+                    if (this.isMundiPagg(payment)) {
                         let simulated: Payment = this.getMundipagg(payments)[0];
                         payment.paymentMethods = simulated.paymentMethods;
                         resolve(payment);
                     }
-                    else if(this.isMercadoPago(payment, payments)){
+                    else if (this.isMercadoPago(payment, payments)) {
                         let simulated: Payment = this.getMercadoPago(payments);
                         payment.paymentMethods = simulated.paymentMethods;
                         resolve(payment)
@@ -327,43 +327,43 @@ export class PaymentManager {
         })
     }
 
-    getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Promise<PagSeguroSimulationResponse>{
+    getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Promise<PagSeguroSimulationResponse> {
         return new Promise((resolve, reject) => {
             this.service.getPagSeguroInstallments(sessionId, amount, creditCardBrand, maxInstallmentNoInterest, isSandBox)
-            .subscribe(response => {
-                resolve(response);
-            }, error => {
-                reject(error);
-            });
+                .subscribe(response => {
+                    resolve(response);
+                }, error => {
+                    reject(error);
+                });
         });
     }
 
-    getInstallmentText(gateway: Payment, method: PaymentMethod): string{
+    getInstallmentText(gateway: Payment, method: PaymentMethod): string {
         let maxInstallment: number = 0;
         let installmentLimit: PaymentSetting = gateway.settings.find(s => s.name.toLowerCase() == 'installmentlimit');
 
-        if(!method)
+        if (!method)
             return null;
-            
-        if(installmentLimit)
+
+        if (installmentLimit)
             method.installment = method.installment.slice(0, Number.parseInt(installmentLimit.value));
 
-        if(gateway.name.toLowerCase() == 'mundipagg'){
-            maxInstallment = method.installment[method.installment.length -1].number;
-            return `${maxInstallment}x de R$ ${method.installment[method.installment.length -1].installmentPrice.toFixed(2).toString().replace('.', ',')}`;
+        if (gateway.name.toLowerCase() == 'mundipagg') {
+            maxInstallment = method.installment[method.installment.length - 1].number;
+            return `${maxInstallment}x de R$ ${method.installment[method.installment.length - 1].installmentPrice.toFixed(2).toString().replace('.', ',')}`;
         }
-        else if(gateway.name.toLowerCase() == 'mercadopago'){
-            let installment = method.installment[method.installment.length -1].description;
+        else if (gateway.name.toLowerCase() == 'mercadopago') {
+            let installment = method.installment[method.installment.length - 1].description;
             installment = installment.replace(/[(].+[)]/g, '').replace(' parcelas', 'x');
             return installment;
         }
-        else{ //else if(gateway.name.toLowerCase() == 'pagseguro'){
-            let index = method.installment.length -1;
+        else { //else if(gateway.name.toLowerCase() == 'pagseguro'){
+            let index = method.installment.length - 1;
             maxInstallment = method.installment[index].number;
             let installmentValue = method.installment[index].installmentPrice.toFixed(2).replace('.', ',')
             return `${maxInstallment}x de R$ ${installmentValue}`;
         }
-        
+
     }
     /*
     ** Simulador de Parcelas - FIM
@@ -372,7 +372,7 @@ export class PaymentManager {
     /*
     ** Erros Mercado Pago - INICIO
     */
-    getMercadoPagoError(code: string): MercadoPagoError{
+    getMercadoPagoError(code: string): MercadoPagoError {
         let errors: MercadoPagoError[] = [];
         errors.push(new MercadoPagoError("310", "Erro ao validar o cliente, tente novamente. Caso o erro persista, recarregue seu navegador", 400),
             new MercadoPagoError("200", "Chave pública não pode ser vazia. Caso o erro persista, recarregue seu navegador", 400),

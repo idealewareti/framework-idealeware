@@ -125,31 +125,31 @@ export class BudgetComponent implements OnInit {
 
     placeOrder(event) {
         if (isPlatformBrowser(this.platformId)) {
-        event.preventDefault();
-        $('.btn-checkout').button('loading');
-        let cartId = localStorage.getItem('cart_id');
-        let token = this.getToken();
-        this.manager.setCustomerToCart(cartId)
-            .then(cart => {
-                this.globals.cart = cart;
-                return this.service.createBudget(cartId, token)
-                    .subscribe(budget => {
-                        localStorage.removeItem('cart_id');
-                        this.globals.cart = null;
-                        this.parentRouter.navigateByUrl(`/orcamento/concluido/${budget.numberBudget}`);
-                    }
-                )
-            })
-            .catch(error => {
-                $('.btn-checkout').button('reset');
-                swal({
-                    title: 'Erro ao criar o orçamento',
-                    text: error.text(),
-                    type: 'error',
-                    confirmButtonText: 'OK'
+            event.preventDefault();
+            $('.btn-checkout').button('loading');
+            let cartId = localStorage.getItem('cart_id');
+            let token = this.getToken();
+            this.manager.setCustomerToCart(cartId)
+                .then(cart => {
+                    this.globals.cart = cart;
+                    return this.service.createBudget(cartId, token)
+                        .subscribe(budget => {
+                            localStorage.removeItem('cart_id');
+                            this.globals.cart = null;
+                            this.parentRouter.navigateByUrl(`/orcamento/concluido/${budget.numberBudget}`);
+                        }
+                        )
+                })
+                .catch(error => {
+                    $('.btn-checkout').button('reset');
+                    swal({
+                        title: 'Erro ao criar o orçamento',
+                        text: error.text(),
+                        type: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.log(error);
                 });
-                console.log(error);
-            });
         }
     }
 

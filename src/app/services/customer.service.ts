@@ -24,7 +24,7 @@ export class CustomerService {
 
     }
 
-    login(user, password): Promise<Token>{
+    login(user, password): Promise<Token> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_AUTHENTICATE}/authenticate/login`;
             this.client.post(url, new Login(user, password))

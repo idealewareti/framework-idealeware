@@ -106,8 +106,8 @@
                             <input type="number" name="qty" [ngModel]="item.quantity" [attr.title]="item.quantity" (ngModelChange)="updateItemService($event, item)" min="1" step="1">
                         </span>
                     </td>
-                    <td class="text-center" *ngIf="showValuesProduct"><span class="regular-price">{{item.totalUnitPrice | currencyFormat }}</span></td>
-                    <td class="text-center" *ngIf="showValuesProduct"><span class="total-price">{{(item.totalPrice) | currencyFormat }}</span></td>
+                    <td class="text-center" *ngIf="showProductValue"><span class="regular-price">{{item.totalUnitPrice | currencyFormat }}</span></td>
+                    <td class="text-center" *ngIf="showProductValue"><span class="total-price">{{(item.totalPrice) | currencyFormat }}</span></td>
                     <td class="text-center"><a href="#" (click)="deleteItemService($event, item)" class="btn-remove"><i class="fa fa-trash" aria-hidden="true"></i></a></td>
                 </tr>
             </tbody>

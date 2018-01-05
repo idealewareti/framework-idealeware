@@ -1,22 +1,22 @@
-import {ModelReference} from '../model-reference';
+import { ModelReference } from '../model-reference';
 
-export class CartShowCase{
+export class CartShowCase {
     id: string;
     name: string;
     status: boolean;
     products: ModelReference[] = []
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    public createFromResponse(response): CartShowCase{
+    public createFromResponse(response): CartShowCase {
         let model = new CartShowCase();
-        for (var k in response){
-            if(k == 'products'){
+        for (var k in response) {
+            if (k == 'products') {
                 model.products = response[k].map(c => c = new ModelReference(c));
             }
-            else{
+            else {
                 model[k] = response[k];
             }
         }

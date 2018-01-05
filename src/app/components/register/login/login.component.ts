@@ -64,40 +64,40 @@ export class LoginComponent {
 
     signIn() {
         this.manager.signIn(this.login)
-        .then(customer => {
-            toastr['success'](`Bem-${customer.gender == 'F' ? 'vinda' : 'vindo'}, ${customer.firstname_Companyname}`);
-            this.route.params
-            .map(params => params)
-            .subscribe((params) => {
-                let step = ((params['step']) ? params['step'] : '');
+            .then(customer => {
+                toastr['success'](`Bem-${customer.gender == 'F' ? 'vinda' : 'vindo'}, ${customer.firstname_Companyname}`);
+                this.route.params
+                    .map(params => params)
+                    .subscribe((params) => {
+                        let step = ((params['step']) ? params['step'] : '');
 
-                if (step == 'checkout') {
-                    this.parentRouter.navigateByUrl(`/checkout`);
-                }
-                else {
-                    if (isPlatformBrowser(this.platformId)) {
-                    this.cartManager.getCart(localStorage.getItem('cart_id'))
-                    .then(response => {
-                        if (response.products.length > 0) {
-                            this.parentRouter.navigateByUrl(`/carrinho`);
+                        if (step == 'checkout') {
+                            this.parentRouter.navigateByUrl(`/checkout`);
                         }
                         else {
-                            this.parentRouter.navigateByUrl(`/`);
+                            if (isPlatformBrowser(this.platformId)) {
+                                this.cartManager.getCart(localStorage.getItem('cart_id'))
+                                    .then(response => {
+                                        if (response.products.length > 0) {
+                                            this.parentRouter.navigateByUrl(`/carrinho`);
+                                        }
+                                        else {
+                                            this.parentRouter.navigateByUrl(`/`);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.log(error);
+                                        this.parentRouter.navigateByUrl(`/`);
+                                    });
+                            }
                         }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        this.parentRouter.navigateByUrl(`/`);
                     });
-                }
+            })
+            .catch(error => {
+                console.log(error);
+                if (isPlatformBrowser(this.platformId)) {
+                    swal('Não foi possível acessar sua conta', error.text(), 'error');
                 }
             });
-        })
-        .catch(error => {
-            console.log(error);
-            if (isPlatformBrowser(this.platformId)) {
-                swal('Não foi possível acessar sua conta', error.text(), 'error');
-            }
-        });
     }
 }

@@ -42,8 +42,8 @@
 
                 <b>{{order.deliveryAddress.addressName}}</b>
                 <p>
-                    {{order.deliveryAddress.addressLine1}}, {{order.deliveryAddress.addressNumer}}  {{order.deliveryAddress.addressLine2}} - {{order.deliveryAddress.district}} <br />
-                    CEP {{order.deliveryAddress.zipCode}} - {{order.deliveryAddress.city}}/{{order.deliveryAddress.state}}
+                    {{order.deliveryAddress.addressLine1}}, {{order.deliveryAddress.addressNumer}} {{order.deliveryAddress.addressLine2}} - {{order.deliveryAddress.district}}
+                    <br /> CEP {{order.deliveryAddress.zipCode}} - {{order.deliveryAddress.city}}/{{order.deliveryAddress.state}}
                 </p>
             </div>
 
@@ -52,8 +52,10 @@
 
                 <b>{{order.payment.paymentMethods[0].methodName}}</b>
                 <p>
-                    {{order.payment.paymentMethods[0].name}} <br />
-                    {{order.payment.paymentMethods[0].creditCardInstallmentCount}}x de {{order.payment.paymentMethods[0].creditCardInstallmentPrice | currencyFormat}} <br />
+                    {{order.payment.paymentMethods[0].name}}
+                    <br /> {{order.payment.paymentMethods[0].creditCardInstallmentCount}}x de {{order.payment.paymentMethods[0].creditCardInstallmentPrice
+                    | currencyFormat}}
+                    <br />
                 </p>
             </div>
 
@@ -62,8 +64,10 @@
 
                 <b>{{order.payment.paymentMethods[0].methodName}}</b>
                 <p>
-                    {{order.payment.paymentMethods[0].name}} <br />
-                    <a *ngIf="orderPipeline() < 2" [attr.href]="order.payment.paymentMethods[0].bankSlipUrl">Clique aqui para visualizar o boleto desta compra</a><br />
+                    {{order.payment.paymentMethods[0].name}}
+                    <br />
+                    <a *ngIf="orderPipeline() < 2" [attr.href]="order.payment.paymentMethods[0].bankSlipUrl">Clique aqui para visualizar o boleto desta compra</a>
+                    <br />
                 </p>
             </div>
         </div>
@@ -85,23 +89,26 @@
                         </li>
                         <li class="product-item" *ngFor="let product of order.products">
                             <span class="image">
-                                <img [attr.src]="(product.sku.picture) ? mediaPath + product.sku.picture.thumbnail : '/assets/images/no-image.jpg' " alt="" class="img-responsive">
+                                <img [attr.src]="(product.sku.picture) ? mediaPath + product.sku.picture.thumbnail : '/assets/images/no-image.jpg' " alt=""
+                                    class="img-responsive">
                             </span>
                             <span class="details">
                                 <b class="name">{{product.name}}</b>
-                                <span *ngIf="!isHiddenVariation()"><span class="sku" *ngFor="let variation of product.sku.variations">{{variation.name}}: {{variation.option.name}}</span></span>
+                                <span *ngIf="!isHiddenVariation()">
+                                    <span class="sku" *ngFor="let variation of product.sku.variations">{{variation.name}}: {{variation.option.name}}</span>
+                                </span>
                                 <span class="qty">Quantidade: {{product.quantity}}</span>
                                 <span class="regular-price">{{product.totalUnitPrice | currencyFormat}}</span>
                             </span>
                         </li>
                         <li class="product-item" *ngFor="let service of order.services">
-                            <span class="image">
+                            <span class="">
                                 {{service.serviceType}}
                             </span>
                             <span class="details">
                                 <b class="name">{{service.rules}}</b>
                                 <span class="qty">Quantidade: {{service.quantity}}</span>
-                                <span class="regular-price">{{product.totalUnitPrice | currencyFormat}}</span>
+                                <span class="regular-price">{{service.totalPrice | currencyFormat}}</span>
                             </span>
                         </li>
                     </ul>
@@ -110,22 +117,38 @@
                     <table class="totals">
                         <tbody>
                             <tr class="subtotal">
-                                <td class="text-left"><span>Subtotal ({{getNumItemsInCart()}} {{((getNumItemsInCart() > 1) ? 'itens' : 'item')}})</span></td>
-                                <td class="text-right"><strong>{{getSubTotal() | currencyFormat}}</strong></td>
+                                <td class="text-left">
+                                    <span>Subtotal ({{getNumItemsInCart()}} {{((getNumItemsInCart() > 1) ? 'itens' : 'item')}})</span>
+                                </td>
+                                <td class="text-right">
+                                    <strong>{{getSubTotal() | currencyFormat}}</strong>
+                                </td>
                             </tr>
                             <tr class="descont" *ngIf="getDiscount() > 0">
-                                <td class="text-left"><span>Desconto</span></td>
-                                <td class="text-right"><strong>-{{getDiscount() | currencyFormat}}</strong></td>
+                                <td class="text-left">
+                                    <span>Desconto</span>
+                                </td>
+                                <td class="text-right">
+                                    <strong>-{{getDiscount() | currencyFormat}}</strong>
+                                </td>
                             </tr>
                             <tr class="shipping">
-                                <td class="text-left"><span>Frete</span></td>
-                                <td class="text-right"><strong>{{getShipping() | currencyFormat}}</strong></td>
+                                <td class="text-left">
+                                    <span>Frete</span>
+                                </td>
+                                <td class="text-right">
+                                    <strong>{{getShipping() | currencyFormat}}</strong>
+                                </td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr class="total">
-                                <th class="text-left"><span>Total</span></th>
-                                <th class="text-right"><strong>{{order.orderPrice | currencyFormat}}</strong></th>
+                                <th class="text-left">
+                                    <span>Total</span>
+                                </th>
+                                <th class="text-right">
+                                    <strong>{{order.orderPrice | currencyFormat}}</strong>
+                                </th>
                             </tr>
                         </tfoot>
                     </table>

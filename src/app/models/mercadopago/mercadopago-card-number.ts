@@ -1,4 +1,4 @@
-export class  MercadoPagoCardNumber {
-   length: string;
-   validation: string;
+export class MercadoPagoCardNumber {
+    length: string;
+    validation: string;
 }

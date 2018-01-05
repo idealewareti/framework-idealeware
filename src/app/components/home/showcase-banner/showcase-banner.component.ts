@@ -14,14 +14,14 @@ declare var $: any;
 export class ShowcaseBannerComponent implements OnInit {
     @Input() banners: ShowCaseBanner[];
     @Input() store: Store = new Store();
-    
-    constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
-    ngOnInit() {}
-    
+    constructor( @Inject(PLATFORM_ID) private platformId: Object) { }
+
+    ngOnInit() { }
+
     ngAfterViewChecked() {
         if (isPlatformBrowser(this.platformId)) {
-            if(this.banners.length > 0 && $('.showcase-banners.slick-slider .slick-track').children('.slick-slide').length == 0) {
+            if (this.banners.length > 0 && $('.showcase-banners.slick-slider .slick-track').children('.slick-slide').length == 0) {
                 $('.showcase-banners').slick({
                     dots: true,
                     autoplay: true,
@@ -29,7 +29,7 @@ export class ShowcaseBannerComponent implements OnInit {
                     arrows: false,
                 });
             }
-        }            
+        }
     }
 
     getBannerUrl(banner: ShowCaseBanner): string {

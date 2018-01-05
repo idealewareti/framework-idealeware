@@ -1,5 +1,5 @@
-export class IntelipostAdditionalInformation{
-    
+export class IntelipostAdditionalInformation {
+
     freeShipping: boolean;
     extraCostsAbsolute: number;
     extraCostsPercentage: number;
@@ -9,14 +9,14 @@ export class IntelipostAdditionalInformation{
     clientType: string;
     salesChannel: string;
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    public createFromResponse(response): IntelipostAdditionalInformation{
+    public createFromResponse(response): IntelipostAdditionalInformation {
         let model = new IntelipostAdditionalInformation();
-        
-        for (var k in response){
+
+        for (var k in response) {
             model[k] = response[k];
         }
 

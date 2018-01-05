@@ -12,36 +12,36 @@ import { Product } from "../../../models/product/product";
     styleUrls: ['../../../template/product/product-related/related-products.scss']
 })
 export class RelatedProductsComponent implements OnInit {
-    
+
     @Input() relatedProducts: RelatedProductGroup;
     @Output() productUpdated: EventEmitter<Product> = new EventEmitter<Product>();
     @Input() product: Product = new Product();
-    
+
     constructor(
         private service: ProductService,
     ) { }
 
     ngOnInit() { }
 
-    isColor(): boolean{
-        if(this.relatedProducts.type == EnVariationType.Color)
+    isColor(): boolean {
+        if (this.relatedProducts.type == EnVariationType.Color)
             return true;
         else return false;
     }
 
-    selectProduct(reference: ProductReference, event = null){
-        if(event)
+    selectProduct(reference: ProductReference, event = null) {
+        if (event)
             event.preventDefault();
-        
+
         this.service.getProductBySku(reference.skuId)
-        .subscribe(product => {
-            this.product = product;
-            this.productUpdated.emit(this.product);
-        });
+            .subscribe(product => {
+                this.product = product;
+                this.productUpdated.emit(this.product);
+            });
     }
 
-    isProductSelected(reference: ProductReference): boolean{
-        if(this.product.skuBase.id == reference.skuId)
+    isProductSelected(reference: ProductReference): boolean {
+        if (this.product.skuBase.id == reference.skuId)
             return true;
         else return false;
     }

@@ -38,7 +38,7 @@ export class SearchVehicleComponent {
         this.service.getVehicleBrand()
             .subscribe(Vehicle => {
                 this.vehiclesBrand = Vehicle;
-            }),(error => console.log(error));
+            }), (error => console.log(error));
     }
 
     getVehicle(event) {
@@ -47,7 +47,7 @@ export class SearchVehicleComponent {
             .subscribe(Vehicle => {
                 this.vehiclesYear = [];
                 this.vehicles = Vehicle;
-            }),(error => console.log(error));
+            }), (error => console.log(error));
     }
 
     getVehicleYear(event) {
@@ -61,7 +61,7 @@ export class SearchVehicleComponent {
                         this.vehiclesYear.push(Vehicle);
                     }
                 });
-            }),(error => console.log(error));
+            }), (error => console.log(error));
     }
 
     searchFor(event) {

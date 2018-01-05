@@ -18,24 +18,24 @@ export class Branch {
     number: string;
     allowPickupStore: boolean;
     replenishmentTime: number
-    
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    public createFromResponse(response): Branch{
+    public createFromResponse(response): Branch {
         let model = new Branch();
-        
-        for (var k in response){
-            if(k == 'locals'){
+
+        for (var k in response) {
+            if (k == 'locals') {
                 model.locals = response.locals.map(local => local = new BranchLocal(local));
             }
-            else{
+            else {
                 model[k] = response[k];
             }
         }
 
         return model;
     }
-    
+
 }

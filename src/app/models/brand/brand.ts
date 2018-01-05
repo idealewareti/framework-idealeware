@@ -1,4 +1,4 @@
-export class Brand{
+export class Brand {
     id: string;
     code: string;
     name: string;
@@ -9,16 +9,16 @@ export class Brand{
     status: true;
     quantity: number = 0;
 
-    constructor(brand = null){
-        if(brand) return this.createFromResponse(brand);
+    constructor(brand = null) {
+        if (brand) return this.createFromResponse(brand);
     }
 
-    public createFromResponse(response): Brand{
+    public createFromResponse(response): Brand {
         let model = new Brand();
-        for (var k in response){
+        for (var k in response) {
             model[k] = response[k];
         }
         return model;
     }
-    
+
 }

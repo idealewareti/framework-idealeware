@@ -180,7 +180,7 @@
 
     <div class="product-suggestions">
         <div class="container">
-            <app-cross-selling *ngIf="product.crossSelling.length > 0" [store]="getStore()"  [references]="product.crossSelling"></app-cross-selling>
+            <app-cross-selling *ngIf="product.crossSellingComplete.length > 0" [store]="getStore()"  [products]="product.crossSellingComplete"></app-cross-selling>
 
         </div>
     </div>
@@ -222,7 +222,7 @@
             </div>
 
             <app-product-rating [product]="product" (ratingUpdated)="handleRating($event)"></app-product-rating>
-            <app-up-selling *ngIf="product.upSelling.length > 0" [store]="getStore()" [references]="product.upSelling"></app-up-selling>
+            <app-up-selling *ngIf="product.upSellingComplete.length > 0" [store]="getStore()" [products]="product.upSellingComplete"></app-up-selling>
         </div>
     </div>
 </main>
@@ -337,7 +337,7 @@
             </div>
 
             <!-- Produtos Relacionados -->
-            <app-cross-selling *ngIf="product.crossSelling.length > 0" [store]="getStore()" [references]="product.crossSelling"></app-cross-selling>
+            <app-cross-selling *ngIf="product.crossSellingComplete.length > 0" [store]="getStore()" [products]="product.crossSellingComplete"></app-cross-selling>
             <!-- /Produtos Relacionados -->
 
         </div>

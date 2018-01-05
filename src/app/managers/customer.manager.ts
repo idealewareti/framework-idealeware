@@ -9,19 +9,19 @@ import { Token } from "../models/customer/token";
 import { isPlatformBrowser } from "@angular/common";
 
 @Injectable()
-export class CustomerManager{
+export class CustomerManager {
 
     constructor(
-        private service: CustomerService, 
+        private service: CustomerService,
         private cartManager: CartManager,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
-    ){}
+    ) { }
 
 
     getToken(): Token {
         let token = new Token();
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             token = new Token();
             token.accessToken = localStorage.getItem('auth');
             token.createdDate = new Date(localStorage.getItem('auth_create'));
@@ -32,13 +32,13 @@ export class CustomerManager{
     }
 
     private setToken(authenticate: any, user: Customer) {
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             let token = new Token();
             token.accessToken = authenticate.accessToken;
             token.tokenType = authenticate.tokenType;
             token.createdDate = authenticate.createdDate;
             token.expiresIn = authenticate.expiresIn;
-    
+
             localStorage.setItem('customer', user.firstname_Companyname);
             localStorage.setItem('customer_mail', user.email);
             localStorage.setItem('auth', token.accessToken);
@@ -48,20 +48,20 @@ export class CustomerManager{
     }
 
     hasToken(): boolean {
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             if (localStorage.getItem('auth')) {
                 return true;
             }
             return false;
         }
-        else{ 
+        else {
             return false;
-        }            
+        }
     }
 
     private getCartId(): string {
         let cartId: string = null;
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             cartId = localStorage.getItem('cart_id');
         }
         return cartId;
@@ -74,27 +74,27 @@ export class CustomerManager{
      * @returns {Promise<Customer>} 
      * @memberof CustomerManager
      */
-    signIn(login: Login): Promise<Customer>{
+    signIn(login: Login): Promise<Customer> {
         let customer: Customer = new Customer();
         return new Promise((resolve, reject) => {
             this.service.login(login.cpfEmail, login.password)
-            .then(response => {
-                customer = response.customer;
-                this.setToken(response, response.customer);
-                let cartId: string = this.getCartId();
-                if(!cartId){                    
+                .then(response => {
+                    customer = response.customer;
+                    this.setToken(response, response.customer);
+                    let cartId: string = this.getCartId();
+                    if (!cartId) {
+                        resolve(customer);
+                    }
+                    else {
+                        return this.cartManager.setCustomerToCart(cartId)
+                    }
+                })
+                .then(cart => {
                     resolve(customer);
-                }
-                else{
-                    return this.cartManager.setCustomerToCart(cartId)
-                }
-            })
-            .then(cart => {
-                resolve(customer);
-            })
-            .catch(error => {
-                reject(error);
-            });
+                })
+                .catch(error => {
+                    reject(error);
+                });
         });
     }
 
@@ -105,30 +105,30 @@ export class CustomerManager{
      * @returns {Promise<Customer>} 
      * @memberof CustomerManager
      */
-    signUp(customer: Customer): Promise<Customer>{
+    signUp(customer: Customer): Promise<Customer> {
         return new Promise((resolve, reject) => {
             this.service.createCustomer(customer)
-            .subscribe(response => {
-                let login: Login = new Login(customer.email, customer.password);
-                this.signIn(login)
-                .then(loggedCustomer => {
-                    resolve(loggedCustomer);
-                })
-                .catch(error => {
-                    reject(error);
-                });
-            }, error => reject(error));
+                .subscribe(response => {
+                    let login: Login = new Login(customer.email, customer.password);
+                    this.signIn(login)
+                        .then(loggedCustomer => {
+                            resolve(loggedCustomer);
+                        })
+                        .catch(error => {
+                            reject(error);
+                        });
+                }, error => reject(error));
         })
     }
 
     logOff() {
-        if(isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {
             localStorage.removeItem('customer');
             localStorage.removeItem('customer_mail');
             localStorage.removeItem('auth');
             localStorage.removeItem('auth_create');
             localStorage.removeItem('auth_expires');
-        }            
+        }
     }
 
     getUser(): Observable<Customer> {

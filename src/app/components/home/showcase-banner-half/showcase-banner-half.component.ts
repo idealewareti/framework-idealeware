@@ -10,7 +10,7 @@ import { Store } from '../../../models/store/store';
 export class ShowcaseBannerHalfComponent implements OnInit {
     @Input() banners: ShowCaseBanner[];
     @Input() store: Store = new Store();
-    
+
     constructor() { }
 
     ngOnInit() { }

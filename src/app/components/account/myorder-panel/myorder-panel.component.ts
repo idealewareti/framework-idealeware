@@ -68,22 +68,28 @@ export class MyOrderPanelComponent implements OnInit {
                     this.store = store;
                     this.mediaPath = `${this.store.link}/static/products/`;
                     this.mediaPathPaint = `${this.store.link}/static/custompaint/`;
-                    this.service.getOrder(this.tabId, this.getToken())
-                        .subscribe(order => {
-                            this.order = order;
-                            this.titleService.setTitle(`Pedido #${this.order.orderNumber}`);
-                        }), (error => {
-                            console.log(error);
-                            swal({
-                                title: 'Erro ao exibir o pedido',
-                                text: error.text(),
-                                type: 'error',
-                                confirmButtonText: 'OK'
-                            });
-                            this.parentRouter.navigateByUrl('/conta/pedidos');
-                        });
+                    return this.getOrder(this.tabId, this.getToken());
+                })
+                .then(order => {
+                    this.order = order;
+                    this.titleService.setTitle(`Pedido #${this.order.orderNumber}`);
+                })
+                .catch(error => {
+                    swal('Erro ao exibir o pedido', error.text(), 'error');
+                    this.parentRouter.navigateByUrl('/conta/pedidos');
                 });
         }
+    }
+
+    getOrder(orderId: string, token: Token): Promise<Order> {
+        return new Promise((resolve, reject) => {
+            this.service.getOrder(this.tabId, this.getToken())
+                .subscribe(order => {
+                    resolve(order);
+                }), (error => {
+                    reject(error);
+                })
+        });
     }
 
     orderPipeline() {

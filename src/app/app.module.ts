@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, BrowserTransferStateModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
@@ -131,7 +131,7 @@ import { AppConfig } from './app.config';
     SignUpComponent,
   ],
   imports: [
-    BrowserModule.withServerTransition({appId: `${AppConfig.DOMAIN}-app`}),
+    BrowserModule.withServerTransition({ appId: `${AppConfig.DOMAIN}-app` }),
     RouterModule.forRoot([
       { path: '', component: ShowcaseComponent },
       { path: '404', component: NotFoundComponent },
@@ -142,13 +142,13 @@ import { AppConfig } from './app.config';
       { path: 'categoria/:id/:nicename', component: SearchComponent },
       { path: 'contato', component: InstitutionalComponent },
       { path: 'conta', loadChildren: 'app/components/account/account.module#AccountModule' },
-      { path: 'grupo/:id/:nicename', component: SearchComponent    },
-      { path: 'checkout', component: CheckoutComponent, data: { name: 'Checkout'} },
+      { path: 'grupo/:id/:nicename', component: SearchComponent },
+      { path: 'checkout', component: CheckoutComponent, data: { name: 'Checkout' } },
       { path: 'checkout/concluido/:id', component: CheckoutFinishComponent },
       { path: 'compare', component: CompareComponent },
       { path: 'corespersonalizadas', loadChildren: 'app/components/custom-paint/custom-paint.module#CustomPaintModule' },
       { path: 'cores-personalizadas', loadChildren: 'app/components/custom-paint/custom-paint.module#CustomPaintModule' },
-      { path: 'grupo/:id/:nicename', component: SearchComponent    },
+      { path: 'grupo/:id/:nicename', component: SearchComponent },
       { path: 'buscar', component: SearchComponent },
       { path: 'institucional/:id', component: InstitutionalComponent },
       { path: 'institucional/:id/:nicename', component: InstitutionalComponent },
@@ -165,14 +165,14 @@ import { AppConfig } from './app.config';
       { path: 'recuperar-senha', component: ForgetPasswordComponent },
       { path: ':product', component: ProductComponent },
       { path: '**', component: RedirectComponent }
-    ]),
+    ], { initialNavigation: 'enabled' }),
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
     BannerModule,
     BannerSideModule,
     BreadcrumpModule,
-    CartShowCaseModule, 
+    CartShowCaseModule,
     ContactModule,
     CouponModule,
     CheckoutAddressesModule,
@@ -215,6 +215,7 @@ import { AppConfig } from './app.config';
     CurrencyFormatModule,
     CustomPaintFilterModule,
     OrderByModule,
+    BrowserTransferStateModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt-BR' },
@@ -255,6 +256,6 @@ import { AppConfig } from './app.config';
     PaymentManager,
     ProductManager,
   ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

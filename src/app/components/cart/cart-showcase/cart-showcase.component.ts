@@ -63,7 +63,7 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
     private buildCarousel() {
         if (isPlatformBrowser(this.platformId)) {
             if (this.products
-                && $('#cartshowcase-items').children('li').length > 3
+                && $('#cartshowcase-items').children('li').length > 0
                 && $('#cartshowcase-items').children('.owl-stage-outer').length == 0) {
                 $("#cartshowcase-items").owlCarousel({
                     items: 4,

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core'
 import { FormGroup, AbstractControl } from '@angular/forms';
 
-
 @Injectable()
 export class FormHelper {
     public updateForm(form: FormGroup, values: any) {
@@ -22,5 +21,5 @@ export class FormHelper {
             (<any>form.controls[i])._touched = false;
             (<any>form.controls[i])._pristine = true;
         }
-    }     
+    }
 }

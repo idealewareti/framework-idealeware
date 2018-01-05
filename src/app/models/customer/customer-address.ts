@@ -1,4 +1,4 @@
-export class CustomerAddress{
+export class CustomerAddress {
     id: string;
     mainAddress: boolean;
     addressType: number;
@@ -13,10 +13,10 @@ export class CustomerAddress{
     number: string;
     addressName: string;
 
-    constructor(object = null){
-        if(object)
+    constructor(object = null) {
+        if (object)
             return this.CreateFromResponse(object);
-        else{
+        else {
             this.id = null;
             this.mainAddress = false;
             this.addressType = null;
@@ -33,10 +33,10 @@ export class CustomerAddress{
         }
     }
 
-    public CreateFromResponse(object) : CustomerAddress{
+    public CreateFromResponse(object): CustomerAddress {
         let address = new CustomerAddress();
 
-        for (var k in object){
+        for (var k in object) {
             address[k] = object[k];
         }
 

@@ -11,14 +11,14 @@ import { Store } from '../../../models/store/store';
 export class ShowcaseBannerStripeComponent implements OnInit {
     @Input() banners: ShowCaseBanner[];
     @Input() store: Store = new Store();
-    
+
     constructor(private globals: Globals) { }
-    
+
     ngOnInit() { }
 
-    calcWidthMedium(): number{
+    calcWidthMedium(): number {
         let total: number = this.banners.length
-        if(total > 1 && total <= 4) {
+        if (total > 1 && total <= 4) {
             return 12 / total;
         }
         return 12;

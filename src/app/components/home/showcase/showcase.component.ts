@@ -12,6 +12,7 @@ import { AppCore } from '../../../app.core';
 import { StoreService } from '../../../services/store.service';
 import { ShowcaseGroup } from '../../../models/showcase/showcase-group';
 import { Router } from '@angular/router';
+import { AppConfig } from '../../../app.config';
 
 @Component({
     selector: 'app-showcase',
@@ -68,11 +69,25 @@ export class ShowcaseComponent implements OnInit {
     }
 
     private fetchStore(): Promise<Store> {
+        if (isPlatformBrowser(this.platformId)) {
+            let store: Store = JSON.parse(sessionStorage.getItem('store'));
+            if (store && store.domain == AppConfig.DOMAIN) {
+                return new Promise((resolve, reject) => {
+                    resolve(store);
+                });
+            }
+        }
+        return this.fetchStoreFromApi();
+    }
+
+    private fetchStoreFromApi(): Promise<Store> {
         return new Promise((resolve, reject) => {
             this.storeService.getStore()
                 .subscribe(response => {
-                    let store: Store = new Store(response);
-                    resolve(store);
+                    if (isPlatformBrowser(this.platformId)) {
+                        sessionStorage.setItem('store', JSON.stringify(response));
+                    }
+                    resolve(response);
                 }, error => {
                     reject(error);
                 });

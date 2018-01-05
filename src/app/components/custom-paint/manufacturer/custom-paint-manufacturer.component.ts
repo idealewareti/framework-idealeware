@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CustomPaintManufacturer } from "../../../models/custom-paint/custom-paint-manufacturer";
 import { CustomPaintService } from "../../../services/custom-paint.service";
 import { Title } from "@angular/platform-browser";
 import { Globals } from '../../../models/globals';
 import { StoreService } from '../../../services/store.service';
 import { Store } from '../../../models/store/store';
+import { isPlatformBrowser } from '@angular/common';
+import { AppConfig } from '../../../app.config';
 
 @Component({
     moduleId: module.id,
@@ -21,7 +23,8 @@ export class CustomPaintManufacturerComponent implements OnInit {
         private service: CustomPaintService,
         private storeService: StoreService,
         private titleService: Title,
-        private globals: Globals
+        private globals: Globals,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.mediaPath = 'static/custompaint';
     }
@@ -44,7 +47,6 @@ export class CustomPaintManufacturerComponent implements OnInit {
             error => console.log(error));
     }
 
-
     getColWidth(): string {
         if (this.manufacturers.length == 1)
             return 'col-md-12 col-sm-12';
@@ -55,11 +57,25 @@ export class CustomPaintManufacturerComponent implements OnInit {
     }
 
     private fetchStore(): Promise<Store> {
+        if (isPlatformBrowser(this.platformId)) {
+            let store: Store = JSON.parse(sessionStorage.getItem('store'));
+            if (store && store.domain == AppConfig.DOMAIN) {
+                return new Promise((resolve, reject) => {
+                    resolve(store);
+                });
+            }
+        }
+        return this.fetchStoreFromApi();
+    }
+
+    private fetchStoreFromApi(): Promise<Store> {
         return new Promise((resolve, reject) => {
             this.storeService.getStore()
                 .subscribe(response => {
-                    let store: Store = new Store(response);
-                    resolve(store);
+                    if (isPlatformBrowser(this.platformId)) {
+                        sessionStorage.setItem('store', JSON.stringify(response));
+                    }
+                    resolve(response);
                 }, error => {
                     reject(error);
                 });

@@ -46,7 +46,7 @@ export class MiniCartComponent implements OnInit {
     getProducts() {
         if (isPlatformBrowser(this.platformId)) {
             let cartId: string = localStorage.getItem('cart_id');
-            if(cartId) {
+            if (cartId) {
                 this.manager.getCart(cartId)
                     .subscribe((cart) => {
                         this.cartReady = true;
@@ -157,7 +157,7 @@ export class MiniCartComponent implements OnInit {
     }
 
     getPaintPicture(paint: Paint): string {
-        if(paint.optionPicture) {
+        if (paint.optionPicture) {
             return `${this.store.link}/static/custompaint/${paint.optionPicture}`;
         }
         else {

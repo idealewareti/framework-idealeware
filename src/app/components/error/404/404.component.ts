@@ -12,5 +12,5 @@ export class NotFoundComponent implements OnInit {
 
     ngOnInit() {
         this.titleService.setTitle('Página não encontrada');
-     }
+    }
 }

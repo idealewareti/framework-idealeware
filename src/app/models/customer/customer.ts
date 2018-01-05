@@ -1,6 +1,6 @@
-import {CustomerAddress} from './customer-address';
+import { CustomerAddress } from './customer-address';
 
-export class Customer{
+export class Customer {
   id: string;
   code: string;
   rg_Ie: string;
@@ -20,22 +20,22 @@ export class Customer{
   receivePromotionalAndNews: true;
   type: number = 1;
 
-  constructor(object = null){
-    if(object) return this.createFromResponse(object);
+  constructor(object = null) {
+    if (object) return this.createFromResponse(object);
   }
 
-  public createFromResponse(response) : Customer{
+  public createFromResponse(response): Customer {
     let customer = new Customer();
 
-    for (var k in response){
-      if(k == 'addresses'){
+    for (var k in response) {
+      if (k == 'addresses') {
         customer.addresses = response.addresses.map(address => address = new CustomerAddress(address));
       }
-      else{
+      else {
         customer[k] = response[k];
       }
     }
-    
+
     return customer;
   }
 

@@ -1,4 +1,4 @@
-export class CustomerIp{
+export class CustomerIp {
     addressFamily: string;
     scopeId: number;
     isIPv6Multicast: boolean;
@@ -7,19 +7,19 @@ export class CustomerIp{
     isIPv6Teredo: boolean;
     isIPv4MappedToIPv6: boolean;
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    public createFromResponse(response): CustomerIp{
+    public createFromResponse(response): CustomerIp {
         let model = new CustomerIp();
-        
-        for (var k in response){
+
+        for (var k in response) {
             model[k] = response[k];
         }
 
         return model;
-            
+
     }
 }
 

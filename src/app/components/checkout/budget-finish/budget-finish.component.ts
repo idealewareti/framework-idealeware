@@ -15,12 +15,12 @@ export class BudgetFinishComponent implements OnInit {
     order: Order = new Order();
 
     constructor(
-        private route:ActivatedRoute,
-        private parentRouter: Router, 
+        private route: ActivatedRoute,
+        private parentRouter: Router,
         private titleService: Title,
     ) { }
 
     ngOnInit() {
         this.titleService.setTitle('Seu Orçamento Foi Gerado');
-     }
+    }
 }

@@ -73,7 +73,7 @@ export class AccountComponent {
             })
 
     }
-    
+
     private fetchStore(): Promise<Store> {
         return new Promise((resolve, reject) => {
             this.storeService.getStore()

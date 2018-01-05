@@ -12,7 +12,7 @@ import { GroupService } from '../../../services/group.service';
 export class GroupComponent implements OnInit {
 
     groups: Group[] = [];
-    
+
     constructor(
         private service: GroupService,
         @Inject(PLATFORM_ID) private platformId: Object
@@ -20,13 +20,13 @@ export class GroupComponent implements OnInit {
 
     ngOnInit() {
         this.getGroups();
-     }
+    }
 
     getGroups() {
         this.service.getAll()
-        .subscribe(groups =>{
-            this.groups = groups;
-        }, erro => console.log(erro));
+            .subscribe(groups => {
+                this.groups = groups;
+            }, erro => console.log(erro));
     }
 
     isMobile(): boolean {

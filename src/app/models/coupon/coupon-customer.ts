@@ -1,17 +1,17 @@
-export class CouponCustomer{
+export class CouponCustomer {
     id: string;
     firstname_Companyname: string;
     lastname_Tradingname: string;
     email: string;
 
-    constructor(object = null){
-        if(object) return this.createFromResponse(object);
+    constructor(object = null) {
+        if (object) return this.createFromResponse(object);
     }
 
-    public createFromResponse(response): CouponCustomer{
+    public createFromResponse(response): CouponCustomer {
         let model = new CouponCustomer();
-        
-        for (var k in response){
+
+        for (var k in response) {
             model[k] = response[k];
         }
 

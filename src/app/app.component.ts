@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import { Meta, Title, SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
+import { Meta, Title, SafeResourceUrl, DomSanitizer, TransferState, makeStateKey } from '@angular/platform-browser';
 import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
 import { Store } from './models/store/store';
@@ -21,6 +21,7 @@ import { GoogleService } from './services/google.service';
 import { CustomerManager } from './managers/customer.manager';
 import { Token } from './models/customer/token';
 
+const STORE_KEY = makeStateKey('store_key');
 declare var $: any;
 declare var ga: any;
 
@@ -35,15 +36,15 @@ export class AppComponent implements OnInit {
   Members
   *********************************************************************************************************
   */
-  cart: Cart;
-  date: Date = new Date();
-  googleUA: Google;
-  customer: Customer;
   private path: string;
   private logged: boolean;
   private ssl: boolean = false;
   private PagseguroScriptAdded: boolean = false;
   private MercadopagoScriptAdded: boolean = false;
+  cart: Cart;
+  date: Date = new Date();
+  googleUA: Google;
+  customer: Customer;
   mediaPath: string;
   institutionals: Institutional[] = [];
   payments: Payment[] = [];
@@ -70,6 +71,7 @@ export class AppComponent implements OnInit {
     private paymentManager: PaymentManager,
     private googleService: GoogleService,
     private customerManager: CustomerManager,
+    private state: TransferState,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.globals = new Globals();
@@ -82,6 +84,7 @@ export class AppComponent implements OnInit {
   *********************************************************************************************************
   */
   ngOnInit() {
+    this.store = this.state.get(STORE_KEY, null as any);
     if (!this.getSessionId()) {
       this.setSessionId();
     }
@@ -89,7 +92,8 @@ export class AppComponent implements OnInit {
       .then(store => {
         this.globals.store = store;
         this.store = store;
-        this.mediaPath = `${this.globals.store.link}/static`;
+        this.state.set(STORE_KEY, store as any);
+        this.mediaPath = `${store.link}/static`;
         this.getInstitutionals();
         this.getGoogle();
         if (this.store.modality == EnumStoreModality.Ecommerce) {
@@ -156,9 +160,10 @@ export class AppComponent implements OnInit {
    * @memberof AppComponent
    */
   getStore(): Store {
-    if (this.store)
+    if (this.store) {
       return this.store;
-    else return null;
+    }
+    return new Store();
   }
 
   getCustomer() {
@@ -432,9 +437,30 @@ export class AppComponent implements OnInit {
   }
 
   private fetchStore(): Promise<Store> {
+    if (isPlatformBrowser(this.platformId)) {
+      let store: Store = JSON.parse(sessionStorage.getItem('store'));
+      if (store && store.domain == AppConfig.DOMAIN) {
+        return new Promise((resolve, reject) => {
+          resolve(store);
+        });
+      }
+      else if (!store && this.store) {
+        return new Promise((resolve, reject) => {
+          sessionStorage.setItem('store', JSON.stringify(this.store));
+          resolve(this.store);
+        });
+      }
+    }
+    return this.fetchStoreFromApi();
+  }
+
+  private fetchStoreFromApi(): Promise<Store> {
     return new Promise((resolve, reject) => {
       this.service.getStore()
         .subscribe(response => {
+          if (isPlatformBrowser(this.platformId)) {
+            sessionStorage.setItem('store', JSON.stringify(response));
+          }
           resolve(response);
         }, error => {
           reject(error);
