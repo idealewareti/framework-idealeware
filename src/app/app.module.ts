@@ -7,7 +7,9 @@ import { registerLocaleData } from '@angular/common';
 import ptBr from '@angular/common/locales/pt';
 registerLocaleData(ptBr)
 import 'rxjs/add/operator/map';
-
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/timeoutWith';
 import { AppComponent } from './app.component';
 import { ShowcaseComponent } from './components/home/showcase/showcase.component';
 import { BrandNavModule } from './components/home/brand-nav/brand-nav.module';

@@ -614,6 +614,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
         for (let k in this.regexBrands) {
             if (this.regexBrands[k].test(cardnumber.replace(/-/g, ''))) {
                 brand = k;
+                break;
             }
         }
         return brand;

@@ -45,7 +45,7 @@ export class SearchComponent implements OnInit {
     filterModel: Filter;
     orderBy: string = null;
     sortBy: string[] = [];
-    pageSize: number = 9;
+    pageSize: number = 16;
     pages: number[];
     pagination: Pagination;
     products: Product[] = [];
@@ -526,14 +526,16 @@ export class SearchComponent implements OnInit {
     buildFilterModel() {
         this.filterModel = new Filter();
         this.searchInput.categories.forEach(id => {
-            let found = this.categories.filter(x => x.id == id)[0];
+            let found = (this.categories) ? this.categories.filter(x => x.id == id)[0] : null;
             if (found) {
                 this.filterModel.categories.push(found);
             }
 
-            this.categories.forEach(c => {
-                this.findChildrenCategory(c, id);
-            });
+            if (this.categories) {
+                this.categories.forEach(c => {
+                    this.findChildrenCategory(c, id);
+                });
+            }
         });
 
         this.searchInput.brands.forEach(id => {

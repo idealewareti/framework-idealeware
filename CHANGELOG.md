@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.4
+- Correção das bandeiras da Mundipagg
+
+## 2.0.3
+- Correções internas
+
 ## 2.0.2
 - Melhorias de performance
 - Resolvido o flickering na loja

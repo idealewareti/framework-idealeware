@@ -37,6 +37,7 @@ export const environment = {
   API_SERVICE: 'https://api-pub-service.hmg.idealeware.com.br',
   API_SHOWCASE: 'https://api-pub-showcase.hmg.idealeware.com.br',
   API_STORE: 'https://api-pub-store.hmg.idealeware.com.br',
+  API_STORE_INFO: 'https://api-pub-storeinfo.hmg.idealeware.com.br',
   API_FIPE: 'https://fipeapi.appspot.com/api/1/carros',
   SELF_COLOR_PALETA: '/assets/services'
 };

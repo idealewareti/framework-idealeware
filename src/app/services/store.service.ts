@@ -6,7 +6,7 @@ import { Observable } from "rxjs/Observable";
 import { Http } from "@angular/http";
 
 @Injectable()
-export class StoreService{
+export class StoreService {
     client: HttpClientHelper;
 
     constructor(http: Http) {
@@ -18,9 +18,25 @@ export class StoreService{
      * @returns {Observable<Store>} 
      * @memberof StoreService
      */
-    getStore(): Observable<Store>{
+    getStore(): Observable<Store> {
         let url: string = `${environment.API_STORE}/store`;
         return this.client.get(url)
-        .map(res => res.json());        
+            .timeoutWith(5000, Observable.throw(new Error('Timeout!')))
+            .map(res => res.json())
+            .catch(error => {
+                console.error(error);
+                return this.getStoreFile();
+            });
+    }
+    
+    /**
+     * Retorna as informações da loja, lendo o arquivo assets/services/store.json
+     * @returns {Observable<Store>} 
+     * @memberof StoreService
+     */
+    getStoreFile(): Observable<Store> {
+        let url: string = 'assets/services/store.json'
+        return this.client.get(url)
+            .map(res => res.json());
     }
 }

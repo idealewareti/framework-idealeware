@@ -28,13 +28,15 @@ export class CategoryMenuComponent implements OnInit {
 
     ngOnInit() {
         this.categories = this.state.get(CATEGORIES_TREE_KEY, null as any);
-        this.service.getTree()
-            .subscribe(categories => {
-                this.categories = categories;
-                this.state.set(CATEGORIES_TREE_KEY, categories as any);
-            }, error => {
-                console.log(error);
-            });
+        if (!this.categories) {
+            this.service.getTree()
+                .subscribe(categories => {
+                    this.categories = categories;
+                    this.state.set(CATEGORIES_TREE_KEY, categories as any);
+                }, error => {
+                    console.log(error);
+                });
+        }
     }
 
     getMediaPath(): string {

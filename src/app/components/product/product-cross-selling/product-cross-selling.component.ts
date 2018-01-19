@@ -1,6 +1,4 @@
 import { Component, Input, OnInit, AfterViewChecked, AfterContentInit, OnDestroy, OnChanges, SimpleChanges, PLATFORM_ID, Inject } from '@angular/core';
-import { Http } from '@angular/http';
-
 import { Product } from '../../../models/product/product';
 import { Sku } from '../../../models/product/sku';
 import { ProductPicture } from '../../../models/product/product-picture';

@@ -1,7 +1,7 @@
-import {Sku} from './sku';
-import {ProductPicture} from './product-picture';
-import {Category} from '../category/category';
-import {Service} from '../product-service/product-service';
+import { Sku } from './sku';
+import { ProductPicture } from './product-picture';
+import { Category } from '../category/category';
+import { Service } from '../product-service/product-service';
 import { Brand } from "../brand/brand";
 import { TechnicalInformation } from "./product-technical-information";
 
@@ -38,9 +38,9 @@ export class Product {
     information: string;
     selfColor: boolean;
     additionalFreightPrice: number;
-    installmentValue : number;
-    installmentNumber : number;
-    showInstallment : boolean;
+    installmentValue: number;
+    installmentNumber: number;
+    showInstallment: boolean;
     installmentText: string;
     fileGuide: string;
     videoEmbed: string;
