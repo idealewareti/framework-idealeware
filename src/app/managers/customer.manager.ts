@@ -7,6 +7,8 @@ import { Globals } from "../../app/models/globals";
 import { Observable } from "rxjs/Observable";
 import { Token } from "../models/customer/token";
 import { isPlatformBrowser } from "@angular/common";
+import { AppConfig } from "../app.config";
+import { Store } from "../models/store/store";
 
 @Injectable()
 export class CustomerManager {
@@ -16,7 +18,9 @@ export class CustomerManager {
         private cartManager: CartManager,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) { }
+    ) {
+        this.persistLocalStorage();
+     }
 
 
     getToken(): Token {
@@ -44,6 +48,15 @@ export class CustomerManager {
             localStorage.setItem('auth', token.accessToken);
             localStorage.setItem('auth_create', token.createdDate.toString());
             localStorage.setItem('auth_expires', token.expiresIn.toString());
+        }
+    }
+
+    private persistLocalStorage() {
+        if (isPlatformBrowser(this.platformId)) {
+            let store: Store = JSON.parse(sessionStorage.getItem('store'));
+            if (store && store.domain != AppConfig.DOMAIN) {
+                localStorage.clear();
+            }
         }
     }
 

@@ -55,11 +55,3 @@ Para publicação, basta digitar no terminal
 Para visualizar uma loja rodando com Server-Side Rendering (Angular Universal)
 (Este comando necessita que a publicação seja gerada e irá ser executado em http://localhost na porta definida em app.config.ts)
 > `npm run serve:ssr`
-
-## Testes da loja
-
-Antes do envio do layout personalizado para atualização na AWS é de responsabilidade do parceiro realizar testes básicos que são considerados como críticos para a loja virtual como:
-* Navegação entre as páginas da loja virtual
-* Cadastrar um novo cliente
-* Realizar uma simulação de frete
-* Efetivar uma compra com cartão de crédito e boleto

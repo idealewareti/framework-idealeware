@@ -93,7 +93,7 @@ export class CheckoutAddressesComponent implements OnInit {
                     this.retryBillingAddress = true;
                 }
                 if (this.retryBillingAddress) {
-                    this.globals.cart.deliveryAddress = address;
+                    this.globals.cart.billingAddress = address;
                     this.cartManager.addBillingAddress(this.globals.cart.id, address.id)
                         .then(cart => {
                             this.showBillingAddresses = false;

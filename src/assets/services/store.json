@@ -1,0 +1,52 @@
+{
+  "domain": "ecommerce",
+  "logo": "Logo-Idealeware-Email-ef7cacfa-a8e7-4aab-9e91-3f0f56fe2722.png",
+  "link": "https://ecommerce.idealeware.com.br",
+  "companyName": "Idealeware",
+  "tradingName": "Idealeware Soluções em Sistemas LTDA - EPP",
+  "cnpj": "06.205.268/0001-46",
+  "stateRegistration": "002210011001",
+  "responsible": "Fernando Mansano",
+  "phone": "(16) 3916-2135",
+  "cellPhone": "(16) 99733-1666",
+  "email": "dev@idealeware.com.br",
+  "zipCode": "14096-075",
+  "addressLine1": "Av. Maurílio Biagi, 800",
+  "addressLine2": "10º andar",
+  "district": " Santa Cruz do José Jacques",
+  "city": "Ribeirão Preto",
+  "state": "SP",
+  "country": "Brasil",
+  "modality": 1,
+  "createdDate": "2017-03-28T15:57:01.999",
+  "settings": [
+    {
+      "id": "617294c4-c401-11e7-8a54-fb786b2bb5fa",
+      "title": "Esconder as variações na loja",
+      "description": "Deseja esconder as variações dos produtos na loja ?",
+      "status": true,
+      "type": 4
+    },
+    {
+      "id": "ebd36042-d8dd-11e7-b06d-353ce8ae3245",
+      "title": "Mostrar estoque dos produtos",
+      "description": "Deseja mostrar a quantidade em estoque dos produtos?",
+      "status": true,
+      "type": 5
+    }
+  ],
+  "imageFivIcon": [
+    "apple-touch-icon-114x114.png",
+    "apple-touch-icon-120x120.png",
+    "apple-touch-icon-57x57.png",
+    "apple-touch-icon-60x60.png",
+    "apple-touch-icon-72x72.png",
+    "apple-touch-icon-76x76.png",
+    "favicon-128x128.png",
+    "favicon-16x16.png",
+    "favicon-196x196.png",
+    "favicon-32x32.png",
+    "favicon-96x96.png"
+  ],
+  "logoMobile": "logo-ideale-98404dc5-203c-46f2-af11-acd4d42d0d3c.jpeg"
+}

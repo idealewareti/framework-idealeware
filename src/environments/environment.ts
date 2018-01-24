@@ -36,8 +36,7 @@ export const environment = {
   API_SEARCH: 'https://api-pub-search.prd.idealeware.com.br',
   API_SERVICE: 'https://api-pub-service.prd.idealeware.com.br',
   API_SHOWCASE: 'https://api-pub-showcase.prd.idealeware.com.br',
-  API_STORE: 'https://api-pub-store.prd.idealeware.com.br',
-  API_STORE_INFO: 'https://api-pub-storeinfo.prd.idealeware.com.br',
+  API_STORE: 'https://api-pub-storeinfo.prd.idealeware.com.br',
   API_FIPE: 'https://fipeapi.appspot.com/api/1/carros',
   SELF_COLOR_PALETA: '/assets/services'
 };
