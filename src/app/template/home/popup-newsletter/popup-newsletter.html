@@ -1,0 +1,29 @@
+<div id="popupnewsletter">
+    <div class="container">
+        <div class="clearfix">
+            <h2>
+                <i class="fa fa-envelope envelope" aria-hidden="true"></i>
+                <span id="popupnewslettertext">Cadastre seu e-mail para receber nossas promoções e novidades!</span>
+            </h2>
+            <form [formGroup]="newsletterForm" (submit)="signupNewsLetter($event)">
+                <fieldset>
+                    <div class="row">
+                        <div class="form-group box-name" [ngClass]="{'has-error': hasError('name')}">
+                            <input type="text" name="name" [(ngModel)]="newsletter.name" class="form-control form-input" placeholder="Nome" formControlName="name"
+                                required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group box-email" [ngClass]="{'has-error': hasError('email')}">
+                            <input type="email" name="email" [(ngModel)]="newsletter.email" class="form-control form-input" placeholder="E-mail" formControlName="email"
+                                required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="submit" class="btn btn-success btn-block">Cadastrar</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

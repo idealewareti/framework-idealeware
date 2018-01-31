@@ -107,7 +107,7 @@ export class HttpClientHelper {
      * @memberof HttpClient
     */
     delete(url, token: Token = null): Observable<any> {
-        this.setHeaders([], null);
+        this.setHeaders([], token);
         return this.http.delete(url, {
             headers: this.headers
         });

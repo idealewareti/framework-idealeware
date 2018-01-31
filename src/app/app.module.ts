@@ -110,6 +110,7 @@ import { ZipCodeMaskModule } from './directives/zipcode-mask/zipcode-mask.module
 import { CustomPaintFilterModule } from './pipes/custom-paint-filter/custom-paint-filter.module';
 import { OrderByModule } from './pipes/orderBy/orderBy.module';
 import { AppConfig } from './app.config';
+import { PopUpNewsLetterModule } from './components/home/popup-newsletter/popup-newsletter.module';
 
 @NgModule({
   declarations: [
@@ -189,6 +190,7 @@ import { AppConfig } from './app.config';
     InstallmentSimulationModule,
     MiniCartModule,
     NewsLetterModule,
+    PopUpNewsLetterModule,
     PopUpModule,
     ProductCrossSellingModule,
     ProductGalleryModule,

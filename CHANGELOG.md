@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.0
+- Adicionado componente para o newsletter do popup
+
 ## 2.0.4
 - Correção das bandeiras da Mundipagg
 

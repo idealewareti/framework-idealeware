@@ -13,7 +13,7 @@
                {{popUpAssortment.description}}
             </p>
             <!-- Newsletter -->
-            <app-newsletter *ngIf="popUpAssortment.registrationRequired" [popupId]="popUpAssortment.id"></app-newsletter>
+            <app-popup-newsletter *ngIf="popUpAssortment.registrationRequired" [popupId]="popUpAssortment.id"></app-popup-newsletter>
             <!-- /Newsletter -->
         </div>
     </div>

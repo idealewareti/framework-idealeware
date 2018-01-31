@@ -1,6 +1,6 @@
 <h2>{{((isEdit) ? 'Editar endereço' : 'Adicionar novo endereço')}}</h2>
 
-<form class="form-horizontal" [formGroup]="myForm" (submit)="addresse($event)">
+<form class="form-horizontal" [formGroup]="myForm" (submit)="validadeSubmit($event)">
     <div class="row">
         <div class="form-group required" [ngClass]="{'has-error': hasError('addressType')}">
             <label for="addressType" class="col-sm-2 control-label">Tipo de Endereço</label>
