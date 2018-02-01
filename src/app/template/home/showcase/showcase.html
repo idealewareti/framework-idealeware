@@ -1,10 +1,10 @@
 <!-- Parte principal do site -->
-<main role="main" *ngIf="showcase">
+<main role="main">
     <app-showcase-banner-stripe [store]="getStore()" [banners]="stripeBanners"></app-showcase-banner-stripe>
     <app-showcase-banner [store]="getStore()" [banners]="banners"></app-showcase-banner>
     <app-brand-nav [store]="getStore()"></app-brand-nav>
     <app-showcase-banner-half [store]="getStore()" [banners]="halfBanners"></app-showcase-banner-half>
-    <div class="container" *ngIf="showcase.groups">
-        <app-showcase-group *ngFor="let group of showcase.groups" [store]="getStore()" [group]="group"></app-showcase-group>
+    <div class="container">
+        <app-showcase-group *ngFor="let group of groups" [store]="getStore()" [group]="group"></app-showcase-group>
     </div>
 </main>
