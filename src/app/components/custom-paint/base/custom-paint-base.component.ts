@@ -296,7 +296,13 @@ export class CustomPaintBaseComponent implements OnInit {
             event.preventDefault();
         }
         this.page = (Number.parseInt(page) > 0) ? Number.parseInt(page) : 1;
-        this.parentRouter.navigate(['/corespersonalizadas', this.manufacuterId, this.colorCode, { 'page': this.page }]);
+
+        if (this.optionId) {
+            this.parentRouter.navigate(['/corespersonalizadas', this.manufacuterId, this.colorCode, this.optionId, { 'page': this.page }]);
+        }
+        else {
+            this.parentRouter.navigate(['/corespersonalizadas', this.manufacuterId, this.colorCode, { 'page': this.page }]);
+        }
     }
 
     changeOption(event = null) {

@@ -1,6 +1,9 @@
 # Changelog
 
 ## 2.1.1
+- Correção da paginação das cores personalizadas
+
+## 2.1.1
 - Correção do Erro 500 ao primeiro carregamento no Server Side
 
 ## 2.1.0
