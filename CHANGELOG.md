@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.1.1
+## 2.1.2
 - Correção da paginação das cores personalizadas
 
 ## 2.1.1

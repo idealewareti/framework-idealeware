@@ -95,14 +95,19 @@ export class ProductRatingComponent implements AfterContentChecked {
                 for (let i in this.ratingForm.controls) {
                     (<any>this.ratingForm.controls[i])._touched = true;
                 }
+                swal({
+                    title: 'Falha ao enviar a avaliação',
+                    text: 'Os campos informados com * são obrigatórios',
+                    type: "error",
+                    confirmButtonText: "OK"
+                });
             }
             else {
                 this.productsRatingCreate.name = this.product.name;
                 this.productsRatingCreate.id = this.product.id;
 
-                $('#btn-productsrating').button('loading');
-
                 if (this.isLogged) {
+                    $('#btn-productsrating').button('loading');
                     this.submitRating();
                 }
                 else {

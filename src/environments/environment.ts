@@ -18,7 +18,7 @@ export const environment = {
   API_CONTACT: 'https://api-pub-contact.prd.idealeware.com.br',
   API_COUPON: 'https://api-pub-coupon.prd.idealeware.com.br',
   API_CUSTOMER: 'https://api-pub-customer.prd.idealeware.com.br',
-  API_CUSTOMPAINT: 'https://api-pub-custompaint.prd.idealeware.com.br',
+  API_CUSTOMPAINT: 'https://api-pub-custompaint.hmg.idealeware.com.br',
   API_DNEADDRESS: 'https://api-pub-dneaddress.prd.idealeware.com.br',
   API_GOOGLE: 'https://api-pub-google.prd.idealeware.com.br',
   API_GROUP: 'https://api-pub-group.prd.idealeware.com.br',

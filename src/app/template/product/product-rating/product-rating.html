@@ -1,6 +1,5 @@
 <div id="avaliations" *ngIf="product">
     <h3 class="title clearfix"><b>AVALIAÇÕES DOS CLIENTES</b></h3>
-
     <div class="row">
         <div class="col-md-6 col-sm-12">
             <h4>Avalie este produto</h4>
@@ -24,13 +23,13 @@
                     </div>
                 </div>
                 <div class="form-group box-ratingTitle required" [ngClass]="{'has-error': hasError('ratingTitle')}">
-                    <label for="name">Título</label>
+                    <label for="" class="control-label">Título</label>
                     <input type="text" formControlName="ratingTitle" name="ratingTitle" [(ngModel)]="productsRatingCreate.customers.ratingTitle" class="form-control form-input" placeholder="Título" required>
                     <span *ngIf="hasError('ratingTitle')" class="help-block">Informe o Título</span>
                 </div>
 
                 <div class="form-group box-comment required" [ngClass]="{'has-error': hasError('ratingComment')}">
-                    <label for="name" class="col-md-12">Comentário</label>
+                    <label for="name" class="control-label">Comentário</label>
                     <textarea class="form-control" formControlName="ratingComment" name="text" maxlength="5000" cols="50" [(ngModel)]="productsRatingCreate.customers.comment" name="comment" rows="4" placeholder="Digite aqui seu comentário..." required></textarea>
                     <span *ngIf="hasError('ratingComment')" class="help-block">Informe um Comentário</span>
                 </div>

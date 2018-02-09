@@ -11,4 +11,26 @@ export class CustomPaintCombination {
     variation: CustomPaintVariationReference;
     price: number;
     status: boolean;
+	
+	constructor(object = null){
+        if(object)
+            return this.CreateFromResponse(object);
+    }
+
+    CreateFromResponse(object) : CustomPaintCombination{
+        let model = new CustomPaintCombination();
+
+        for (var k in object){
+            if(k === 'color'){
+                model[k] = new CustomPaintColor(object[k]);
+            }
+            else if(k === 'variation'){
+                model[k] = new CustomPaintVariationReference(object[k]);
+            }
+            else
+                model[k] = object[k];
+        }
+
+        return model;
+    }
 }

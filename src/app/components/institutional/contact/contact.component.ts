@@ -86,6 +86,7 @@ export class ContactComponent implements OnInit {
             }
         }
     }
+    
     hasError(key: string): boolean {
         return (this.contactForm.controls[key].touched && this.contactForm.controls[key].invalid);
     }
