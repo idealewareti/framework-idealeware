@@ -6,6 +6,9 @@ import { Brand } from '../../../models/brand/brand';
 import { BrandService } from '../../../services/brand.service';
 import { AppCore } from '../../../app.core';
 import { Subscriber } from 'rxjs/Subscriber';
+import { makeStateKey, TransferState } from '@angular/platform-browser';
+
+const BRAND_KEY = makeStateKey('nav_brand_key');
 
 declare var $: any;
 
@@ -21,12 +24,19 @@ export class BrandNavComponent implements OnInit {
 
     constructor(
         private service: BrandService,
-        @Inject(PLATFORM_ID) private platformId: Object
+        @Inject(PLATFORM_ID) private platformId: Object,
+        private state: TransferState
     ) { }
 
     ngOnInit() {
+        this.allBrands = this.state.get(BRAND_KEY, null as any);
+        if (this.allBrands) {
+            this.removeBrandWithoutPicture();
+            return;
+        }
         this.service.getAll()
             .subscribe(brands => {
+                this.state.set(BRAND_KEY, brands as any);
                 this.allBrands = brands;
                 this.removeBrandWithoutPicture();
             }, e => {
