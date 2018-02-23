@@ -22,6 +22,8 @@ import { CustomerManager } from './managers/customer.manager';
 import { Token } from './models/customer/token';
 
 const STORE_KEY = makeStateKey('store_key');
+const PAYMENTS_KEY = makeStateKey('payments_key');
+
 declare var $: any;
 declare var ga: any;
 
@@ -202,15 +204,22 @@ export class AppComponent implements OnInit {
 
   getPayments(): Promise<Payment[]> {
     return new Promise((resolve, reject) => {
-      this.paymentService.getAll()
-        .subscribe(payments => {
-          this.payments = payments;
-          this.createPagseguroSession();
-          resolve(payments);
-        }, error => {
-          console.log(error._body);
-          reject(error);
-        });
+      this.payments = this.state.get(PAYMENTS_KEY, [] as any);
+      if (this.payments.length > 0) {
+        this.createPagseguroSession();
+        resolve(this.payments);
+      } else {
+        this.paymentService.getAll()
+          .subscribe(payments => {
+            this.state.set(PAYMENTS_KEY, payments as any);
+            this.payments = payments;
+            this.createPagseguroSession();
+            resolve(payments);
+          }, error => {
+            console.log(error._body);
+            reject(error);
+          });
+      }
     });
   }
 
