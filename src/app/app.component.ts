@@ -23,6 +23,7 @@ import { Token } from './models/customer/token';
 
 const STORE_KEY = makeStateKey('store_key');
 const PAYMENTS_KEY = makeStateKey('payments_key');
+const INSTITUTIONALS_KEY = makeStateKey('institutionals_key');
 
 declare var $: any;
 declare var ga: any;
@@ -187,8 +188,12 @@ export class AppComponent implements OnInit {
   }
 
   getInstitutionals() {
+    this.institutionals = this.state.get(INSTITUTIONALS_KEY, null as any);
+    if (this.institutionals) return;
+
     this.institutionalService.getAll()
       .subscribe(response => {
+        this.state.set(INSTITUTIONALS_KEY, response as any);
         this.institutionals = response
       }, error => {
         console.log(error.text());
