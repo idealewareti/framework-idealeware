@@ -49,6 +49,22 @@ export class ShowcaseComponent implements OnInit {
             .then(store => {
                 this.store = store;
                 this.state.set(STORE_KEY, store as any);
+
+                if (this.showcase) {
+                    this.groups = this.showcase.groups;
+                    this.banners = this.showcase.pictures.filter(b => b.bannerType == EnumBannerType.Full);
+                    this.stripeBanners = this.showcase.pictures.filter(b => b.bannerType == EnumBannerType.Tarja);
+                    this.halfBanners = this.showcase.pictures.filter(b => b.bannerType == EnumBannerType.Half);
+                    
+                    let title = (this.showcase.metaTagTitle) ? this.showcase.metaTagTitle : this.showcase.name;
+                    this.metaService.addTags([
+                        { name: 'title', content: this.showcase.metaTagTitle },
+                        { name: 'description', content: this.showcase.metaTagDescription }
+                    ]);
+                    this.titleService.setTitle(this.showcase.metaTagTitle);
+                    return;
+                }
+                
                 this.service.getShowCase()
                     .subscribe(showcase => {
                         this.showcase = showcase;
