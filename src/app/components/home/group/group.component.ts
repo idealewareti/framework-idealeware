@@ -3,6 +3,9 @@ import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Group } from '../../../models/group/group';
 import { AppCore } from '../../../app.core';
 import { GroupService } from '../../../services/group.service';
+import { makeStateKey, TransferState } from '@angular/platform-browser';
+
+const GROUPS_KEY = makeStateKey('groups_key');
 
 @Component({
     selector: 'app-group',
@@ -15,7 +18,8 @@ export class GroupComponent implements OnInit {
 
     constructor(
         private service: GroupService,
-        @Inject(PLATFORM_ID) private platformId: Object
+        @Inject(PLATFORM_ID) private platformId: Object,
+        private state: TransferState,
     ) { }
 
     ngOnInit() {
@@ -23,8 +27,12 @@ export class GroupComponent implements OnInit {
     }
 
     getGroups() {
+        this.groups = this.state.get(GROUPS_KEY, null as any);
+        if (this.groups) return;
+
         this.service.getAll()
             .subscribe(groups => {
+                this.state.set(GROUPS_KEY, groups as any);
                 this.groups = groups;
             }, erro => console.log(erro));
     }
