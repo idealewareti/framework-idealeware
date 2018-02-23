@@ -51,35 +51,15 @@ export class ShowcaseComponent implements OnInit {
                 this.state.set(STORE_KEY, store as any);
 
                 if (this.showcase) {
-                    this.groups = this.showcase.groups;
-                    this.banners = this.showcase.pictures.filter(b => b.bannerType == EnumBannerType.Full);
-                    this.stripeBanners = this.showcase.pictures.filter(b => b.bannerType == EnumBannerType.Tarja);
-                    this.halfBanners = this.showcase.pictures.filter(b => b.bannerType == EnumBannerType.Half);
-                    
-                    let title = (this.showcase.metaTagTitle) ? this.showcase.metaTagTitle : this.showcase.name;
-                    this.metaService.addTags([
-                        { name: 'title', content: this.showcase.metaTagTitle },
-                        { name: 'description', content: this.showcase.metaTagDescription }
-                    ]);
-                    this.titleService.setTitle(this.showcase.metaTagTitle);
+                    this.initData(this.showcase);
                     return;
                 }
-                
+
                 this.service.getShowCase()
                     .subscribe(showcase => {
-                        this.showcase = showcase;
                         this.state.set(SHOWCASE_KEY, showcase as any);
-                        this.groups = showcase.groups;
-                        this.banners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Full);
-                        this.stripeBanners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Tarja);
-                        this.halfBanners = showcase.pictures.filter(b => b.bannerType == EnumBannerType.Half);
-
-                        let title = (this.showcase.metaTagTitle) ? this.showcase.metaTagTitle : this.showcase.name;
-                        this.metaService.addTags([
-                            { name: 'title', content: this.showcase.metaTagTitle },
-                            { name: 'description', content: this.showcase.metaTagDescription }
-                        ]);
-                        this.titleService.setTitle(showcase.metaTagTitle);
+                        this.showcase = showcase;
+                        this.initData(showcase);
                     }, error => console.log(error));
             })
             .catch(error => {
@@ -91,6 +71,20 @@ export class ShowcaseComponent implements OnInit {
         this.showcase = null;
         this.metaService.removeTag("name='title'");
         this.metaService.removeTag("name='description'");
+    }
+
+    private initData(data: ShowCase): void {
+        this.groups = data.groups;
+        this.banners = data.pictures.filter(b => b.bannerType == EnumBannerType.Full);
+        this.stripeBanners = data.pictures.filter(b => b.bannerType == EnumBannerType.Tarja);
+        this.halfBanners = data.pictures.filter(b => b.bannerType == EnumBannerType.Half);
+
+        let title = (data.metaTagTitle) ? data.metaTagTitle : data.name;
+        this.metaService.addTags([
+            { name: 'title', content: data.metaTagTitle },
+            { name: 'description', content: data.metaTagDescription }
+        ]);
+        this.titleService.setTitle(data.metaTagTitle);
     }
 
     private fetchStore(): Promise<Store> {
