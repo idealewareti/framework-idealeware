@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
 import { Meta, Title, SafeResourceUrl, DomSanitizer, TransferState, makeStateKey } from '@angular/platform-browser';
 import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
@@ -20,6 +20,7 @@ import { PaymentMethod } from './models/payment/payment-method';
 import { GoogleService } from './services/google.service';
 import { CustomerManager } from './managers/customer.manager';
 import { Token } from './models/customer/token';
+import { ScriptService } from './services/script.service';
 
 const STORE_KEY = makeStateKey('store_key');
 const PAYMENTS_KEY = makeStateKey('payments_key');
@@ -31,9 +32,10 @@ declare var ga: any;
 @Component({
   selector: 'app-root',
   templateUrl: './template/app.html',
-  styleUrls: []
+  styleUrls: [],
+  providers: [ScriptService]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
 
   /*
   Members
@@ -75,6 +77,7 @@ export class AppComponent implements OnInit {
     private googleService: GoogleService,
     private customerManager: CustomerManager,
     private state: TransferState,
+    private scriptService: ScriptService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.globals = new Globals();
@@ -151,6 +154,10 @@ export class AppComponent implements OnInit {
         $('body').removeClass('mobile-body').addClass('desktop-body');
       }
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.scriptService.loadScript('http://seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js');
   }
 
   /*
