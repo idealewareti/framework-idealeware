@@ -157,7 +157,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.scriptService.loadScript('http://seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js');
+        this.scriptService.loadScript('https://seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js');
     }
 
     /*
