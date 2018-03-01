@@ -33,5 +33,8 @@ export const environment = {
   API_SHOWCASE: 'https://api-pub-showcase.prd.idealeware.com.br',
   API_STORE: 'https://api-pub-storeinfo.prd.idealeware.com.br',
   API_FIPE: 'https://fipeapi.appspot.com/api/1/carros',
-  SELF_COLOR_PALETA: '/assets/services'
+  SELF_COLOR_PALETA: '/assets/services',
+
+  GATEWAY_STORE: 'https://j8tuu63l00.execute-api.us-east-1.amazonaws.com/Prod',
+  GATEWAY_PRODUCT: 'https://ymjbw0brzf.execute-api.us-east-1.amazonaws.com/Prod',
 };

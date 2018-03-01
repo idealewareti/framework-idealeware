@@ -157,7 +157,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.scriptService.loadScript('https://seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js');
+        if (isPlatformBrowser(this.platformId)) {
+            this.scriptService.loadScript('https://seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js');
+        }
     }
 
     /*
@@ -176,6 +178,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         return new Store();
     }
 
+    /**
+     * Retorna os dados do cliente
+     * @memberof AppComponent
+     */
     getCustomer() {
         if (this.customerManager.hasToken() && !this.customer) {
             this.customerManager.getUserFromStorage()
@@ -194,6 +200,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /**
+     * Retorna as páginas institucionais
+     * @returns 
+     * @memberof AppComponent
+     */
     getInstitutionals() {
         this.institutionals = this.state.get(INSTITUTIONALS_KEY, null as any);
         if (this.institutionals) return;
@@ -207,6 +218,12 @@ export class AppComponent implements OnInit, AfterViewInit {
             });
     }
 
+    /**
+     * Retorna a URLs da página institucional
+     * @param {Institutional} page 
+     * @returns {string} 
+     * @memberof AppComponent
+     */
     getInstitutionalUrl(page: Institutional): string {
         if (page.allowDelete)
             return `/institucional/${page.id}/${AppCore.getNiceName(page.title)}`;
@@ -214,6 +231,11 @@ export class AppComponent implements OnInit, AfterViewInit {
             return '/contato';
     }
 
+    /**
+     * Retorna os pagamentos da loja
+     * @returns {Promise<Payment[]>} 
+     * @memberof AppComponent
+     */
     getPayments(): Promise<Payment[]> {
         return new Promise((resolve, reject) => {
             this.payments = this.state.get(PAYMENTS_KEY, [] as any);
@@ -272,6 +294,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         else return false;
     }
 
+    /**
+     * Verifica se o acesso é mobile
+     * @returns {boolean} 
+     * @memberof AppComponent
+     */
     isMobile(): boolean {
         if (isPlatformBrowser(this.platformId)) {
             return AppCore.isMobile(window);
@@ -292,6 +319,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     Actions
     *********************************************************************************************************
     */
+    /**
+     * Abre o box de busca no mobile
+     * @param {any} event 
+     * @memberof AppComponent
+     */
     searchFor(event) {
         if (isPlatformBrowser(this.platformId)) {
             event.preventDefault();
@@ -303,6 +335,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /**
+     * Cria uma nova sessão na loja
+     * @memberof AppComponent
+     */
     setSessionId() {
         if (isPlatformBrowser(this.platformId)) {
             let guid = AppCore.createGuid();
@@ -310,12 +346,22 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /**
+     * Verifica se a loja possui uma sessão criada
+     * Caso não possua, uma nova será gerada
+     * @memberof AppComponent
+     */
     checkSessionId() {
         if (!this.getSessionId()) {
             this.setSessionId();
         }
     }
 
+    /**
+     * Retorna a sessão criada
+     * @returns {string} 
+     * @memberof AppComponent
+     */
     getSessionId(): string {
         if (isPlatformBrowser(this.platformId)) {
             return localStorage.getItem('session_id');
@@ -323,10 +369,20 @@ export class AppComponent implements OnInit, AfterViewInit {
         return null;
     }
 
+    /**
+     * Retorna o ID da página do Facebook da loja
+     * @returns {string} 
+     * @memberof AppComponent
+     */
     getFacebook(): string {
         return AppConfig.FACEBOOK_PAGE;
     }
 
+    /**
+     * Retorna a url do Facebook 
+     * @returns {SafeResourceUrl} 
+     * @memberof AppComponent
+     */
     getFacebookUrl(): SafeResourceUrl {
         let url = `https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F${this.getFacebook()}%2F&tabs&width=340&height=214&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=214403341930049`;
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
@@ -337,6 +393,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     *********************************************************************************************************
     */
 
+    /**
+     * Adiciona o script do Mercado Pago na loja
+     * @memberof AppComponent
+     */
     addMercadoPago() {
         if (isPlatformBrowser(this.platformId)) {
             if (this.store && !this.MercadopagoScriptAdded && this.store.modality == EnumStoreModality.Ecommerce && this.hasMercadoPago()) {
@@ -349,6 +409,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /**
+     * Adiciona o script do pagseguro na loja
+     * @memberof AppComponent
+     */
     addPagseguro() {
         if (isPlatformBrowser(this.platformId)) {
             if (this.store && !this.PagseguroScriptAdded && this.globals.store.modality == EnumStoreModality.Ecommerce && this.hasPagSeguro()) {
@@ -361,18 +425,38 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /**
+     * Verifica se a loja possui Mercado Pago
+     * @returns {boolean} 
+     * @memberof AppComponent
+     */
     hasMercadoPago(): boolean {
         return this.paymentManager.hasMercadoPago(this.payments);
     }
 
+    /**
+     * Retorna o meio de pagamento Mercado Pago
+     * @returns {Payment} 
+     * @memberof AppComponent
+     */
     getMercadoPago(): Payment {
         return this.paymentManager.getMercadoPago(this.payments);
     }
 
+    /**
+     * Verifica se a loja possui Mundipagg
+     * @returns {boolean} 
+     * @memberof AppComponent
+     */
     hasMundipagg(): boolean {
         return this.paymentManager.hasMundipagg(this.payments);
     }
 
+    /**
+     * Retorna as bandeiras do cartão de crédito do gateway Mundipagg
+     * @returns 
+     * @memberof AppComponent
+     */
     getMundipaggBrands() {
         if (this.paymentManager.hasMundipagg(this.payments)) {
             let bankslip: Payment = this.paymentManager.getMundipaggBankslip(this.payments);
@@ -383,31 +467,55 @@ export class AppComponent implements OnInit, AfterViewInit {
         else return [];
     }
 
+    /**
+     * Verifica se a loja possui pagseguro
+     * @returns {boolean} 
+     * @memberof AppComponent
+     */
     hasPagSeguro(): boolean {
         return this.paymentManager.hasPagSeguro(this.payments);
     }
 
+    /**
+     * Retorna o Pagseguro da loja
+     * @returns {Payment} 
+     * @memberof AppComponent
+     */
     getPagSeguro(): Payment {
         return this.paymentManager.getPagSeguro(this.payments);
     }
 
+    /**
+   * Adiciona o UA-Code do Google Analytics no site
+   * @memberof AppComponent
+   */
     getGoogle() {
         if (isPlatformBrowser(this.platformId)) {
             this.googleService.getAll()
                 .subscribe(response => {
-                    this.googleUA = response;
-                    ga('create', response.uaCode, 'auto');
-
-                    this.router.events.subscribe(event => {
-                        if (event instanceof NavigationEnd) {
-                            ga('set', 'page', event.urlAfterRedirects);
-                            ga('send', 'pageview');
-                        }
-                    });
+                    // Se houver UA Code cadastrado, prosseguir
+                    if (response) {
+                        this.googleUA = response;
+                        // Cria o primeiro pageview na loja
+                        ga('create', response.uaCode, 'auto');
+                        ga('send', 'pageview');
+                        // Adiciona um evento ao mudar a rota para que o Analy
+                        this.router.events.subscribe(event => {
+                            if (event instanceof NavigationEnd) {
+                                ga('set', 'page', event.urlAfterRedirects);
+                                ga('send', 'pageview');
+                            }
+                        });
+                    }
                 }, e => console.log(e));
         }
     }
 
+    /**
+     * Move o selo SSL para dentro do footer
+     * @returns {boolean} 
+     * @memberof AppComponent
+     */
     addSSL(): boolean {
         if (isPlatformBrowser(this.platformId)) {
             let children = $('#index-seal-ssl').children();
@@ -425,6 +533,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         return false;
     }
 
+    /**
+    * Mantém o site sempre em https
+    * (exceto quando ele estiver rodando em localhost)
+    * @memberof AppComponent
+    */
     keepHttps() {
         if (isPlatformBrowser(this.platformId)) {
             if (location.href.indexOf("https://") == -1 && location.hostname != 'localhost' && !/^\d+[.]/.test(location.hostname)) {
@@ -433,6 +546,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /**
+     * Cria a sessão no pagseguro e armazena no Local Storage
+     * @memberof AppComponent
+     */
     createPagseguroSession() {
         if (isPlatformBrowser(this.platformId)) {
             if (this.customerManager.hasToken()) {
@@ -457,6 +574,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /**
+     * Busca informações da loja
+     * Se for o primeiro acesso, irá buscar pela API
+     * Se já houver um acesso, irá buscar na Session Storage
+     * @private
+     * @returns {Promise<Store>} 
+     * @memberof AppComponent
+    */
     private fetchStore(): Promise<Store> {
         if (isPlatformBrowser(this.platformId)) {
             let store: Store = JSON.parse(sessionStorage.getItem('store'));
@@ -475,6 +600,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         return this.fetchStoreFromApi();
     }
 
+    /**
+    * Busca informações da loja na API
+    * @private
+    * @returns {Promise<Store>} 
+    * @memberof AppComponent
+    */
     private fetchStoreFromApi(): Promise<Store> {
         return new Promise((resolve, reject) => {
             this.service.getStore()

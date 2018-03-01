@@ -10,17 +10,21 @@ gulp.task('default', function () {
 
 gulp.task('build-img', function () {
     console.log('Otimizando as imagens...');
-    var b = gulp.src('src/assets/images/**/*')
+    var a = gulp.src('src/assets/images/**/*')
         .pipe(imagemin())
-        .pipe(gulp.dest('dist/browser/assets/images'));
+        .pipe(gulp.dest('dist/assets/images'));
 
-    var s = gulp.src('src/assets/images/**/*')
-        .pipe(imagemin())
-        .pipe(gulp.dest('dist/server/assets/images'));
+    var f = gulp.src('src/assets/fonts/**/*')
+        .pipe(gulp.dest('dist/assets/fonts'));
 
-    return es.concat(b, s);
+    var b = gulp.src('dist/browser/assets')
+        .pipe(clean());
+
+    var s = gulp.src('dist/server/assets')
+        .pipe(clean());
+
+    return es.concat(a, f, b, s);
 });
-
 
 gulp.task('clean', function () {
     console.log('Limpando a pasta dist');
