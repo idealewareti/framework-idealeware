@@ -161,7 +161,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
                 installmentLimitMin = product.installmentLimit;
         });
 
-        if (this.payment.name.toLowerCase() == "pagseguro") {
+        if (this.payment.name != null && this.payment.name.toLowerCase() == "pagseguro") {
             let pagseguroMin = Number.parseInt(this.payment.settings.find(a => a.name == "InstallmentLimit").value);
             if (pagseguroMin < installmentLimitMin) {
                 installmentLimitMin = pagseguroMin;

@@ -19,24 +19,16 @@ export class StoreService {
      * @memberof StoreService
      */
     getStore(): Observable<Store> {
-        let url: string = `${environment.GATEWAY_STORE}/store`;
+        let url: string = `${environment.API_STORE}/store`;
         return this.client.get(url)
+            .timeoutWith(5000, Observable.throw(new Error('Timeout!')))
             .map(res => res.json())
-            .catch(error => this.getStoreFile(error));
+            .catch(error => {
+                console.error(error);
+                return this.getStoreFile();
+            });
     }
-
-    /**
-     * Retorna as informações da loja pelo API Gateway
-     * @returns {Observable<Store>} 
-     * @memberof StoreService
-     */
-    getStoreFromGateway(): Observable<Store> {
-        let url: string = `${environment.GATEWAY_STORE}/store`;
-        return this.client.get(url)
-            .map(res => res.json())
-            .catch(error => this.getStoreFile(error));
-    }
-
+    
     /**
      * Retorna as informações da loja, lendo o arquivo assets/services/store.json
      * @returns {Observable<Store>} 

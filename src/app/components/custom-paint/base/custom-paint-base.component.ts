@@ -6,7 +6,6 @@ import { CustomPaintService } from "../../../services/custom-paint.service";
 import { CustomPaintCombination } from "../../../models/custom-paint/custom-paint-combination";
 import { CartManager } from "../../../managers/cart.manager";
 import { Store } from "../../../models/store/store";
-import { StoreService } from "../../../services/store.service";
 import { Globals } from "../../../models/globals";
 import { EnumStoreModality } from '../../../enums/store-modality.enum';
 import { isPlatformBrowser } from '@angular/common';
@@ -17,6 +16,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { Pagination } from '../../../models/pagination';
 import { ModelReference } from '../../../models/model-reference';
 import { AppConfig } from '../../../app.config';
+import { StoreManager } from '../../../managers/store.manager';
 
 declare var swal: any;
 declare var toastr: any;
@@ -48,7 +48,7 @@ export class CustomPaintBaseComponent implements OnInit {
 
     constructor(
         private service: CustomPaintService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private titleService: Title,
         private route: ActivatedRoute,
         private parentRouter: Router,
@@ -73,7 +73,7 @@ export class CustomPaintBaseComponent implements OnInit {
                 this.manufacuterId = params['manufacturer'];
                 this.colorCode = params['color'];
                 this.optionId = params['option'];
-                this.fetchStore()
+                this.storeManager.getStore()
                     .then(store => {
                         this.store = store;
                         this.modality = this.store.modality;
@@ -200,32 +200,6 @@ export class CustomPaintBaseComponent implements OnInit {
                     swal('Erro ao adicionar ao carrinho', message, 'error');
                 });
         }
-    }
-
-    private fetchStore(): Promise<Store> {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain == AppConfig.DOMAIN) {
-                return new Promise((resolve, reject) => {
-                    resolve(store);
-                });
-            }
-        }
-        return this.fetchStoreFromApi();
-    }
-
-    private fetchStoreFromApi(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        sessionStorage.setItem('store', JSON.stringify(response));
-                    }
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 
     getColor(color: CustomPaintColor): string {

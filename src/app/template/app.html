@@ -4,7 +4,7 @@
         <div class="row">
             <div class="brand overflow-hidden text-center">
                 <a [routerLink]="['/']">
-                    <img [src]="mediaPath + '/store/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive">
+                    <img [src]="logoPath" [attr.alt]="store.companyName" class="img-responsive">
                 </a>
             </div>
         </div>
@@ -55,9 +55,9 @@
                 </div>
                 <div class="col-brand pull-left col-padding">
                     <h1 id="brand">
-                        <a [routerLink]="['/']" [attr.title]="getStore().companyName">
+                        <a [routerLink]="['/']" [attr.title]="store.companyName">
                             <b class="sr-only">{{getStore().companyName}}</b>
-                            <img [attr.src]="mediaPath + '/store/' + getStore().logo" [attr.alt]="getStore().companyName" class="img-responsive">
+                            <img [attr.src]="logoPath" [attr.alt]="getStore().companyName" class="img-responsive">
                         </a>
                     </h1>
                 </div>
@@ -107,7 +107,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand hidden-md hidden-lg" [routerLink]="['/']" [attr.title]="getStore().companyName">
-                <img [attr.src]="mediaPath + '/store/' + getStore().logoMobile" [attr.alt]="getStore().companyName" class="img-responsive">
+                <img [attr.src]="logoMobilePath" [attr.alt]="getStore().companyName" class="img-responsive">
             </a>
             <span class="mobile-btns pull-right hidden-md hidden-lg">
                 <button id="btn-search" class="btn btn-search">

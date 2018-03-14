@@ -8,8 +8,8 @@ import { CustomPaintVariation } from "../../../models/custom-paint/custom-paint-
 import { CustomPaintOption } from "../../../models/custom-paint/custom-paint-option";
 import { isPlatformBrowser } from '@angular/common';
 import { Store } from '../../../models/store/store';
-import { StoreService } from '../../../services/store.service';
 import { AppConfig } from '../../../app.config';
+import { StoreManager } from '../../../managers/store.manager';
 
 declare var swal: any;
 
@@ -30,7 +30,7 @@ export class CustomPaintVariationComponent implements OnInit {
 
     constructor(
         private service: CustomPaintService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private titleService: Title,
         private route: ActivatedRoute,
         private parentRouter: Router,
@@ -45,7 +45,7 @@ export class CustomPaintVariationComponent implements OnInit {
             .subscribe((params) => {
                 this.manufacuterId = params['manufacturer'];
                 this.colorCode = params['color'];
-                this.fetchStore()
+                this.storeManager.getStore()
                     .then(store => {
                         this.store = store;
                     })
@@ -107,32 +107,6 @@ export class CustomPaintVariationComponent implements OnInit {
                 this.parentRouter.navigateByUrl(url);
             }
         }
-    }
-
-    private fetchStore(): Promise<Store> {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain == AppConfig.DOMAIN) {
-                return new Promise((resolve, reject) => {
-                    resolve(store);
-                });
-            }
-        }
-        return this.fetchStoreFromApi();
-    }
-
-    private fetchStoreFromApi(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        sessionStorage.setItem('store', JSON.stringify(response));
-                    }
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 
     getOptionPicture(option: CustomPaintOption): string {

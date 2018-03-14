@@ -4,13 +4,13 @@ import { Title } from "@angular/platform-browser";
 import { Product } from '../../../models/product/product';
 import { ProductService } from '../../../services/product.service';
 import { Globals } from '../../../models/globals';
-import { StoreService } from '../../../services/store.service';
 import { Store } from '../../../models/store/store';
 import { ModelReference } from '../../../models/model-reference';
 import { AppCore } from '../../../app.core';
 import { isPlatformBrowser } from '@angular/common';
 import { ProductManager } from '../../../managers/product.manager';
 import { AppConfig } from '../../../app.config';
+import { StoreManager } from '../../../managers/store.manager';
 declare var swal: any;
 
 @Component({
@@ -25,7 +25,7 @@ export class CompareComponent implements OnInit {
 
     constructor(
         private service: ProductService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private productManager: ProductManager,
         private route: ActivatedRoute,
         private titleService: Title,
@@ -37,7 +37,7 @@ export class CompareComponent implements OnInit {
         this.route.params
             .map(params => params)
             .subscribe(params => {
-                this.fetchStore()
+                this.storeManager.getStore()
                     .then(store => {
                         this.store = store;
                         let productsId: ModelReference[] = params['compare'].toString().split(',').map(p => p = { 'id': p });
@@ -73,31 +73,5 @@ export class CompareComponent implements OnInit {
 
     getCoverImage(product: Product): string {
         return `${this.store.link}${this.productManager.getCoverImage(product)}`;
-    }
-
-    private fetchStore(): Promise<Store> {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain == AppConfig.DOMAIN) {
-                return new Promise((resolve, reject) => {
-                    resolve(store);
-                });
-            }
-        }
-        return this.fetchStoreFromApi();
-    }
-
-    private fetchStoreFromApi(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        sessionStorage.setItem('store', JSON.stringify(response));
-                    }
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 }

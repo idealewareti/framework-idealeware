@@ -3,10 +3,10 @@ import { CustomPaintManufacturer } from "../../../models/custom-paint/custom-pai
 import { CustomPaintService } from "../../../services/custom-paint.service";
 import { Title } from "@angular/platform-browser";
 import { Globals } from '../../../models/globals';
-import { StoreService } from '../../../services/store.service';
 import { Store } from '../../../models/store/store';
 import { isPlatformBrowser } from '@angular/common';
 import { AppConfig } from '../../../app.config';
+import { StoreManager } from '../../../managers/store.manager';
 
 @Component({
     moduleId: module.id,
@@ -21,7 +21,7 @@ export class CustomPaintManufacturerComponent implements OnInit {
 
     constructor(
         private service: CustomPaintService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private titleService: Title,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
@@ -30,7 +30,7 @@ export class CustomPaintManufacturerComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.fetchStore()
+        this.storeManager.getStore()
             .then(store => {
                 this.store = store;
             })
@@ -54,32 +54,6 @@ export class CustomPaintManufacturerComponent implements OnInit {
             return 'col-md-6 col-sm-12';
         else
             return 'col-md-4 col-sm-12';
-    }
-
-    private fetchStore(): Promise<Store> {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain == AppConfig.DOMAIN) {
-                return new Promise((resolve, reject) => {
-                    resolve(store);
-                });
-            }
-        }
-        return this.fetchStoreFromApi();
-    }
-
-    private fetchStoreFromApi(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        sessionStorage.setItem('store', JSON.stringify(response));
-                    }
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 
     getManufacturerPicture(manufacturer: CustomPaintManufacturer): string {

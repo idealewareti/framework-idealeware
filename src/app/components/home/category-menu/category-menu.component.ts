@@ -4,8 +4,8 @@ import { Category } from '../../../models/category/category';
 import { Globals } from '../../../models/globals';
 import { CategoryService } from '../../../services/category.service';
 import { Store } from '../../../models/store/store';
-import { StoreService } from '../../../services/store.service';
 import { AppCore } from '../../../app.core';
+import { StoreManager } from '../../../managers/store.manager';
 
 const CATEGORIES_TREE_KEY = makeStateKey('categories_tree');
 
@@ -22,7 +22,6 @@ export class CategoryMenuComponent implements OnInit {
 
     constructor(
         private service: CategoryService,
-        private storeService: StoreService,
         private state: TransferState
     ) { }
 

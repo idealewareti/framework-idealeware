@@ -11,7 +11,7 @@ export class PaymentMethod {
         creditCardInstallmentCount: number;
         creditCardInstallmentPrice: number;
         creditCardInterest: number;
-        bankSlipDiscount: number;
+        discount: number;
         bankSlipUrl: string;
         installment: Installment[] = [];
     

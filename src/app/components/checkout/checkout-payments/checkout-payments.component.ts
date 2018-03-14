@@ -630,6 +630,7 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
      */
     selectMundipaggMethod(method: PaymentMethod, event = null) {
         this.preventDefault(event);
+        this.payment = this.paymentManager.getMundipagg(this.payments)[0];
         this.selected.method = method;
         this.selected = new PaymentSelected(this.payment, method);
         this.emitPayment();

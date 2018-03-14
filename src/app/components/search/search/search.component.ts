@@ -22,9 +22,9 @@ import { EnumStoreModality } from "../../../enums/store-modality.enum";
 import { SearchService } from '../../../services/search.service';
 import { AppCore } from '../../../app.core';
 import { isPlatformBrowser } from '@angular/common';
-import { StoreService } from '../../../services/store.service';
 import { error } from 'util';
 import { AppConfig } from '../../../app.config';
+import { StoreManager } from '../../../managers/store.manager';
 
 declare var $: any;
 
@@ -86,7 +86,7 @@ export class SearchComponent implements OnInit {
         private categoryApi: CategoryService,
         private brandApi: BrandService,
         private groupApi: GroupService,
-        private storeApi: StoreService,
+        private storeManager: StoreManager,
         private service: SearchService,
         private titleService: Title,
         private metaService: Meta,
@@ -114,7 +114,7 @@ export class SearchComponent implements OnInit {
 
                 this.titleService.setTitle('Buscar Produtos');
 
-                this.fetchStore()
+                this.storeManager.getStore()
                     .then(store => {
                         this.store = store;
                         return this.getModule();
@@ -825,32 +825,6 @@ export class SearchComponent implements OnInit {
 
     getStore(): Store {
         return this.store;
-    }
-
-    private fetchStore(): Promise<Store> {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain == AppConfig.DOMAIN) {
-                return new Promise((resolve, reject) => {
-                    resolve(store);
-                });
-            }
-        }
-        return this.fetchStoreFromApi();
-    }
-
-    private fetchStoreFromApi(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeApi.getStore()
-                .subscribe(response => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        sessionStorage.setItem('store', JSON.stringify(response));
-                    }
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 
     isCatalog(): boolean {

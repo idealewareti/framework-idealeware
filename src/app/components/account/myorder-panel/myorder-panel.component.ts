@@ -7,8 +7,8 @@ import { Title } from "@angular/platform-browser";
 import { Globals } from "../../../models/globals";
 import { Token } from '../../../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
-import { StoreService } from '../../../services/store.service';
 import { Store } from '../../../models/store/store';
+import { StoreManager } from '../../../managers/store.manager';
 
 declare var swal: any;
 
@@ -28,7 +28,7 @@ export class MyOrderPanelComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private service: OrderService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private parentRouter: Router,
         private titleService: Title,
         private globals: Globals,
@@ -48,22 +48,10 @@ export class MyOrderPanelComponent implements OnInit {
         return token;
     }
 
-    private fetchStore(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    let store: Store = new Store(response);
-                    resolve(store);
-                }, error => {
-                    reject(error);
-                });
-        });
-    }
-
     ngOnInit() {
         if (isPlatformBrowser(this.platformId)) {
             this.tabId = this.route.params['value'].id;
-            this.fetchStore()
+            this.storeManager.getStore()
                 .then(store => {
                     this.store = store;
                     this.mediaPath = `${this.store.link}/static/products/`;

@@ -57,7 +57,10 @@
                         <i class="fa" [ngClass]="{'fa-square-o': !isMundiPaggMethodSelected(method), 'fa-check-square-o': isMundiPaggMethodSelected(method)}"></i>
                         <img *ngIf="method.icon" [attr.src]="'assets/images/' + method.icon" [attr.alt]="method.name">
                         Pagar com boleto
-                    </label>
+                   <p>
+                    <span *ngIf="method.discount > 0" class="bankslip-color">Ganhe {{method.discount}}% de desconto ao pagar com boleto!</span>
+                   </p>
+                </label>
                 </div>
 
                 <div class="panel-body" *ngIf="isMundipaggCreditCard(payment)">

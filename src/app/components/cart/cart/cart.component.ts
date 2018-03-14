@@ -8,7 +8,6 @@ import { Cart } from '../../../models/cart/cart';
 import { CartItem } from '../../../models/cart/cart-item';
 import { CartManager } from '../../../managers/cart.manager';
 import { ProductService } from '../../../services/product.service';
-import { StoreService } from "../../../services/store.service";
 import { Service } from "../../../models/product-service/product-service";
 import { Globals } from "../../../models/globals";
 import { Store } from "../../../models/store/store";
@@ -18,6 +17,7 @@ import { error } from 'util';
 import { Paint } from '../../../models/custom-paint/custom-paint';
 import { Shipping } from '../../../models/shipping/shipping';
 import { AppConfig } from '../../../app.config';
+import { StoreManager } from '../../../managers/store.manager';
 
 //declare var $: any;
 declare var S: any;
@@ -42,7 +42,7 @@ export class CartComponent {
     constructor(
         private manager: CartManager,
         private productService: ProductService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private titleService: Title,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
@@ -53,7 +53,7 @@ export class CartComponent {
             window.scrollTo(0, 0);
 
             let cartId = localStorage.getItem('cart_id');
-            this.fetchStore()
+            this.storeManager.getStore()
                 .then(store => {
                     this.store = store;
                     this.globals.store = store;
@@ -270,32 +270,6 @@ export class CartComponent {
 
     getStore(): Store {
         return this.store;
-    }
-
-    private fetchStore(): Promise<Store> {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain == AppConfig.DOMAIN) {
-                return new Promise((resolve, reject) => {
-                    resolve(store);
-                });
-            }
-        }
-        return this.fetchStoreFromApi();
-    }
-
-    private fetchStoreFromApi(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        sessionStorage.setItem('store', JSON.stringify(response));
-                    }
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 
     getPicture(sku: Sku): string {

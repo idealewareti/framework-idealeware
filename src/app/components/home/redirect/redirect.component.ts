@@ -2,7 +2,6 @@ import { Component, OnInit, AfterContentChecked } from '@angular/core';
 import { Router, ActivatedRoute } from "@angular/router";
 import { Http } from "@angular/http";
 import { Redirect301Service } from '../../../services/redirect301.service';
-import { StoreService } from '../../../services/store.service';
 
 @Component({
     selector: 'app-redirect',
@@ -15,8 +14,7 @@ export class RedirectComponent implements OnInit {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private service: Redirect301Service,
-        private storeService: StoreService
+        private service: Redirect301Service
     ) { }
 
     ngOnInit() {

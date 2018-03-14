@@ -111,6 +111,7 @@ import { CustomPaintFilterModule } from './pipes/custom-paint-filter/custom-pain
 import { OrderByModule } from './pipes/orderBy/orderBy.module';
 import { AppConfig } from './app.config';
 import { PopUpNewsLetterModule } from './components/home/popup-newsletter/popup-newsletter.module';
+import { StoreManager } from './managers/store.manager';
 
 @NgModule({
   declarations: [
@@ -259,6 +260,7 @@ import { PopUpNewsLetterModule } from './components/home/popup-newsletter/popup-
     CustomerManager,
     PaymentManager,
     ProductManager,
+    StoreManager
   ],
   bootstrap: [AppComponent]
 })

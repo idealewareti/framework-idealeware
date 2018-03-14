@@ -7,7 +7,6 @@ import { Title } from "@angular/platform-browser";
 import { CartManager } from "../../..//managers/cart.manager";
 import { CustomerService } from "../../..//services/customer.service";
 import { CartService } from "../../..//services/cart.service";
-import { StoreService } from "../../..//services/store.service";
 import { BudgetService } from "../../..//services/budget.service";
 import { Sku } from "../../..//models/product/sku";
 import { Globals } from "../../..//models/globals";
@@ -15,6 +14,7 @@ import { Token } from '../../../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
 import { Store } from '../../../models/store/store';
 import { Budget } from '../../../models/budget/budget';
+import { StoreManager } from '../../../managers/store.manager';
 
 declare var swal: any;
 declare var $: any;
@@ -39,29 +39,16 @@ export class BudgetComponent implements OnInit {
         private titleService: Title,
         private manager: CartManager,
         private customerService: CustomerService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private service: BudgetService,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object,
     ) { }
 
-
-    private fetchStore(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    let store: Store = new Store(response);
-                    resolve(store);
-                }, error => {
-                    reject(error);
-                });
-        });
-    }
-
     ngOnInit() {
         this.mediaPath = `${this.globals.store.link}/static/products/`;
         let cartId = localStorage.getItem('cart_id');
-        this.fetchStore()
+        this.storeManager.getStore()
             .then(store => {
                 if (store.modality == 1) {
                     this.parentRouter.navigateByUrl('/checkout');

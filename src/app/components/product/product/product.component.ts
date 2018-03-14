@@ -28,10 +28,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { validEmail } from '../../../directives/email-validator/email-validator.directive';
 import { AppCore } from '../../../app.core';
 import { ProductAwaitedService } from '../../../services/product-awaited.service';
-import { StoreService } from '../../../services/store.service';
 import { error } from 'util';
 import { ProductManager } from '../../../managers/product.manager';
 import { AppConfig } from '../../../app.config';
+import { StoreManager } from '../../../managers/store.manager';
 
 declare var $: any;
 declare var S: any;
@@ -78,7 +78,7 @@ export class ProductComponent {
         private route: ActivatedRoute,
         private service: ProductService,
         private manager: ProductManager,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private serviceAwaited: ProductAwaitedService,
         private relatedService: RelatedProductsService,
         private cartManager: CartManager,
@@ -102,7 +102,7 @@ export class ProductComponent {
 
     /* Lifecycle events */
     ngOnInit() {
-        this.fetchStore()
+        this.storeManager.getStore()
             .then(store => {
                 this.store = store;
                 this.mediaPath = `${this.store.link}/static/products/`;
@@ -530,32 +530,6 @@ export class ProductComponent {
             return true;
         }
         return false;
-    }
-
-    private fetchStore(): Promise<Store> {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain == AppConfig.DOMAIN) {
-                return new Promise((resolve, reject) => {
-                    resolve(store);
-                });
-            }
-        }
-        return this.fetchStoreFromApi();
-    }
-
-    private fetchStoreFromApi(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        sessionStorage.setItem('store', JSON.stringify(response));
-                    }
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 
     private fetchProductBySku(skuId: string): Promise<Product> {

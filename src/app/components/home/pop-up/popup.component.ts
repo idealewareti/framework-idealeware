@@ -4,6 +4,9 @@ import { PopUp } from "../../../models/popup/popup";
 import { PopUpService } from "../../../services/pop-up.service";
 import { Globals } from "../../../models/globals";
 import { Store } from "../../../models/store/store";
+import { makeStateKey, TransferState } from "@angular/platform-browser";
+
+const POPUP_KEY = makeStateKey('popup_key');
 
 declare var $: any;
 
@@ -19,7 +22,12 @@ export class PopUpComponent implements OnInit {
     private popupEnabled: boolean = false;
     @Input() store: Store;
 
-    constructor(private service: PopUpService, @Inject(PLATFORM_ID) private platformId: Object) { }
+    constructor(
+        private service: PopUpService,
+        private state: TransferState,
+        @Inject(PLATFORM_ID) private platformId: Object
+    ) {
+    }
 
     ngOnInit() {
         this.getPopUp();
@@ -36,14 +44,16 @@ export class PopUpComponent implements OnInit {
     }
 
     getPopUp() {
+        const popup = this.state.get(POPUP_KEY, null as any);
+        if (popup) {
+            this.initData(popup);
+            return;
+        }
+
         this.service.getPopUp()
             .subscribe(response => {
-                if (response && response.id) {
-                    this.popUpAssortment = response;
-                }
-                else {
-                    this.popUpAssortment = null;
-                }
+                this.state.set(POPUP_KEY, response as any);
+                this.initData(response);
             }, error => console.log(error));
     }
 
@@ -63,6 +73,15 @@ export class PopUpComponent implements OnInit {
                     });
                 });
             }
+        }
+    }
+
+    private initData(data: PopUp): void {
+        if (data && data.id) {
+            this.popUpAssortment = data;
+        }
+        else {
+            this.popUpAssortment = null;
         }
     }
 }

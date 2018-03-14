@@ -20,7 +20,6 @@ import { IntelipostService } from '../../../services/intelipost.service';
 import { PaymentService } from '../../../services/payment.service';
 import { PaymentManager } from '../../../managers/payment.manager';
 import { OrderService } from '../../../services/order.service';
-import { StoreService } from '../../../services/store.service';
 import { Globals } from '../../../models/globals';
 import { Store } from '../../../models/store/store';
 import { EnumStoreModality } from '../../../enums/store-modality.enum';
@@ -31,6 +30,7 @@ import { MercadoPagoCreditCard } from '../../../models/mercadopago/mercadopago-c
 import { Token } from '../../../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
 import { AppCore } from '../../../app.core';
+import { StoreManager } from '../../../managers/store.manager';
 
 declare var swal: any;
 declare var toastr: any;
@@ -82,7 +82,7 @@ export class CheckoutComponent implements OnInit {
         private paymentService: PaymentService,
         private paymentManager: PaymentManager,
         private orderService: OrderService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
@@ -93,7 +93,7 @@ export class CheckoutComponent implements OnInit {
     ngOnInit() {
         this.titleService.setTitle('Finalização da Compra');
 
-        this.fetchStore()
+        this.storeManager.getStore()
             .then(store => {
                 this.store = store;
                 this.globals.store = store;
@@ -128,18 +128,6 @@ export class CheckoutComponent implements OnInit {
     /*
     ** Setting up 
     */
-    private fetchStore(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    let store: Store = new Store(response);
-                    resolve(store);
-                }, error => {
-                    reject(error);
-                });
-        });
-    }
-
     private loadCart(): any {
         if (isPlatformBrowser(this.platformId)) {
             this.manager.getCart(localStorage.getItem('cart_id'))
@@ -273,6 +261,10 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getTotal(): number {
+        if(this.isMundipaggBankslip() && this.methodSelected.discount > 0)
+        {
+            return this.globals.cart.totalPurchasePrice - (this.globals.cart.totalPurchasePrice *( this.methodSelected.discount / 100)); 
+        }
         return this.globals.cart.totalPurchasePrice;
     }
 
@@ -369,6 +361,7 @@ export class CheckoutComponent implements OnInit {
      */
     handlePaymentUpdated(paymentSelected: PaymentSelected) {
         this.paymentSelected = paymentSelected;
+        this.getTotal();
     }
 
     /**

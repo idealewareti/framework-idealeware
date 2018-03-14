@@ -6,10 +6,10 @@ import { ActivatedRoute, Router, Event as RouterEvent, NavigationStart, Navigati
 import { Customer } from '../../models/customer/customer';
 import { Store } from '../../models/store/store';
 import { CustomerService } from '../../services/customer.service';
-import { StoreService } from '../../services/store.service';
 import { isPlatformBrowser } from '@angular/common';
 import { AppCore } from '../../app.core';
 import { Token } from '../../models/customer/token';
+import { StoreManager } from '../../managers/store.manager';
 
 //declare var $: any;
 declare var S: any;
@@ -41,7 +41,7 @@ export class AccountComponent {
         private titleService: Title,
         private route: ActivatedRoute,
         private parentRouter: Router,
-        private storeService: StoreService
+        private storeManager: StoreManager
     ) { }
 
 
@@ -60,7 +60,7 @@ export class AccountComponent {
             this.titleService.setTitle(this.actual.title);
         });
 
-        this.fetchStore()
+        this.storeManager.getStore()
             .then(store => {
                 this.store = store;
                 let token: Token = this.getToken();
@@ -72,18 +72,6 @@ export class AccountComponent {
                 console.log(error);
             })
 
-    }
-
-    private fetchStore(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    let store: Store = new Store(response);
-                    resolve(store);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 
     isMobile(): boolean {

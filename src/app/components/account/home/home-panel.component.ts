@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, Inject, PLATFORM_ID } from '@angular/core';
 import { Customer } from "../../../models/customer/customer";
 import { Store } from "../../../models/store/store";
-import { StoreService } from "../../../services/store.service";
 import { Router } from "@angular/router";
 import { CustomerService } from "../../../services/customer.service";
 import { Order } from "../../../models/order/order";
 import { Title } from "@angular/platform-browser";
 import { Token } from '../../../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
+import { StoreManager } from '../../../managers/store.manager';
 
 @Component({
     selector: 'app-home-panel',
@@ -22,7 +22,7 @@ export class AccountHomeComponent implements OnInit {
 
     constructor(
         private service: CustomerService,
-        private storeService: StoreService,
+        private storeManager: StoreManager,
         private parentRouter: Router,
         titleService: Title,
         @Inject(PLATFORM_ID) private platformId: Object
@@ -81,7 +81,7 @@ export class AccountHomeComponent implements OnInit {
             if (this.store)
                 resolve(this.store);
 
-            this.fetchStore()
+            this.storeManager.getStore()
                 .then(store => {
                     this.store = store;
                     resolve(store);
@@ -92,17 +92,5 @@ export class AccountHomeComponent implements OnInit {
                 });
         });
 
-    }
-
-    private fetchStore(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.storeService.getStore()
-                .subscribe(response => {
-                    let store: Store = new Store(response);
-                    resolve(store);
-                }, error => {
-                    reject(error);
-                });
-        });
     }
 }

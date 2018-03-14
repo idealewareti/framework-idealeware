@@ -1,21 +1,25 @@
-   <div id="newsletter">
-        <div class="container">
-            <div id="box-newsletter" class="clearfix">
-                <h3 class="title-newsletter">
-                    <i class="fa fa-envelope" aria-hidden="true"></i>
-                    <span>Cadastre seu e-mail para receber nossas promoções e novidades</span>
-                </h3>
-                <form [formGroup]="newsletterForm" (submit)="signupNewsLetter($event)" class="form form-inline">
-                    <fieldset>
-                        <div class="form-group box-name" [ngClass]="{'has-error': hasError('name')}">
-                            <input type="text" name="name" [(ngModel)]="newsletter.name" class="form-control form-input" placeholder="Nome" formControlName="name" required>
-                        </div>
-                        <div class="form-group box-email" [ngClass]="{'has-error': hasError('email')}">
-                            <input type="email" name="email" [(ngModel)]="newsletter.email" class="form-control form-input" placeholder="E-mail" formControlName="email" required>
-                        </div>
-                        <button type="submit" id="btn-newsletter" class="btn btn-default">Cadastrar</button>
-                    </fieldset>
-                </form>
-            </div>
+<div id="newsletter">
+    <div class="container">
+        <div id="box-newsletter" class="clearfix">
+            <h3 class="title-newsletter">
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+                <span>Cadastre seu e-mail para receber nossas promoções e novidades</span>
+            </h3>
+            <form [formGroup]="newsletterForm" (submit)="signupNewsLetter($event)" class="form form-inline">
+                <fieldset>
+                    <div class="form-group box-name" [ngClass]="{'has-error': hasError('name')}">
+                        <input type="text" name="name" [(ngModel)]="newsletter.name" class="form-control form-input" 
+                                placeholder="Nome" formControlName="name"
+                            required>
+                    </div>
+                    <div class="form-group box-email" [ngClass]="{'has-error': hasError('email')}">
+                        <input type="email" name="email" [(ngModel)]="newsletter.email" class="form-control form-input" 
+                                placeholder="E-mail" formControlName="email"
+                            required>
+                    </div>
+                    <button type="submit" id="btn-newsletter" class="btn btn-default">Cadastrar</button>
+                </fieldset>
+            </form>
         </div>
     </div>
+</div>

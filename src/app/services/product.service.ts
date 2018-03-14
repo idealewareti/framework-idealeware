@@ -14,25 +14,25 @@ export class ProductService {
     }
 
     getProductBySku(skuId: string): Observable<Product> {
-        let url = `${environment.GATEWAY_PRODUCT}/products/sku/${skuId}`;
+        let url = `${environment.API_PRODUCT}/products/sku/${skuId}`;
         return this.client.get(url)
             .map(res => res.json())
     }
 
     getProductById(id: string): Observable<Product> {
-        let url = `${environment.GATEWAY_PRODUCT}/products/${id}`;
+        let url = `${environment.API_PRODUCT}/products/${id}`;
         return this.client.get(url)
             .map(res => res.json())
     }
 
     getProducts(references: Object[]): Observable<Product[]> {
-        let url = `${environment.GATEWAY_PRODUCT}/products/completebyreference`;
+        let url = `${environment.API_PRODUCT}/products/completebyreference`;
         return this.client.post(url, references)
             .map(res => res.json())
     }
 
     getProductsFromShowcaseGroup(groupId: string): Observable<Product[]> {
-        let url = `${environment.GATEWAY_PRODUCT}/products/showcasegroups/${groupId}`;
+        let url = `${environment.API_PRODUCT}/products/showcasegroups/${groupId}`;
         return this.client.get(url)
             .map(res => res.json())
     }

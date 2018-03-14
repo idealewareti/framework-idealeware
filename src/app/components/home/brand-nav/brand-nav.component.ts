@@ -18,7 +18,7 @@ declare var $: any;
     styleUrls: ['../../../template/home/brand-nav/brand-nav.scss']
 })
 export class BrandNavComponent implements OnInit {
-    @Input() store: Store = new Store();
+    @Input() store: Store;
     allBrands: Brand[] = [];
     brands: Brand[] = [];
 
@@ -28,20 +28,26 @@ export class BrandNavComponent implements OnInit {
         private state: TransferState
     ) { }
 
-    ngOnInit() {
-        this.allBrands = this.state.get(BRAND_KEY, null as any);
-        if (this.allBrands) {
-            this.removeBrandWithoutPicture();
-            return;
-        }
-        this.service.getAll()
-            .subscribe(brands => {
-                this.state.set(BRAND_KEY, brands as any);
-                this.allBrands = brands;
+    ngOnChanges(): void {
+        if (this.store) {
+            const response = this.state.get(BRAND_KEY, null as any);
+            if (response) {
+                this.allBrands = response;
                 this.removeBrandWithoutPicture();
-            }, e => {
-                console.log(e);
-            });
+                return;
+            }
+            this.service.getAll()
+                .subscribe(brands => {
+                    this.state.set(BRAND_KEY, brands as any);
+                    this.allBrands = brands;
+                    this.removeBrandWithoutPicture();
+                }, e => {
+                    console.log(e);
+                });
+        }
+    }
+
+    ngOnInit() {
     }
 
     ngAfterViewChecked() {

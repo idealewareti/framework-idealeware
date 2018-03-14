@@ -18,7 +18,7 @@ export const environment = {
   API_CONTACT: 'https://api-pub-contact.prd.idealeware.com.br',
   API_COUPON: 'https://api-pub-coupon.prd.idealeware.com.br',
   API_CUSTOMER: 'https://api-pub-customer.prd.idealeware.com.br',
-  API_CUSTOMPAINT: 'https://api-pub-custompaint.prd.idealeware.com.br',
+  API_CUSTOMPAINT: 'https://api-pub-custompaint.hmg.idealeware.com.br',
   API_DNEADDRESS: 'https://api-pub-dneaddress.prd.idealeware.com.br',
   API_GOOGLE: 'https://api-pub-google.prd.idealeware.com.br',
   API_GROUP: 'https://api-pub-group.prd.idealeware.com.br',
@@ -36,10 +36,8 @@ export const environment = {
   API_SEARCH: 'https://api-pub-search.prd.idealeware.com.br',
   API_SERVICE: 'https://api-pub-service.prd.idealeware.com.br',
   API_SHOWCASE: 'https://api-pub-showcase.prd.idealeware.com.br',
-  API_STORE: 'https://api-pub-storeinfo.prd.idealeware.com.br',
+  API_STORE: 'https://api-pub-store.prd.idealeware.com.br',
+  API_STORE_INFO: 'https://api-pub-storeinfo.prd.idealeware.com.br',
   API_FIPE: 'https://fipeapi.appspot.com/api/1/carros',
-  SELF_COLOR_PALETA: '/assets/services',
-
-  GATEWAY_STORE: 'https://j8tuu63l00.execute-api.us-east-1.amazonaws.com/Prod',
-  GATEWAY_PRODUCT: 'https://ymjbw0brzf.execute-api.us-east-1.amazonaws.com/Prod',
+  SELF_COLOR_PALETA: '/assets/services'
 };

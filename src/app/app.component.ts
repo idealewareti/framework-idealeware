@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
 import { Meta, Title, SafeResourceUrl, DomSanitizer, TransferState, makeStateKey } from '@angular/platform-browser';
-import { StoreService } from './services/store.service';
 import { Globals } from './models/globals';
 import { Store } from './models/store/store';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
@@ -21,8 +20,8 @@ import { GoogleService } from './services/google.service';
 import { CustomerManager } from './managers/customer.manager';
 import { Token } from './models/customer/token';
 import { ScriptService } from './services/script.service';
+import { StoreManager } from './managers/store.manager';
 
-const STORE_KEY = makeStateKey('store_key');
 const PAYMENTS_KEY = makeStateKey('payments_key');
 const INSTITUTIONALS_KEY = makeStateKey('institutionals_key');
 
@@ -51,6 +50,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     googleUA: Google;
     customer: Customer;
     mediaPath: string;
+    logoPath: string;
+    logoMobilePath: string;
     institutionals: Institutional[] = [];
     payments: Payment[] = [];
     zipCode: string;
@@ -58,6 +59,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     q: string;
     facebookSafeUrl: SafeResourceUrl;
     store: Store;
+
+    /*
+    Readonly
+    *********************************************************************************************************
+    */
+    private readonly storeStaticPath: string = '/store/';
 
     /*
     Constructor
@@ -70,7 +77,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         private globals: Globals,
         private router: Router,
         private sanitizer: DomSanitizer,
-        private service: StoreService,
+        private storeManager: StoreManager,
         private institutionalService: InstitutionalService,
         private paymentService: PaymentService,
         private paymentManager: PaymentManager,
@@ -83,23 +90,22 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.globals = new Globals();
         this.globals.store = new Store();
         this.globals.cart = new Cart();
+        this.store = new Store();
     }
 
     /*
     Lifecycle
     *********************************************************************************************************
     */
-    ngOnInit() {
-        this.store = this.state.get(STORE_KEY, null as any);
+    ngOnInit(): Promise<any> {
         if (!this.getSessionId()) {
             this.setSessionId();
         }
-        this.fetchStore()
+        return this.storeManager.getStore()
             .then(store => {
                 this.globals.store = store;
                 this.store = store;
-                this.state.set(STORE_KEY, store as any);
-                this.mediaPath = `${store.link}/static`;
+                this.initImagePath(store);
                 this.getInstitutionals();
                 this.getGoogle();
                 if (this.store.modality == EnumStoreModality.Ecommerce) {
@@ -114,51 +120,50 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterContentChecked() {
-        this.getUrl();
         this.getCustomer();
-        if (isPlatformBrowser(this.platformId)) {
-            $('#btn-search').click(function (event) {
-                $('#search-box .mask').hide();
-                $('#search-box #form-search').css('top', '-100%');
-                $('#search-box').show();
-                $('#search-box .mask').fadeIn(300);
-                $('#search-box #form-search').css('top', 0);
-                return false;
-            });
-            $('#search-box .btn-close,#search-box .mask').click(function (event) {
-                $('#search-box #form-search').css('top', '-100%');
-                $('#search-box .mask').fadeOut(300, function () {
-                    $('#search-box').hide();
-                });
-
-                return false;
-            });
-        }
     }
 
     ngAfterViewChecked() {
         this.keepHttps();
         this.checkSessionId();
-        this.getUrl();
         this.addPagseguro();
         this.addMercadoPago();
         if (this.store && !this.ssl) {
             this.ssl = this.addSSL();
         }
-        if (this.isMobile()) {
-            if (isPlatformBrowser(this.platformId)) {
-                if (!$('body').hasClass('mobile-body'))
-                    $('body').addClass('mobile-body').removeClass('desktop-body');
-            }
-            else {
-                $('body').removeClass('mobile-body').addClass('desktop-body');
-            }
-        }
+
     }
 
     ngAfterViewInit(): void {
         if (isPlatformBrowser(this.platformId)) {
+            this.getUrl();
             this.scriptService.loadScript('https://seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js');
+            if (this.isMobile()) {
+                const bodySelector = $('body');
+                if (!bodySelector.hasClass('mobile-body'))
+                    bodySelector.addClass('mobile-body').removeClass('desktop-body');
+            } else {
+                $('body').removeClass('mobile-body').addClass('desktop-body');
+            }
+
+            if (isPlatformBrowser(this.platformId)) {
+                $('#btn-search').click(function (event) {
+                    $('#search-box .mask').hide();
+                    $('#search-box #form-search').css('top', '-100%');
+                    $('#search-box').show();
+                    $('#search-box .mask').fadeIn(300);
+                    $('#search-box #form-search').css('top', 0);
+                    return false;
+                });
+                $('#search-box .btn-close,#search-box .mask').click(function (event) {
+                    $('#search-box #form-search').css('top', '-100%');
+                    $('#search-box .mask').fadeOut(300, function () {
+                        $('#search-box').hide();
+                    });
+
+                    return false;
+                });
+            }
         }
     }
 
@@ -172,10 +177,7 @@ export class AppComponent implements OnInit, AfterViewInit {
      * @memberof AppComponent
      */
     getStore(): Store {
-        if (this.store) {
-            return this.store;
-        }
-        return new Store();
+        return this.store;
     }
 
     /**
@@ -257,6 +259,16 @@ export class AppComponent implements OnInit, AfterViewInit {
         });
     }
 
+    /*
+    Private Methods
+    *********************************************************************************************************
+    */
+    private initImagePath(store: Store): void {
+        this.mediaPath = `${store.link}/static`;
+        this.logoPath = this.mediaPath + this.storeStaticPath + store.logo;
+        this.logoMobilePath = this.mediaPath + this.storeStaticPath + store.logoMobile;
+    }
+
     /**
      * Retorna a URL da rota
      * @private
@@ -265,7 +277,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private getUrl() {
         this.router.events.subscribe((url: any) => {
             this.path = url['url'];
-
             if (this.path && !this.path.includes('q=')) {
                 this.q = '';
             }
@@ -388,11 +399,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
-    /*
-    Actions
-    *********************************************************************************************************
-    */
-
     /**
      * Adiciona o script do Mercado Pago na loja
      * @memberof AppComponent
@@ -486,9 +492,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     /**
-   * Adiciona o UA-Code do Google Analytics no site
-   * @memberof AppComponent
-   */
+     * Adiciona o UA-Code do Google Analytics no site
+     * @memberof AppComponent
+     */
     getGoogle() {
         if (isPlatformBrowser(this.platformId)) {
             this.googleService.getAll()
@@ -538,7 +544,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     * (exceto quando ele estiver rodando em localhost)
     * @memberof AppComponent
     */
-    keepHttps() {
+   keepHttps() {
         if (isPlatformBrowser(this.platformId)) {
             if (location.href.indexOf("https://") == -1 && location.hostname != 'localhost' && !/^\d+[.]/.test(location.hostname)) {
                 location.href = location.href.replace("http://", "https://");
@@ -573,51 +579,4 @@ export class AppComponent implements OnInit, AfterViewInit {
             }
         }
     }
-
-    /**
-     * Busca informações da loja
-     * Se for o primeiro acesso, irá buscar pela API
-     * Se já houver um acesso, irá buscar na Session Storage
-     * @private
-     * @returns {Promise<Store>} 
-     * @memberof AppComponent
-    */
-    private fetchStore(): Promise<Store> {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain == AppConfig.DOMAIN) {
-                return new Promise((resolve, reject) => {
-                    resolve(store);
-                });
-            }
-            else if (!store && this.store) {
-                return new Promise((resolve, reject) => {
-                    sessionStorage.setItem('store', JSON.stringify(this.store));
-                    resolve(this.store);
-                });
-            }
-        }
-        return this.fetchStoreFromApi();
-    }
-
-    /**
-    * Busca informações da loja na API
-    * @private
-    * @returns {Promise<Store>} 
-    * @memberof AppComponent
-    */
-    private fetchStoreFromApi(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            this.service.getStore()
-                .subscribe(response => {
-                    if (isPlatformBrowser(this.platformId)) {
-                        sessionStorage.setItem('store', JSON.stringify(response));
-                    }
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
-    }
-
 }
