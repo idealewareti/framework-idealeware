@@ -45,7 +45,7 @@ export class SearchComponent implements OnInit {
     filterModel: Filter;
     orderBy: string = null;
     sortBy: string[] = [];
-    pageSize: number = 16;
+    pageSize: number = 9;
     pages: number[];
     pagination: Pagination;
     products: Product[] = [];

@@ -58,7 +58,7 @@
                         <img *ngIf="method.icon" [attr.src]="'assets/images/' + method.icon" [attr.alt]="method.name">
                         Pagar com boleto
                    <p>
-                    <span *ngIf="method.discount > 0" class="bankslip-color">Ganhe {{method.discount}}% de desconto ao pagar com boleto!</span>
+                    <span *ngIf="method.discount > 0" class="text-info">Ganhe {{method.discount}}% de desconto ao pagar com boleto!</span>
                    </p>
                 </label>
                 </div>

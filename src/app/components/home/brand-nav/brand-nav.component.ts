@@ -28,26 +28,21 @@ export class BrandNavComponent implements OnInit {
         private state: TransferState
     ) { }
 
-    ngOnChanges(): void {
-        if (this.store) {
-            const response = this.state.get(BRAND_KEY, null as any);
-            if (response) {
-                this.allBrands = response;
-                this.removeBrandWithoutPicture();
-                return;
-            }
-            this.service.getAll()
-                .subscribe(brands => {
-                    this.state.set(BRAND_KEY, brands as any);
-                    this.allBrands = brands;
-                    this.removeBrandWithoutPicture();
-                }, e => {
-                    console.log(e);
-                });
-        }
-    }
-
     ngOnInit() {
+		const response = this.state.get(BRAND_KEY, null as any);
+		if (response) {
+			this.allBrands = response;
+			this.removeBrandWithoutPicture();
+			return;
+		}
+		this.service.getAll()
+			.subscribe(brands => {
+				this.state.set(BRAND_KEY, brands as any);
+				this.allBrands = brands;
+				this.removeBrandWithoutPicture();
+			}, e => {
+				console.log(e);
+			});
     }
 
     ngAfterViewChecked() {

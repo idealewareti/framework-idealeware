@@ -26,7 +26,7 @@ const PAYMENTS_KEY = makeStateKey('payments_key');
 const INSTITUTIONALS_KEY = makeStateKey('institutionals_key');
 
 declare var $: any;
-declare var ga: any;
+declare var gtag: any;
 
 @Component({
     selector: 'app-root',
@@ -503,13 +503,20 @@ export class AppComponent implements OnInit, AfterViewInit {
                     if (response) {
                         this.googleUA = response;
                         // Cria o primeiro pageview na loja
-                        ga('create', response.uaCode, 'auto');
-                        ga('send', 'pageview');
+                        gtag('config', response.uaCode );
+                        gtag('config', response.uaCode, {
+                            'page_title': 'home',
+                            'page_path': '/'
+                          });
+                        gtag('event', 'page_view', { 'send_to':  response.uaCode });
                         // Adiciona um evento ao mudar a rota para que o Analy
                         this.router.events.subscribe(event => {
                             if (event instanceof NavigationEnd) {
-                                ga('set', 'page', event.urlAfterRedirects);
-                                ga('send', 'pageview');
+                                gtag('config', response.uaCode );
+                                gtag('config', response.uaCode, {
+                                    'page_path': event.urlAfterRedirects
+                                  });
+                                gtag('event', 'page_view', { 'send_to':  response.uaCode });
                             }
                         });
                     }

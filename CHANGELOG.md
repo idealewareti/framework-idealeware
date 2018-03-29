@@ -1,5 +1,13 @@
 # Changelog
 
+
+## 3.0.1
+- Atualização Analytics Google
+
+## 3.0.0
+- Atualização framework 
+- Melhoria desempenho
+
 ## 2.1.2
 - Correção da paginação das cores personalizadas
 
