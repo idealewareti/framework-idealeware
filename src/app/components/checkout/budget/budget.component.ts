@@ -6,7 +6,6 @@ import { Http } from "@angular/http";
 import { Title } from "@angular/platform-browser";
 import { CartManager } from "../../..//managers/cart.manager";
 import { CustomerService } from "../../..//services/customer.service";
-import { CartService } from "../../..//services/cart.service";
 import { BudgetService } from "../../..//services/budget.service";
 import { Sku } from "../../..//models/product/sku";
 import { Globals } from "../../..//models/globals";

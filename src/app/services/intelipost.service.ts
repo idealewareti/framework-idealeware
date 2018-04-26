@@ -5,6 +5,7 @@ import { Intelipost } from '../models/intelipost/intelipost';
 import { environment } from '../../environments/environment';
 import { HttpClientHelper } from '../helpers/http.helper';
 import { Http } from '@angular/http';
+import { debuglog } from 'util';
 
 @Injectable()
 export class IntelipostService {

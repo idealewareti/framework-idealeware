@@ -7,7 +7,7 @@
                 </div>
             </div>
             <div class="row row-first">
-                <div class="description-text" [innerHTML]="institutional.content"></div>
+                <div class="description-text" [innerHTML]="institutional.content | safeHtml"></div>
             </div>
             <div class="row" *ngIf="isContactPage()">
                 <app-contact></app-contact>

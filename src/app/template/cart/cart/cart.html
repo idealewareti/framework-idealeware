@@ -81,7 +81,7 @@
             </tbody>
             <tbody *ngIf="getNumProductsInCart() == 0">
                 <tr>
-                    <td colspan="6"><p class="text-muted">Seu carrinho está vazio</p></td>
+                    <td colspan="6"><p class="text-muted">Seu carrinho está vazio ou expirado</p></td>
                 </tr>
             </tbody>
         </table>
@@ -169,7 +169,7 @@
 
     <div class="row row-no-products-in-cart" *ngIf="getNumItemsInCart() == 0">
         <div class="container">
-            <p>Seu carrinho está vazio</p>
+            <p>Seu carrinho está vazio ou expirado</p>
             <a [routerLink]="['/']" class="btn btn-info pull-right">{{(modality == 1) ? 'CONTINUAR COMPRANDO' : 'CONTINUAR ORÇANDO'}}</a>
         </div> 
 

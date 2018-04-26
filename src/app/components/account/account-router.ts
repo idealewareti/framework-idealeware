@@ -15,15 +15,15 @@ const routes: Routes = [
   { path: '',
     component: AccountComponent,
     children: [
-      { path: '',    component: AccountHomeComponent },
-      { path: 'home', component: AccountHomeComponent },
-      { path: 'dados-cadastrais', component: UserEditComponent },
-      { path: 'enderecos', component: AddressPanelComponent },
-      { path: 'enderecos/:id', component: AddressEditComponent },
-      { path: 'pedido/:id', component:  MyOrderPanelComponent },
-      { path: 'pedidos/:id', component:  MyOrderPanelComponent },
-      { path: 'pedidos', component:  OrderPanelComponent },
-      { path: 'vounchers', component: VouncherPanelComponent },
+      { path: '',    component: AccountHomeComponent, data: { name: 'Account' } },
+      { path: 'home', component: AccountHomeComponent, data: { name: 'Account' } },
+      { path: 'dados-cadastrais', component: UserEditComponent, data: { name: 'Account' } },
+      { path: 'enderecos', component: AddressPanelComponent, data: { name: 'Account' } },
+      { path: 'enderecos/:id', component: AddressEditComponent, data: { name: 'Account' } },
+      { path: 'pedido/:id', component:  MyOrderPanelComponent, data: { name: 'Account' } },
+      { path: 'pedidos/:id', component:  MyOrderPanelComponent, data: { name: 'Account' } },
+      { path: 'pedidos', component:  OrderPanelComponent, data: { name: 'Account' } },
+      { path: 'vounchers', component: VouncherPanelComponent, data: { name: 'Account' } },
     ]
   }
 ];

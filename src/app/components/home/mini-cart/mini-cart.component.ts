@@ -2,13 +2,13 @@ import { Component, OnInit, Input } from '@angular/core';
 import { PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Globals } from '../../../models/globals';
-import { CartService } from '../../../services/cart.service';
 import { AppCore } from '../../../app.core';
 import { CartItem } from '../../../models/cart/cart-item';
 import { Sku } from '../../../models/product/sku';
 import { Store } from '../../../models/store/store';
 import { Paint } from '../../../models/custom-paint/custom-paint';
 import { Cart } from '../../../models/cart/cart';
+import { CartManager } from '../../../managers/cart.manager';
 
 declare var swal: any;
 
@@ -26,7 +26,7 @@ export class MiniCartComponent implements OnInit {
     showValuesProduct: boolean = false;
 
     constructor(
-        private manager: CartService,
+        private manager: CartManager,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
@@ -43,15 +43,16 @@ export class MiniCartComponent implements OnInit {
         return this.globals.cart;
     }
 
+
     getProducts() {
         if (isPlatformBrowser(this.platformId)) {
             let cartId: string = localStorage.getItem('cart_id');
             if (cartId) {
                 this.manager.getCart(cartId)
-                    .subscribe((cart) => {
+                    .then(cart => {
                         this.cartReady = true;
                         this.globals.cart = cart;
-                    }, e => {
+                    }).catch(e => {
                         console.log(e);
                         this.cartReady = true;
                     });
@@ -67,10 +68,10 @@ export class MiniCartComponent implements OnInit {
             let cartId: string = localStorage.getItem('cart_id');
             item.quantity = quantity;
             this.manager.updateItem(item, cartId)
-                .subscribe(cart => {
+                .then(cart => {
                     this.globals.cart = cart;
-                }, error => {
-                    swal("Falha ao atualizar o produto ao carrinho", error.text(), "warning");
+                }).catch(e => {
+                    swal("Falha ao atualizar o produto ao carrinho", e.text(), "warning");
                 });
         }
     }
@@ -80,9 +81,10 @@ export class MiniCartComponent implements OnInit {
         if (isPlatformBrowser(this.platformId)) {
             let cartId: string = localStorage.getItem('cart_id');
             this.manager.deleteItem(item, cartId)
-                .subscribe(cart => this.globals.cart = cart,
-                error => {
-                    swal("Falha ao remover o produto ao carrinho", error.text(), "warning");
+                .then(cart => {
+                    this.globals.cart = cart;
+                }).catch(e => {
+                    swal("Falha ao remover o produto ao carrinho", e.text(), "warning");
                 });
         }
     }
@@ -92,9 +94,10 @@ export class MiniCartComponent implements OnInit {
         if (isPlatformBrowser(this.platformId)) {
             let cartId: string = localStorage.getItem('cart_id');
             this.manager.deletePaint(item, cartId)
-                .subscribe(cart => this.globals.cart = cart,
-                error => {
-                    swal("Falha ao remover a tinta do carrinho", error.text(), "warning");
+                .then(cart => {
+                    this.globals.cart = cart;
+                }).catch(e => {
+                    swal("Falha ao remover a tinta do carrinho", e.text(), "warning");
                 });
         }
     }

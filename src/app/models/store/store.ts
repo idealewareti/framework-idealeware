@@ -24,6 +24,7 @@ export class Store {
     modality: EnumStoreModality;
     settings: StoreSetting[] = [];
     imageFivIcon: string[] = [];
+    kondutoPublicKey: string;
 
     public constructor(object = null) {
         if (object) return this.createFromResponse(object);

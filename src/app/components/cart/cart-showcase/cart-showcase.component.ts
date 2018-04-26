@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, Input } from '@angular/core';
-import { CartService } from '../../../services/cart.service';
 import { ProductService } from '../../../services/product.service';
 import { CartShowCase } from '../../../models/cart-showcase/cart-showcase';
 import { Product } from '../../../models/product/product';

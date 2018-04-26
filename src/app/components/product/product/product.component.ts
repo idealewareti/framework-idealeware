@@ -32,6 +32,7 @@ import { error } from 'util';
 import { ProductManager } from '../../../managers/product.manager';
 import { AppConfig } from '../../../app.config';
 import { StoreManager } from '../../../managers/store.manager';
+import { KondutoManager } from '../../../managers/konduto.manager';
 
 declare var $: any;
 declare var S: any;
@@ -44,7 +45,7 @@ declare var toastr: any;
     templateUrl: '../../../template/product/product/product.html',
     styleUrls: ['../../../template/product/product/product.scss']
 })
-export class ProductComponent {
+export class ProductComponent implements OnDestroy {
 
     id: string;
     productsRating: ProductRating = new ProductRating();
@@ -89,6 +90,7 @@ export class ProductComponent {
         private sanitizer: DomSanitizer,
         private paymentManager: PaymentManager,
         private globals: Globals,
+        private kondutoManager: KondutoManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.productAwaitedForm = new FormBuilder().group({
@@ -139,6 +141,7 @@ export class ProductComponent {
     }
 
     ngOnDestroy() {
+        this.kondutoManager.clearProductMeta();
         if (isPlatformBrowser(this.platformId)) {
             this.metaService.removeTag("name='title'");
             this.metaService.removeTag("name='description'");
@@ -261,6 +264,7 @@ export class ProductComponent {
         this.fetchProductBySku(id)
             .then(product => {
                 this.product = product;
+                this.kondutoManager.addProductMeta(this.product);
                 if (this.product.name.toLowerCase().indexOf('tinta') !== -1 && this.store.domain === 'ecommerce') {
                     this.product.selfColor = true;
                 }
@@ -302,11 +306,13 @@ export class ProductComponent {
     }
 
     /* Breadcrump */
-    getBreadCrump(): Category {
-        if (this.product['baseCategory'])
-            return this.product.baseCategory;
-        else
-            return this.product.categories[0];
+    getBreadCrump(): Category[] {
+        if (this.product['baseCategory']) {
+            var index = this.product.categories
+                .findIndex(c => c.id === this.product.baseCategory.id) + 1;
+            return this.product.categories.slice(0, index);
+        } else
+            return this.product.categories;
     }
 
     private arrangeCategories() {

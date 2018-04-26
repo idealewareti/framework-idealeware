@@ -12,6 +12,8 @@ import { Token } from '../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
 import { Paint } from '../models/custom-paint/custom-paint';
 import { AppCore } from '../app.core';
+import { identifierModuleUrl } from '@angular/compiler';
+import { debuglog } from 'util';
 
 declare var toastr: any;
 
@@ -106,6 +108,7 @@ export class CartManager {
             else {
                 this.service.getCart(cartId)
                     .subscribe(cart => {
+                        this.setCartId(cart.id);
                         resolve(cart);
                     }, error => {
                         reject(error);
@@ -133,13 +136,16 @@ export class CartManager {
                 this.getCart(cartId)
                     .then(cart => {
                         console.log('Adding item to cart');
-                        return this.addItem(cartId, sku.id, quantity, feature);
+                        this.setCartId(cart.id);
+                        return this.addItem(cart.id, sku.id, quantity, feature);
                     })
                     .then(cart => {
                         console.log('Item added to cart');
                         resolve(cart);
                     })
-                    .catch(error => reject(error));
+                    .catch(error => {
+                        reject(error);
+                    });
             }
             else {
                 console.log(`Cart doen't exists`);
@@ -150,6 +156,7 @@ export class CartManager {
                 this.createCart(cart)
                     .then(response => {
                         console.log('Cart successful created');
+                        this.setCartId(response.id);
                         resolve(response);
                     })
                     .catch(error => reject(error));
@@ -175,6 +182,7 @@ export class CartManager {
                 console.log('Cart exists');
                 this.getCart(cartId)
                     .then(cart => {
+                        this.setCartId(cart.id);
                         console.log('Adding item to cart');
                         return this.addPaint(paint.id, manufacturer, quantity, cart.id);
                     })
@@ -196,6 +204,7 @@ export class CartManager {
                 this.createCart(cart, true)
                     .then(response => {
                         console.log('Cart successful created');
+                        this.setCartId(response.id);
                         localStorage.setItem('shopping_cart', JSON.stringify(cart));
                         resolve(cart);
                     })
@@ -214,7 +223,7 @@ export class CartManager {
      * @returns {Promise<Cart>} 
      * @memberof CartManager
      */
-    addPaint(paintId: string, manufacturer: string, quantity: number, cartId: string): Promise<Cart> {
+    private addPaint(paintId: string, manufacturer: string, quantity: number, cartId: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             this.service.addPaint(paintId, manufacturer, quantity, cartId)
                 .subscribe(cart => {
@@ -233,7 +242,7 @@ export class CartManager {
      * @returns {Promise<Cart>} 
      * @memberof CartManager
      */
-    addItem(cartId: string, skuId: string, quantity: number, feature: string): Promise<Cart> {
+    private addItem(cartId: string, skuId: string, quantity: number, feature: string): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let item = {
                 "skuId": skuId,
@@ -264,6 +273,7 @@ export class CartManager {
             };
             this.service.sendServiceToCart(item, cartId)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart)
                 }, error => reject(error));
         });
@@ -277,14 +287,13 @@ export class CartManager {
      * @returns {Promise<Cart>} 
      * @memberof CartManager
      */
-    createCart(cart: Cart, isPaint: boolean = false): Promise<Cart> {
+    private createCart(cart: Cart, isPaint: boolean = false): Promise<Cart> {
         return new Promise((resolve, reject) => {
             let session_id: string = this.getSessionId();
             let zipCode: number = this.getZipcode();
             let origin = this.getOrigin();
             this.service.createCart(cart, isPaint, session_id, zipCode, origin)
                 .subscribe(response => {
-                    this.setCartId(response.id);
                     resolve(response);
                 }, error => reject(error));
         });
@@ -302,6 +311,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.updateItem(item, cartId)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });
@@ -319,6 +329,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.updateItemService(item, cartId)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });
@@ -336,6 +347,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.updatePaint(item, cartId)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });
@@ -353,6 +365,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.deleteItem(item, cartId)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });
@@ -370,6 +383,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.deleteService(serviceId, cartId)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });
@@ -387,6 +401,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.deletePaint(item, cartId)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });
@@ -404,6 +419,7 @@ export class CartManager {
         return new Promise((resolve, reject) => {
             this.service.setShipping(shipping, cartId)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });
@@ -421,6 +437,7 @@ export class CartManager {
             let token = this.getToken();
             this.service.setCustomerToCart(cartId, token)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         })
@@ -439,6 +456,7 @@ export class CartManager {
             let token = this.getToken();
             this.service.addDeliveryAddress(cartId, addressId, token)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });
@@ -457,6 +475,7 @@ export class CartManager {
             let token = this.getToken();
             this.service.addBillingAddress(cartId, addressId, token)
                 .subscribe(cart => {
+                    this.setCartId(cart.id);
                     resolve(cart);
                 }, error => reject(error));
         });

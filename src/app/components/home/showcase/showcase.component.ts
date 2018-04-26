@@ -28,7 +28,7 @@ export class ShowcaseComponent implements OnInit {
     halfBanners: ShowCaseBanner[] = [];
     groups: ShowcaseGroup[] = [];
     showcase: ShowCase = new ShowCase();
-    store: Store = new Store();
+    store: Store;
 
     constructor(
         private titleService: Title,
@@ -42,22 +42,15 @@ export class ShowcaseComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.showcase = this.state.get(SHOWCASE_KEY, null as any);
         this.groups = (this.showcase && this.showcase.groups) ? this.showcase.groups : [];
-        this.store = this.state.get(STORE_KEY, null as any);
         this.storeManager.getStore()
             .then(store => {
                 this.store = store;
-                this.state.set(STORE_KEY, store as any);
-
-                if (this.showcase) {
-                    this.initData(this.showcase);
-                    return;
-                }
-
                 this.service.getShowCase()
                     .subscribe(showcase => {
-                        this.state.set(SHOWCASE_KEY, showcase as any);
+                        console.log('Showcase: ');
+                        console.log(showcase);
+                        console.log('*******************************************');
                         this.showcase = showcase;
                         this.initData(showcase);
                     }, error => console.log(error));

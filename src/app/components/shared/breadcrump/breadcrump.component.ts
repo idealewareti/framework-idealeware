@@ -11,7 +11,7 @@ import { AppCore } from '../../../app.core';
 })
 export class BreadcrumpComponent implements OnInit {
 
-    @Input() category: Category;
+    @Input() categorys: Category[];
     
     crumps: Category[] = [];
 
@@ -21,12 +21,14 @@ export class BreadcrumpComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        if(this.category && this.category.id){
-            this.crumps.push(this.category);
-            if(this.category['parentCategoryId'] && !AppCore.isGuidEmpty(this.category.parentCategoryId)){
-                this.getParent(this.category.parentCategoryId);
+        this.categorys.forEach((category)=>{
+            if(category && category.id){
+                this.crumps.push(category);
+                if(category['parentCategoryId'] && !AppCore.isGuidEmpty(category.parentCategoryId)){
+                    this.getParent(category.parentCategoryId);
+                }
             }
-        }
+        });
     }
 
     getParent(parentCategoryId: string){

@@ -34,7 +34,7 @@ declare var $: any;
     templateUrl: '../../../template/search/search/search.html',
     styleUrls: ['../../../template/search/search/search.scss']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
     loading: boolean = true;
     showAll: boolean = false;
     categoriesArranged: boolean = false;
@@ -363,9 +363,9 @@ export class SearchComponent implements OnInit {
         else return this.category;
     }
 
-    getBreadCrump(): Category {
+    getBreadCrump(): Category[] {
         if (this.module == 'category' && this.category && this.category.id) {
-            return this.category;
+            return [this.category];
         }
         else
             return null;

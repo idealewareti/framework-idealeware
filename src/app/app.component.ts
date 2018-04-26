@@ -1,8 +1,14 @@
-import { Component, OnInit, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
-import { Meta, Title, SafeResourceUrl, DomSanitizer, TransferState, makeStateKey } from '@angular/platform-browser';
+import {
+    Component, OnInit, Inject, PLATFORM_ID,
+    AfterViewInit, ElementRef, Renderer2, ViewChild
+} from '@angular/core';
+import {
+    Meta, Title, SafeResourceUrl, DomSanitizer,
+    TransferState, makeStateKey
+} from '@angular/platform-browser';
 import { Globals } from './models/globals';
 import { Store } from './models/store/store';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute, ActivationEnd, ActivationStart, ResolveStart } from '@angular/router';
 import { Cart } from './models/cart/cart';
 import { Institutional } from './models/institutional/institutional';
 import { AppCore } from './app.core';
@@ -21,6 +27,7 @@ import { CustomerManager } from './managers/customer.manager';
 import { Token } from './models/customer/token';
 import { ScriptService } from './services/script.service';
 import { StoreManager } from './managers/store.manager';
+import { KondutoManager } from './managers/konduto.manager';
 
 const PAYMENTS_KEY = makeStateKey('payments_key');
 const INSTITUTIONALS_KEY = makeStateKey('institutionals_key');
@@ -59,7 +66,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     q: string;
     facebookSafeUrl: SafeResourceUrl;
     store: Store;
-
+    @ViewChild('konduto') kondutoContainer: ElementRef;
     /*
     Readonly
     *********************************************************************************************************
@@ -73,7 +80,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     constructor(
         private route: ActivatedRoute,
         private title: Title,
-        private meta: Meta,
         private globals: Globals,
         private router: Router,
         private sanitizer: DomSanitizer,
@@ -85,8 +91,21 @@ export class AppComponent implements OnInit, AfterViewInit {
         private customerManager: CustomerManager,
         private state: TransferState,
         private scriptService: ScriptService,
+        private renderer: Renderer2,
+        private kondutoManager: KondutoManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
+        // Antifraude precisa ser o primeiro a carregar para que as metas já venham contempladas
+        if (this.isKondutoActived()) {
+            this.kondutoManager.addOrUpdatePageMeta('Home');
+            this.router.events.subscribe((url: any) => {
+                if (url instanceof ActivationStart) {
+                    const routeName = url.snapshot.data.name || '';
+                    this.kondutoManager.addOrUpdatePageMeta(routeName);
+                }
+            });
+        }
+
         this.globals = new Globals();
         this.globals.store = new Store();
         this.globals.cart = new Cart();
@@ -107,6 +126,11 @@ export class AppComponent implements OnInit, AfterViewInit {
                 this.store = store;
                 this.initImagePath(store);
                 this.getInstitutionals();
+
+                if (this.isKondutoActived()) {
+                    this.injectKondutoScript(this.store.kondutoPublicKey);
+                }
+                
                 this.getGoogle();
                 if (this.store.modality == EnumStoreModality.Ecommerce) {
                     this.getPayments();
@@ -114,7 +138,12 @@ export class AppComponent implements OnInit, AfterViewInit {
                 this.facebookSafeUrl = this.getFacebookUrl();
             })
             .catch(error => {
+                console.log('******************************************************');
+                console.log('******************************************************');
+                console.log('Erro 500: ');
                 console.log(error);
+                console.log('******************************************************');
+                console.log('******************************************************');
                 this.router.navigate(['/erro-500']);
             });
     }
@@ -136,7 +165,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         if (isPlatformBrowser(this.platformId)) {
-            this.getUrl();
+            this.checkRouter();
             this.scriptService.loadScript('https://seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js');
             if (this.isMobile()) {
                 const bodySelector = $('body');
@@ -270,17 +299,51 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     /**
-     * Retorna a URL da rota
+     * verificar rotas
      * @private
      * @memberof AppComponent
      */
-    private getUrl() {
+    private checkRouter() {
         this.router.events.subscribe((url: any) => {
             this.path = url['url'];
             if (this.path && !this.path.includes('q=')) {
                 this.q = '';
             }
         });
+
+        /*Capturar mudanças na rotas para da um scroll para topo */
+        let self = this;
+        this.router.events.subscribe((evt) => {
+            if (!(evt instanceof NavigationEnd)) {
+                return;
+            }
+            window.scrollTo(0, 0)
+
+        });
+    }
+
+    private injectKondutoScript(key: string): void {
+        if (!key) return;
+        const scriptLoaded = document.getElementById('kdtjs');
+
+        if (scriptLoaded) {
+            return;
+        }
+        let script = this.renderer.createElement('script');
+        const content = `
+            var __kdt = __kdt || [];
+            __kdt.push({"public_key": "${key}"});   
+                (function() {   
+                    var kdt = document.createElement('script');   
+                    kdt.id = 'kdtjs'; kdt.type = 'text/javascript';   
+                    kdt.async = true;    
+                    kdt.src = 'https://i.k-analytix.com/k.js';   
+                    var s = document.getElementsByTagName('body')[0];   
+                    s.parentNode.insertBefore(kdt, s);   
+                })(); 
+        `
+        script.innerHTML = content;
+        this.renderer.appendChild(this.kondutoContainer.nativeElement, script);
     }
 
     /*
@@ -400,6 +463,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     /**
+     * Indica se a loja utiliza a Konduto
+     * @returns {boolean} 
+     * @memberof AppComponent
+     */
+    isKondutoActived(): boolean {
+        return AppConfig.KONDUTO;
+    }
+
+    /**
      * Adiciona o script do Mercado Pago na loja
      * @memberof AppComponent
      */
@@ -503,20 +575,20 @@ export class AppComponent implements OnInit, AfterViewInit {
                     if (response) {
                         this.googleUA = response;
                         // Cria o primeiro pageview na loja
-                        gtag('config', response.uaCode );
+                        gtag('config', response.uaCode);
                         gtag('config', response.uaCode, {
                             'page_title': 'home',
                             'page_path': '/'
-                          });
-                        gtag('event', 'page_view', { 'send_to':  response.uaCode });
+                        });
+                        gtag('event', 'page_view', { 'send_to': response.uaCode });
                         // Adiciona um evento ao mudar a rota para que o Analy
                         this.router.events.subscribe(event => {
                             if (event instanceof NavigationEnd) {
-                                gtag('config', response.uaCode );
+                                gtag('config', response.uaCode);
                                 gtag('config', response.uaCode, {
                                     'page_path': event.urlAfterRedirects
-                                  });
-                                gtag('event', 'page_view', { 'send_to':  response.uaCode });
+                                });
+                                gtag('event', 'page_view', { 'send_to': response.uaCode });
                             }
                         });
                     }
@@ -551,7 +623,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     * (exceto quando ele estiver rodando em localhost)
     * @memberof AppComponent
     */
-   keepHttps() {
+    keepHttps() {
         if (isPlatformBrowser(this.platformId)) {
             if (location.href.indexOf("https://") == -1 && location.hostname != 'localhost' && !/^\d+[.]/.test(location.hostname)) {
                 location.href = location.href.replace("http://", "https://");

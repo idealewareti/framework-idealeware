@@ -109,9 +109,11 @@ import { StrongPasswordModule } from './directives/strong-password/strong-passwo
 import { ZipCodeMaskModule } from './directives/zipcode-mask/zipcode-mask.module';
 import { CustomPaintFilterModule } from './pipes/custom-paint-filter/custom-paint-filter.module';
 import { OrderByModule } from './pipes/orderBy/orderBy.module';
+import { SafeHtmlPipe } from "./pipes/pipe.safehtml"
 import { AppConfig } from './app.config';
 import { PopUpNewsLetterModule } from './components/home/popup-newsletter/popup-newsletter.module';
 import { StoreManager } from './managers/store.manager';
+import { KondutoManager } from './managers/konduto.manager';
 
 @NgModule({
   declarations: [
@@ -133,41 +135,41 @@ import { StoreManager } from './managers/store.manager';
     ShowcaseComponent,
     SearchComponent,
     SignUpComponent,
+    SafeHtmlPipe,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: `${AppConfig.DOMAIN}-app` }),
     RouterModule.forRoot([
-      { path: '', component: ShowcaseComponent },
+      { path: '', component: ShowcaseComponent, data: { name: 'Home' } },
       { path: '404', component: NotFoundComponent },
       { path: 'erro-500', component: Error500Component },
-      { path: 'buscar', component: SearchComponent },
-      { path: 'carrinho', component: CartComponent },
-      { path: 'categoria/:id', component: SearchComponent },
-      { path: 'categoria/:id/:nicename', component: SearchComponent },
+      { path: 'buscar', component: SearchComponent, data: { name: 'Search' }  },
+      { path: 'carrinho', component: CartComponent, data: { name: 'Basket' } },
+      { path: 'categoria/:id', component: SearchComponent, data: { name: 'Category' } },
+      { path: 'categoria/:id/:nicename', component: SearchComponent, data: { name: 'Category' } },
       { path: 'contato', component: InstitutionalComponent },
       { path: 'conta', loadChildren: 'app/components/account/account.module#AccountModule' },
-      { path: 'grupo/:id/:nicename', component: SearchComponent },
+      { path: 'grupo/:id/:nicename', component: SearchComponent, data: { name: 'Search' }  },
       { path: 'checkout', component: CheckoutComponent, data: { name: 'Checkout' } },
-      { path: 'checkout/concluido/:id', component: CheckoutFinishComponent },
+      { path: 'checkout/concluido/:id', component: CheckoutFinishComponent, data: { name: 'Checkout' } },
       { path: 'compare', component: CompareComponent },
       { path: 'corespersonalizadas', loadChildren: 'app/components/custom-paint/custom-paint.module#CustomPaintModule' },
       { path: 'cores-personalizadas', loadChildren: 'app/components/custom-paint/custom-paint.module#CustomPaintModule' },
-      { path: 'grupo/:id/:nicename', component: SearchComponent },
-      { path: 'buscar', component: SearchComponent },
+      { path: 'grupo/:id/:nicename', component: SearchComponent, data: { name: 'Search' }  },
       { path: 'institucional/:id', component: InstitutionalComponent },
       { path: 'institucional/:id/:nicename', component: InstitutionalComponent },
       { path: 'login', component: LoginComponent },
       { path: 'login/:step', component: LoginComponent },
-      { path: 'cadastrar', component: SignUpComponent },
+      { path: 'cadastrar', component: SignUpComponent, data: { name: 'SignUp' } },
       { path: 'logout', component: LogoutComponent },
-      { path: 'marcas/:id', component: SearchComponent },
-      { path: 'marcas/:id/:nicename', component: SearchComponent },
+      { path: 'marcas/:id', component: SearchComponent, data: { name: 'Search' }  },
+      { path: 'marcas/:id/:nicename', component: SearchComponent, data: { name: 'Search' }  },
       { path: 'orcamento', component: BudgetComponent },
       { path: 'orcamento/concluido', component: BudgetFinishComponent },
       { path: 'orcamento/concluido/:id', component: BudgetFinishComponent },
-      { path: 'produto/:id', component: ProductComponent },
-      { path: 'recuperar-senha', component: ForgetPasswordComponent },
-      { path: ':product', component: ProductComponent },
+      { path: 'produto/:id', component: ProductComponent, data: { name: 'Product' } },
+      { path: 'recuperar-senha', component: ForgetPasswordComponent, data: { name: 'ForgetPassword' } },
+      { path: ':product', component: ProductComponent, data: { name: 'Product' } },
       { path: '**', component: RedirectComponent }
     ], { initialNavigation: 'enabled' }),
     HttpModule,
@@ -260,7 +262,8 @@ import { StoreManager } from './managers/store.manager';
     CustomerManager,
     PaymentManager,
     ProductManager,
-    StoreManager
+    StoreManager,
+    KondutoManager
   ],
   bootstrap: [AppComponent]
 })

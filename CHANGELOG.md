@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.3
+-  Atualização da loja para recriar o carrinho assim que expirado
+
+## 3.0.2
+- Correção de inserção de vídeos nas páginas institucionais
+- Correção scroll para topo durante navegação
 
 ## 3.0.1
 - Atualização Analytics Google

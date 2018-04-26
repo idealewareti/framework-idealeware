@@ -1,4 +1,4 @@
-import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, Inject, ElementRef, ViewChild, Renderer2 } from '@angular/core';
 import { Cart } from '../../../models/cart/cart';
 import { Customer } from '../../../models/customer/customer';
 import { CustomerAddress } from '../../../models/customer/customer-address';
@@ -31,6 +31,10 @@ import { Token } from '../../../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
 import { AppCore } from '../../../app.core';
 import { StoreManager } from '../../../managers/store.manager';
+import { debuglog } from 'util';
+import { retry } from 'rxjs/operators/retry';
+import { fail } from 'assert';
+import { AppConfig } from '../../../app.config';
 
 declare var swal: any;
 declare var toastr: any;
@@ -70,6 +74,10 @@ export class CheckoutComponent implements OnInit {
     changeFor: number = null;
     defaultPayment: Payment;
     store: Store;
+    @ViewChild('scriptContainer') scriptContainer: ElementRef;
+    kondutoScript: HTMLElement;
+    kondutoScriptId = 'konduto-event-script';
+    kondutoIdentified: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -82,6 +90,7 @@ export class CheckoutComponent implements OnInit {
         private paymentService: PaymentService,
         private paymentManager: PaymentManager,
         private orderService: OrderService,
+        private renderer: Renderer2,
         private storeManager: StoreManager,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
@@ -92,7 +101,6 @@ export class CheckoutComponent implements OnInit {
     */
     ngOnInit() {
         this.titleService.setTitle('Finalização da Compra');
-
         this.storeManager.getStore()
             .then(store => {
                 this.store = store;
@@ -123,6 +131,55 @@ export class CheckoutComponent implements OnInit {
             this.parentRouter.navigateByUrl('/orcamento');
         }
 
+
+        if (!this.kondutoIdentified) {
+            this.kondutoIdentified = true;
+            this.getCustomer().then(
+                customer => this.injectKondutoIdentifier(customer.email)
+            )
+        }
+    }
+
+    ngOnDestroy() {
+        let script = document.getElementById(this.kondutoScriptId);
+        if (script) {
+            this.renderer.removeChild(this.scriptContainer, this.kondutoScript);
+        }
+    }
+
+    private injectKondutoIdentifier(id: string): void {
+        if (!this.isKondutoActived()) {
+            return;
+        }
+
+        let script = this.renderer.createElement('script');
+        this.renderer.setAttribute(script, 'id', this.kondutoScriptId);
+        const content = `
+            var customerID = "${id}"; // define o ID do cliente 
+            (function () {
+                var period = 300;
+                var limit = 20 * 1e3;
+                var nTry = 0;
+                var intervalID = setInterval(function () { // loop para retentar o envio         
+                    var clear = limit / period <= ++nTry;
+                    if ((typeof (Konduto) !== "undefined") &&
+                        (typeof (Konduto.setCustomerID) !== "undefined")) {
+                        window.Konduto.setCustomerID(customerID); // envia o ID para a Konduto             
+                        clear = true;
+                    }
+                    if (clear) {
+                        clearInterval(intervalID);
+                    }
+                }, period);
+            })(customerID);
+        `
+
+        script.innerHTML = content;
+        this.renderer.appendChild(this.scriptContainer.nativeElement, script);
+    }
+
+    private isKondutoActived(): boolean {
+        return AppConfig.KONDUTO;
     }
 
     /*
@@ -138,7 +195,7 @@ export class CheckoutComponent implements OnInit {
                     this.billingAddress = response.billingAddress;
 
                     if (this.getNumItemsInCart() == 0) {
-                        this.parentRouter.navigateByUrl('/');
+                        this.parentRouter.navigateByUrl('/carrinho');
                     }
                 })
                 .catch(error => {
@@ -147,6 +204,7 @@ export class CheckoutComponent implements OnInit {
                 });
         }
     }
+
     private getToken(): Token {
         if (isPlatformBrowser(this.platformId)) {
             let token = new Token();
@@ -261,9 +319,8 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getTotal(): number {
-        if(this.isMundipaggBankslip() && this.methodSelected.discount > 0)
-        {
-            return this.globals.cart.totalPurchasePrice - (this.globals.cart.totalPurchasePrice *( this.methodSelected.discount / 100)); 
+        if (this.isMundipaggBankslip() && this.methodSelected.discount > 0) {
+            return this.globals.cart.totalPurchasePrice - (this.globals.cart.totalPurchasePrice * (this.methodSelected.discount / 100));
         }
         return this.globals.cart.totalPurchasePrice;
     }
@@ -411,7 +468,9 @@ export class CheckoutComponent implements OnInit {
     isCartEmpty(cart: Cart): boolean {
         let empty = false;
 
-        if ((cart.products == null || cart.products.length < 1) && (cart.paints == null || cart.paints.length < 1))
+        if ((cart.products == null || cart.products.length < 1) &&
+            (cart.paints == null || cart.paints.length < 1) &&
+            (cart.services == null || cart.services.length < 1))
             empty = true;
 
         return empty;
@@ -625,38 +684,45 @@ export class CheckoutComponent implements OnInit {
 
             let cartId = localStorage.getItem('cart_id');
 
-            /* Pagamento Offline */
-            if (this.paymentSelected.payment.type == 2) {
-                this.payWithOfflineMethod(cartId);
-            }
-            /* Pagamento com cartão de crédito mundipagg */
-            else if (this.isMundipaggCreditCard()) {
-                this.payWithMundipaggCreditCard(cartId);
-            }
-            /* Pagamento com boleto mundipagg */
-            else if (this.isMundipaggBankslip()) {
-                this.payWithMundipaggBankslip(cartId);
-            }
-            /* Pagamento boleto pagseguro */
-            else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code == 202) {
-                this.payWithPagseguroBankSlip(cartId);
-            }
-            /* Pagamento cartão de crédito pagseguro */
-            else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code >= 100 && this.paymentSelected.pagseguro.code <= 199) {
-                this.payWithPagseguroCreditCard(cartId);
-            }
-            /* Pagamento boleto mercado pago */
-            else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'ticket') {
-                this.payWithMercadoPagoBankSlip(cartId);
-            }
-            /* Pagamento cartão de crédito mercado pago */
-            else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'credit_card') {
-                this.payWithMercadoPagoCreditCard(cartId);
-            }
-            else {
-                swal('Não foi possível realizar o pedido', 'Nenhuma forma de pagamento selecionada', 'error');
-                $('#btn_place-order').button('reset');
-            }
+            this.manager.getCart(cartId).then(cart => {
+                if (this.isCartEmpty(cart)) {
+                    this.parentRouter.navigateByUrl("/carrinho");
+                    return;
+                }
+
+                /* Pagamento Offline */
+                if (this.paymentSelected.payment.type == 2) {
+                    this.payWithOfflineMethod(cartId);
+                }
+                /* Pagamento com cartão de crédito mundipagg */
+                else if (this.isMundipaggCreditCard()) {
+                    this.payWithMundipaggCreditCard(cartId);
+                }
+                /* Pagamento com boleto mundipagg */
+                else if (this.isMundipaggBankslip()) {
+                    this.payWithMundipaggBankslip(cartId);
+                }
+                /* Pagamento boleto pagseguro */
+                else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code == 202) {
+                    this.payWithPagseguroBankSlip(cartId);
+                }
+                /* Pagamento cartão de crédito pagseguro */
+                else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code >= 100 && this.paymentSelected.pagseguro.code <= 199) {
+                    this.payWithPagseguroCreditCard(cartId);
+                }
+                /* Pagamento boleto mercado pago */
+                else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'ticket') {
+                    this.payWithMercadoPagoBankSlip(cartId);
+                }
+                /* Pagamento cartão de crédito mercado pago */
+                else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'credit_card') {
+                    this.payWithMercadoPagoCreditCard(cartId);
+                }
+                else {
+                    swal('Não foi possível realizar o pedido', 'Nenhuma forma de pagamento selecionada', 'error');
+                    $('#btn_place-order').button('reset');
+                }
+            });
         }
     }
 

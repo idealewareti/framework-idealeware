@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, EventEmitter, Output, Inject, PLATFORM_ID, SimpleChanges } from '@angular/core';
-import { CartService } from "../../../services/cart.service";
 import { IntelipostService } from "../../../services/intelipost.service";
 import { Intelipost } from "../../../models/intelipost/intelipost";
 import { IntelipostRequest } from "../../../models/intelipost/intelipost-request";
