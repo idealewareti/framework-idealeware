@@ -13,7 +13,7 @@ export const environment = {
   API_BRAND: 'https://api-pub-brand.prd.idealeware.com.br',
   API_BUDGET: 'https://api-pub-budget.prd.idealeware.com.br',
   API_CART: 'https://api-pub-cart.prd.idealeware.com.br',
-  API_CARTSHOWCASE: 'https://api-pub-cart.prd.idealeware.com.br',
+  API_CARTSHOWCASE: 'https://api-pub-cartshowcase.prd.idealeware.com.br',
   API_CATEGORY: 'https://api-pub-category.prd.idealeware.com.br',
   API_CONTACT: 'https://api-pub-contact.prd.idealeware.com.br',
   API_COUPON: 'https://api-pub-coupon.prd.idealeware.com.br',

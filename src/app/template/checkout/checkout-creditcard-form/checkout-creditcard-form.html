@@ -80,14 +80,17 @@
             <label for="n-parcelas" class="control-label">Número do Parcelas</label>
             <select *ngIf="mercadopago" class="form-control" formControlName="installment" [(ngModel)]="creditCard.installmentCount">
                 <option *ngIf="mercadopago.installmentResponse.payer_costs.length == 0" value="" disabled>Informe um cartão de crédito válido para obter as parcelas</option>
+                <option *ngIf="mercadopago.installmentResponse.payer_costs.length > 0" [value]="0"></option>
                 <option class="form-control" *ngFor="let installment of mercadopago.installmentResponse.payer_costs" [value]="installment.installments">{{installment.recommended_message}}</option>
             </select>
             <select *ngIf="pagseguro" class="form-control" formControlName="installment" name="installmentCount" [(ngModel)]="creditCard.installmentCount">
                 <option *ngIf="pagseguro.installments.length == 0" value="" disabled>Informe um cartão de crédito válido para obter as parcelas</option>
+                <option *ngIf="pagseguro.installments.length > 0" [value]="0"></option>
                 <option *ngFor="let installment of pagseguro.installments" [value]="installment.quantity">{{installment.quantity}}x de {{installment.installmentAmount | currencyFormat}} {{(installment.interestFree) ? 'sem juros' : 'com juros'}}</option>
             </select>
             <select *ngIf="mundipagg" class="form-control" formControlName="installment" name="installmentCount" [(ngModel)]="creditCard.installmentCount">
                 <option *ngIf="MundipaggListInstallments().length == 0" value="" disabled>Informe um cartão de crédito válido para obter as parcelas</option>
+                <option *ngIf="MundipaggListInstallments().length > 0" [value]="0"></option>
                 <option *ngFor="let installment of MundipaggListInstallments()" [value]="installment.number">{{MundipaggInstallmentLabel(installment)}}</option>
             </select>
         </div>

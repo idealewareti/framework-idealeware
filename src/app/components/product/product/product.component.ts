@@ -21,7 +21,6 @@ import { Store } from "../../../models/store/store";
 import { RelatedProductsService } from "../../../services/related-products.service";
 import { EnumStoreModality } from "../../../enums/store-modality.enum";
 import { RelatedProductGroup } from "../../../models/related-products/related-product-group";
-import { PaymentManager } from "../../../managers/payment.manager";
 import { Globals } from "../../../models/globals";
 import { SelfColor } from "../../../models/self-color/self-color";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -88,7 +87,6 @@ export class ProductComponent implements OnDestroy {
         private metaService: Meta,
         private location: Location,
         private sanitizer: DomSanitizer,
-        private paymentManager: PaymentManager,
         private globals: Globals,
         private kondutoManager: KondutoManager,
         @Inject(PLATFORM_ID) private platformId: Object
@@ -321,13 +319,7 @@ export class ProductComponent implements OnDestroy {
 
     /* Installment Simulator */
     private getInstallmentValue() {
-        if (this.product.installmentNumber == 0 && this.product.installmentValue == 0) {
-            this.paymentManager.getInstallments(this.sku)
-                .then(payment => {
-                    this.installment = this.paymentManager.getInstallmentText(payment, payment.paymentMethods[0]);
-                });
-        }
-        else {
+        if (this.product.installmentNumber > 0 && this.product.installmentValue > 0) {
             this.installment = `em ${this.product.installmentNumber}x de R$ ${this.product.installmentValue.toFixed(2).toString().replace('.', ',')}`;
         }
 

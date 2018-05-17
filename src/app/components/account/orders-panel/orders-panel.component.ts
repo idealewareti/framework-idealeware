@@ -34,6 +34,19 @@ export class OrderPanelComponent {
         this.service.getOrders(this.getToken())
             .subscribe(orders => {
                 this.orders = orders;
+                this.orders.forEach((order)=>{
+                    const labels = [
+                        { id: 0, label: 'Novo Pedido' },
+                        { id: 1, label: 'Pedido Aprovado' },
+                        { id: 2, label: 'Em Transporte' },
+                        { id: 3, label: 'Pedido Concluído' },
+                        { id: 10, label: 'Pedido Faturado' },
+                        { id: 11, label: 'Pendente' },
+                        { id: 12, label: 'Pedido Cancelado' },
+                        { id: 13, label: 'Em Processamento' }
+                    ]
+                    order.labelStatus = labels.filter(s => s.id == order.status)[0].label;
+                })
             }), (error => console.log(error));
 
         this.titleService.setTitle('Meus Pedidos');

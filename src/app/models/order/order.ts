@@ -39,6 +39,8 @@ export class Order {
     totalPaintsPrice: number;
     orderPrice: number;
 
+    labelStatus: string;
+
     // constructor(object = null) {
     //     if (object) return this.createFromResponse(object);
     // }
@@ -91,21 +93,4 @@ export class Order {
 
     //     return model;
     // }
-
-
-    public labelStatus(): string {
-
-        let status = [
-            { id: 0, label: 'Novo Pedido' },
-            { id: 1, label: 'Pedido Aprovado' },
-            { id: 2, label: 'Em Transporte' },
-            { id: 3, label: 'Pedido Concluído' },
-            { id: 10, label: 'Pedido Faturado' },
-            { id: 11, label: 'Pendente' },
-            { id: 12, label: 'Pedido Cancelado' },
-            { id: 13, label: 'Em Processamento' }
-        ]
-
-        return status.filter(s => s.id == this.status)[0].label;
-    }
 }

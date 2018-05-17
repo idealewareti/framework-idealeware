@@ -5,7 +5,7 @@
         </label>
         <div class="clearfix">
             <div class="shipping-loader pull-right" *ngIf="loading">
-                <app-wait-loader [small]="true" ></app-wait-loader>
+                <app-wait-loader [small]="true"></app-wait-loader>
             </div>
             <a href="http://www.buscacep.correios.com.br/sistemas/buscacep/buscaCepEndereco.cfm" target="_blank" class="pull-right">Não sei meu CEP</a>
             <div class="input-box overflow-hidden">
@@ -15,14 +15,24 @@
         </div>
     </form>
     <div class="list-group shipping-list" *ngIf="deliveryOptions.length > 0">
-        <a *ngFor="let option of deliveryOptions" (click)="addShippingToCart($event, option)" [ngClass]="{'list-group-item-info': checkOption(option)}" href="" class="list-group-item">
+        <a *ngFor="let option of deliveryOptions" (click)="addShippingToCart($event, option)" [ngClass]="{'list-group-item-info': checkOption(option.delivery_method_name)}"
+            href="" class="list-group-item">
             {{option.delivery_method_name}}
-            <strong>até <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis -
-                <span class="" *ngIf="option.final_shipping_cost == 0">Frete Grátis</span> 
-                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat }}</span> 
+            <strong>até
+                <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis -
+                <span class="" *ngIf="option.final_shipping_cost == 0">Frete Grátis</span>
+                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat }}</span>
             </strong>
         </a>
     </div>
+
+    <div class="list-group shipping-list" *ngIf="branches.length > 0">
+        <a *ngFor="let option of allowPickUpStore()" (click)="addShippingToCart($event, null, option)" [ngClass]="{'list-group-item-info': checkOption(null, option)}"
+            href="" class="list-group-item">
+            <strong>Retirar na Loja - </strong>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} {{option.city}}/{{option.state}}
+        </a>
+    </div>
+
 </div>
 
 <div class="shipping-box" *ngIf="isMobile()">
@@ -36,11 +46,20 @@
         <button type="submit" class="btn btn-default">Calcular Frete</button>
     </form>
     <div class="list-group" *ngIf="deliveryOptions.length > 0">
-        <a href="#" *ngFor="let option of deliveryOptions" (click)="addShippingToCart($event, option)" class="list-group-item" [ngClass]="{'list-group-item-info': checkOption(option)}">
-            {{option.delivery_method_name}} <strong>até <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis - 
-                <span class="" *ngIf="option.final_shipping_cost == 0">Frete Grátis</span> 
-                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat }}</span> 
+        <a href="#" *ngFor="let option of deliveryOptions" (click)="addShippingToCart($event, option)" class="list-group-item" [ngClass]="{'list-group-item-info': checkOption(option.delivery_method_name)}">
+            {{option.delivery_method_name}}
+            <strong>até
+                <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis -
+                <span class="" *ngIf="option.final_shipping_cost == 0">Frete Grátis</span>
+                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat }}</span>
             </strong>
+        </a>
+    </div>
+
+    <div class="list-group shipping-list" *ngIf="branches.length > 0">
+        <a *ngFor="let option of allowPickUpStore()" (click)="addShippingToCart($event, null, option)" [ngClass]="{'list-group-item-info': checkOption(null, option)}"
+            href="" class="list-group-item">
+            <strong>Retirar na Loja - </strong>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} {{option.city}}/{{option.state}}
         </a>
     </div>
 </div>

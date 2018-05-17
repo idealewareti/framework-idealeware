@@ -12,7 +12,7 @@
                 </td>
                 <td class="col-status">
                     <span>Status do Pedido</span>
-                    <strong class="status">{{lastOrder.labelStatus()}}</strong>
+                    <strong class="status">{{lastOrder.labelStatus}}</strong>
                     <span *ngIf="lastOrder.status == 3" class="date">Entregue em: {{lastOrder.historyStatus[lastOrder.historyStatus.length - 1].alterDate | date:'dd/MM/y'}}</span>
                 </td>
                 <td class="col-total">

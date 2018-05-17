@@ -11,6 +11,9 @@ import { Globals } from '../../../models/globals';
 import { isPlatformBrowser } from '@angular/common';
 import { AppConfig } from '../../../app.config';
 import { AppCore } from '../../../app.core';
+import { Branch } from '../../../models/branch/branch';
+import { BranchService } from '../../../services/branch.service';
+import { EnumShippingType } from '../../../enums/shipping-type.enum';
 
 declare var swal: any;
 
@@ -23,7 +26,8 @@ declare var swal: any;
 export class ShippingCalcComponent implements OnInit {
     private intelipost: Intelipost;
     private deliveryOptions: IntelipostDeliveryOption[] = [];
-    private selected: IntelipostDeliveryOption = new IntelipostDeliveryOption();
+    private branches: Branch[] = [];
+    private shippingSelected: Shipping = new Shipping();
     @Input() zipCode: string;
     @Input() cart: Cart;
     @Output() cartUpdated: EventEmitter<Cart> = new EventEmitter<Cart>();
@@ -32,6 +36,7 @@ export class ShippingCalcComponent implements OnInit {
 
     constructor(
         private service: IntelipostService,
+        private branchService: BranchService,
         private cartManager: CartManager,
         private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
@@ -48,6 +53,7 @@ export class ShippingCalcComponent implements OnInit {
         if (changes['cart'] && !changes.cart.firstChange) {
             if (changes.cart.currentValue.shipping == null) {
                 this.deliveryOptions = [];
+                this.branches = [];
             }
         }
     }
@@ -102,6 +108,7 @@ export class ShippingCalcComponent implements OnInit {
         if (isPlatformBrowser(this.platformId)) {
             event.preventDefault();
             this.deliveryOptions = [];
+            this.branches = [];
             this.loading = true;
             this.sendRequest()
                 .then(response => {
@@ -122,29 +129,53 @@ export class ShippingCalcComponent implements OnInit {
                     console.log(error);
                     this.loading = false;
                 });
+            this.getBranches(this.zipCode);
         }
     }
 
-    addShippingToCart(event, option: IntelipostDeliveryOption) {
-        if (isPlatformBrowser(this.platformId)) {
-            event.preventDefault();
-            this.selected = option;
+    /**
+     * Adiciona o frete selecionado ao carrinho
+     * 
+     * @param {any} event 
+     * @param {IntelipostDeliveryOption} [intelipostOption=null] 
+     * @param {Branch} [branch=null] 
+     * @returns {Promise<Cart>} 
+     * @memberof CheckoutShippingComponent
+     */
+    addShippingToCart(event, intelipostOption: IntelipostDeliveryOption = null, branch: Branch = null): Promise<Cart> {
+        return new Promise((resolve, reject) => {
+            if (event)
+                event.preventDefault();
             let shipping = new Shipping();
-            shipping.shippingType = 2; // TODO
             let delivery = new DeliveryInformation();
-            delivery.quotId = this.intelipost.content.id.toString();
-            delivery.deliveryMethodId = option.delivery_method_id.toString();
-            delivery.shippingCost = option.final_shipping_cost;
-            delivery.deliveryMethodName = option.delivery_method_name;
-            delivery.deliveryProviderName = option.logistic_provider_name;
-            delivery.deliveryEstimateBusinessDays = option.delivery_estimate_business_days;
 
-            shipping.deliveryInformation = delivery;
-            this.loading = true;
+            if (intelipostOption) {
+                shipping.shippingType = EnumShippingType.Delivery;
+                delivery.quotId = this.intelipost.content.id.toString();
+                delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
+                delivery.shippingCost = this.shippingCost(intelipostOption);
+                delivery.deliveryMethodName = intelipostOption.delivery_method_name;
+                delivery.deliveryProviderName = intelipostOption.logistic_provider_name;
+                delivery.deliveryEstimateBusinessDays = intelipostOption.delivery_estimate_business_days;
+                shipping.deliveryInformation = delivery;
+            }
+            else if (branch) {
+                shipping.shippingType = EnumShippingType.PickuUpStore;
+                shipping.branch = branch;
+                delivery.quotId = branch.id;
+                delivery.deliveryMethodId = branch.id;
+                delivery.deliveryMethodName = 'Retirar na Loja';
+                delivery.shippingCost = 0.0;
+                delivery.deliveryProviderName = branch.name;
+                delivery.deliveryEstimateBusinessDays = branch.replenishmentTime;
+                shipping.deliveryInformation = delivery;
+            }
+
             this.cartManager.setShipping(shipping, localStorage.getItem('cart_id'))
                 .then(cart => {
                     this.cart = cart;
                     this.globals.cart = cart;
+                    this.shippingSelected = shipping;
                     this.cartUpdated.emit(this.cart);
                     this.loading = false;
                 })
@@ -153,14 +184,65 @@ export class ShippingCalcComponent implements OnInit {
                     console.log(error);
                     this.loading = false;
                 });
+
+        });
+    }
+
+    /**
+     * Obtem as filiais
+     * 
+     * @param {string} zipcode 
+     * @memberof CheckoutShippingComponent
+     */
+    getBranches(zipcode: string) {
+        zipcode = zipcode.replace('-', '');
+        this.branchService.getBranches(zipcode)
+            .subscribe(branches => {
+                this.branches = branches;
+            }, error => console.log(error));
+    }
+
+    /**
+     * Habilita retirada na loja
+     * 
+     * @returns {Branch[]} 
+     * @memberof CheckoutShippingComponent
+     */
+    allowPickUpStore(): Branch[] {
+        return this.branches.filter(b => b.allowPickupStore);
+    }
+
+    /**
+     * Marca a opção de frete selecionada
+     * 
+     * @param {string} methodName 
+     * @param {Branch} [branch=null] 
+     * @returns {boolean} 
+     * @memberof CheckoutShippingComponent
+     */
+    checkOption(methodName: string, branch: Branch = null): boolean {
+        if (methodName) {
+            if (!this.shippingSelected)
+                return false
+            if (!this.shippingSelected.deliveryInformation)
+                return false
+            else if (this.shippingSelected.deliveryInformation.deliveryMethodName == methodName)
+                return true;
+            else return false;
+        }
+        else {
+            if (!this.shippingSelected.branch)
+                return false;
+            else if (this.shippingSelected.branch.id == branch.id)
+                return true;
+            else return false;
         }
     }
 
-    checkOption(option: IntelipostDeliveryOption): boolean {
-        if (option.delivery_method_id == this.selected.delivery_method_id)
-            return true;
-        else return false;
-
+    shippingCost(deliveryOption: IntelipostDeliveryOption): number {
+        if (deliveryOption.final_shipping_cost < deliveryOption.provider_shipping_cost)
+            return deliveryOption.final_shipping_cost;
+        else return deliveryOption.provider_shipping_cost;
     }
 
     isMobile(): boolean {

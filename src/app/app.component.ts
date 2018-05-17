@@ -130,7 +130,7 @@ export class AppComponent implements OnInit, AfterViewInit {
                 if (this.isKondutoActived()) {
                     this.injectKondutoScript(this.store.kondutoPublicKey);
                 }
-                
+
                 this.getGoogle();
                 if (this.store.modality == EnumStoreModality.Ecommerce) {
                     this.getPayments();
@@ -138,13 +138,8 @@ export class AppComponent implements OnInit, AfterViewInit {
                 this.facebookSafeUrl = this.getFacebookUrl();
             })
             .catch(error => {
-                console.log('******************************************************');
-                console.log('******************************************************');
-                console.log('Erro 500: ');
+                console.log('init err:');
                 console.log(error);
-                console.log('******************************************************');
-                console.log('******************************************************');
-                this.router.navigate(['/erro-500']);
             });
     }
 
@@ -166,7 +161,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
         if (isPlatformBrowser(this.platformId)) {
             this.checkRouter();
-            this.scriptService.loadScript('https://seal.alphassl.com/SiteSeal/alpha_image_115-55_en.js');
             if (this.isMobile()) {
                 const bodySelector = $('body');
                 if (!bodySelector.hasClass('mobile-body'))
@@ -237,16 +231,14 @@ export class AppComponent implements OnInit, AfterViewInit {
      * @memberof AppComponent
      */
     getInstitutionals() {
-        this.institutionals = this.state.get(INSTITUTIONALS_KEY, null as any);
-        if (this.institutionals) return;
-
-        this.institutionalService.getAll()
-            .subscribe(response => {
-                this.state.set(INSTITUTIONALS_KEY, response as any);
-                this.institutionals = response
-            }, error => {
-                console.log(error.text());
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.institutionalService.getAll()
+                .subscribe(response => {
+                    this.institutionals = response
+                }, error => {
+                    console.log(error.text());
+                });
+        }
     }
 
     /**
@@ -636,6 +628,10 @@ export class AppComponent implements OnInit, AfterViewInit {
      * @memberof AppComponent
      */
     createPagseguroSession() {
+        if (!this.hasPagSeguro()) {
+            return;
+        }
+
         if (isPlatformBrowser(this.platformId)) {
             if (this.customerManager.hasToken()) {
                 let token: Token = this.customerManager.getToken();

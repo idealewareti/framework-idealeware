@@ -16,12 +16,14 @@ export class CategoryService {
 
     getTree(): Observable<Category[]> {
         let url = `${environment.API_CATEGORY}/categories/tree`;
+        console.log("API: "+ url);
         return this.client.get(url)
             .map(res => res.json())
     }
 
     getCategory(id: string): Observable<Category> {
         let url = `${environment.API_CATEGORY}/categories/${id}`;
+        console.log("API: "+ url);
         return this.client.get(url)
             .map(res => res.json())
     }
@@ -31,6 +33,7 @@ export class CategoryService {
             this.getTree()
                 .subscribe(categories => {
                     let category = categories.filter(c => c.id == id)[0];
+                    console.log("API: "+ category);
                     if (category && category.children)
                         resolve(category.children);
                     else resolve([]);

@@ -208,7 +208,6 @@ import { KondutoManager } from './managers/konduto.manager';
     ShowcaseBannerModule,
     ShowcaseBannerHalfModule,
     ShowcaseBannerStripeModule,
-    ShowcaseGroupModule,
     ShippingCalcModule,
     WaitLoaderModule,
     CpfMaskModule,
@@ -222,7 +221,8 @@ import { KondutoManager } from './managers/konduto.manager';
     CurrencyFormatModule,
     CustomPaintFilterModule,
     OrderByModule,
-    BrowserTransferStateModule
+    BrowserTransferStateModule,
+    ShowcaseGroupModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt-BR' },

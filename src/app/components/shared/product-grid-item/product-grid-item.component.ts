@@ -6,7 +6,6 @@ import { Sku } from '../../../models/product/sku';
 import { Router } from '@angular/router';
 import { AppCore } from '../../../app.core';
 import { EnumStoreModality } from '../../../enums/store-modality.enum';
-import { PaymentManager } from '../../../managers/payment.manager';
 
 @Component({
     selector: 'app-product-grid-item',
@@ -29,7 +28,6 @@ export class ProductGridItemComponent implements OnInit {
 
     constructor(
         private parentRouter: Router,
-        private paymentManager: PaymentManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
@@ -135,11 +133,9 @@ export class ProductGridItemComponent implements OnInit {
 
     simulateInstallments() {
         if (isPlatformBrowser(this.platformId)) {
-            this.paymentManager.getInstallments(this.sku)
-                .then(payment => {
-                    this.product.installmentText = this.paymentManager.getInstallmentText(payment, payment.paymentMethods[0]);
-                })
-                .catch(error => console.log(error));
+            if (this.product.installmentNumber > 0 && this.product.installmentValue > 0) {
+                this.product.installmentText = `em ${this.product.installmentNumber}x de R$ ${this.product.installmentValue.toFixed(2).toString().replace('.', ',')}`;
+            }
         }
     }
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.1.0
+-  Refactor em showcase, search e product-detail - diminuições de request (parcelamentos)
+
 ## 3.0.3
 -  Atualização da loja para recriar o carrinho assim que expirado
 

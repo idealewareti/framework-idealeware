@@ -1,12 +1,8 @@
 import { EnumBannerType } from "../../enums/banner-type.enum";
 
 export class ShowCaseBanner {
-    id: string;
-    showCaseId: string;
     name: string;
     fullBanner: string;
-    position: number;
-    createdDate: Date;
     url: string;
     bannerType: EnumBannerType = EnumBannerType.Full;
 

@@ -15,7 +15,6 @@ import { AppConfig } from '../../../app.config';
 import { StoreManager } from '../../../managers/store.manager';
 
 const SHOWCASE_KEY = makeStateKey('showcase_key');
-const STORE_KEY = makeStateKey('store_key');
 
 @Component({
     selector: 'app-showcase',
@@ -39,18 +38,23 @@ export class ShowcaseComponent implements OnInit {
         private router: Router,
         private state: TransferState,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) { }
+    ) { 
+        this.state.remove(SHOWCASE_KEY);
+    }
 
     ngOnInit() {
-        this.groups = (this.showcase && this.showcase.groups) ? this.showcase.groups : [];
         this.storeManager.getStore()
             .then(store => {
                 this.store = store;
+                this.showcase = this.state.get(SHOWCASE_KEY, null as any);
+                if (this.showcase) {
+                    this.initData(this.showcase);
+                    return;
+                }
+
                 this.service.getShowCase()
                     .subscribe(showcase => {
-                        console.log('Showcase: ');
-                        console.log(showcase);
-                        console.log('*******************************************');
+                        this.state.set(SHOWCASE_KEY, showcase as  any);
                         this.showcase = showcase;
                         this.initData(showcase);
                     }, error => console.log(error));
@@ -64,13 +68,14 @@ export class ShowcaseComponent implements OnInit {
         this.showcase = null;
         this.metaService.removeTag("name='title'");
         this.metaService.removeTag("name='description'");
+        this.state.remove(SHOWCASE_KEY);
     }
 
     private initData(data: ShowCase): void {
         this.groups = data.groups;
-        this.banners = data.pictures.filter(b => b.bannerType == EnumBannerType.Full);
-        this.stripeBanners = data.pictures.filter(b => b.bannerType == EnumBannerType.Tarja);
-        this.halfBanners = data.pictures.filter(b => b.bannerType == EnumBannerType.Half);
+        this.banners = data.banners.filter(b => b.bannerType == EnumBannerType.Full);
+        this.stripeBanners = data.banners.filter(b => b.bannerType == EnumBannerType.Tarja);
+        this.halfBanners = data.banners.filter(b => b.bannerType == EnumBannerType.Half);
 
         let title = (data.metaTagTitle) ? data.metaTagTitle : data.name;
         this.metaService.addTags([

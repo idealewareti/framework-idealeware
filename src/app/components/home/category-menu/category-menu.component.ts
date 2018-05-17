@@ -23,7 +23,9 @@ export class CategoryMenuComponent implements OnInit {
     constructor(
         private service: CategoryService,
         private state: TransferState
-    ) { }
+    ) { 
+        this.state.remove(CATEGORIES_TREE_KEY);
+    }
 
     ngOnInit() {
         this.categories = this.state.get(CATEGORIES_TREE_KEY, null as any);

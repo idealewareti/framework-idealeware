@@ -19,7 +19,7 @@
                     </td>
                     <td class="col-status">
                         <span>Status de Entrega</span>
-                        <strong class="status" [ngClass]="statusClass(order)">{{order.labelStatus()}}</strong>
+                        <strong class="status" [ngClass]="statusClass(order)">{{order.labelStatus}}</strong>
                                     <span *ngIf="order.status == 3" class="date">Entregue em: {{order.historyStatus[order.historyStatus.length - 1].alterDate | date:'dd/MM/y'}}</span>
                     </td>
                     <td class="col-total hidden-xs">
