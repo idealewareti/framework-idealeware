@@ -429,7 +429,6 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
                     resolve(new PagseguroCardBrand(response.brand));
                 },
                 error: (response) => {
-                    console.log(response);
                     reject('Cartão Inválido');
                 }
             });
@@ -491,7 +490,6 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
                 },
                 error: response => {
                     // this.loaderService.done();
-                    console.log(response);
                     this.pagseguro.installments = [];
                     reject(response);
                 }

@@ -377,7 +377,6 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
                             }
                         },
                         error: response => {
-                            console.log(response);
                             this.pagseguro_error = 'Não foi possível obter as formas de pagamento do Pagseguro';
                             swal('Erro ao obter as formas de pagamento', 'Falha ao obter as formas de pagamento do Pagseguro', 'error');
                         },

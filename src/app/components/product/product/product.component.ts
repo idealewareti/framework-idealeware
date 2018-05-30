@@ -64,7 +64,6 @@ export class ProductComponent implements OnDestroy {
     modality: EnumStoreModality = -1;
     showValuesProduct: boolean = false;
     totalNote: number = 0;
-    notFound: boolean = false;
     installment: string = '';
     selfColor: SelfColor = null;
     productAwaitedForm: FormGroup;
@@ -291,10 +290,8 @@ export class ProductComponent implements OnDestroy {
                 ]);
             })
             .catch(error => {
-                this.product = null;
                 console.log(error);
-                this.notFound = true;
-                this.titleService.setTitle('Ocorreu um erro');
+				this.parentRouter.navigate(['/404']);
             });
     }
 

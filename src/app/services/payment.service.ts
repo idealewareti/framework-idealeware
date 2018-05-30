@@ -34,7 +34,6 @@ export class PaymentService {
      */
     getDefault(): Observable<Payment> {
         let url = `${environment.API_PAYMENTS}/payments/default`;
-        console.log("API: "+ url);
         return this.client.get(url)
             .map(res => res.json())
     }
@@ -42,7 +41,6 @@ export class PaymentService {
     bankSlipTransaction(cartId: string, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/BankSlipTransaction/${cartId}`;
-            console.log("API: "+ url);
             this.client.post(url, null, token)
                 .map(res => {
                     if (res.status == 200) resolve(res.text());
@@ -57,7 +55,6 @@ export class PaymentService {
     creditCardTransaction(cartId, creditcard: CreditCard, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/CreditCardTransaction/${cartId}`;
-            console.log("API: "+ url);
             this.client.post(url, creditcard, token)
                 .map(res => {
                     if (res.status == 200) resolve(res.text());
@@ -71,14 +68,12 @@ export class PaymentService {
 
     simulateInstallments(cartId: string, token: Token): Observable<Payment[]> {
         let url = `${environment.API_PAYMENTS}/payments/PaymentSimulation/Cart/${cartId}`;
-        console.log("API: "+ url);
         return this.client.get(url, token)
             .map(res => res.json())
     }
 
     simulateInstallmentsBySkuId(skuId: string): Observable<Payment[]> {
         let url = `${environment.API_PAYMENTS}/payments/PaymentSimulation/Product/${skuId}`;
-        console.log("API: "+ url);
         return this.client.get(url)
             .map(res => res.json())
     }
@@ -92,7 +87,6 @@ export class PaymentService {
      */
     simulateInstallmentsBySkuIdDefault(skuId: string, sessionId: string = null): Observable<Payment> {
         let url = `${environment.API_PAYMENTS}/payments/PaymentSimulation/Product/${skuId}/Default?sessionId=${sessionId}`;
-        console.log("API: "+ url);
         return this.client.get(url)
             .map(res => res.json())
     }
@@ -100,7 +94,6 @@ export class PaymentService {
     createPagSeguroSession(token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/PagSeguro/Session`;
-            console.log("API: "+ url);
             this.client.get(url, token)
                 .map(res => {
                     resolve(res.text());
@@ -114,7 +107,6 @@ export class PaymentService {
     createPagSeguroSessionSimulator(): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/PagSeguro/Session/Simulator`;
-            console.log("API: "+ url);
             this.client.get(url)
                 .map(res => {
                     resolve(res.text());
@@ -128,8 +120,6 @@ export class PaymentService {
     getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Observable<PagSeguroSimulationResponse> {
         let urlProduction = `https://pagseguro.uol.com.br/checkout/v2/installments.json?sessionId=${sessionId}&amount=${amount}&creditCardBrand=${creditCardBrand}&maxInstallmentNoInterest=${maxInstallmentNoInterest}`;
         let urlSandbox = `https://sandbox.pagseguro.uol.com.br/checkout/v2/installments.json?sessionId=${sessionId}&amount=${amount}&creditCardBrand=${creditCardBrand}&maxInstallmentNoInterest=${maxInstallmentNoInterest}`;
-        console.log("API: "+ urlProduction);
-        console.log("API: "+ urlSandbox);
         return this.client.get(isSandBox ? urlSandbox : urlProduction)
             .map(res => res.json())
     }
@@ -137,7 +127,6 @@ export class PaymentService {
     PagseguroBankSlip(cartId: string, hash: string, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/PagSeguro/BankSlip/${cartId}?SenderHash=${hash}`;
-            console.log("API: "+ url);
             this.client.post(url, null, token)
                 .map(res => {
                     if (res.status == 200) {
@@ -154,7 +143,6 @@ export class PaymentService {
     PagseguroCreditCard(cartId: string, hash: string, creditCard: PagseguroCreditCard, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/PagSeguro/CreditCard/${cartId}/?SenderHash=${hash}`;
-            console.log("API: "+ url);
             this.client.post(url, creditCard, token)
                 .map(res => {
                     if (res.status == 200) {
@@ -171,7 +159,6 @@ export class PaymentService {
     pickUpStoreTransaction(cartId: string, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/PickUpStore/${cartId}/`;
-            console.log("API: "+ url);
             this.client.post(url, null, token)
                 .map(res => {
                     if (res.status == 200) {
@@ -188,7 +175,6 @@ export class PaymentService {
     delivertPayment(cartId: string, token: Token, changeFor: number = null): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/DeliveryPayment/${cartId}/`;
-            console.log("API: "+ url);
             changeFor = (changeFor) ? changeFor : 0;
             let body = { type: 'Money', changeFor: changeFor };
             this.client.post(url, body, token)
@@ -207,7 +193,6 @@ export class PaymentService {
     GetMercadoPagoPublicKey(token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/MercadoPago/PublicKey/`;
-            console.log("API: "+ url);
             this.client.get(url, token)
                 .map(res => {
                     if (res.status == 200) {
@@ -224,7 +209,6 @@ export class PaymentService {
     MercadoPagoCreditCard(cartId: string, creditCard: MercadoPagoCreditCard, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/MercadoPago/CreditCard/${cartId}`;
-            console.log("API: "+ url);
             this.client.post(url, creditCard, token)
                 .map(res => {
                     if (res.status == 200) {
@@ -242,7 +226,6 @@ export class PaymentService {
     MercadoPagoBankSlip(cartId: string, token: Token): Promise<string> {
         return new Promise((resolve, reject) => {
             let url = `${environment.API_PAYMENTS}/payments/MercadoPago/BankSlip/${cartId}`;
-            console.log("API: "+ url);
             this.client.post(url, null, token)
                 .map(res => {
                     if (res.status == 200) {
@@ -259,14 +242,12 @@ export class PaymentService {
 
     MercadoPagoGetPaymentsMethods(): Observable<MercadoPagoPaymentMethod[]> {
         let url = `${environment.API_PAYMENTS}/payments/MercadoPago/PaymentMethods`;
-        console.log("API: "+ url);
         return this.client.get(url)
             .map(res => res.json())
     }
 
     MercadoPagoGetInstalments(payment_method_id: string, amount: number): Observable<MercadoPagoInstallmentResponse> {
         let url = `${environment.API_PAYMENTS}/payments/MercadoPago/Installments/${payment_method_id}/${amount}`;
-        console.log("API: "+ url);
         return this.client.get(url)
             .map(res => res.json())
     }

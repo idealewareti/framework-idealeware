@@ -114,6 +114,7 @@ import { AppConfig } from './app.config';
 import { PopUpNewsLetterModule } from './components/home/popup-newsletter/popup-newsletter.module';
 import { StoreManager } from './managers/store.manager';
 import { KondutoManager } from './managers/konduto.manager';
+import { ServerResponseService  } from './services/server-response.service';
 
 @NgModule({
   declarations: [
@@ -170,7 +171,7 @@ import { KondutoManager } from './managers/konduto.manager';
       { path: 'produto/:id', component: ProductComponent, data: { name: 'Product' } },
       { path: 'recuperar-senha', component: ForgetPasswordComponent, data: { name: 'ForgetPassword' } },
       { path: ':product', component: ProductComponent, data: { name: 'Product' } },
-      { path: '**', component: RedirectComponent }
+      { path: '**', component: NotFoundComponent }
     ], { initialNavigation: 'enabled' }),
     HttpModule,
     FormsModule,
@@ -263,7 +264,8 @@ import { KondutoManager } from './managers/konduto.manager';
     PaymentManager,
     ProductManager,
     StoreManager,
-    KondutoManager
+    KondutoManager,
+	ServerResponseService
   ],
   bootstrap: [AppComponent]
 })

@@ -45,9 +45,9 @@ export class SignUpComponent {
         private titleService: Title,
         @Inject(PLATFORM_ID) private platformId: Object,
     ) {
-        this.customer = new Customer({type: 1, gender: 'M'});
+        this.customer = new Customer({ type: 1, gender: 'M' });
         this.titleService.setTitle('Cadastre-se');
-        this.customer.addresses.push(new CustomerAddress({addressType: 1}));
+        this.customer.addresses.push(new CustomerAddress({ addressType: 1 }));
 
         this.myForm = formBuilder.group({
             firstname_Companyname: ['', Validators.required],
@@ -79,60 +79,60 @@ export class SignUpComponent {
         });
     }
 
-    ngOnInit() {}
+    ngOnInit() { }
 
-    ngAfterContentChecked() {}
+    ngAfterContentChecked() { }
 
     signUp(event) {
         event.preventDefault();
 
-        if(this.invalidForm()){
+        if (this.invalidForm()) {
             swal({
                 title: 'Falha ao cadastrar',
                 text: 'Os campos informados com * são obrigatórios',
                 type: "error",
                 confirmButtonText: "OK"
             });
-            
-            for(let i in this.myForm.controls){
+
+            for (let i in this.myForm.controls) {
                 (<any>this.myForm.controls[i])._touched = true;
             }
         }
-        else{
+        else {
             this.customer.addresses[0].addressName = 'Endereço Padrão';
             this.manager.signUp(this.customer)
-            .then(response => {
-                let cartId = localStorage.getItem('cart_id');
-                if(cartId)
-                    this.parentRouter.navigateByUrl(`/checkout`);
-                else{
-                    this.parentRouter.navigateByUrl(`/`);
-                }
-            })
-            .catch(error => {
-                let title = '';
-                let message = '';
-
-                if (error.status == 0) {
-                    title = AppTexts.SIGNUP_ERROR_TITLE;
-                    message = AppTexts.SIGNUP_API_OFFLINE;
-                }
-                else {
-                    title = AppTexts.SIGNUP_ERROR_TITLE;
-                    if (new RegExp(/\[(.*?)\]/g).test(error.text())){
-                        let response = error.text().match(/\[(.*?)\]/g)
-                        message = response[response.length - 1].replace('["', '').replace('"]', '');
+                .then(response => {
+                    let cartId = localStorage.getItem('cart_id');
+                    if (cartId)
+                        this.parentRouter.navigateByUrl(`/checkout`);
+                    else {
+                        this.parentRouter.navigateByUrl(`/`);
                     }
-                    else message = error.text();
-                }
+                })
+                .catch(error => {
+                    let title = '';
+                    let message = '';
 
-                swal({
-                    title: title,
-                    text: message,
-                    type: "error",
-                    confirmButtonText: "OK"
+                    if (error.status == 0) {
+                        title = AppTexts.SIGNUP_ERROR_TITLE;
+                        message = AppTexts.SIGNUP_API_OFFLINE;
+                    }
+                    else {
+                        title = AppTexts.SIGNUP_ERROR_TITLE;
+                        if (new RegExp(/\[(.*?)\]/g).test(error.text())) {
+                            let response = error.text().match(/\[(.*?)\]/g)
+                            message = response[response.length - 1].replace('["', '').replace('"]', '');
+                        }
+                        else message = error.text();
+                    }
+
+                    swal({
+                        title: title,
+                        text: message,
+                        type: "error",
+                        confirmButtonText: "OK"
+                    });
                 });
-            });
         }
     }
 
@@ -154,7 +154,7 @@ export class SignUpComponent {
      * @memberOf SignUpComponent
      */
     public changeCustomerType(type: number, event = null) {
-        if(event)
+        if (event)
             event.preventDefault();
         this.customer.type = type;
         this.customer.cpf_Cnpj = '';
@@ -166,57 +166,57 @@ export class SignUpComponent {
         if (this.customer.addresses[0] != null && this.customer.addresses[0].zipCode) {
             toastr['info']('Localizando o endereço');
             this.dneService.getAddress(this.customer.addresses[0].zipCode)
-            .subscribe(response => {
-                this.customer.addresses[0].district = response.neighborhoods;
-                this.customer.addresses[0].city = response.city;
-                this.customer.addresses[0].addressLine1 = response.street;
-                this.customer.addresses[0].state = response.state;
-                if(response.street){
-                    toastr['success']('Endereço encontrado');
-                }
-                else{
-                    toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
-                }
-            }),error => { 
-                console.log(error);
-                toastr['error']('Endereço não encontrado, preencha os campos manualmente');
-            };
+                .subscribe(response => {
+                    this.customer.addresses[0].district = response.neighborhoods;
+                    this.customer.addresses[0].city = response.city;
+                    this.customer.addresses[0].addressLine1 = response.street;
+                    this.customer.addresses[0].state = response.state;
+                    if (response.street) {
+                        toastr['success']('Endereço encontrado');
+                    }
+                    else {
+                        toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
+                    }
+                }), error => {
+                    console.log(error);
+                    toastr['error']('Endereço não encontrado, preencha os campos manualmente');
+                };
         }
     }
 
-    isMobile(): boolean{
+    isMobile(): boolean {
         if (isPlatformBrowser(this.platformId)) {
             return AppCore.isMobile(window);
         }
         else return false;
     }
 
-    hasError(key: string): boolean{
+    hasError(key: string): boolean {
         let error: boolean = (this.myForm.controls[key].touched && this.myForm.controls[key].invalid);
         return error;
     }
 
-    invalidForm(): boolean{
-        if(this.myForm.invalid && this.customer.type == 1)
+    invalidForm(): boolean {
+        if (this.myForm.invalid && this.customer.type == 1)
             return true;
-        else if(this.myForm.invalid && this.customer.type == 1){
+        else if (this.myForm.invalid && this.customer.type == 1) {
             let errors = [];
-            for(let i in this.myForm.controls){
-                if((<any>this.myForm.controls[i]).invalid)
+            for (let i in this.myForm.controls) {
+                if ((<any>this.myForm.controls[i]).invalid)
                     errors.push(i)
             }
 
-            if(errors.length == 1 && errors[0] == 'birthdate')
+            if (errors.length == 1 && errors[0] == 'birthdate')
                 return false;
             else return true;
         }
         else return false;
     }
 
-    errorCPF_CNPJ(): boolean{
-        if(this.customer.type == 1 && (this.hasError('cpf_Cnpj') || (!this.validCPF() && this.validCPF() != null)))
+    errorCPF_CNPJ(): boolean {
+        if (this.customer.type == 1 && (this.hasError('cpf_Cnpj') || (!this.validCPF() && this.validCPF() != null)))
             return true;
-        else if(this.customer.type == 2 && (this.hasError('cpf_Cnpj') || (!this.validCNPJ() && this.validCNPJ() != null)))
+        else if (this.customer.type == 2 && (this.hasError('cpf_Cnpj') || (!this.validCNPJ() && this.validCNPJ() != null)))
             return true;
         else return false;
     }

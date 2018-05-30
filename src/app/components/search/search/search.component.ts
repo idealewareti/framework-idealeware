@@ -136,12 +136,7 @@ export class SearchComponent implements OnInit, OnDestroy {
                     })
                     .catch(error => {
                         console.log(error);
-                        this.loading = false;
-                        this.variations = [];
-                        this.options = [];
-                        this.brands = [];
-                        // this.getCategories()
-                        //     .then(categories => this.buildFilterModel());
+						this.parentRouter.navigate(['/404']);
                     });
             });
     }

@@ -74,7 +74,7 @@
                                 <div class="form-group required col-md-6" *ngIf="customer.type == 1" [ngClass]="{'has-error': hasError('birthdate')}">
                                     <label for="birthdate" class="col-sm-4 control-label">{{(customer.type == 1) ? 'Data de Nascimento' : 'Data de Fundação'}}</label>
                                     <div class="col-sm-8">
-                                        <input type="date" class="form-control" formControlName="birthdate" placeholder="00/00/0000" maxlength="10" [(ngModel)]="customer.birthdate">
+                                        <input type="date" class="form-control date" formControlName="birthdate" placeholder="00/00/0000" maxlength="10" [(ngModel)]="customer.birthdate">
                                         <span *ngIf="hasError('birthdate')" class="help-block">O campo é obrigatório</span>
                                     </div>
                                 </div>

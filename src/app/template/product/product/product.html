@@ -1,13 +1,3 @@
-<main role="main" class="product-page">
-    <div class="product-page-details">
-        <div class="container" *ngIf="notFound">
-            <div class="product-unavaliable">
-                <b>Página não encontrada</b>
-            </div>
-        </div>
-    </div>
-</main>
-
 <main role="main" class="product-page" *ngIf="!isMobile() && isProductLoaded()">
     
     <div class="product-page-details">
