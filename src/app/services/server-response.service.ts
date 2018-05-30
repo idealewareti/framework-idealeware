@@ -1,7 +1,6 @@
 import { RESPONSE } from '@nguniversal/express-engine/tokens'
 import { Inject, Injectable, Optional } from '@angular/core'
 import { Response } from 'express'
-import ms = require('ms')
 
 export interface IServerResponseService {
   getHeader(key: string): string
@@ -76,35 +75,6 @@ export class ServerResponseService implements IServerResponseService {
     return this
   }
 
-  setCachePrivate(): this {
-    if (this.response) {
-      this.setCache('private')
-    }
-    return this
-  }
-
-  setCacheNone(): this {
-    if (this.response) {
-      this.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
-      this.setHeader('Pragma', 'no-cache')
-    }
-    return this
-  }
-
-  setCache(directive: HttpCacheDirective, maxAge?: string, smaxAge?: string): this {
-    if (this.response) {
-      // tslint:disable-next-line:max-line-length
-      if (smaxAge) {
-        this.setHeader('Cache-Control', `${directive}, max-age=${maxAge ? ms(maxAge) / 1000 : 0}, s-maxage=${ms(smaxAge) / 1000}`)
-      } else {
-        this.setHeader('Cache-Control', `${directive}, max-age=${maxAge ? ms(maxAge) / 1000 : 0}`)
-      }
-
-      this.setHeader('Expires', maxAge ? new Date(Date.now() + ms(maxAge)).toUTCString() : new Date(Date.now()).toUTCString())
-    }
-    return this
-  }
-
   setError(message = 'internal server error'): this {
     if (this.response) {
       this.response.statusCode = 500
@@ -113,5 +83,3 @@ export class ServerResponseService implements IServerResponseService {
     return this
   }
 }
-
-export type HttpCacheDirective = 'public' | 'private' | 'no-store' | 'no-cache' | 'must-revalidate' | 'no-transform' | 'proxy-revalidate'
