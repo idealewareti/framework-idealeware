@@ -60,7 +60,7 @@
                     <strong>Subtotal: <span class="price">{{getSubTotal() |  currencyFormat }}</span></strong>
                 </div>
                 <div class="btn-actions">
-                    <a *ngIf="modality > -1" [routerLink]="['/']" class="btn btn-block btn-default btn-lg btn-continue">{{(modality == 1) ? 'Continuar Comprando' : 'Continuar orçando'}}</a>
+                    <a *ngIf="store.modality > -1" [routerLink]="['/']" class="btn btn-block btn-default btn-lg btn-continue">{{(store.modality == 1) ? 'Continuar Comprando' : 'Continuar orçando'}}</a>
                     <app-checkout-button [cart]="getCart()"></app-checkout-button>
                 </div>
             </div>
