@@ -8,8 +8,10 @@
     <li class="hidden-lg hidden-md" *ngIf="isLoggedIn">
         <a [routerLink]="['/conta/pedidos']" title="Meus Pedidos">Meus Pedidos</a>
     </li>
+
     <li role="separator" class="divider hidden-md hidden-lg"></li>
-    <li *ngFor="let category of categories" [ngClass]="{'dropdown': category.children.length > 0}" >
+
+    <li *ngFor="let category of categories" [ngClass]="{'dropdown': category.children.length > 0}">
         <a [routerLink]="[getRoute(category)]" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" role="button"
             aria-haspopup="true" aria-expanded="false">
             <span *ngIf="category.picture" class="icon hidden-xs">
@@ -22,14 +24,22 @@
             <li *ngFor="let sub1 of category.children" [ngClass]="{'dropdown': sub1.children.length > 0}">
                 <a [routerLink]="[getRoute(sub1)]" [attr.title]="sub1.name">{{sub1.name}}</a>
                 <ul *ngIf="sub1.children.length > 0" class="dropdown-menu">
-                    <li *ngFor="let sub2 of sub1.children">
+                    <li *ngFor="let sub2 of sub1.children" [ngClass]="{'dropdown': sub1.children.length > 0}">
                         <a [routerLink]="[getRoute(sub2)]" [attr.title]="sub2.name">{{sub2.name}}</a>
+                        <ul *ngIf="sub2.children.length > 0" class="dropdown-menu">
+                            <li *ngFor="let sub3 of sub2.children">
+                                <a [routerLink]="[getRoute(sub3)]" [attr.title]="sub3.name">{{sub3.name}}</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>
         </ul>
     </li>
+
+
     <li>
         <app-group class=""></app-group>
     </li>
+
 </ul>
