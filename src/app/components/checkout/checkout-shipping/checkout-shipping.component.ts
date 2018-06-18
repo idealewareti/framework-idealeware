@@ -94,7 +94,8 @@ export class CheckoutShippingComponent implements OnChanges {
                 shipping.shippingType = EnumShippingType.Delivery;
                 delivery.quotId = this.intelipost.content.id.toString();
                 delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
-                delivery.shippingCost = this.shippingCost(intelipostOption);
+                // delivery.shippingCost = this.shippingCost(intelipostOption);
+                delivery.shippingCost = intelipostOption.final_shipping_cost;
                 delivery.deliveryMethodName = intelipostOption.delivery_method_name;
                 delivery.deliveryProviderName = intelipostOption.logistic_provider_name;
                 delivery.deliveryEstimateBusinessDays = intelipostOption.delivery_estimate_business_days;

@@ -23,6 +23,7 @@ export const environment = {
   API_GOOGLE: 'https://api-pub-google.prd.idealeware.com.br',
   API_GROUP: 'https://api-pub-group.prd.idealeware.com.br',
   API_INSTITUTIONAL: 'https://api-pub-institutional.prd.idealeware.com.br',
+  //API_INTELIPOST: 'http://localhost:7023',
   API_INTELIPOST: 'https://api-pub-intelipost.prd.idealeware.com.br',
   API_ORDER: 'https://api-pub-order.prd.idealeware.com.br',
   API_ORDERVALIDATION: 'https://api-pub-ordervalidation.prd.idealeware.com.br',

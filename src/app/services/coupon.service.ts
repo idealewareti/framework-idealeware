@@ -22,9 +22,8 @@ export class CouponService {
 
     public getCouponDiscount(id: string, code: string): Observable<Cart> {
         let url = `${environment.API_COUPON}/coupons/${id}/coupon/${code}`;
-        return this.client.get(url)
+        return this.client.get(encodeURI(url))
             .map(res => res.json())
-
     }
 
     public deleteCouponDiscount(cartId: string, couponId: string): Observable<Cart> {

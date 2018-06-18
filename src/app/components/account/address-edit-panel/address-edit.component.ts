@@ -65,6 +65,7 @@ export class AddressEditComponent implements OnInit {
 
     submit(event) {
         event.preventDefault();
+        debugger;
         if (this.isEdit) this.update();
         else this.save();
     }
@@ -82,6 +83,14 @@ export class AddressEditComponent implements OnInit {
     }
 
     private save() {
+        if(this.address.id){
+            this.update();
+        }else{
+            this.insert();
+        }
+    }
+
+    private insert(){
         if (isPlatformBrowser(this.platformId)) {
             let token: Token = this.getToken();
             this.service.saveAddress(this.address, token)

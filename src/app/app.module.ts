@@ -114,7 +114,8 @@ import { AppConfig } from './app.config';
 import { PopUpNewsLetterModule } from './components/home/popup-newsletter/popup-newsletter.module';
 import { StoreManager } from './managers/store.manager';
 import { KondutoManager } from './managers/konduto.manager';
-import { ServerResponseService  } from './services/server-response.service';
+import { ServerResponseService } from './services/server-response.service';
+import { ProductShipping } from './components/product/product-shipping/product-shipping.component';
 
 @NgModule({
   declarations: [
@@ -137,6 +138,7 @@ import { ServerResponseService  } from './services/server-response.service';
     SearchComponent,
     SignUpComponent,
     SafeHtmlPipe,
+    ProductShipping
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: `${AppConfig.DOMAIN}-app` }),
@@ -144,27 +146,27 @@ import { ServerResponseService  } from './services/server-response.service';
       { path: '', component: ShowcaseComponent, data: { name: 'Home' } },
       { path: '404', component: NotFoundComponent },
       { path: 'erro-500', component: Error500Component },
-      { path: 'buscar', component: SearchComponent, data: { name: 'Search' }  },
+      { path: 'buscar', component: SearchComponent, data: { name: 'Search' } },
       { path: 'carrinho', component: CartComponent, data: { name: 'Basket' } },
       { path: 'categoria/:id', component: SearchComponent, data: { name: 'Category' } },
       { path: 'categoria/:id/:nicename', component: SearchComponent, data: { name: 'Category' } },
       { path: 'contato', component: InstitutionalComponent },
       { path: 'conta', loadChildren: 'app/components/account/account.module#AccountModule' },
-      { path: 'grupo/:id/:nicename', component: SearchComponent, data: { name: 'Search' }  },
+      { path: 'grupo/:id/:nicename', component: SearchComponent, data: { name: 'Search' } },
       { path: 'checkout', component: CheckoutComponent, data: { name: 'Checkout' } },
       { path: 'checkout/concluido/:id', component: CheckoutFinishComponent, data: { name: 'Checkout' } },
       { path: 'compare', component: CompareComponent },
       { path: 'corespersonalizadas', loadChildren: 'app/components/custom-paint/custom-paint.module#CustomPaintModule' },
       { path: 'cores-personalizadas', loadChildren: 'app/components/custom-paint/custom-paint.module#CustomPaintModule' },
-      { path: 'grupo/:id/:nicename', component: SearchComponent, data: { name: 'Search' }  },
+      { path: 'grupo/:id/:nicename', component: SearchComponent, data: { name: 'Search' } },
       { path: 'institucional/:id', component: InstitutionalComponent },
       { path: 'institucional/:id/:nicename', component: InstitutionalComponent },
       { path: 'login', component: LoginComponent },
       { path: 'login/:step', component: LoginComponent },
       { path: 'cadastrar', component: SignUpComponent, data: { name: 'SignUp' } },
       { path: 'logout', component: LogoutComponent },
-      { path: 'marcas/:id', component: SearchComponent, data: { name: 'Search' }  },
-      { path: 'marcas/:id/:nicename', component: SearchComponent, data: { name: 'Search' }  },
+      { path: 'marcas/:id', component: SearchComponent, data: { name: 'Search' } },
+      { path: 'marcas/:id/:nicename', component: SearchComponent, data: { name: 'Search' } },
       { path: 'orcamento', component: BudgetComponent },
       { path: 'orcamento/concluido', component: BudgetFinishComponent },
       { path: 'orcamento/concluido/:id', component: BudgetFinishComponent },
@@ -265,7 +267,7 @@ import { ServerResponseService  } from './services/server-response.service';
     ProductManager,
     StoreManager,
     KondutoManager,
-	ServerResponseService
+    ServerResponseService
   ],
   bootstrap: [AppComponent]
 })

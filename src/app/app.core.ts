@@ -89,4 +89,19 @@ export class AppCore{
           .replace(/-+/g, '-');
         return str;
       };
+
+      public static ConvertTextToDate(textDate:string){
+        debugger;
+        var array = textDate.split('/').map((item,index)=>
+        {
+            if(index == 1){
+                return parseInt(item) - 1;
+            }else{
+                return parseInt(item);
+            }
+        }); 
+        
+        var date = new Date(array[2], array[1], array[0]);
+        return date;
+    }
 }

@@ -4,5 +4,5 @@ export const AppConfig = {
     FACEBOOK_PAGE: 'idealeware',
     LOADER_COLOR: '#333333',
     PORT: 4008,
-    KONDUTO: true
+    KONDUTO: false
 }

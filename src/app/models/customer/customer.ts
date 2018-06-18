@@ -19,6 +19,7 @@ export class Customer {
   status: true;
   receivePromotionalAndNews: true;
   type: number = 1;
+  date :string;
 
   constructor(object = null) {
     if (object) return this.createFromResponse(object);

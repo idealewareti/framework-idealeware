@@ -49,7 +49,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     */
     private path: string;
     private logged: boolean;
-    private ssl: boolean = false;
     private PagseguroScriptAdded: boolean = false;
     private MercadopagoScriptAdded: boolean = false;
     cart: Cart;
@@ -152,10 +151,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.checkSessionId();
         this.addPagseguro();
         this.addMercadoPago();
-        if (this.store && !this.ssl) {
-            this.ssl = this.addSSL();
-        }
-
     }
 
     ngAfterViewInit(): void {
@@ -586,28 +581,6 @@ export class AppComponent implements OnInit, AfterViewInit {
                     }
                 }, e => console.log(e));
         }
-    }
-
-    /**
-     * Move o selo SSL para dentro do footer
-     * @returns {boolean} 
-     * @memberof AppComponent
-     */
-    addSSL(): boolean {
-        if (isPlatformBrowser(this.platformId)) {
-            let children = $('#index-seal-ssl').children();
-            if (children.length == 4) {
-                for (let i = 0; i < children.length; i++) {
-                    let c = children[i];
-                    $('#selo-alphassl').append(c);
-                }
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        return false;
     }
 
     /**

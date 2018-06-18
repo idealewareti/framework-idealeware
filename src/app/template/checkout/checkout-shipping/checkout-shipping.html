@@ -8,19 +8,19 @@
             <div class="radio" *ngFor="let option of intelipost.content.delivery_options">
                 <label (click)="addShippingToCart($event, option)">
                     <i class="fa" [ngClass]="{'fa-square-o': !checkOption(option.delivery_method_name), 'fa-check-square-o': checkOption(option.delivery_method_name)}"></i>
-                     {{option.delivery_method_name}} | até {{option.delivery_estimate_business_days}} dias úteis -
-                        <strong *ngIf="shippingCost(option)  == 0">Frete Grátis</strong>
-                        <strong *ngIf="shippingCost(option)  != 0">{{shippingCost(option) |  currencyFormat }}</strong>
-                    </label>
+                    {{option.delivery_method_name}} | até {{option.delivery_estimate_business_days}} dias úteis -
+                    <strong *ngIf="shippingCost(option)  == 0">Frete Grátis</strong>
+                    <!-- <strong *ngIf="shippingCost(option)  != 0">{{shippingCost(option) |  currencyFormat }}</strong> -->
+                    <strong>{{option.final_shipping_cost | currencyFormat }}</strong>
+                </label>
             </div>
         </div>
         <div class="shipping-pickupstore">
             <div class="radio" If="branches.length > 0" *ngFor="let branch of allowPickUpStore()">
                 <label (click)="addShippingToCart($event, null, branch)">
                     <i class="fa" [ngClass]="{'fa-square-o': !checkOption(null, branch), 'fa-check-square-o': checkOption(null, branch)}"></i>
-                    Retirar na Loja: {{branch.name}}<br>
-                    {{branch.addressLine1}}, {{branch.number}} {{branch.addressline2}}
-                    {{branch.city}}/{{branch.state}}
+                    Retirar na Loja: {{branch.name}}
+                    <br> {{branch.addressLine1}}, {{branch.number}} {{branch.addressline2}} {{branch.city}}/{{branch.state}}
                 </label>
             </div>
         </div>

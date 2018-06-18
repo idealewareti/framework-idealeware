@@ -79,7 +79,7 @@ export class ShippingCalcComponent implements OnInit {
                     this.loading = true;
                     this.cartManager.getCart(localStorage.getItem('cart_id').toString())
                         .then(cart => {
-                            if (cart.totalPurchasePrice == 0) {
+                            if (cart.products.length == 0) {
                                 swal({ title: 'Erro!', text: 'Carrinho vazio', type: 'warning', confirmButtonText: 'OK' });
                                 reject(null);
                             }
@@ -113,7 +113,7 @@ export class ShippingCalcComponent implements OnInit {
             this.sendRequest()
                 .then(response => {
                     this.intelipost = response;
-                    this.deliveryOptions = this.intelipost.content.delivery_options;
+                    this.deliveryOptions = this.intelipost.content.delivery_options;      
                     this.loading = false;
                 })
                 .catch(error => {
@@ -153,7 +153,9 @@ export class ShippingCalcComponent implements OnInit {
                 shipping.shippingType = EnumShippingType.Delivery;
                 delivery.quotId = this.intelipost.content.id.toString();
                 delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
-                delivery.shippingCost = this.shippingCost(intelipostOption);
+                //delivery.shippingCost = this.shippingCost(intelipostOption);
+                console.log(intelipostOption);
+                delivery.shippingCost = intelipostOption.final_shipping_cost;
                 delivery.deliveryMethodName = intelipostOption.delivery_method_name;
                 delivery.deliveryProviderName = intelipostOption.logistic_provider_name;
                 delivery.deliveryEstimateBusinessDays = intelipostOption.delivery_estimate_business_days;
@@ -184,7 +186,6 @@ export class ShippingCalcComponent implements OnInit {
                     console.log(error);
                     this.loading = false;
                 });
-
         });
     }
 

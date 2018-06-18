@@ -176,6 +176,10 @@ export class CartComponent {
         return this.globals.cart.totalDiscountPrice;
     }
 
+    getExistShipping(){
+        return this.globals.cart.shipping.shippingType;        
+    }
+
     getShipping() {
         return this.globals.cart.totalFreightPrice;
     }

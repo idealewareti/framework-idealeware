@@ -1,5 +1,5 @@
 <main role="main" class="product-page" *ngIf="!isMobile() && isProductLoaded()">
-    
+
     <div class="product-page-details">
         <div class="container">
             <div class="bread-crumb">
@@ -14,8 +14,12 @@
                     <div class="product-name col-md-12">
                         <h2>{{product.name}}</h2>
                     </div>
-                    <div class="product-sku text-right col-md-12">Marca: <span>{{product.brand.name}}</span></div>
-                    <div class="product-sku text-right col-md-12">Cód: <span>{{sku.code}}</span></div>
+                    <div class="product-sku text-right col-md-12">Marca:
+                        <span>{{product.brand.name}}</span>
+                    </div>
+                    <div class="product-sku text-right col-md-12">Cód:
+                        <span>{{sku.code}}</span>
+                    </div>
 
                     <div class="rating-stars text-left col-md-12" *ngIf="getRating() > 0">
                         <span class="star">
@@ -23,7 +27,7 @@
                             <i class="fa" [ngClass]="{'fa-star':totalNote > 1, 'fa-star-o':totalNote < 2}" aria-hidden="true"></i>
                             <i class="fa" [ngClass]="{'fa-star':totalNote > 2, 'fa-star-o':totalNote < 3}" aria-hidden="true"></i>
                             <i class="fa" [ngClass]="{'fa-star':totalNote > 3, 'fa-star-o':totalNote < 4}" aria-hidden="true"></i>
-                            <i class="fa" [ngClass]="{'fa-star':totalNote > 4, 'fa-star-o':totalNote < 5}" aria-hidden="true"></i>         
+                            <i class="fa" [ngClass]="{'fa-star':totalNote > 4, 'fa-star-o':totalNote < 5}" aria-hidden="true"></i>
                         </span>
                         <span class="qty">{{getRating()}}</span>
                     </div>
@@ -31,21 +35,26 @@
                     <div class="product-short-description col-md-12">
                         <p [innerHTML]="product.briefDescription"></p>
                     </div>
-                    
+
                     <div *ngIf="isProductRelated()" class="product-variation col-md-12">
                         <app-related-products [relatedProducts]="related" [product]="product" (productUpdated)="handleProductUpdated($event)"></app-related-products>
                     </div>
 
                     <div *ngIf="!isProductRelated() && !isHiddenVariation() && product.skus.length > 0" class="product-variation col-md-12">
-                         <app-product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></app-product-variation> 
+                        <app-product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)"
+                            [skus]="product.skus"></app-product-variation>
                     </div>
 
                     <div class="product-variation-item" *ngIf="product.selfColor">
                         <legend class="product-variation-title">Cor selecionada:</legend>
-                        <span class="product-variation-option" *ngIf="!feature"><a href="#" (click)="colorPicker($event)">Nenhuma cor selecionada</a></span>
+                        <span class="product-variation-option" *ngIf="!feature">
+                            <a href="#" (click)="colorPicker($event)">Nenhuma cor selecionada</a>
+                        </span>
                         <span class="product-variation-option" *ngIf="feature">
                             <span class="self-color-selected" [style.background-color]="selfColor.Hex"></span>
-                        <span class="self-color-text"><a href="#" (click)="colorPicker($event)">{{feature}}</a></span>
+                            <span class="self-color-text">
+                                <a href="#" (click)="colorPicker($event)">{{feature}}</a>
+                            </span>
                         </span>
                     </div>
 
@@ -55,12 +64,12 @@
                             <div class="product-price-box" *ngIf="sku.promotionalPrice > 0 && sku.price > 0">
                                 <diV class="col-md-6 pull-right text-center">
                                     <span class="old-price">
-                                    <span class="price-label">De:</span>
-                                    <span class="price">{{sku.price |  currencyFormat}}</span>
+                                        <span class="price-label">De:</span>
+                                        <span class="price">{{sku.price | currencyFormat}}</span>
                                     </span>
                                     <span class="regular-price">
-                                    <span class="price-label">Por</span>
-                                    <span class="price">{{sku.promotionalPrice |  currencyFormat}}</span>
+                                        <span class="price-label">Por</span>
+                                        <span class="price">{{sku.promotionalPrice | currencyFormat}}</span>
                                     </span>
                                     <span class="parcelamento" *ngIf="installment">
                                         {{ installment }}
@@ -71,15 +80,14 @@
                             <div class="product-price-box" *ngIf="sku.promotionalPrice == 0 && sku.price > 0">
                                 <diV class="col-md-6 pull-right text-center">
                                     <span class="regular-price">
-                                    <span class="price-label"></span>
-                                    <span class="price">{{sku.price |  currencyFormat}}</span>
+                                        <span class="price-label"></span>
+                                        <span class="price">{{sku.price | currencyFormat}}</span>
                                     </span>
                                     <span class="parcelamento" *ngIf="installment">
                                         {{ installment }}
                                     </span>
                                     <span class="text-info" *ngIf="getTotalServices() > 0">
-                                        + {{getTotalServices() |  currencyFormat}}
-                                        em serviços
+                                        + {{getTotalServices() | currencyFormat}} em serviços
                                     </span>
                                 </diV>
                             </div>
@@ -99,7 +107,9 @@
                                     <div class="form-group">
                                         <input class="input" type="number" maxlength="2" min="1" [(ngModel)]="areaSizer" placeholder="m²">
                                     </div>
-                                    <button (click)="getAreaSizer($event)" class="btn btn-default"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                                    <button (click)="getAreaSizer($event)" class="btn btn-default">
+                                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                    </button>
                                 </div>
                             </div>
 
@@ -118,12 +128,12 @@
                                     </div>
 
                                     <div class="product-buy-button col-xs-8 col-md-12">
-                                        <button class="btn btn-success btn-block btn-lg" (click)="addToCart()"><i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                        <button class="btn btn-success btn-block btn-lg" (click)="addToCart()">
+                                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                                             <span *ngIf="modality == 1">Comprar</span>
                                             <span *ngIf="modality == 0">Orçar</span>
                                         </button>
                                     </div>
-
                                 </div>
                                 <div class="stock-info stock-alert" *ngIf="showStock()">
                                     <p>Temos apenas {{sku.stock}} no estoque</p>
@@ -132,6 +142,11 @@
                             </div>
                         </div>
                         
+                        <div class="col-md-12">
+                            <hr>
+                            <product-shipping [product]="product"></product-shipping>
+                        </div>
+
                     </div>
 
                     <div class="product-unavaliable" *ngIf="!isProductAvailable()">
@@ -141,12 +156,16 @@
                             <p>Avise-me quando estiver disponível</p>
                             <div class="form-group box-name" [ngClass]="{'has-error': hasError('name')}">
                                 <label for="name" class="sr-only">Nome</label>
-                                <input type="text" name="name" [(ngModel)]="productsAwaited.name" class="form-control form-input" placeholder="Nome" required formControlName="name" >
+                                <input type="text" name="name" [(ngModel)]="productsAwaited.name" class="form-control form-input" placeholder="Nome" required
+                                    formControlName="name">
                             </div>
                             <div class="form-group box-email" [ngClass]="{'has-error': hasError('email')}">
                                 <label for="email" class="sr-only">E-mail</label>
-                                <input type="email" name="email" [(ngModel)]="productsAwaited.email" class="form-control form-input" placeholder="E-mail" formControlName="email" required>
-                                <button type="submit" id="btn-productsawaited" class="btn btn-clear"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                                <input type="email" name="email" [(ngModel)]="productsAwaited.email" class="form-control form-input" placeholder="E-mail"
+                                    formControlName="email" required>
+                                <button type="submit" id="btn-productsawaited" class="btn btn-clear">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                </button>
                             </div>
                             <div class="form-group">
                                 <div *ngIf="hasError('name')" class="text-danger">O campo Nome é obrigatório</div>
@@ -162,7 +181,9 @@
     <div class="product-extra" *ngIf="product.selfColor">
         <div class="container">
             <div class="description">
-                <h3 class="title"><b>SELECIONE A COR</b></h3>
+                <h3 class="title">
+                    <b>SELECIONE A COR</b>
+                </h3>
             </div>
             <app-self-color (colorUpdated)="handleFeatureUpdated($event)"></app-self-color>
         </div>
@@ -170,18 +191,23 @@
 
     <div class="product-suggestions">
         <div class="container">
-            <app-cross-selling *ngIf="product.crossSellingComplete.length > 0" [store]="getStore()"  [products]="product.crossSellingComplete"></app-cross-selling>
+            <app-cross-selling *ngIf="product.crossSellingComplete.length > 0" [store]="getStore()" [products]="product.crossSellingComplete"></app-cross-selling>
         </div>
     </div>
+
     <div class="product-extra">
         <div class="container">
             <div class="description" *ngIf="product.description">
-                <h3 class="title"><b>INFORMAÇÕES DO PRODUTO</b></h3>
+                <h3 class="title">
+                    <b>INFORMAÇÕES DO PRODUTO</b>
+                </h3>
                 <div class="description-text" [innerHTML]="product.description"></div>
             </div>
 
             <div class="specifications" *ngIf="hasTechnicalInformation()">
-                <h3 class="title"><b>ESPECIFICAÇÕES TÉCNICAS</b></h3>
+                <h3 class="title">
+                    <b>ESPECIFICAÇÕES TÉCNICAS</b>
+                </h3>
                 <table class="table">
                     <tbody>
                         <tr *ngFor="let techInfo of product.technicalInformation">
@@ -193,7 +219,9 @@
             </div>
 
             <div class="fileguide" *ngIf="hasFileGuide()">
-                <h3 class="title"><b>MANUAL DO PRODUTO</b></h3>
+                <h3 class="title">
+                    <b>MANUAL DO PRODUTO</b>
+                </h3>
                 <div class="lineshowcase"></div>
                 <div class="form-group">
                     <a [attr.href]="fileGuideSafeUrl" class="btn btn-default">
@@ -203,7 +231,9 @@
             </div>
 
             <div class="video" *ngIf="hasVideo()">
-                <h3 class="title"><b>VIDEO DO PRODUTO</b></h3>
+                <h3 class="title">
+                    <b>VIDEO DO PRODUTO</b>
+                </h3>
                 <div class="form-group">
                     <iframe [attr.src]="videoSafeUrl" width="600" height="300">
                     </iframe>
@@ -228,31 +258,34 @@
                     <h2>{{product.name}}</h2>
                 </div>
 
-                <div class="product-sku">Cód: <span>{{sku.code}}</span></div>
+                <div class="product-sku">Cód:
+                    <span>{{sku.code}}</span>
+                </div>
 
                 <div *ngIf="isProductRelated()" class="product-variation">
                     <app-related-products [relatedProducts]="related" [product]="product" (productUpdated)="handleProductUpdated($event)"></app-related-products>
                 </div>
 
                 <div *ngIf="!isProductRelated() && !isHiddenVariation() && product.skus.length > 0" class="product-variation">
-                     <app-product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)" [skus]="product.skus"></app-product-variation> 
+                    <app-product-variation [selected]="sku" (skuUpdated)="handleSkuUpdated($event)" (allOptionsSelected)="handleOptionChanged($event)"
+                        [skus]="product.skus"></app-product-variation>
                 </div>
 
                 <div class="product-price-box text-center" *ngIf="sku.promotionalPrice">
                     <span class="old-price">
                         <span class="price-label">De:</span>
-                    <span class="price">{{sku.price |  currencyFormat}}</span>
+                        <span class="price">{{sku.price | currencyFormat}}</span>
                     </span>
                     <span class="regular-price">
                         <span class="price-label">Por</span>
-                    <span class="price">{{sku.promotionalPrice |  currencyFormat}}</span>
+                        <span class="price">{{sku.promotionalPrice | currencyFormat}}</span>
                     </span>
                     <app-installment-simulation *ngIf="!isCatalog()" [sku]="sku"></app-installment-simulation>
                 </div>
                 <div class="product-price-box text-center" *ngIf="sku.promotionalPrice == 0">
                     <span class="regular-price">
                         <span class="price-label"></span>
-                    <span class="price">{{sku.price |  currencyFormat}}</span>
+                        <span class="price">{{sku.price | currencyFormat}}</span>
                     </span>
 
                     <app-installment-simulation *ngIf="!isCatalog()" [sku]="sku" [sku]="sku"></app-installment-simulation>
@@ -271,7 +304,9 @@
                             <label for="email" class="sr-only">E-mail</label>
                             <input type="email" name="email" [(ngModel)]="productsAwaited.email" class="form-control form-input" placeholder="E-mail"
                                 required>
-                            <button type="submit" id="btn-productsawaited" class="btn btn-clear"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                            <button type="submit" id="btn-productsawaited" class="btn btn-clear">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -285,7 +320,7 @@
                         </span>
                         <span class="product-buy-button col-sm-8">
                             <button class="btn btn-success btn-block btn-lg" (click)="addToCart()">
-                                <i class="fa fa-shopping-cart" aria-hidden="true"></i> 
+                                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                                 <span *ngIf="sku.price > 0">Comprar</span>
                                 <span *ngIf="sku.price < 1">Orçar</span>
                             </button>
@@ -295,7 +330,9 @@
             </div>
 
             <div *ngIf="product.description" class="description-tab-box">
-                <button data-id="#informacoes-produto" class="btn-open-content" (click)="accordion('#informacoes-produto')">Informações do Produto <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                <button data-id="#informacoes-produto" class="btn-open-content" (click)="accordion('#informacoes-produto')">Informações do Produto
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </button>
                 <div id="informacoes-produto" style="display: none;">
                     <div class="description-text" [innerHTML]="product.description">
                     </div>
@@ -303,7 +340,9 @@
             </div>
 
             <div *ngIf="product.technicalInformation.length > 0" class="description-tab-box">
-                <button data-id="#especificacoes-produto" class="btn-open-content" (click)="accordion('#especificacoes-produto')">Especificações Técnicas <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                <button data-id="#especificacoes-produto" class="btn-open-content" (click)="accordion('#especificacoes-produto')">Especificações Técnicas
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </button>
                 <div id="especificacoes-produto" style="display: none;">
                     <div class="specifications">
                         <table class="table">
@@ -319,7 +358,9 @@
             </div>
 
             <div class="description-tab-box">
-                <button data-id="#avaliacoes-produto" class="btn-open-content" (click)="accordion('#avaliacoes-produto')">Avaliações do Produto <i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                <button data-id="#avaliacoes-produto" class="btn-open-content" (click)="accordion('#avaliacoes-produto')">Avaliações do Produto
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </button>
                 <div id="avaliacoes-produto" style="display: none;">
                     <app-product-rating [product]="product" (ratingUpdated)="handleRating($event)"></app-product-rating>
                 </div>
