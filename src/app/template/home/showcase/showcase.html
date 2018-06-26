@@ -5,6 +5,6 @@
     <app-brand-nav [store]="getStore()"></app-brand-nav>
     <app-showcase-banner-half [store]="getStore()" [banners]="halfBanners"></app-showcase-banner-half>
     <div class="container">
-        <app-showcase-group *ngFor="let group of groups" [store]="getStore()" [group]="group"></app-showcase-group>
+        <app-showcase-group [store]="getStore()"></app-showcase-group>
     </div>
 </main>

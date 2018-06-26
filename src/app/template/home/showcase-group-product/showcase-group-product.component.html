@@ -1,0 +1,5 @@
+<ul [attr.id]="'group-' + group.id" class="showcase-items list-style-none" *ngIf="products" [ngClass]="{'owl-carousel owl-theme': products.length > 1}">
+    <li class="showcase-item" *ngFor="let product of products" itemscope itemtype="http://schema.org/ItemList">
+        <app-product-grid-item [store]="store" [product]="product"></app-product-grid-item>
+    </li>
+</ul>

@@ -19,15 +19,15 @@
             <span class="regular-price">
                 <span class="price-label">Por</span>
                 <span class="price">{{promotionalPrice |  currencyFormat }}</span>
-                <span class="parcelamento" *ngIf="product.installmentText">ou em até {{ product.installmentText }}</span>
             </span>
+            <app-installment-simulation [sku]="sku" [isSimpleSimulation]="true"></app-installment-simulation>
         </div>
         <div *ngIf="promotionalPrice == 0">
             <span class="regular-price">
                 <span class="price-label"></span>
                 <span class="price">{{price |  currencyFormat }}</span>
-                <span class="parcelamento" *ngIf="product.installmentText">ou em até {{ product.installmentText }}</span>
             </span>
+            <app-installment-simulation [sku]="sku" [isSimpleSimulation]="true"></app-installment-simulation>
         </div>
     </span>
     <span class="comparar" *ngIf="showCompare">

@@ -12,6 +12,8 @@ import { MercadoPagoError } from "../models/mercadopago/mercadopago-error";
 import { PagSeguroSimulationResponse } from "../models/pagseguro/pagseguro-simulation";
 import { isPlatformBrowser } from "@angular/common";
 import { Token } from "../models/customer/token";
+import { Observable } from "rxjs";
+import { InstallmentsSimulation } from "../models/payment/installments-simulation";
 
 @Injectable()
 export class PaymentManager {
@@ -57,6 +59,13 @@ export class PaymentManager {
                     resolve(simulator);
                 }, error => reject(error));
         });
+    }
+
+    getInstallmentsSimulationSimpleBySkuId(skuId : string) : Promise<InstallmentsSimulation>{
+        return new Promise((resolve, reject)=>{
+            this.service.getInstallmentsSimulationSimpleBySkuId(skuId)
+                .subscribe(installments => resolve(installments), error => reject(error));
+        })
     }
 
     simulateInstallmentsBySkuIdDefault(skuId: string): Promise<Payment> {

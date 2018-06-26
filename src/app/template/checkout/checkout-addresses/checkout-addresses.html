@@ -5,7 +5,7 @@
     </div>
     <div class="content">
         <h4>Endereço de Entrega</h4>
-        <div class="adress-details">
+        <div class="adress-details" *ngIf="shippingAddressOrDefault()">
             <strong>{{shippingAddressOrDefault().addressName}}</strong>
             <p>
                 {{shippingAddressOrDefault().addressLine1}}
@@ -41,7 +41,7 @@
     </div>
     <div class="content">
         <h4>Endereço de Cobrança</h4>
-        <div class="adress-details">
+        <div class="adress-details" *ngIf="billingAddressOrDefault()">
             <strong>{{billingAddressOrDefault().addressName}}</strong>
             <p>
                 {{billingAddressOrDefault().addressLine1}}

@@ -256,6 +256,7 @@ export class CheckoutComponent implements OnInit {
                 this.paymentManager.getAll()
                     .then(payments => {
                         this.payments = payments;
+                        this.createPagseguroSession();
                         resolve(payments);
                     })
                     .catch(error => {
@@ -264,6 +265,48 @@ export class CheckoutComponent implements OnInit {
                         reject(error);
                     });
             })
+        }
+    }
+
+    /**
+     * Verifica se a loja possui pagseguro
+     * @returns {boolean} 
+     * @memberof AppComponent
+     */
+    hasPagSeguro(): boolean {
+        return this.paymentManager.hasPagSeguro(this.payments);
+    }
+
+    /**
+     * Cria a sessão no pagseguro e armazena no Local Storage
+     * @memberof AppComponent
+     */
+    createPagseguroSession() {
+        if (!this.hasPagSeguro()) {
+            return;
+        }
+        
+        let token: Token = this.getToken();
+
+        if (isPlatformBrowser(this.platformId)) {
+            if (token) {
+                this.paymentService.createPagSeguroSession(token)
+                    .then(sessionId => {
+                        localStorage.setItem('pagseguro_session', sessionId);
+                    })
+                    .catch(error => {
+                        console.log(`ERRO AO GERAR A SESSÃO DO PAGSEGURO: ${error}`);
+                    });
+            }
+            else {
+                this.paymentManager.createPagSeguroSessionSimulator()
+                    .then(sessionId => {
+                        localStorage.setItem('pagseguro_session', sessionId);
+                    })
+                    .catch(error => {
+                        console.log(`ERRO AO GERAR A SESSÃO DO PAGSEGURO: ${error}`);
+                    });
+            }
         }
     }
 

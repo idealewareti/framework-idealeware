@@ -1,8 +1,3 @@
-// The file contents for the current environment will overwrite these during build.
-// The build system defaults to the dev environment which uses `environment.ts`, but if you do
-// `ng build --env=prod` then `environment.prod.ts` will be used instead.
-// The list of which env maps to which file can be found in `.angular-cli.json`.
-
 export const environment = {
   production: false,
   envName: 'Development',
@@ -12,6 +7,7 @@ export const environment = {
   API_BRANCH: 'https://api-pub-branch.prd.idealeware.com.br',
   API_BRAND: 'https://api-pub-brand.prd.idealeware.com.br',
   API_BUDGET: 'https://api-pub-budget.prd.idealeware.com.br',
+  API_CAROUSEL: 'https://api-pub-carousel.prd.idealeware.com.br',
   API_CART: 'https://api-pub-cart.prd.idealeware.com.br',
   API_CARTSHOWCASE: 'https://api-pub-cartshowcase.prd.idealeware.com.br',
   API_CATEGORY: 'https://api-pub-category.prd.idealeware.com.br',
@@ -22,8 +18,8 @@ export const environment = {
   API_DNEADDRESS: 'https://api-pub-dneaddress.prd.idealeware.com.br',
   API_GOOGLE: 'https://api-pub-google.prd.idealeware.com.br',
   API_GROUP: 'https://api-pub-group.prd.idealeware.com.br',
+  API_INSTALLMENTS: 'https://api-pub-installments.prd.idealeware.com.br',
   API_INSTITUTIONAL: 'https://api-pub-institutional.prd.idealeware.com.br',
-  //API_INTELIPOST: 'http://localhost:7023',
   API_INTELIPOST: 'https://api-pub-intelipost.prd.idealeware.com.br',
   API_ORDER: 'https://api-pub-order.prd.idealeware.com.br',
   API_ORDERVALIDATION: 'https://api-pub-ordervalidation.prd.idealeware.com.br',

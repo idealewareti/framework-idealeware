@@ -25,7 +25,7 @@ export class ShowcaseComponent implements OnInit {
     banners: ShowCaseBanner[] = [];
     stripeBanners: ShowCaseBanner[] = [];
     halfBanners: ShowCaseBanner[] = [];
-    groups: ShowcaseGroup[] = [];
+    // groups: ShowcaseGroup[] = [];
     showcase: ShowCase = new ShowCase();
     store: Store;
 
@@ -38,7 +38,7 @@ export class ShowcaseComponent implements OnInit {
         private router: Router,
         private state: TransferState,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) { 
+    ) {
         this.state.remove(SHOWCASE_KEY);
     }
 
@@ -52,9 +52,9 @@ export class ShowcaseComponent implements OnInit {
                     return;
                 }
 
-                this.service.getShowCase()
+                this.service.getBannersFromStore()
                     .subscribe(showcase => {
-                        this.state.set(SHOWCASE_KEY, showcase as  any);
+                        this.state.set(SHOWCASE_KEY, showcase as any);
                         this.showcase = showcase;
                         this.initData(showcase);
                     }, error => console.log(error));
@@ -72,7 +72,7 @@ export class ShowcaseComponent implements OnInit {
     }
 
     private initData(data: ShowCase): void {
-        this.groups = data.groups;
+        // this.groups = data.groups;
         this.banners = data.banners.filter(b => b.bannerType == EnumBannerType.Full);
         this.stripeBanners = data.banners.filter(b => b.bannerType == EnumBannerType.Tarja);
         this.halfBanners = data.banners.filter(b => b.bannerType == EnumBannerType.Half);

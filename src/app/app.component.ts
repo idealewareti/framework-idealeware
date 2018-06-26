@@ -258,14 +258,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         return new Promise((resolve, reject) => {
             this.payments = this.state.get(PAYMENTS_KEY, [] as any);
             if (this.payments.length > 0) {
-                this.createPagseguroSession();
                 resolve(this.payments);
             } else {
                 this.paymentService.getAll()
                     .subscribe(payments => {
                         this.state.set(PAYMENTS_KEY, payments as any);
                         this.payments = payments;
-                        this.createPagseguroSession();
                         resolve(payments);
                     }, error => {
                         console.log(error._body);
@@ -592,38 +590,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (isPlatformBrowser(this.platformId)) {
             if (location.href.indexOf("https://") == -1 && location.hostname != 'localhost' && !/^\d+[.]/.test(location.hostname)) {
                 location.href = location.href.replace("http://", "https://");
-            }
-        }
-    }
-
-    /**
-     * Cria a sessão no pagseguro e armazena no Local Storage
-     * @memberof AppComponent
-     */
-    createPagseguroSession() {
-        if (!this.hasPagSeguro()) {
-            return;
-        }
-
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.customerManager.hasToken()) {
-                let token: Token = this.customerManager.getToken();
-                this.paymentService.createPagSeguroSession(token)
-                    .then(sessionId => {
-                        localStorage.setItem('pagseguro_session', sessionId);
-                    })
-                    .catch(error => {
-                        console.log(`ERRO AO GERAR A SESSÃO DO PAGSEGURO: ${error}`);
-                    });
-            }
-            else {
-                this.paymentManager.createPagSeguroSessionSimulator()
-                    .then(sessionId => {
-                        localStorage.setItem('pagseguro_session', sessionId);
-                    })
-                    .catch(error => {
-                        console.log(`ERRO AO GERAR A SESSÃO DO PAGSEGURO: ${error}`);
-                    });
             }
         }
     }

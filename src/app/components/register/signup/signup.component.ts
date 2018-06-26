@@ -106,7 +106,9 @@ export class SignUpComponent {
         }
         else {
             this.customer.addresses[0].addressName = 'Endereço Padrão';
-            this.customer.birthdate = AppCore.ConvertTextToDate(this.customer.date);
+            if(this.customer.type == 1){
+                this.customer.birthdate = AppCore.ConvertTextToDate(this.customer.date);
+            }
             this.manager.signUp(this.customer)
                 .then(response => {
                     let cartId = localStorage.getItem('cart_id');

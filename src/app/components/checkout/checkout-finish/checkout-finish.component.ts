@@ -7,6 +7,7 @@ import { Token } from '../../../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
 
 declare var $: any;
+declare var gtag: any;
 
 @Component({
     moduleId: module.id,
@@ -16,7 +17,6 @@ declare var $: any;
 })
 export class CheckoutFinishComponent implements OnInit {
     order: Order = new Order();
-
     constructor(
         private service: OrderService,
         private route: ActivatedRoute,
@@ -35,6 +35,7 @@ export class CheckoutFinishComponent implements OnInit {
                 this.service.getOrder(id, this.getToken())
                     .subscribe(order => {
                         this.order = order;
+                        this.sendGoogleEcommerce(order);
                     }, error => {
                         console.log(error);
                         this.parentRouter.navigateByUrl('/');
@@ -67,6 +68,34 @@ export class CheckoutFinishComponent implements OnInit {
             token.tokenType = 'Bearer';
         }
         return token;
+    }
+
+    private sendGoogleEcommerce(order: Order) {
+
+        gtag('require', 'ecommerce');
+
+        var items = [];
+
+        order.products.forEach((product, index) => {
+            items.push(
+                {
+                    "id": product.sku.code,
+                    "name": product.name,
+                    "list_position": index,
+                    "quantity": product.quantity,
+                    "price": product.totalUnitPrice
+                }
+            );
+        });
+
+        gtag('event', 'purchase', {
+            "transaction_id": order.orderNumber,
+            "affiliation": order.domain,
+            "value": order.orderPrice,
+            "currency": "BRL",
+            "shipping": order.totalFreightPrice,
+            "items": items
+        });
     }
 
 }

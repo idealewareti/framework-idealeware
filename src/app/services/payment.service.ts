@@ -11,6 +11,7 @@ import { MercadoPagoPaymentMethod } from "../models/mercadopago/mercadopago-paym
 import { MercadoPagoInstallmentResponse } from "../models/mercadopago/mercadopago-installment-response";
 import { Http } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { InstallmentsSimulation } from "../models/payment/installments-simulation";
 
 @Injectable()
 export class PaymentService {
@@ -73,9 +74,15 @@ export class PaymentService {
     }
 
     simulateInstallmentsBySkuId(skuId: string): Observable<Payment[]> {
-        let url = `${environment.API_PAYMENTS}/payments/PaymentSimulation/Product/${skuId}`;
+        let url = `${environment.API_INSTALLMENTS}/installments/payments/sku/${skuId}`;
         return this.client.get(url)
             .map(res => res.json())
+    }
+
+    getInstallmentsSimulationSimpleBySkuId(skuId: string): Observable<InstallmentsSimulation> {
+        let url = `${environment.API_INSTALLMENTS}/installments/simulation/sku/${skuId}`;
+        return this.client.get(url)
+            .map(res => res.json());
     }
 
     /**

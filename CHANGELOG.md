@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.2.0
+-  Reformulado carregamento da vitrine da loja
+-  Adicionado componente para busca de parcelamento de produtos.
+-  Adicionado componente para carregamento de grupos da vitrine.
+-  Retirado criações de sessões do pagseguro.
+-  Adicionado simulação de calculo de frete na detalhe do produto.
+-  Adicionado terceiro nivel de categoria de produto.
+
+## 3.1.1
+-  Adicionado Google Ecommerce
+
 ## 3.1.0
 -  Refactor em showcase, search e product-detail - diminuições de request (parcelamentos)
 

@@ -116,6 +116,7 @@ import { StoreManager } from './managers/store.manager';
 import { KondutoManager } from './managers/konduto.manager';
 import { ServerResponseService } from './services/server-response.service';
 import { ProductShipping } from './components/product/product-shipping/product-shipping.component';
+import { CarouselService } from './services/carousel.service';
 
 @NgModule({
   declarations: [
@@ -267,7 +268,8 @@ import { ProductShipping } from './components/product/product-shipping/product-s
     ProductManager,
     StoreManager,
     KondutoManager,
-    ServerResponseService
+    ServerResponseService,
+    CarouselService
   ],
   bootstrap: [AppComponent]
 })

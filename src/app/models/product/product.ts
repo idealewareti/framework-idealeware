@@ -45,4 +45,9 @@ export class Product {
     fileGuide: string;
     videoEmbed: string;
     videoUrl: string;
+
+    /*Produto Order*/
+    quantity: number;
+    totalUnitPrice: number;
+    sku: Sku;
 }

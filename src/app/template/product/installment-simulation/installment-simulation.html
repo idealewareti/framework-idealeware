@@ -1,4 +1,7 @@
-<div>
+<div *ngIf="isSimpleSimulation">
+    <span *ngIf="installments.installmentNumber > 0" class="parcelamento">ou em até {{installments.installmentNumber}}x de {{installments.installmentValue | currencyFormat}}</span>
+</div>
+<div *ngIf="!isSimpleSimulation">
     <div class="form-group clearfix">
         <a class="pull-right" href="#" (click)="getSimulation()" data-toggle="modal" data-target="#modal-installments"><i class="fa fa-credit-card" aria-hidden="true"></i> Veja as formas de parcelamento deste produto</a>
     </div>

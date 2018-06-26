@@ -4,7 +4,7 @@ import { ShowCase } from "../models/showcase/showcase";
 import { environment } from "../../environments/environment";
 import { Http } from "@angular/http";
 import { Observable } from "rxjs/Observable";
-import { Product } from "../models/product/product";
+import { ShowCaseBanner } from "../models/showcase/showcase-banner";
 
 @Injectable()
 export class ShowCaseService {
@@ -14,15 +14,9 @@ export class ShowCaseService {
         this.client = new HttpClientHelper(http);
     }
 
-    getShowCase(): Observable<ShowCase> {
-        let url = `${environment.API_SHOWCASE}/showcases/banners`;
+    public getBannersFromStore() : Observable<ShowCase>{
+        let url = `${environment.API_SHOWCASE}/showcases/active`;
         return this.client.get(url)
-            .map(res => res.json())
-    }
-
-    getGroupProducts(groupId: string): Observable<Product[]> {
-        let url = `${environment.API_SHOWCASE}/showcases/groups/${groupId}/products`;
-        return this.client.get(url)
-            .map(res => res.json())
+            .map(res => res.json());
     }
 }
