@@ -20,7 +20,7 @@ export class SearchService{
     searchFor(search: Search, pageNumber: number = null, pageSize: number = null): Promise<SearchResult>{
         let pagination: Pagination = new Pagination();
         return new Promise((resolve, reject) => {
-            let url = `${environment.API_SEARCH}/search/withInstallment?Page=${pageNumber}&PageSize=${pageSize}`;
+            let url = `${environment.API_SEARCH}/search/facet?Page=${pageNumber}&PageSize=${pageSize}`;
             search.priceRange.toNumber();
             this.client.post(url, search)
             .map(res => {

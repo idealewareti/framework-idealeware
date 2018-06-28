@@ -14,7 +14,7 @@ export class ProductService {
     }
 
     getProductBySku(skuId: string): Observable<Product> {
-        let url = `${environment.API_PRODUCT}/products/withinstallment/sku/${skuId}`;
+        let url = `${environment.API_PRODUCT}/products/sku/${skuId}`;
         return this.client.get(url)
             .map(res => res.json())
     }

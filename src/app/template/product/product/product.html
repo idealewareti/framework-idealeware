@@ -71,9 +71,7 @@
                                         <span class="price-label">Por</span>
                                         <span class="price">{{sku.promotionalPrice | currencyFormat}}</span>
                                     </span>
-                                    <span class="parcelamento" *ngIf="installment">
-                                        {{ installment }}
-                                    </span>
+                                     <app-installment-simulation *ngIf="!isCatalog()" [isSimpleSimulation]="true" [sku]="sku" [sku]="sku"></app-installment-simulation>
                                 </diV>
                             </div>
 
@@ -83,9 +81,7 @@
                                         <span class="price-label"></span>
                                         <span class="price">{{sku.price | currencyFormat}}</span>
                                     </span>
-                                    <span class="parcelamento" *ngIf="installment">
-                                        {{ installment }}
-                                    </span>
+                                    <app-installment-simulation *ngIf="!isCatalog()" [isSimpleSimulation]="true" [sku]="sku" [sku]="sku"></app-installment-simulation>
                                     <span class="text-info" *ngIf="getTotalServices() > 0">
                                         + {{getTotalServices() | currencyFormat}} em serviços
                                     </span>
