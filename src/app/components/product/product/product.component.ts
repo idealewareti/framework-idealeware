@@ -141,6 +141,7 @@ export class ProductComponent implements OnDestroy {
         this.kondutoManager.clearProductMeta();
         if (isPlatformBrowser(this.platformId)) {
             this.metaService.removeTag("name='title'");
+            this.metaService.removeTag("name='og:image'");
             this.metaService.removeTag("name='description'");
             $('body').removeClass('product');
         }
@@ -283,9 +284,10 @@ export class ProductComponent implements OnDestroy {
                         });
                 }
                 this.setTitle(this.product, this.sku);
+
                 this.metaService.addTags([
-                    { name: 'title', content: this.product.metaTagTitle },
-                    { name: 'description', content: this.product.metaTagDescription },
+                    { name: 'title', content: (this.product.metaTagTitle) ? this.product.metaTagTitle : this.product.name },
+                    { name: 'description', content: (this.product.metaTagDescription) ? this.product.metaTagDescription : this.product.briefDescription },
                     { name: 'og:image', content: this.getMainImage() }
                 ]);
             })

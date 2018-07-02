@@ -26,6 +26,7 @@ import { error } from 'util';
 import { AppConfig } from '../../../app.config';
 import { StoreManager } from '../../../managers/store.manager';
 
+
 declare var $: any;
 
 @Component({
@@ -64,7 +65,8 @@ export class SearchComponent implements OnInit, OnDestroy {
     minimumPrice: string = null;
     priceRange: PriceRange = new PriceRange(0, 0);
     store: Store;
-
+    
+    
     orderSearchOptionsEcommerce: Object[] = [
         { label: 'Mais Relevantes', value: EnumSort.MostRelevant },
         { label: 'Menores Preços', value: EnumSort.PriceLowestFirst },
@@ -95,6 +97,9 @@ export class SearchComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit() {
+        
+        
+
         this.route.params
             .map(params => params)
             .subscribe(params => {
@@ -102,6 +107,7 @@ export class SearchComponent implements OnInit, OnDestroy {
                 if (isPlatformBrowser(this.platformId)) {
                     window.scrollTo(0, 0);
                 }
+                
                 this.id = params['id'];
                 this.searchInput = new Search();
                 this.filterModel = new Filter();
@@ -154,6 +160,10 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this._removeTags();
+    }
+
+    _removeTags(){
         this.metaService.removeTag("name='title'");
         this.metaService.removeTag("name='description'");
     }
@@ -380,6 +390,7 @@ export class SearchComponent implements OnInit, OnDestroy {
                 .subscribe(brand => {
                     this.brand = brand;
                     this.titleService.setTitle(brand.metaTagTitle);
+                    this._removeTags();
                     this.metaService.addTags([
                         { name: 'title', content: brand.metaTagTitle },
                         { name: 'description', content: brand.metaTagDescription }
@@ -393,6 +404,7 @@ export class SearchComponent implements OnInit, OnDestroy {
             this.groupApi.getById(id)
                 .subscribe(group => {
                     this.titleService.setTitle(group.metaTagTitle);
+                    this._removeTags();
                     this.metaService.addTags([
                         { name: 'title', content: group.metaTagTitle },
                         { name: 'description', content: group.metaTagDescription }
@@ -598,6 +610,7 @@ export class SearchComponent implements OnInit, OnDestroy {
                         this.categoryApi.getCategory(this.id)
                             .subscribe(category => {
                                 this.titleService.setTitle(category.metaTagTitle);
+                                this._removeTags();
                                 this.metaService.addTags([
                                     { name: 'title', content: category.metaTagTitle },
                                     { name: 'description', content: category.metaTagDescription }

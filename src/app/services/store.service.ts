@@ -20,6 +20,7 @@ export class StoreService {
      */
     getStore(): Observable<Store> {
         let url: string = `${environment.API_STORE}/store`;
+
         return this.client.get(url)
             .timeoutWith(5000, Observable.throw(new Error('Timeout!')))
             .map(res => res.json())
