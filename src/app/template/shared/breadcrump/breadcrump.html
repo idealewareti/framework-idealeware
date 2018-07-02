@@ -1,4 +1,7 @@
 <ol class="breadcrumb">
     <li><a [routerLink]="['/']">Home</a></li>
-    <li If="crumps.length > 0" *ngFor="let crump of crumps"><a [routerLink]="['/categoria', crump.id, crump.niceName]" [attr.title]="crump.name">{{crump.name}}</a></li>
+    <li If="crumps.length > 0" *ngFor="let crump of crumps">
+        <a *ngIf="crump.niceName" [routerLink]="['/categoria', crump.id, crump.niceName]" [attr.title]="crump.name">{{crump.name}}</a>
+        <a *ngIf="!crump.niceName" [routerLink]="['/categoria', crump.id]" [attr.title]="crump.name">{{crump.name}}</a>
+    </li>
 </ol>
