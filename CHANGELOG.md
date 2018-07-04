@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.1
+- Controle de request via client
+- Correções no calculo de frete da detalhes
+
 ## 3.2.0
 -  Reformulado carregamento da vitrine da loja
 -  Adicionado componente para busca de parcelamento de produtos.

@@ -33,6 +33,7 @@ export class ProductShipping {
 
     @Input() zipCode: string;
     @Input() product: Product;
+    @Input() quantity: number;
     loading: boolean = false;
 
     constructor(
@@ -43,6 +44,15 @@ export class ProductShipping {
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
+    ngOnChanges(): void {
+        if (this.zipCode.split('').length == 9) {
+            this.calculate(null);
+        } else {
+            this.deliveryOptions = [];
+            this.branches = [];
+        }
+    }
+
     ngOnInit() {
         if (isPlatformBrowser(this.platformId)) {
             if (!this.zipCode && localStorage.getItem('customer_zipcode'))
@@ -51,12 +61,14 @@ export class ProductShipping {
     }
 
     inputShipping(event){
+	if (isPlatformBrowser(this.platformId)) {
         if(this.zipCode.split('').length == 9){
             this.calculate(event);
         }else{
             this.deliveryOptions = [];
             this.branches = [];
         }
+	  }
     }
 
     sendRequest(): Promise<Intelipost> {
@@ -73,6 +85,7 @@ export class ProductShipping {
                 this.productShipping.Identification = this.intelipostIdentification;
                 this.productShipping.ZipCode = zipCode.toString();
                 this.productShipping.Products = this.product.skuBase;
+                this.productShipping.Products.Quantity = this.quantity;
 
                 return this.service.getProductShipping(this.productShipping)
                     .then(res => resolve(res))
@@ -97,7 +110,7 @@ export class ProductShipping {
 
     calculate(event) {
         if (isPlatformBrowser(this.platformId)) {
-            event.preventDefault();
+            if(event) event.preventDefault();
             if (!this.zipCode) {
                 swal({ title: 'Erro!', text: 'CEP Inválido', type: 'warning', confirmButtonText: 'OK' });
             }

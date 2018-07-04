@@ -23,6 +23,7 @@ export class Sku{
       pictures: ProductPicture[] = [];
       alternativePicture: ProductPicture;
       name: string;
+      Quantity: number;
 
       constructor(sku = null){
             if(sku) return this.CreateFromResponse(sku);
