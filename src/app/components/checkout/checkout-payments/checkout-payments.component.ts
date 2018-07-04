@@ -54,18 +54,19 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
     ) { }
 
     ngOnInit() {
-        if (this.hasPagseguro()) {
-            // Inicia a sessão no Pagseguro
-            this.getPagseguroMethods();
-        }
-        if (this.hasMercadoPago()) {
-            // Obtem os métodos de pagamento do Mercado Pago
-            this.getMercadoPagoMethods();
-        }
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.hasPagseguro()) {
+                // Inicia a sessão no Pagseguro
+                this.getPagseguroMethods();
+            }
+            if (this.hasMercadoPago()) {
+                // Obtem os métodos de pagamento do Mercado Pago
+                this.getMercadoPagoMethods();
+            }
 
-        this.mundipagg.bankslip = this.paymentManager.getMundipaggBankslip(this.payments);
-        this.mundipagg.creditCard = this.paymentManager.getMundipaggCreditCard(this.payments);
-
+            this.mundipagg.bankslip = this.paymentManager.getMundipaggBankslip(this.payments);
+            this.mundipagg.creditCard = this.paymentManager.getMundipaggCreditCard(this.payments);
+        }
     }
 
     ngAfterViewInit() {
@@ -77,9 +78,11 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['shippingCost'] && !changes.shippingCost.firstChange) {
-            if (changes.shippingCost.currentValue != changes.shippingCost.previousValue) {
-                this.resetPayment();
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes['shippingCost'] && !changes.shippingCost.firstChange) {
+                if (changes.shippingCost.currentValue != changes.shippingCost.previousValue) {
+                    this.resetPayment();
+                }
             }
         }
     }

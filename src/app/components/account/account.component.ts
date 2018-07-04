@@ -46,31 +46,33 @@ export class AccountComponent {
 
 
     ngOnInit() {
-        if (!this.isLogged())
-            this.parentRouter.navigateByUrl('/login');
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.isLogged())
+                this.parentRouter.navigateByUrl('/login');
 
-        this.parentRouter.events.subscribe((url: any) => {
-            let path: string = url['url'];
-            if (this.validModule(this.path).length > 0) {
-                this.actual = this.validModule(this.path)[0];
-            }
-            else {
-                this.actual = { module: 'home', title: 'Minha Conta' };
-            }
-            this.titleService.setTitle(this.actual.title);
-        });
+            this.parentRouter.events.subscribe((url: any) => {
+                let path: string = url['url'];
+                if (this.validModule(this.path).length > 0) {
+                    this.actual = this.validModule(this.path)[0];
+                }
+                else {
+                    this.actual = { module: 'home', title: 'Minha Conta' };
+                }
+                this.titleService.setTitle(this.actual.title);
+            });
 
-        this.storeManager.getStore()
-            .then(store => {
-                this.store = store;
-                let token: Token = this.getToken();
-                this.service.getUser(token)
-                    .subscribe(customer => this.customer = customer),
-                    (error => console.log(error));
-            })
-            .catch(error => {
-                console.log(error);
-            })
+            this.storeManager.getStore()
+                .then(store => {
+                    this.store = store;
+                    let token: Token = this.getToken();
+                    this.service.getUser(token)
+                        .subscribe(customer => this.customer = customer),
+                        (error => console.log(error));
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
 
     }
 

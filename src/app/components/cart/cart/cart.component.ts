@@ -71,15 +71,17 @@ export class CartComponent {
     }
 
     ngAfterContentChecked() {
-        if (this.globals.cart)
-            this.titleService.setTitle(`Meu Carrinho - (${this.getNumItemsInCart()}) item(ns)`);
-        if (this.getStore() && this.modality == -1) {
-            this.modality = this.globals.store.modality;
-            this.showProductValue = this.showValues();
-            if (this.modality == 0)
-                this.buttonLabel = 'FINALIZAR ORÇAMENTO';
-            else
-                this.buttonLabel = 'FINALIZAR COMPRA';
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.globals.cart)
+                this.titleService.setTitle(`Meu Carrinho - (${this.getNumItemsInCart()}) item(ns)`);
+            if (this.getStore() && this.modality == -1) {
+                this.modality = this.globals.store.modality;
+                this.showProductValue = this.showValues();
+                if (this.modality == 0)
+                    this.buttonLabel = 'FINALIZAR ORÇAMENTO';
+                else
+                    this.buttonLabel = 'FINALIZAR COMPRA';
+            }
         }
     }
 
@@ -176,8 +178,8 @@ export class CartComponent {
         return this.globals.cart.totalDiscountPrice;
     }
 
-    getExistShipping(){
-        return this.globals.cart.shipping.shippingType;        
+    getExistShipping() {
+        return this.globals.cart.shipping.shippingType;
     }
 
     getShipping() {

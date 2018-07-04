@@ -32,12 +32,14 @@ export class ProductGridItemComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.sku = this.product.skuBase;
-        this.price = this.sku.price;
-        this.promotionalPrice = this.sku.promotionalPrice;
+        if (isPlatformBrowser(this.platformId)) {
+            this.sku = this.product.skuBase;
+            this.price = this.sku.price;
+            this.promotionalPrice = this.sku.promotionalPrice;
 
-        if (this.store.modality == EnumStoreModality.Ecommerce) {
-            this.simulateInstallments();
+            if (this.store.modality == EnumStoreModality.Ecommerce) {
+                this.simulateInstallments();
+            }
         }
     }
 

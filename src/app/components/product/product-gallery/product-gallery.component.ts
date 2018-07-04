@@ -26,22 +26,28 @@ export class ProductGalleryComponent implements OnInit, OnChanges {
     constructor( @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit() {
-        this.pictures = this.sku.pictures;
-        this.setCoverImage((this.sku.pictures.length > 0) ? this.sku.pictures[0] : new ProductPicture());
+        if (isPlatformBrowser(this.platformId)) {
+            this.pictures = this.sku.pictures;
+            this.setCoverImage((this.sku.pictures.length > 0) ? this.sku.pictures[0] : new ProductPicture());
+        }
     }
 
     ngAfterViewInit() {
-        this.imageZoom(this.coverImg);
-        this.buildGallery();
+        if (isPlatformBrowser(this.platformId)) {
+            this.imageZoom(this.coverImg);
+            this.buildGallery();
+        }
     }
 
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['sku'] && !changes.sku.firstChange) {
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes['sku'] && !changes.sku.firstChange) {
 
-            if (changes.sku.previousValue.id != changes.sku.currentValue.id) {
-                this.pictures = this.sku.pictures;
-                this.setCoverImage((this.sku.pictures.length > 0) ? this.sku.pictures[0] : new ProductPicture());
+                if (changes.sku.previousValue.id != changes.sku.currentValue.id) {
+                    this.pictures = this.sku.pictures;
+                    this.setCoverImage((this.sku.pictures.length > 0) ? this.sku.pictures[0] : new ProductPicture());
+                }
             }
         }
     }
@@ -51,7 +57,9 @@ export class ProductGalleryComponent implements OnInit, OnChanges {
     }
 
     ngOnDestroy() {
-        this.destroyZoom();
+        if (isPlatformBrowser(this.platformId)) {
+            this.destroyZoom();
+        }
     }
 
     setCoverImage(image: ProductPicture, event = null) {

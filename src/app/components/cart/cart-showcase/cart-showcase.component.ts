@@ -28,15 +28,21 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit() {
+        if (isPlatformBrowser(this.platformId)) {
         this.getShowCases();
+        }
     }
 
     ngOnDestroy() {
+        if (isPlatformBrowser(this.platformId)) {
         this.destroyCarousel();
+        }
     }
 
     ngAfterViewChecked() {
+        if (isPlatformBrowser(this.platformId)) {
         this.buildCarousel();
+        }
     }
 
     getShowCases() {

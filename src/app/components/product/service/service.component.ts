@@ -42,7 +42,9 @@ export class ServiceComponent {
     ) { }
 
     ngOnInit() {
-        this.getServiceId();
+        if (isPlatformBrowser(this.platformId)) {
+            this.getServiceId();
+        }
     }
 
 

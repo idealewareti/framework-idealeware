@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Cart } from '../../../models/cart/cart';
 import { Router } from '@angular/router';
 

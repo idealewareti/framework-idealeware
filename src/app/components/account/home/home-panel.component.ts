@@ -31,13 +31,15 @@ export class AccountHomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getStore()
-            .then(store => {
-                return this.getCustomer();
-            })
-            .catch(error => {
-                this.parentRouter.navigateByUrl('/login');
-            })
+        if (isPlatformBrowser(this.platformId)) {
+            this.getStore()
+                .then(store => {
+                    return this.getCustomer();
+                })
+                .catch(error => {
+                    this.parentRouter.navigateByUrl('/login');
+                })
+        }
     }
 
     private getToken(): Token {

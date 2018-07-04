@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PLATFORM_ID, Inject, Input } from '@angular/core';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Store } from '../../../models/store/store';
 import { Brand } from '../../../models/brand/brand';
 import { BrandService } from '../../../services/brand.service';
@@ -29,20 +29,22 @@ export class BrandNavComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-		const response = this.state.get(BRAND_KEY, null as any);
-		if (response) {
-			this.allBrands = response;
-			this.removeBrandWithoutPicture();
-			return;
-		}
-		this.service.getAll()
-			.subscribe(brands => {
-				this.state.set(BRAND_KEY, brands as any);
-				this.allBrands = brands;
-				this.removeBrandWithoutPicture();
-			}, e => {
-				console.log(e);
-			});
+        if (isPlatformBrowser(this.platformId)) {
+            const response = this.state.get(BRAND_KEY, null as any);
+            if (response) {
+                this.allBrands = response;
+                this.removeBrandWithoutPicture();
+                return;
+            }
+            this.service.getAll()
+                .subscribe(brands => {
+                    this.state.set(BRAND_KEY, brands as any);
+                    this.allBrands = brands;
+                    this.removeBrandWithoutPicture();
+                }, e => {
+                    console.log(e);
+                });
+        }
     }
 
     ngAfterViewChecked() {

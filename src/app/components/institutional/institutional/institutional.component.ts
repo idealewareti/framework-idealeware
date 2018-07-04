@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterContentChecked, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, AfterContentChecked, OnDestroy ,PLATFORM_ID, Inject} from '@angular/core';
 import {
     ActivatedRoute,
     Router,
@@ -11,6 +11,7 @@ import {
 import { Institutional } from '../../../models/institutional/institutional';
 import { InstitutionalService } from '../../../services/institutional.service';
 import { Title, Meta } from "@angular/platform-browser";
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
     moduleId: module.id,
@@ -30,22 +31,25 @@ export class InstitutionalComponent implements OnInit {
         private route: ActivatedRoute,
         private titleService: Title,
         private metaService: Meta,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.institutional = new Institutional();
     }
 
 
     ngOnInit() {
-        this.route.params
-            .map(params => params['id'])
-            .subscribe((id) => {
-                this.institutional = null;
+        if (isPlatformBrowser(this.platformId)) {
+            this.route.params
+                .map(params => params['id'])
+                .subscribe((id) => {
+                    this.institutional = null;
 
-                if (id)
-                    this.loadPage(id);
-                else
-                    this.getDefault();
-            });
+                    if (id)
+                        this.loadPage(id);
+                    else
+                        this.getDefault();
+                });
+        }
     }
 
 

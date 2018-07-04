@@ -26,22 +26,24 @@ export class CheckoutFinishComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.route.params
-            .map(params => params)
-            .subscribe((params) => {
-                let id = params['id'];
-                this.titleService.setTitle('Seu Pedido Foi Gerado');
+        if (isPlatformBrowser(this.platformId)) {
+            this.route.params
+                .map(params => params)
+                .subscribe((params) => {
+                    let id = params['id'];
+                    this.titleService.setTitle('Seu Pedido Foi Gerado');
 
-                this.service.getOrder(id, this.getToken())
-                    .subscribe(order => {
-                        this.order = order;
-                        this.sendGoogleEcommerce(order);
-                    }, error => {
-                        console.log(error);
-                        this.parentRouter.navigateByUrl('/');
-                    })
+                    this.service.getOrder(id, this.getToken())
+                        .subscribe(order => {
+                            this.order = order;
+                            this.sendGoogleEcommerce(order);
+                        }, error => {
+                            console.log(error);
+                            this.parentRouter.navigateByUrl('/');
+                        })
 
-            });
+                });
+        }
     }
 
     isBankSlip(): boolean {

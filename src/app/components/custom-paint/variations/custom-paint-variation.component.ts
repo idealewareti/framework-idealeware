@@ -40,21 +40,23 @@ export class CustomPaintVariationComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.route.params
-            .map(params => params)
-            .subscribe((params) => {
-                this.manufacuterId = params['manufacturer'];
-                this.colorCode = params['color'];
-                this.storeManager.getStore()
-                    .then(store => {
-                        this.store = store;
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    })
-                this.getManufacturer(this.manufacuterId);
-                this.getVariation(this.manufacuterId);
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.route.params
+                .map(params => params)
+                .subscribe((params) => {
+                    this.manufacuterId = params['manufacturer'];
+                    this.colorCode = params['color'];
+                    this.storeManager.getStore()
+                        .then(store => {
+                            this.store = store;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        })
+                    this.getManufacturer(this.manufacuterId);
+                    this.getVariation(this.manufacuterId);
+                });
+        }
     }
 
     /* Loaders */

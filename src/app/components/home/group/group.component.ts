@@ -23,7 +23,9 @@ export class GroupComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        if (isPlatformBrowser(this.platformId)) {
         this.getGroups();
+        }
     }
 
     getGroups() {

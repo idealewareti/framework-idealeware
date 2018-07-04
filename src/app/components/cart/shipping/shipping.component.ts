@@ -50,10 +50,12 @@ export class ShippingCalcComponent implements OnInit {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['cart'] && !changes.cart.firstChange) {
-            if (changes.cart.currentValue.shipping == null) {
-                this.deliveryOptions = [];
-                this.branches = [];
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes['cart'] && !changes.cart.firstChange) {
+                if (changes.cart.currentValue.shipping == null) {
+                    this.deliveryOptions = [];
+                    this.branches = [];
+                }
             }
         }
     }
@@ -113,7 +115,7 @@ export class ShippingCalcComponent implements OnInit {
             this.sendRequest()
                 .then(response => {
                     this.intelipost = response;
-                    this.deliveryOptions = this.intelipost.content.delivery_options;      
+                    this.deliveryOptions = this.intelipost.content.delivery_options;
                     this.loading = false;
                 })
                 .catch(error => {

@@ -30,7 +30,9 @@ export class PopUpComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getPopUp();
+        if (isPlatformBrowser(this.platformId)) {
+            this.getPopUp();
+        }
     }
 
     ngAfterContentChecked() {

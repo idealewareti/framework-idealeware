@@ -1,5 +1,6 @@
 import { Component, Input, AfterViewChecked, OnInit, OnDestroy, Inject, PLATFORM_ID, SimpleChanges } from '@angular/core';
 import { Router } from "@angular/router";
+import { isPlatformBrowser } from '@angular/common';
 import { Payment } from "../../../models/payment/payment";
 import { Sku } from "../../../models/product/sku";
 import { PaymentManager } from "../../../managers/payment.manager";
@@ -10,6 +11,7 @@ import { PagseguroInstallment } from "../../../models/pagseguro/pagseguro-instal
 import { PaymentSetting } from "../../../models/payment/payment-setting";
 import { Globals } from '../../../models/globals';
 import { InstallmentsSimulation } from '../../../models/payment/installments-simulation';
+
 
 
 declare var $: any;
@@ -24,13 +26,13 @@ declare var PagSeguroDirectPayment: any;
 })
 export class InstallmentSimulationComponent implements OnInit {
     @Input() sku: Sku;
-    @Input() isSimpleSimulation : Boolean;
+    @Input() isSimpleSimulation: Boolean;
     payments: Payment[] = [];
     simulation: Payment = new Payment();
     gatewaySelected: Payment = new Payment();
     private id: string;
     error: string;
-    installments : InstallmentsSimulation = new InstallmentsSimulation();
+    installments: InstallmentsSimulation = new InstallmentsSimulation();
 
     mediaPath: string;
 
@@ -41,18 +43,22 @@ export class InstallmentSimulationComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.mediaPath = `${this.globals.store.link}/assets/images/`;
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if(changes['sku'] && changes['isSimpleSimulation'] && this.isSimpleSimulation){
-            this.getSimulationSimple();
+        if (isPlatformBrowser(this.platformId)) {
+            this.mediaPath = `${this.globals.store.link}/assets/images/`;
         }
     }
 
-    getSimulationSimple(){
+    ngOnChanges(changes: SimpleChanges): void {
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes['sku'] && changes['isSimpleSimulation'] && this.isSimpleSimulation) {
+                this.getSimulationSimple();
+            }
+        }
+    }
+
+    getSimulationSimple() {
         this.manager.getInstallmentsSimulationSimpleBySkuId(this.sku.id)
-            .then(installments =>this.installments = installments)
+            .then(installments => this.installments = installments)
             .catch(error => console.log(`Erro ao buscar parcelamentos: ${error}`));
     }
 

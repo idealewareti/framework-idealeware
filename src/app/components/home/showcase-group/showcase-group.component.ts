@@ -3,6 +3,7 @@ import { PLATFORM_ID, Inject, Input } from '@angular/core';
 import { Store } from '../../../models/store/store';
 import { ShowcaseGroup } from '../../../models/showcase/showcase-group';
 import { CarouselService } from '../../../services/carousel.service';
+import { isPlatformBrowser } from "@angular/common";
 
 declare var $: any;
 
@@ -23,11 +24,13 @@ export class ShowcaseGroupComponent implements OnInit /*implements AfterViewChec
     ) { }
 
     ngOnInit(): void {
-        this.carouselService.getCarousels()
-            .subscribe(carousel => {
-                this.groups = carousel;
-            }, error => {
-                console.log(`Problemas de conexão ao buscar grupos. :${error}`);
-            })
+        if (isPlatformBrowser(this.platformId)) {
+            this.carouselService.getCarousels()
+                .subscribe(carousel => {
+                    this.groups = carousel;
+                }, error => {
+                    console.log(`Problemas de conexão ao buscar grupos. :${error}`);
+                })
+        }
     }
 }

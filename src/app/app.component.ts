@@ -116,6 +116,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     *********************************************************************************************************
     */
     ngOnInit(): Promise<any> {
+        if (isPlatformBrowser(this.platformId)) {
         if (!this.getSessionId()) {
             this.setSessionId();
         }
@@ -140,17 +141,22 @@ export class AppComponent implements OnInit, AfterViewInit {
                 console.log('init err:');
                 console.log(error);
             });
+        }
     }
 
     ngAfterContentChecked() {
+        if (isPlatformBrowser(this.platformId)) {
         this.getCustomer();
+        }
     }
 
     ngAfterViewChecked() {
+        if (isPlatformBrowser(this.platformId)) {
         this.keepHttps();
         this.checkSessionId();
         this.addPagseguro();
         this.addMercadoPago();
+        }
     }
 
     ngAfterViewInit(): void {

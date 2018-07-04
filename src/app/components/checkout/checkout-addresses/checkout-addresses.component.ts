@@ -33,10 +33,12 @@ export class CheckoutAddressesComponent implements OnInit {
     ** Lifecycles
     */
     ngOnInit() {
-        this.setBillingAddress(this.getFirstOrDefault())
-            .then(cart => {
-                return this.setShippingAddress(this.getFirstOrDefault());
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.setBillingAddress(this.getFirstOrDefault())
+                .then(cart => {
+                    return this.setShippingAddress(this.getFirstOrDefault());
+                });
+        }
     }
 
     /*

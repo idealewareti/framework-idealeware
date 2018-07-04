@@ -30,25 +30,27 @@ export class ForgetPasswordComponent implements OnInit {
         builder: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object,
     ) {
-        this.formRecoverPassword = builder.group({
-            email: ['', Validators.compose([
-                Validators.required,
-                validEmail()
-            ])],
-            confirmEmail: ['', Validators.compose([
-                Validators.required,
-                validEmail(),
-                equalsValidator(this.email)
+        if (isPlatformBrowser(this.platformId)) {
+            this.formRecoverPassword = builder.group({
+                email: ['', Validators.compose([
+                    Validators.required,
+                    validEmail()
+                ])],
+                confirmEmail: ['', Validators.compose([
+                    Validators.required,
+                    validEmail(),
+                    equalsValidator(this.email)
 
-            ])],
-            cpf_cnpj: ['', Validators.required]
-        });
+                ])],
+                cpf_cnpj: ['', Validators.required]
+            });
+        }
 
     }
 
     ngOnInit() {
-        this.titleService.setTitle('Recuperar Senha');
         if (isPlatformBrowser(this.platformId)) {
+            this.titleService.setTitle('Recuperar Senha');
             window.scrollTo(0, 0);
         }
     }

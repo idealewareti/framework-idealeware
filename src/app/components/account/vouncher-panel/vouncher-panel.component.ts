@@ -25,8 +25,8 @@ export class VouncherPanelComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.titleService.setTitle('Meus Cupons');
         if (isPlatformBrowser(this.platformId)) {
+        this.titleService.setTitle('Meus Cupons');
             let token: Token = this.getToken();
             this.customerService.getUser(token)
                 .subscribe(customer => {

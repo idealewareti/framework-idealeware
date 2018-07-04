@@ -27,17 +27,19 @@ export class ContactComponent implements OnInit {
         private service: ContactService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
-        this.contactForm = formBuilder.group({
-            name: ['', Validators.required],
-            email: ['', Validators.compose([
-                Validators.required,
-                validEmail()
-            ])],
-            title: ['', Validators.required],
-            message: ['', Validators.required]
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            this.contactForm = formBuilder.group({
+                name: ['', Validators.required],
+                email: ['', Validators.compose([
+                    Validators.required,
+                    validEmail()
+                ])],
+                title: ['', Validators.required],
+                message: ['', Validators.required]
+            });
 
-        this.contact = new Contact();
+            this.contact = new Contact();
+        }
     }
 
     ngOnInit() { }
@@ -86,7 +88,7 @@ export class ContactComponent implements OnInit {
             }
         }
     }
-    
+
     hasError(key: string): boolean {
         return (this.contactForm.controls[key].touched && this.contactForm.controls[key].invalid);
     }

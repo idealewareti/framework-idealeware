@@ -101,49 +101,52 @@ export class ProductComponent implements OnDestroy {
 
     /* Lifecycle events */
     ngOnInit() {
-        this.storeManager.getStore()
-            .then(store => {
-                this.store = store;
-                this.mediaPath = `${this.store.link}/static/products/`;
-                this.modality = this.store.modality;
-                this.showValuesProduct = this.showValues(this.store);
+        if (isPlatformBrowser(this.platformId)) {
+            this.storeManager.getStore()
+                .then(store => {
+                    this.store = store;
+                    this.mediaPath = `${this.store.link}/static/products/`;
+                    this.modality = this.store.modality;
+                    this.showValuesProduct = this.showValues(this.store);
 
-                if (isPlatformBrowser(this.platformId)) {
-                    $('body').addClass('product');
-                    window.scrollTo(0, 0);
-                }
+                    if (isPlatformBrowser(this.platformId)) {
+                        $('body').addClass('product');
+                        window.scrollTo(0, 0);
+                    }
 
-                this.route.params
-                    .map(params => params)
-                    .subscribe((params) => {
-                        if (params['id']) {
-                            this.id = params['id'];
-                            this.getProductBySku(this.id);
-                        }
-                        else if (params['product']) {
-                            let paramProduct = params['product'];
-                            this.id = paramProduct.substr(params['product'].length - 36);
-                            if (this.isGuid(this.id))
+                    this.route.params
+                        .map(params => params)
+                        .subscribe((params) => {
+                            if (params['id']) {
+                                this.id = params['id'];
                                 this.getProductBySku(this.id);
-                            else {
-                                let routeParam = decodeURI(this.parentRouter.url).slice(1);
-                                this.parentRouter.navigateByUrl(`/redirect/${routeParam}`);
                             }
-                        }
-                    });
-            })
-            .catch(error => {
-                console.log(error);
-            });
+                            else if (params['product']) {
+                                let paramProduct = params['product'];
+                                this.id = paramProduct.substr(params['product'].length - 36);
+                                if (this.isGuid(this.id))
+                                    this.getProductBySku(this.id);
+                                else {
+                                    let routeParam = decodeURI(this.parentRouter.url).slice(1);
+                                    this.parentRouter.navigateByUrl(`/redirect/${routeParam}`);
+                                }
+                            }
+                        });
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
     }
 
     ngOnDestroy() {
-        this.kondutoManager.clearProductMeta();
         if (isPlatformBrowser(this.platformId)) {
+            this.kondutoManager.clearProductMeta();
             this.metaService.removeTag("name='title'");
             this.metaService.removeTag("name='description'");
             $('body').removeClass('product');
         }
+
     }
 
     isMobile(): boolean {
@@ -291,7 +294,7 @@ export class ProductComponent implements OnDestroy {
             })
             .catch(error => {
                 console.log(error);
-				this.parentRouter.navigate(['/404']);
+                this.parentRouter.navigate(['/404']);
             });
     }
 

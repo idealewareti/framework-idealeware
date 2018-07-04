@@ -31,6 +31,7 @@ export class OrderPanelComponent {
     }
 
     ngOnInit() {
+        if (isPlatformBrowser(this.platformId)) {
         this.service.getOrders(this.getToken())
             .subscribe(orders => {
                 this.orders = orders;
@@ -50,6 +51,7 @@ export class OrderPanelComponent {
             }), (error => console.log(error));
 
         this.titleService.setTitle('Meus Pedidos');
+        }
     }
 
     showList() {

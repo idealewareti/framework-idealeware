@@ -64,51 +64,53 @@ export class CustomPaintBaseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.route.params
-            .map(params => params)
-            .subscribe((params) => {
-                if (params['page']) {
-                    this.page = (Number.parseInt(params['page']) < 1) ? 1 : Number.parseInt(params['page']);
-                }
-                this.manufacuterId = params['manufacturer'];
-                this.colorCode = params['color'];
-                this.optionId = params['option'];
-                this.storeManager.getStore()
-                    .then(store => {
-                        this.store = store;
-                        this.modality = this.store.modality;
-                        return this.getManufacturer(this.manufacuterId)
-                    })
-                    .then(manufacturer => {
-                        this.manufacturer = manufacturer;
-                        this.titleService.setTitle(`Cores Personalizadas ${this.manufacturer.name} - Selecione seu produto`);
-                        return this.getVariation(this.manufacuterId);
-                    })
-                    .then(variation => {
-                        this.variation = variation;
-                        let todos = new CustomPaintOption();
-                        todos.id = '0';
-                        todos.name = 'Todos';
-                        this.variation.options.unshift(todos);
-                        return this.getPaints(this.manufacuterId, this.colorCode, this.optionId);
-                    })
-                    .then(paints => {
-                        if (paints.length == 0) {
+        if (isPlatformBrowser(this.platformId)) {
+            this.route.params
+                .map(params => params)
+                .subscribe((params) => {
+                    if (params['page']) {
+                        this.page = (Number.parseInt(params['page']) < 1) ? 1 : Number.parseInt(params['page']);
+                    }
+                    this.manufacuterId = params['manufacturer'];
+                    this.colorCode = params['color'];
+                    this.optionId = params['option'];
+                    this.storeManager.getStore()
+                        .then(store => {
+                            this.store = store;
+                            this.modality = this.store.modality;
+                            return this.getManufacturer(this.manufacuterId)
+                        })
+                        .then(manufacturer => {
+                            this.manufacturer = manufacturer;
+                            this.titleService.setTitle(`Cores Personalizadas ${this.manufacturer.name} - Selecione seu produto`);
+                            return this.getVariation(this.manufacuterId);
+                        })
+                        .then(variation => {
+                            this.variation = variation;
+                            let todos = new CustomPaintOption();
+                            todos.id = '0';
+                            todos.name = 'Todos';
+                            this.variation.options.unshift(todos);
+                            return this.getPaints(this.manufacuterId, this.colorCode, this.optionId);
+                        })
+                        .then(paints => {
+                            if (paints.length == 0) {
+                                if (isPlatformBrowser(this.platformId)) {
+                                    swal('Sem produtos disponíveis', 'Não há tintas para esta cor', 'warning');
+                                    this.parentRouter.navigate(['/corespersonalizadas', this.manufacuterId]);
+                                }
+                            }
+                            this.paints = paints;
+                        })
+                        .catch(error => {
+                            console.log(error);
                             if (isPlatformBrowser(this.platformId)) {
-                                swal('Sem produtos disponíveis', 'Não há tintas para esta cor', 'warning');
+                                swal('Erro', `Falha ao carregar os produtos: ${error.text()}`, 'error');
                                 this.parentRouter.navigate(['/corespersonalizadas', this.manufacuterId]);
                             }
-                        }
-                        this.paints = paints;
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        if (isPlatformBrowser(this.platformId)) {
-                            swal('Erro', `Falha ao carregar os produtos: ${error.text()}`, 'error');
-                            this.parentRouter.navigate(['/corespersonalizadas', this.manufacuterId]);
-                        }
-                    });
-            });
+                        });
+                });
+        }
     }
 
     /* Loaders */

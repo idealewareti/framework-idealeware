@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, AfterContentChecked, Input, Inject, PLATFORM_ID  } from '@angular/core';
 import { Router, ActivatedRoute } from "@angular/router";
 import { Http } from "@angular/http";
 import { Redirect301Service } from '../../../services/redirect301.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
     selector: 'app-redirect',
@@ -14,22 +15,25 @@ export class RedirectComponent implements OnInit {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private service: Redirect301Service
+        private service: Redirect301Service,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
-        this.route.params
-            .map(params => params)
-            .subscribe((params) => {
-                let path: string = '';
-                if (params['redir']) {
-                    path = decodeURI(this.router.url).slice(1).replace('redirect/', '');
-                }
-                else {
-                    path = decodeURI(this.router.url).slice(1);
-                }
-                this.redirectTo(path);
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.route.params
+                .map(params => params)
+                .subscribe((params) => {
+                    let path: string = '';
+                    if (params['redir']) {
+                        path = decodeURI(this.router.url).slice(1).replace('redirect/', '');
+                    }
+                    else {
+                        path = decodeURI(this.router.url).slice(1);
+                    }
+                    this.redirectTo(path);
+                });
+        }
     }
 
     redirectTo(path: string) {

@@ -30,15 +30,17 @@ export class CustomPaintManufacturerComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.storeManager.getStore()
-            .then(store => {
-                this.store = store;
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        this.titleService.setTitle('Cores Personalizadas');
-        this.getManufacturers();
+        if (isPlatformBrowser(this.platformId)) {
+            this.storeManager.getStore()
+                .then(store => {
+                    this.store = store;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            this.titleService.setTitle('Cores Personalizadas');
+            this.getManufacturers();
+        }
     }
 
     getManufacturers() {

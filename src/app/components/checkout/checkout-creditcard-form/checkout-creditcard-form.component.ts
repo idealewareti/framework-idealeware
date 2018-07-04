@@ -78,8 +78,10 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     ngOnInit() { }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['payment'] && !changes.payment.firstChange) {
-            this.resetCard();
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes['payment'] && !changes.payment.firstChange) {
+                this.resetCard();
+            }
         }
     }
 

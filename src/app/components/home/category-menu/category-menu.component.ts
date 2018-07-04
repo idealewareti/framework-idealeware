@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Renderer2 } from '@angular/core';
+import { Component, OnInit, Input, Renderer2,PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { TransferState, makeStateKey } from '@angular/platform-browser';
 import { Category } from '../../../models/category/category';
 import { Globals } from '../../../models/globals';
@@ -10,49 +11,52 @@ import { StoreManager } from '../../../managers/store.manager';
 const CATEGORIES_TREE_KEY = makeStateKey('categories_tree');
 
 @Component({
-    selector: 'app-category-menu',
-    templateUrl: '../../../template/home/category-menu/category-menu.html',
-    styleUrls: ['../../../template/home/category-menu/category-menu.scss']
+  selector: 'app-category-menu',
+  templateUrl: '../../../template/home/category-menu/category-menu.html',
+  styleUrls: ['../../../template/home/category-menu/category-menu.scss']
 })
 export class CategoryMenuComponent implements OnInit {
-    @Input() isLoggedIn: boolean = false;
-    @Input() store: Store;
-    categories: Category[] = [];
-    mediaPath: string;
+  @Input() isLoggedIn: boolean = false;
+  @Input() store: Store;
+  categories: Category[] = [];
+  mediaPath: string;
 
-    constructor(
-        private service: CategoryService,
-        private state: TransferState,
-        private renderer: Renderer2,
-    ) {
-        this.state.remove(CATEGORIES_TREE_KEY);
+  constructor(
+    private service: CategoryService,
+    private state: TransferState,
+    private renderer: Renderer2,
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) {
+    this.state.remove(CATEGORIES_TREE_KEY);
+  }
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.categories = this.state.get(CATEGORIES_TREE_KEY, null as any);
+      if (!this.categories) {
+        this.service.getTree()
+          .subscribe(categories => {
+            this.categories = categories;
+            this.state.set(CATEGORIES_TREE_KEY, categories as any);
+            this.injectDropDownHover();
+          }, error => {
+            console.log(error);
+          });
+      }
     }
+  }
 
-    ngOnInit() {
-        this.categories = this.state.get(CATEGORIES_TREE_KEY, null as any);
-        if (!this.categories) {
-            this.service.getTree()
-                .subscribe(categories => {
-                    this.categories = categories;
-                    this.state.set(CATEGORIES_TREE_KEY, categories as any);
-                    this.injectDropDownHover();
-                }, error => {
-                    console.log(error);
-                });
-        }
-    }
+  getMediaPath(): string {
+    return `${this.store.link}/static/categories/`;
+  }
 
-    getMediaPath(): string {
-        return `${this.store.link}/static/categories/`;
-    }
+  getRoute(category: Category): string {
+    return `/categoria/${category.id}/${AppCore.getNiceName(category.name)}`;
+  }
 
-    getRoute(category: Category): string {
-        return `/categoria/${category.id}/${AppCore.getNiceName(category.name)}`;
-    }
-
-    private injectDropDownHover(): void {
-        let script = this.renderer.createElement('script');
-        const content = `
+  private injectDropDownHover(): void {
+    let script = this.renderer.createElement('script');
+    const content = `
         +function ($) {
             'use strict';
           
@@ -291,7 +295,7 @@ export class CategoryMenuComponent implements OnInit {
           }(jQuery);
         `
 
-        script.innerHTML = content;
-        this.renderer.appendChild(document.body, script);
-    }
+    script.innerHTML = content;
+    this.renderer.appendChild(document.body, script);
+  }
 }

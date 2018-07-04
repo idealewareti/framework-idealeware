@@ -45,6 +45,7 @@ export class BudgetComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        if (isPlatformBrowser(this.platformId)) {
         this.mediaPath = `${this.globals.store.link}/static/products/`;
         let cartId = localStorage.getItem('cart_id');
         this.storeManager.getStore()
@@ -75,6 +76,7 @@ export class BudgetComponent implements OnInit {
                 console.log(error);
                 this.parentRouter.navigateByUrl('/');
             });
+        }
     }
 
     private getToken(): Token {

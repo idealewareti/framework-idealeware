@@ -35,6 +35,7 @@ export class CustomPaintColorComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        if (isPlatformBrowser(this.platformId)) {
         this.route.params
             .map(params => params)
             .subscribe((params) => {
@@ -42,6 +43,7 @@ export class CustomPaintColorComponent implements OnInit {
                 this.getColors(this.manufacuterId);
                 this.getManufacturer(this.manufacuterId);
             });
+        }
     }
 
     ngAfterViewChecked() {

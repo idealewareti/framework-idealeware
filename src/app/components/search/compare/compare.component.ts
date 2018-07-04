@@ -34,33 +34,35 @@ export class CompareComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.route.params
-            .map(params => params)
-            .subscribe(params => {
-                this.storeManager.getStore()
-                    .then(store => {
-                        this.store = store;
-                        let productsId: ModelReference[] = params['compare'].toString().split(',').map(p => p = { 'id': p });
-                        let title: string = 'Comparando Produtos:';
-                        if (productsId.length > 0) {
-                            productsId.forEach(p => {
-                                this.service.getProductBySku(p.id)
-                                    .subscribe(product => {
-                                        this.products.push(product);
-                                        title += ` ${product.name}`;
-                                    }, error => {
-                                        if (isPlatformBrowser(this.platformId)) {
-                                            swal('Erro ao comparar', 'Não foi possível comparar os produtos.', 'error');
-                                        }
-                                    });
-                            });
-                            this.titleService.setTitle(title);
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    })
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.route.params
+                .map(params => params)
+                .subscribe(params => {
+                    this.storeManager.getStore()
+                        .then(store => {
+                            this.store = store;
+                            let productsId: ModelReference[] = params['compare'].toString().split(',').map(p => p = { 'id': p });
+                            let title: string = 'Comparando Produtos:';
+                            if (productsId.length > 0) {
+                                productsId.forEach(p => {
+                                    this.service.getProductBySku(p.id)
+                                        .subscribe(product => {
+                                            this.products.push(product);
+                                            title += ` ${product.name}`;
+                                        }, error => {
+                                            if (isPlatformBrowser(this.platformId)) {
+                                                swal('Erro ao comparar', 'Não foi possível comparar os produtos.', 'error');
+                                            }
+                                        });
+                                });
+                                this.titleService.setTitle(title);
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        })
+                });
+        }
     }
 
     getStore(): Store {

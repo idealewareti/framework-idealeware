@@ -32,11 +32,13 @@ export class MiniCartComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.mediaPath = `${this.store.link}/static/products/`;
-        this.mediaPathPaint = `${this.store.link}/static/custompaint/`;
-        this.modality = this.store.modality;
-        this.showValuesProduct = this.showValues(this.store);
-        this.getProducts();
+        if (isPlatformBrowser(this.platformId)) {
+            this.mediaPath = `${this.store.link}/static/products/`;
+            this.mediaPathPaint = `${this.store.link}/static/custompaint/`;
+            this.modality = this.store.modality;
+            this.showValuesProduct = this.showValues(this.store);
+            this.getProducts();
+        }
     }
 
     public getCart() {

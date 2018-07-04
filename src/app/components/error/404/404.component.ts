@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID  } from '@angular/core';
 import { Title } from "@angular/platform-browser";
+import { isPlatformBrowser } from '@angular/common';
 import { ServerResponseService } from "../../../services/server-response.service";
 
 @Component({
@@ -11,11 +12,14 @@ import { ServerResponseService } from "../../../services/server-response.service
 export class NotFoundComponent implements OnInit {
     constructor(
 	private titleService: Title,
-	private serviceResponse: ServerResponseService	
+    private serviceResponse: ServerResponseService,
+    @Inject(PLATFORM_ID) private platformId: Object	
 	) { }
 
     ngOnInit() {
+        if (isPlatformBrowser(this.platformId)) {
         this.titleService.setTitle('Página não encontrada');
-		this.serviceResponse.setStatus(404,'not found');
+        this.serviceResponse.setStatus(404,'not found');
+        }
     }
 }

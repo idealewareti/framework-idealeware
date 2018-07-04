@@ -52,6 +52,7 @@ export class AddressEditComponent implements OnInit {
     }
 
     ngOnInit() {
+        if (isPlatformBrowser(this.platformId)) {
         this.tabId = this.route.params['value'].id;
         if (this.tabId && this.tabId != 'novo') {
             this.isEdit = true;
@@ -61,6 +62,7 @@ export class AddressEditComponent implements OnInit {
             this.isEdit = false;
             this.titleService.setTitle('Cadastar Novo Endereço');
         }
+    }
     }
 
     submit(event) {

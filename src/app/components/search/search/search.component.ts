@@ -95,67 +95,72 @@ export class SearchComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit() {
-        this.route.params
-            .map(params => params)
-            .subscribe(params => {
-                /* Unsetting filter */
-                if (isPlatformBrowser(this.platformId)) {
-                    window.scrollTo(0, 0);
-                }
-                this.id = params['id'];
-                this.searchInput = new Search();
-                this.filterModel = new Filter();
-                this.category = new Category();
-                this.categories = [];
-                this.sort = EnumSort.MostRelevant;
-                this.minimumPrice = null;
-                this.maximumPrice = null;
-                this.priceRange = new PriceRange(0, 0);
+        if (isPlatformBrowser(this.platformId)) {
+            this.route.params
+                .map(params => params)
+                .subscribe(params => {
+                    /* Unsetting filter */
+                    if (isPlatformBrowser(this.platformId)) {
+                        window.scrollTo(0, 0);
+                    }
+                    this.id = params['id'];
+                    this.searchInput = new Search();
+                    this.filterModel = new Filter();
+                    this.category = new Category();
+                    this.categories = [];
+                    this.sort = EnumSort.MostRelevant;
+                    this.minimumPrice = null;
+                    this.maximumPrice = null;
+                    this.priceRange = new PriceRange(0, 0);
 
-                this.titleService.setTitle('Buscar Produtos');
+                    this.titleService.setTitle('Buscar Produtos');
 
-                this.storeManager.getStore()
-                    .then(store => {
-                        this.store = store;
-                        return this.getModule();
-                    })
-                    .then(module => {
-                        this.module = module;
-                        if (params['id'])
-                            this.id = params['id'];
+                    this.storeManager.getStore()
+                        .then(store => {
+                            this.store = store;
+                            return this.getModule();
+                        })
+                        .then(module => {
+                            this.module = module;
+                            if (params['id'])
+                                this.id = params['id'];
 
-                        this.orderBy = (params['orderBy']) ? params['orderBy'] : undefined;
-                        if (params['page'])
-                            this.page = (Number.parseInt(params['page']) < 1) ? 1 : Number.parseInt(params['page']);
-                        else this.page = 1;
-                        this.products = [];
-                        return this.prepareSearch(params);
-                    })
-                    .then(results => {
-                        this.applyResults(results);
-                    })
-                    .catch(error => {
-                       console.log(error);
-						if(error.status == 404)
-						{
-						this.parentRouter.navigate(['/404']);
-						}
-                        this.loading = false;
-                        this.variations = [];
-                        this.options = [];
-                        this.brands = [];
-                    });
-            });
+                            this.orderBy = (params['orderBy']) ? params['orderBy'] : undefined;
+                            if (params['page'])
+                                this.page = (Number.parseInt(params['page']) < 1) ? 1 : Number.parseInt(params['page']);
+                            else this.page = 1;
+                            this.products = [];
+                            return this.prepareSearch(params);
+                        })
+                        .then(results => {
+                            this.applyResults(results);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            if (error.status == 404) {
+                                this.parentRouter.navigate(['/404']);
+                            }
+                            this.loading = false;
+                            this.variations = [];
+                            this.options = [];
+                            this.brands = [];
+                        });
+                });
+        }
     }
 
     ngAfterViewChecked() {
-        if (this.isMobile())
-            this.filterBox();
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.isMobile())
+                this.filterBox();
+        }
     }
 
     ngOnDestroy() {
-        this.metaService.removeTag("name='title'");
-        this.metaService.removeTag("name='description'");
+        if (isPlatformBrowser(this.platformId)) {
+            this.metaService.removeTag("name='title'");
+            this.metaService.removeTag("name='description'");
+        }
     }
 
     /* Paginations */

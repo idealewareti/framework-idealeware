@@ -45,50 +45,52 @@ export class SignUpComponent {
         private titleService: Title,
         @Inject(PLATFORM_ID) private platformId: Object,
     ) {
-        this.customer = new Customer({ type: 1, gender: 'M' });
-        this.titleService.setTitle('Cadastre-se');
-        this.customer.addresses.push(new CustomerAddress({ addressType: 1 }));
+        if (isPlatformBrowser(this.platformId)) {
+            this.customer = new Customer({ type: 1, gender: 'M' });
+            this.titleService.setTitle('Cadastre-se');
+            this.customer.addresses.push(new CustomerAddress({ addressType: 1 }));
 
-        this.myForm = formBuilder.group({
-            firstname_Companyname: ['', Validators.required],
-            lastname_Tradingname: ['', Validators.required],
-            cpf_Cnpj: ['', Validators.required],
-            rg_Ie: [''],
-            phone: ['', Validators.required],
-            celPhone: [''],
-            email: ['', Validators.required],
-            password: ['', Validators.compose([
-                strongPasswordValidator(this.strongPasswordRegex)
-            ])],
-            confirmPassword: ['', Validators.compose([
-                Validators.required,
-                Validators.minLength(6),
-                equalsControlValidator('password')
-            ])],
-            gender: ['', Validators.required],
-            birthdate: [''],
-            zipCode: ['', Validators.required],
-            addressType: ['', Validators.required],
-            addressLine1: ['', Validators.required],
-            addressLine2: [''],
-            district: ['', Validators.required],
-            city: ['', Validators.required],
-            state: ['', Validators.required],
-            number: ['', Validators.required],
-            receivePromotionalAndNews: ['']
-        });
+            this.myForm = formBuilder.group({
+                firstname_Companyname: ['', Validators.required],
+                lastname_Tradingname: ['', Validators.required],
+                cpf_Cnpj: ['', Validators.required],
+                rg_Ie: [''],
+                phone: ['', Validators.required],
+                celPhone: [''],
+                email: ['', Validators.required],
+                password: ['', Validators.compose([
+                    strongPasswordValidator(this.strongPasswordRegex)
+                ])],
+                confirmPassword: ['', Validators.compose([
+                    Validators.required,
+                    Validators.minLength(6),
+                    equalsControlValidator('password')
+                ])],
+                gender: ['', Validators.required],
+                birthdate: [''],
+                zipCode: ['', Validators.required],
+                addressType: ['', Validators.required],
+                addressLine1: ['', Validators.required],
+                addressLine2: [''],
+                district: ['', Validators.required],
+                city: ['', Validators.required],
+                state: ['', Validators.required],
+                number: ['', Validators.required],
+                receivePromotionalAndNews: ['']
+            });
+        }
     }
 
     ngOnInit() { }
 
     ngAfterContentChecked() { }
 
-    ngAfterViewInit(){
+    ngAfterViewInit() {
         if (isPlatformBrowser(this.platformId)) {
             $('.date').mask('00/00/0000');
         }
     }
-    
+
     signUp(event) {
         event.preventDefault();
 
@@ -106,7 +108,7 @@ export class SignUpComponent {
         }
         else {
             this.customer.addresses[0].addressName = 'Endereço Padrão';
-            if(this.customer.type == 1){
+            if (this.customer.type == 1) {
                 this.customer.birthdate = AppCore.ConvertTextToDate(this.customer.date);
             }
             this.manager.signUp(this.customer)

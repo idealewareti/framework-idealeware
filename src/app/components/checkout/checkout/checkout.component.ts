@@ -100,50 +100,55 @@ export class CheckoutComponent implements OnInit {
     ** Lifecycle
     */
     ngOnInit() {
-        this.titleService.setTitle('Finalização da Compra');
-        this.storeManager.getStore()
-            .then(store => {
-                this.store = store;
-                this.globals.store = store;
-                this.mediaPath = `${store.link}/static/products/`;
-                this.mediaPathPayments = `${store.link}/static/payments/`;
-                this.mediaPathPaint = `${store.link}/static/custompaint/`;
-                this.loadCart();
-                this.getPayments();
-                if (isPlatformBrowser(this.platformId)) {
-                    this.getCustomer()
-                        .then(customer => {
-                            return this.manager.setCustomerToCart(localStorage.getItem('cart_id').toString());
-                        })
-                        .then(cart => {
-                            this.globals.cart = cart;
-                        });
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            })
-
+        if (isPlatformBrowser(this.platformId)) {
+            this.titleService.setTitle('Finalização da Compra');
+            this.storeManager.getStore()
+                .then(store => {
+                    this.store = store;
+                    this.globals.store = store;
+                    this.mediaPath = `${store.link}/static/products/`;
+                    this.mediaPathPayments = `${store.link}/static/payments/`;
+                    this.mediaPathPaint = `${store.link}/static/custompaint/`;
+                    this.loadCart();
+                    this.getPayments();
+                    if (isPlatformBrowser(this.platformId)) {
+                        this.getCustomer()
+                            .then(customer => {
+                                return this.manager.setCustomerToCart(localStorage.getItem('cart_id').toString());
+                            })
+                            .then(cart => {
+                                this.globals.cart = cart;
+                            });
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
     }
 
     ngAfterViewChecked() {
-        if (this.store && this.store.modality == EnumStoreModality.Budget) {
-            this.parentRouter.navigateByUrl('/orcamento');
-        }
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.store && this.store.modality == EnumStoreModality.Budget) {
+                this.parentRouter.navigateByUrl('/orcamento');
+            }
 
 
-        if (!this.kondutoIdentified) {
-            this.kondutoIdentified = true;
-            this.getCustomer().then(
-                customer => this.injectKondutoIdentifier(customer.email)
-            )
+            if (!this.kondutoIdentified) {
+                this.kondutoIdentified = true;
+                this.getCustomer().then(
+                    customer => this.injectKondutoIdentifier(customer.email)
+                )
+            }
         }
     }
 
     ngOnDestroy() {
-        let script = document.getElementById(this.kondutoScriptId);
-        if (script) {
-            this.renderer.removeChild(this.scriptContainer, this.kondutoScript);
+        if (isPlatformBrowser(this.platformId)) {
+            let script = document.getElementById(this.kondutoScriptId);
+            if (script) {
+                this.renderer.removeChild(this.scriptContainer, this.kondutoScript);
+            }
         }
     }
 
@@ -285,7 +290,7 @@ export class CheckoutComponent implements OnInit {
         if (!this.hasPagSeguro()) {
             return;
         }
-        
+
         let token: Token = this.getToken();
 
         if (isPlatformBrowser(this.platformId)) {

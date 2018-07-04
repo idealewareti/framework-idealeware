@@ -48,17 +48,21 @@ export class LoginComponent implements OnDestroy {
     }
 
     ngOnInit() {
-        this.step = this.route.params['value'].step;
-        if (this.isNewCustomer())
-            this.parentRouter.navigateByUrl('/cadastro');
-        else this.titleService.setTitle('Login');
+        if (isPlatformBrowser(this.platformId)) {
+            this.step = this.route.params['value'].step;
+            if (this.isNewCustomer())
+                this.parentRouter.navigateByUrl('/cadastro');
+            else this.titleService.setTitle('Login');
+        }
 
     }
 
     ngOnDestroy() {
-        let script = document.getElementById(this.kondutoScriptId);
-        if (script) {
-            this.renderer.removeChild(this.scriptContainer, this.kondutoScript);
+        if (isPlatformBrowser(this.platformId)) {
+            let script = document.getElementById(this.kondutoScriptId);
+            if (script) {
+                this.renderer.removeChild(this.scriptContainer, this.kondutoScript);
+            }
         }
     }
 

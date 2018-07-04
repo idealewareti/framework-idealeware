@@ -30,8 +30,10 @@ export class LoginEmbedComponent implements OnInit, OnChanges {
     ngOnInit() { }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['openModal'].currentValue) {
-            this.open();
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes['openModal'].currentValue) {
+                this.open();
+            }
         }
     }
 

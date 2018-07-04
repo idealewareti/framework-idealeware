@@ -43,32 +43,36 @@ export class ShowcaseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.storeManager.getStore()
-            .then(store => {
-                this.store = store;
-                this.showcase = this.state.get(SHOWCASE_KEY, null as any);
-                if (this.showcase) {
-                    this.initData(this.showcase);
-                    return;
-                }
+        if (isPlatformBrowser(this.platformId)) {
+            this.storeManager.getStore()
+                .then(store => {
+                    this.store = store;
+                    this.showcase = this.state.get(SHOWCASE_KEY, null as any);
+                    if (this.showcase) {
+                        this.initData(this.showcase);
+                        return;
+                    }
 
-                this.service.getBannersFromStore()
-                    .subscribe(showcase => {
-                        this.state.set(SHOWCASE_KEY, showcase as any);
-                        this.showcase = showcase;
-                        this.initData(showcase);
-                    }, error => console.log(error));
-            })
-            .catch(error => {
-                console.log(error);
-            });
+                    this.service.getBannersFromStore()
+                        .subscribe(showcase => {
+                            this.state.set(SHOWCASE_KEY, showcase as any);
+                            this.showcase = showcase;
+                            this.initData(showcase);
+                        }, error => console.log(error));
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
     }
 
     ngOnDestroy() {
-        this.showcase = null;
-        this.metaService.removeTag("name='title'");
-        this.metaService.removeTag("name='description'");
-        this.state.remove(SHOWCASE_KEY);
+        if (isPlatformBrowser(this.platformId)) {
+            this.showcase = null;
+            this.metaService.removeTag("name='title'");
+            this.metaService.removeTag("name='description'");
+            this.state.remove(SHOWCASE_KEY);
+        }
     }
 
     private initData(data: ShowCase): void {

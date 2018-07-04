@@ -31,7 +31,9 @@ export class SearchVehicleComponent {
     ) { }
 
     ngOnInit() {
-        this.initVehicleBrand();
+        if (isPlatformBrowser(this.platformId)) {
+            this.initVehicleBrand();
+        }
     }
 
     initVehicleBrand() {

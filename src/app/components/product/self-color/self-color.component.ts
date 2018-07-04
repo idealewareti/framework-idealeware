@@ -46,14 +46,16 @@ export class SelfColorComponent {
     }
 
     ngOnInit() {
-        this.families.forEach(family => {
-            this.service.getColors(family)
-                .then(colors => {
-                    family.colors = colors;
-                    this.colors = this.colors.concat(colors);
-                })
-                .catch(error => console.log(error));
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            this.families.forEach(family => {
+                this.service.getColors(family)
+                    .then(colors => {
+                        family.colors = colors;
+                        this.colors = this.colors.concat(colors);
+                    })
+                    .catch(error => console.log(error));
+            });
+        }
     }
 
     ngAfterViewChecked() {
