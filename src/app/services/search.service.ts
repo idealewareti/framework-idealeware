@@ -29,13 +29,11 @@ export class SearchService{
             })
             .subscribe(response => {
                 if(response['products']){
-                    // response = new SearchResult(response);
                     response.pagination = pagination;
                     resolve(response);
                 }
                 else{
                     let result: SearchResult = new SearchResult();
-                    // result.products = response.map(p => p = new Product(p));
                     result.pagination = pagination;
                     resolve(result);
                 }

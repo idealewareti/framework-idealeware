@@ -305,12 +305,7 @@ export class ProductComponent implements OnDestroy {
 
     /* Breadcrump */
     getBreadCrump(): Category[] {
-        if (this.product['baseCategory']) {
-            var index = this.product.categories
-                .findIndex(c => c.id === this.product.baseCategory.id) + 1;
-            return this.product.categories.slice(0, index);
-        } else
-            return this.product.categories;
+         return this.product.categories;
     }
 
     private arrangeCategories() {

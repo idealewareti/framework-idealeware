@@ -18,22 +18,4 @@ export class ProductService {
         return this.client.get(url)
             .map(res => res.json())
     }
-
-    getProductById(id: string): Observable<Product> {
-        let url = `${environment.API_PRODUCT}/products/${id}`;
-        return this.client.get(url)
-            .map(res => res.json())
-    }
-
-    getProducts(references: Object[]): Observable<Product[]> {
-        let url = `${environment.API_PRODUCT}/products/completebyreference`;
-        return this.client.post(url, references)
-            .map(res => res.json())
-    }
-
-    getProductsFromShowcaseGroup(groupId: string): Observable<Product[]> {
-        let url = `${environment.API_PRODUCT}/products/showcasegroups/${groupId}`;
-        return this.client.get(url)
-            .map(res => res.json())
-    }
 }

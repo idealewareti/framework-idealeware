@@ -29,19 +29,19 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (isPlatformBrowser(this.platformId)) {
-        this.getShowCases();
+            this.getShowCases();
         }
     }
 
     ngOnDestroy() {
         if (isPlatformBrowser(this.platformId)) {
-        this.destroyCarousel();
+            this.destroyCarousel();
         }
     }
 
     ngAfterViewChecked() {
         if (isPlatformBrowser(this.platformId)) {
-        this.buildCarousel();
+            this.buildCarousel();
         }
     }
 
@@ -49,20 +49,10 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
         this.service.getCartShowCase()
             .subscribe(response => {
                 this.cartShowCase = response;
-                this.getProducts();
+                if (this.cartShowCase.products.length > 0) {
+                    this.products = response.products;
+                }
             }, error => console.log(error));
-    }
-
-    getProducts() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.cartShowCase.products.length > 0) {
-                let references = this.cartShowCase.products;
-                this.productService.getProducts(references)
-                    .subscribe(response => {
-                        this.products = response;
-                    }, error => console.log(error));
-            }
-        }
     }
 
     private buildCarousel() {
@@ -73,8 +63,9 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
                 $("#cartshowcase-items").owlCarousel({
                     items: 4,
                     margin: 10,
-                    loop: true,
+                    loop: false,
                     nav: true,
+                    rewind:true,
                     navText: [
                         '<i class="fa fa-angle-left" aria-hidden="true"></i>',
                         '<i class="fa fa-angle-right" aria-hidden="true"></i>'

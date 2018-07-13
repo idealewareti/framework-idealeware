@@ -45,11 +45,13 @@ export class ProductShipping {
     ) { }
 
     ngOnChanges(): void {
-        if (this.zipCode.split('').length == 9) {
-            this.calculate(null);
-        } else {
-            this.deliveryOptions = [];
-            this.branches = [];
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.zipCode.split('').length == 9) {
+                this.calculate(null);
+            } else {
+                this.deliveryOptions = [];
+                this.branches = [];
+            }
         }
     }
 
@@ -60,15 +62,15 @@ export class ProductShipping {
         }
     }
 
-    inputShipping(event){
-	if (isPlatformBrowser(this.platformId)) {
-        if(this.zipCode.split('').length == 9){
-            this.calculate(event);
-        }else{
-            this.deliveryOptions = [];
-            this.branches = [];
+    inputShipping(event) {
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.zipCode.split('').length == 9) {
+                this.calculate(event);
+            } else {
+                this.deliveryOptions = [];
+                this.branches = [];
+            }
         }
-	  }
     }
 
     sendRequest(): Promise<Intelipost> {
@@ -84,6 +86,7 @@ export class ProductShipping {
                 this.productShipping = new ProductShippingModel();
                 this.productShipping.Identification = this.intelipostIdentification;
                 this.productShipping.ZipCode = zipCode.toString();
+                this.product.skuBase.price = this.validPromotionalPrice();
                 this.productShipping.Products = this.product.skuBase;
                 this.productShipping.Products.Quantity = this.quantity;
 
@@ -110,7 +113,7 @@ export class ProductShipping {
 
     calculate(event) {
         if (isPlatformBrowser(this.platformId)) {
-            if(event) event.preventDefault();
+            if (event) event.preventDefault();
             if (!this.zipCode) {
                 swal({ title: 'Erro!', text: 'CEP Inválido', type: 'warning', confirmButtonText: 'OK' });
             }
@@ -143,5 +146,11 @@ export class ProductShipping {
                 this.getBranches(this.zipCode);
             }
         }
+    }
+
+    validPromotionalPrice() {
+        return this.product.skuBase.promotionalPrice > 0
+            ? this.product.skuBase.promotionalPrice
+            : this.product.skuBase.price;
     }
 }

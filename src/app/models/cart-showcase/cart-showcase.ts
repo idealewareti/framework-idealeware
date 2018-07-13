@@ -1,10 +1,11 @@
 import { ModelReference } from '../model-reference';
+import { Product } from '../product/product';
 
 export class CartShowCase {
     id: string;
     name: string;
     status: boolean;
-    products: ModelReference[] = []
+    products: Product[] = []
 
     constructor(object = null) {
         if (object) return this.createFromResponse(object);

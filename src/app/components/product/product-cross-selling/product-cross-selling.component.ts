@@ -47,7 +47,8 @@ export class ProductCrossSellingComponent implements OnChanges {
                 $("#cross-selling-items").owlCarousel({
                     items: 4,
                     margin: 10,
-                    loop: true,
+                    loop: false,
+                    rewind: true,
                     nav: true,
                     navText: [
                         '<i class="fa fa-angle-left" aria-hidden="true"></i>',

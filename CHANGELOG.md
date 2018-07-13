@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.2
+- Melhoria vitrine do carrinho retornando produtos prontos
+- Retirado requisição da store para json
+- Alterado plugin de owl com ajuste do parcelamento - retirado loop
+- Melhoria Breadcump categoria - detahles do produto
+
 ## 3.2.1
 - Controle de request via client
 - Correções no calculo de frete da detalhes
