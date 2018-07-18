@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.2.3
+- Melhoria retirado sessão e parcelamento do pagseguro da detalhes,retornando completo da api.
+
 ## 3.2.2
 - Melhoria vitrine do carrinho retornando produtos prontos
 - Retirado requisição da store para json

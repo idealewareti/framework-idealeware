@@ -90,44 +90,7 @@ export class InstallmentSimulationComponent implements OnInit {
                     }
                 });
 
-                this.selectGateway(this.defaultPayment(this.payments));
-                if (this.manager.hasPagSeguro(this.payments)) {
-                    this.manager.createPagSeguroSessionSimulator()
-                        .then(session => {
-                            PagSeguroDirectPayment.setSessionId(session);
-                            let pagseguro: Payment = this.manager.getPagSeguro(this.payments);
-                            let noInterestInstallmentQuantity: number = Number.parseInt(pagseguro.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
-                            let cardBrand: string = 'visa';
-                            let productPrice: number = (this.sku.promotionalPrice > 0) ? this.sku.promotionalPrice : this.sku.price;
-                            PagSeguroDirectPayment.getInstallments({
-                                amount: productPrice,
-                                brand: cardBrand,
-                                maxInstallmentNoInterest: noInterestInstallmentQuantity,
-                                success: response => {
-                                    let installments: PagseguroInstallment[] = response.installments[cardBrand].map(i => i = new PagseguroInstallment(i));
-                                    let method = new PaymentMethod();
-                                    method.name = 'Visa'
-                                    installments.forEach(i => {
-                                        method.installment.push(i.convertToInstallment());
-                                    });
-
-                                    let installmentLimit: PaymentSetting = this.payments.find(p => p.name.toLowerCase() == 'pagseguro').settings.find(s => s.name.toLowerCase() == 'installmentlimit');
-                                    if (installmentLimit)
-                                        method.installment = method.installment.slice(0, Number.parseInt(installmentLimit.value));
-
-                                    this.payments.find(p => p.name.toLowerCase() == 'pagseguro').paymentMethods.push(method);
-                                },
-                                error: response => {
-                                    console.log(response);
-                                    this.error = 'Não foi possível obter o parcelamento';
-                                }
-                            });
-                        })
-                        .catch(error => {
-                            console.log(error);
-                            this.error = `Não foi possível obter o parcelamento do Pagseguro (Erro: ${error.status})`;
-                        });
-                }
+                this.selectGateway(this.defaultPayment(this.payments));             
             })
             .catch(error => {
                 console.log(error);
