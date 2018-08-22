@@ -22,7 +22,7 @@ export class Product {
     metaTagTitle: string;
     metaTagDescription: string;
     skuBase: Sku;
-    skus: Sku[] = [];
+    skus: Sku[];
     categories: Category[] = [];
     shippingCompanies: Object[] = [];
     crossSelling: Object[] = [];

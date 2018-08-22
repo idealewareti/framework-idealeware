@@ -1,7 +1,7 @@
-import { Component, OnInit, EventEmitter, Output, AfterContentChecked, SimpleChanges, Input, OnChanges, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, EventEmitter, Output, SimpleChanges, Input, OnChanges, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+
 import { Intelipost } from '../../../models/intelipost/intelipost';
-import { IntelipostService } from '../../../services/intelipost.service';
-import { Globals } from '../../../models/globals';
 import { IntelipostRequest } from '../../../models/intelipost/intelipost-request';
 import { CustomerAddress } from '../../../models/customer/customer-address';
 import { CartManager } from '../../../managers/cart.manager';
@@ -10,20 +10,20 @@ import { Branch } from '../../../models/branch/branch';
 import { DeliveryInformation } from '../../../models/shipping/delivery-information';
 import { Shipping } from '../../../models/shipping/shipping';
 import { EnumShippingType } from '../../../enums/shipping-type.enum';
-import { BranchService } from '../../../services/branch.service';
 import { Cart } from '../../../models/cart/cart';
-import { isPlatformBrowser } from '@angular/common';
+import { IntelispostManager } from '../../../managers/intelispost.manager';
+import { BranchManager } from '../../../managers/branch.manager';
 
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-checkout-shipping',
-    templateUrl: '../../../template/checkout/checkout-shipping/checkout-shipping.html',
-    styleUrls: ['../../../template/checkout/checkout-shipping/checkout-shipping.scss']
+    selector: 'checkout-shipping',
+    templateUrl: '../../../templates/checkout/checkout-shipping/checkout-shipping.html',
+    styleUrls: ['../../../templates/checkout/checkout-shipping/checkout-shipping.scss']
 })
 export class CheckoutShippingComponent implements OnChanges {
     intelipost: Intelipost = new Intelipost();
+    @Input() cart: Cart = null;
     @Input() deliveryAddress: CustomerAddress
     branches: Branch[] = [];
     shippingSelected: Shipping = new Shipping();
@@ -31,10 +31,9 @@ export class CheckoutShippingComponent implements OnChanges {
     @Output() shippingUpdated: EventEmitter<Shipping> = new EventEmitter<Shipping>();
 
     constructor(
-        private shippingService: IntelipostService,
-        private globals: Globals,
-        private manager: CartManager,
-        private branchService: BranchService,
+        private intelispostManager: IntelispostManager,
+        private cartManager: CartManager,
+        private branchManager: BranchManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
@@ -52,17 +51,13 @@ export class CheckoutShippingComponent implements OnChanges {
     calculateShipping(address: CustomerAddress) {
         if (isPlatformBrowser(this.platformId)) {
             if (address.zipCode) {
-                let cartId = this.globals.cart.id;
+                let cartId = this.cart.id;
                 let request = new IntelipostRequest(null, null, null, address.zipCode);
-                this.shippingService.getShipping(request, localStorage.getItem('cart_id'))
-                    .then(response => {
-                        this.intelipost = response;
+                this.getShipping(request)
+                    .then(() => {
                         return this.addShippingToCart(null, this.intelipost.content.delivery_options[0]);
-                    })
-                    .then(cart => {
-                    })
+                    }).then(() => { })
                     .catch(error => {
-                        console.log(error);
                         let body = JSON.parse(error.text());
                         let response = JSON.parse(body)
                         let message = response.messages[0].text;
@@ -72,6 +67,16 @@ export class CheckoutShippingComponent implements OnChanges {
                 this.getBranches(address.zipCode);
             }
         }
+    }
+
+    private getShipping(intelispostRequest: IntelipostRequest): Promise<Intelipost> {
+        return new Promise(resolve => {
+            this.intelispostManager.getShipping(intelispostRequest, this.cart.id)
+                .subscribe(intelipost => {
+                    this.intelipost = intelipost;
+                    resolve(intelipost)
+                });
+        })
     }
 
     /**
@@ -94,7 +99,6 @@ export class CheckoutShippingComponent implements OnChanges {
                 shipping.shippingType = EnumShippingType.Delivery;
                 delivery.quotId = this.intelipost.content.id.toString();
                 delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
-                // delivery.shippingCost = this.shippingCost(intelipostOption);
                 delivery.shippingCost = intelipostOption.final_shipping_cost;
                 delivery.deliveryMethodName = intelipostOption.delivery_method_name;
                 delivery.deliveryProviderName = intelipostOption.logistic_provider_name;
@@ -118,19 +122,17 @@ export class CheckoutShippingComponent implements OnChanges {
             }
 
             if (isPlatformBrowser(this.platformId)) {
-                this.manager.setShipping(shipping, localStorage.getItem('cart_id'))
-                    .then(cart => {
-                        this.globals.cart = cart;
+                this.cartManager.setShipping(shipping, localStorage.getItem('cart_id'))
+                    .subscribe(cart => {
+                        this.cart = cart;
                         this.shippingSelected = shipping;
                         this.shippingUpdated.emit(shipping);
                         resolve(cart);
-                    })
-                    .catch(error => {
+                    },err => {
                         swal({ title: 'Erro!', text: 'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK' });
-                        reject(error);
+                        reject(err);
                     });
             }
-
         });
     }
 
@@ -168,10 +170,10 @@ export class CheckoutShippingComponent implements OnChanges {
      */
     getBranches(zipcode: string) {
         zipcode = zipcode.replace('-', '');
-        this.branchService.getBranches(zipcode)
+        this.branchManager.getBranches(zipcode)
             .subscribe(branches => {
                 this.branches = branches;
-            }, error => console.log(error));
+            });
     }
 
     /**

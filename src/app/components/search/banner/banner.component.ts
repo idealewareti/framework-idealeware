@@ -1,23 +1,22 @@
-import { Component, Input, OnInit, SimpleChange, OnChanges, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Input, SimpleChange, OnChanges, Inject, PLATFORM_ID } from '@angular/core';
 import { Banner } from '../../../models/banner/banner';
-import { BannerService } from '../../../services/banner.service';
-import { Globals } from "../../../models/globals";
 import { isPlatformBrowser } from '@angular/common';
 import { AppCore } from '../../../app.core';
-import { Store } from '../../../models/store/store';													
+import { Store } from '../../../models/store/store';
+import { BannerManager } from '../../../managers/banner.manager';
+
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-banner',
-    templateUrl: '../../../template/search/banner/banner.html',
-    styleUrls: ['../../../template/search/banner/banner.scss']
+    selector: 'banner',
+    templateUrl: '../../../templates/search/banner/banner.html',
+    styleUrls: ['../../../templates/search/banner/banner.scss']
 })
 export class BannerComponent implements OnChanges {
     @Input() module: string = null;
     @Input() moduleId: string = null;
     @Input() place: number;
-	@Input() store: Store;
+    @Input() store: Store;
     bannersTop: Banner[] = [];
 
     mediaPath: string;
@@ -27,57 +26,45 @@ export class BannerComponent implements OnChanges {
 
 
     constructor(
-        private service: BannerService,
+        private bannerManager: BannerManager,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) {}
+    ) { }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-		this.mediaPath = `${this.store.link}/static/banners/`;
+        this.mediaPath = `${this.store.link}/static/banners/`;
 
-        if (changes['moduleId'] || changes['module']) {
+        if (changes['moduleId']) {
             this.destroyCarousel();
             switch (this.module) {
                 case 'category':
-                    this.service.getBannersFromCategory(this.moduleId, this.place)
+                    this.bannerManager.getBannersFromCategory(this.moduleId, this.place)
                         .subscribe(banners => {
                             this.bannersTop = banners;
-                            // this.buildCarousel();
-                        }, error => console.log(error));
+                        });
                     break;
 
                 case 'brand':
-                    this.service.getBannersFromBrand(this.moduleId, this.place)
+                    this.bannerManager.getBannersFromBrand(this.moduleId, this.place)
                         .subscribe(banners => {
                             this.bannersTop = banners;
-                            // this.buildCarousel();
-                        }, error => console.log(error));
+                        });
                     break;
 
                 case 'group':
-                    this.service.getBannersFromGroup(this.moduleId, this.place)
+                    this.bannerManager.getBannersFromGroup(this.moduleId, this.place)
                         .subscribe(banners => {
                             this.bannersTop = banners;
-                            // this.buildCarousel();
-                        }, error => console.log(error));
+                        });
                     break;
 
                 default:
-                    this.service.getBannersFromCategory(this.moduleId, this.place)
+                    this.bannerManager.getBannersFromCategory(this.moduleId, this.place)
                         .subscribe(banners => {
                             this.bannersTop = banners;
-                            // this.buildCarousel();
-                        }, error => console.log(error));
+                        });
                     break;
             }
         }
-
-        // this.bannersTop.forEach(banner => {
-        //     this.items.push(`${this.mediaPath}${banner.picture}`);
-        // });
-    }
-
-    ngAfterViewChecked() {
-        // this.buildCarousel();
     }
 
     ngOnDestroy() {
@@ -114,7 +101,7 @@ export class BannerComponent implements OnChanges {
     }
 
     destroyCarousel() {
-        if (isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId) && this.bannersTop.length > 0) {
             let $owl = $('#banner-tarja .tarja-slider');
             $owl.owlCarousel();
             $owl.trigger('destroy.owl.carousel');

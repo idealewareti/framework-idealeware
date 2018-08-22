@@ -1,151 +1,110 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { Globals } from '../../../models/globals';
+import { isPlatformBrowser } from '@angular/common';
+
 import { AppCore } from '../../../app.core';
 import { CartItem } from '../../../models/cart/cart-item';
 import { Sku } from '../../../models/product/sku';
 import { Store } from '../../../models/store/store';
-import { Paint } from '../../../models/custom-paint/custom-paint';
-import { Cart } from '../../../models/cart/cart';
 import { CartManager } from '../../../managers/cart.manager';
+import { Cart } from '../../../models/cart/cart';
 
 declare var swal: any;
 
 @Component({
-    selector: 'app-mini-cart',
-    templateUrl: '../../../template/home/mini-cart/mini-cart.html',
-    styleUrls: ['../../../template/home/mini-cart/mini-cart.scss']
+    selector: 'mini-cart',
+    templateUrl: '../../../templates/home/mini-cart/mini-cart.html',
+    styleUrls: ['../../../templates/home/mini-cart/mini-cart.scss']
 })
 export class MiniCartComponent implements OnInit {
+
     @Input() store: Store;
+    cart: Cart = null;
     mediaPath: string;
-    mediaPathPaint: string;
-    cartReady: boolean = false;
     modality: number = -1;
     showValuesProduct: boolean = false;
 
     constructor(
-        private manager: CartManager,
-        private globals: Globals,
+        private cartManager: CartManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
-    ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.mediaPath = `${this.store.link}/static/products/`;
-            this.mediaPathPaint = `${this.store.link}/static/custompaint/`;
-            this.modality = this.store.modality;
-            this.showValuesProduct = this.showValues(this.store);
-            this.getProducts();
+    ngOnInit(): void {
+        this.mediaPath = `${this.store.link}/static/products/`;
+        this.modality = this.store.modality;
+        this.showValuesProduct = this.showValues(this.store);
+        this.getCart();
+    }
+
+    isCart(): boolean {
+        return this.cart != null;
+    }
+
+    getCart(): void {
+        if (!this.cartManager.haveCart()) {
+            this.cartManager.loadCart()
+                .subscribe(() => { });
         }
+        this.cartManager.getCart()
+            .subscribe(cart => this.cart = cart);
     }
 
-    public getCart() {
-        return this.globals.cart;
-    }
-
-
-    getProducts() {
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId: string = localStorage.getItem('cart_id');
-            if (cartId) {
-                this.manager.getCart(cartId)
-                    .then(cart => {
-                        this.cartReady = true;
-                        this.globals.cart = cart;
-                    }).catch(e => {
-                        console.log(e);
-                        this.cartReady = true;
-                    });
-            }
-            else {
-                this.cartReady = true;
-            }
-        }
-    }
-
-    updateItem(quantity, item: CartItem) {
+    updateItem(quantity, item: CartItem): void {
         if (isPlatformBrowser(this.platformId)) {
             let cartId: string = localStorage.getItem('cart_id');
             item.quantity = quantity;
-            this.manager.updateItem(item, cartId)
-                .then(cart => {
-                    this.globals.cart = cart;
-                }).catch(e => {
-                    swal("Falha ao atualizar o produto ao carrinho", e.text(), "warning");
-                });
+            this.cartManager.updateItem(item, cartId)
+                .subscribe(cart => this.cart = cart, e =>
+                    swal("Falha ao atualizar o produto ao carrinho", e.text(), "warning"));
         }
     }
 
-    deleteItem(event, item: CartItem) {
+    deleteItem(event, item: CartItem): void {
         event.preventDefault();
         if (isPlatformBrowser(this.platformId)) {
             let cartId: string = localStorage.getItem('cart_id');
-            this.manager.deleteItem(item, cartId)
-                .then(cart => {
-                    this.globals.cart = cart;
-                }).catch(e => {
-                    swal("Falha ao remover o produto ao carrinho", e.text(), "warning");
-                });
-        }
-    }
-
-    deletePaint(event, item: CartItem) {
-        event.preventDefault();
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId: string = localStorage.getItem('cart_id');
-            this.manager.deletePaint(item, cartId)
-                .then(cart => {
-                    this.globals.cart = cart;
-                }).catch(e => {
-                    swal("Falha ao remover a tinta do carrinho", e.text(), "warning");
-                });
+            this.cartManager.deleteItem(item, cartId)
+                .subscribe(() => { }, e => swal("Falha ao remover o produto ao carrinho", e.text(), "warning"));
         }
     }
 
     getDiscount(): number {
-        return (this.globals.cart) ? this.globals.cart.totalDiscountPrice : 0.0;
+        return (this.cart) ? this.cart.totalDiscountPrice : 0.0;
     }
 
     getShipping(): number {
-        return (this.globals.cart) ? this.globals.cart.totalFreightPrice : 0.0;
+        return (this.cart) ? this.cart.totalFreightPrice : 0.0;
     }
 
     getSubTotal(): number {
-        return (this.globals.cart) ? this.globals.cart.totalProductsPrice + this.globals.cart.totalServicesPrice + this.globals.cart.totalCustomPaintPrice : 0.0;
+        return (this.cart) ? this.cart.totalProductsPrice + this.cart.totalServicesPrice : 0.0;
     }
 
     getTotal(): number {
-        return (this.globals.cart) ? this.globals.cart.totalPurchasePrice : 0.0;
+        return (this.cart) ? this.cart.totalPurchasePrice : 0.0;
     }
 
     getNumItemsInCart(): number {
-        if (this.globals.cart) {
+        if (this.cart) {
             let numItems = 0;
-            numItems += (this.globals.cart.products) ? this.globals.cart.products.length : 0;
-            numItems += (this.globals.cart.services) ? this.globals.cart.services.length : 0;
-            numItems += (this.globals.cart.paints) ? this.globals.cart.paints.length : 0;
-
+            numItems += (this.cart.products) ? this.cart.products.length : 0;
+            numItems += (this.cart.services) ? this.cart.services.length : 0;
             return numItems;
         }
-        else return 0;
+        return 0;
     }
 
     isMobile(): boolean {
-        if (isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId))
             return AppCore.isMobile(window);
-        }
-        else return false;
+        return false;
     }
 
     showValues(store): boolean {
-        if (this.modality == 1) {
+        if (this.store && this.modality == 1)
             return true;
-        }
-        else if (this.modality == 0 && store.settings.find(s => s.type == 3 && s.status == true)) {
+        else if (this.store && this.modality == 0 && store.settings.find(s => s.type == 3 && s.status == true))
             return true;
-        }
     }
 
     getRoute(item: CartItem): string {
@@ -153,20 +112,9 @@ export class MiniCartComponent implements OnInit {
     }
 
     getPicture(sku: Sku): string {
-        if (sku.picture && sku.picture['showcase']) {
+        if (this.store && sku.picture && sku.picture['showcase'])
             return `${this.store.link}/static/products/${sku.picture.thumbnail}`;
-        }
-        else {
-            return 'assets/images/no-image.jpg';
-        }
-    }
+        return 'assets/images/no-image.jpg';
 
-    getPaintPicture(paint: Paint): string {
-        if (paint.optionPicture) {
-            return `${this.store.link}/static/custompaint/${paint.optionPicture}`;
-        }
-        else {
-            return 'assets/images/no-image.jpg';
-        }
     }
 }

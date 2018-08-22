@@ -1,15 +1,15 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Sku } from "../../../models/product/sku";
 import { Variation } from "../../../models/product/variation";
 import { VariationOption } from "../../../models/product/product-variation-option";
+import { currentId } from 'async_hooks';
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-product-variation',
-    templateUrl: '../../../template/product/product-variation/product-variation.html',
-    styleUrls: ['../../../template/product/product-variation/product-variation.scss']
+    selector: 'product-variation',
+    templateUrl: '../../../templates/product/product-variation/product-variation.html',
+    styleUrls: ['../../../templates/product/product-variation/product-variation.scss']
 })
-export class ProductVariationComponent implements OnInit {
+export class ProductVariationComponent implements OnChanges {
     @Input() skus: Sku[] = [];
     @Input() selected: Sku = new Sku();
     @Output() skuUpdated: EventEmitter<Sku> = new EventEmitter<Sku>();
@@ -19,20 +19,18 @@ export class ProductVariationComponent implements OnInit {
     options: VariationOption[] = [];
     optionsSelected: Variation[] = [];
 
-    constructor() { }
+    ngOnChanges() {
+        this.variations = [];
+        this.options = [];
+        this.optionsSelected = [];
 
-    ngOnInit() {
         this.skus.forEach(sku => {
             this.variations = this.getVariationsDistinct(sku.variations, this.variations);
-            sku.variations.forEach(variation => {
-                this.options = this.getOptionsDistinct(variation.option, this.options);
-            })
         });
 
         this.selected.variations.forEach(variation => {
             this.optionsSelected.push(new Variation(variation));
         });
-
     }
 
     /**
@@ -83,10 +81,6 @@ export class ProductVariationComponent implements OnInit {
             });
         });
 
-        if (options.length == 1) {
-            this.selectOption(variation, options[0]);
-        }
-
         this.allOptionsSelected.emit(this.variations.length == this.optionsSelected.length);
 
         return options;
@@ -125,21 +119,29 @@ export class ProductVariationComponent implements OnInit {
         else return false;
     }
 
+    hasNotStockOption(option: VariationOption): boolean {
+        if (this.isOptionSelected(option))
+            return this.selected.stock <= 0;
+        return false;
+    }
+
     /* Actions */
     selectOption(variation: Variation, option: VariationOption, event = null) {
         if (event)
             event.preventDefault();
 
-        let selected = new Variation(variation);
-        selected.option = new VariationOption(option);
+        if (!this.isOptionSelected(option)) {
+            let selected = new Variation(variation);
+            selected.option = new VariationOption(option);
 
-        if (this.isVariationSelected(selected)) {
-            let index = this.optionsSelected.findIndex(v => v.id == selected.id);
-            this.optionsSelected.splice(index);
+            if (this.isVariationSelected(selected)) {
+                let index = this.optionsSelected.findIndex(v => v.id == selected.id);
+                this.optionsSelected.splice(index);
+            }
+
+            this.optionsSelected.push(selected);
+            this.findSku();
         }
-
-        this.optionsSelected.push(selected);
-        this.findSku();
     }
 
     findSku() {
@@ -151,7 +153,10 @@ export class ProductVariationComponent implements OnInit {
             this.selected = skus[0];
             this.skuUpdated.emit(this.selected);
         }
-
         return skus;
+    }
+
+    trackById(index, item) {
+        return item.id;
     }
 }

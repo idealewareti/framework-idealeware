@@ -4,14 +4,13 @@ import { IntelipostAdditionalInformation } from "./intelipost-additional-informa
 import { IntelipostIdentification } from "./intelipost-identification";
 
 export class IntelipostContent {
-
     id: number;
     clientId: number;
     originZipCode: string;
     destinationZipCode: string;
     created: Date;
-    volumes: IntelipostVolume[] = [];
-    delivery_options: IntelipostDeliveryOption[] = [];
+    volumes: IntelipostVolume[];
+    delivery_options: IntelipostDeliveryOption[];
     additional_information: IntelipostAdditionalInformation;
     identification: IntelipostIdentification;
 
@@ -42,5 +41,4 @@ export class IntelipostContent {
 
         return model;
     }
-
 }

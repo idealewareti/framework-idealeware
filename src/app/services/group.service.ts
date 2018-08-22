@@ -2,27 +2,26 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { Group } from "../models/group/group";
 import { environment } from "../../environments/environment";
-import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
-
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class GroupService{
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
     getAll(): Observable<Group[]>{
         let url = `${environment.API_GROUP}/groups`;
-        return this.client.get(url)
-        .map(res => res.json())
+        return this.client.get(url);
     }
 
     getById(id): Observable<Group>{
         let url = `${environment.API_GROUP}/groups/${id}`;
-        return this.client.get(url)
-        .map(res => res.json())
+        return this.client.get(url);
     }
 }

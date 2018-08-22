@@ -1,0 +1,6 @@
+<div class="showcase showcase-owl destaque" *ngFor="let group of groups; trackBy: trackById">
+    <h3 class="title">
+        <b>{{group.name}}</b>
+    </h3>   
+    <showcase-group-product [store]="store" [group]="group"></showcase-group-product> 
+</div>

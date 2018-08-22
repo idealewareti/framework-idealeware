@@ -2,14 +2,17 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { environment } from "../../environments/environment";
 import { Store } from "../models/store/store";
-import { Observable } from "rxjs/Observable";
-import { Http } from "@angular/http";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class StoreService {
+
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
@@ -20,8 +23,6 @@ export class StoreService {
      */
     getStore(): Observable<Store> {
         let url: string = `${environment.API_STORE}/store`;
-        return this.client.get(url)
-            .map(res => res.json())
-            .catch(error => error);
-            };
+        return this.client.get(url);
     }
+}

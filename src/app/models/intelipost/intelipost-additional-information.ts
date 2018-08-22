@@ -1,10 +1,9 @@
 export class IntelipostAdditionalInformation {
-
     freeShipping: boolean;
     extraCostsAbsolute: number;
     extraCostsPercentage: number;
     leadTimeBussinessDays: number;
-    deliveryMethodIds: number[] = [];
+    deliveryMethodIds: number[];
     taxID: string;
     clientType: string;
     salesChannel: string;

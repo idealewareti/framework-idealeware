@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { NewsLetter } from "../models/newsletter/newsletter";
 import { HttpClientHelper } from '../helpers/http.helper';
-import { Http } from '@angular/http';
 import { environment } from '../../environments/environment';
-import { Observable } from 'rxjs/Observable';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class NewsLetterService {
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
@@ -21,8 +23,7 @@ export class NewsLetterService {
         else {
             url = `${environment.API_POPUP}/popup`;
         }
-        return this.client.post(url, newsLetter)
-            .map(res => res.json());
+        return this.client.post(url, newsLetter);
     }
 
 }

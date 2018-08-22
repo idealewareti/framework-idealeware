@@ -1,77 +1,51 @@
-import { Component, Input, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
-import { OrderService } from "../../../services/order.service";
 import { Order } from "../../../models/order/order";
 import { OrderStatusEnum } from "../../../enums/order-status.enum";
-import { Title } from "@angular/platform-browser";
-import { Globals } from "../../../models/globals";
-import { Token } from '../../../models/customer/token';
-import { isPlatformBrowser } from '@angular/common';
 import { Store } from '../../../models/store/store';
 import { StoreManager } from '../../../managers/store.manager';
+import { OrderManager } from '../../../managers/order.manager';
 
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-myorder-panel',
-    templateUrl: '../../../template/account/myorder-panel/myorder-panel.html',
-    styleUrls: ['../../../template/account/myorder-panel/myorder-panel.scss'],
+    selector: 'myorder-panel',
+    templateUrl: '../../../templates/account/myorder-panel/myorder-panel.html',
+    styleUrls: ['../../../templates/account/myorder-panel/myorder-panel.scss'],
 })
 export class MyOrderPanelComponent implements OnInit {
     @Input() tabId: string;
     order: Order = null;
     mediaPath: string;
-    mediaPathPaint: string;
     store: Store;
 
     constructor(
         private route: ActivatedRoute,
-        private service: OrderService,
+        private orderManager: OrderManager,
         private storeManager: StoreManager,
-        private parentRouter: Router,
-        private titleService: Title,
-        private globals: Globals,
-        @Inject(PLATFORM_ID) private platformId: Object
+        private parentRouter: Router
     ) { }
 
-
-    private getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token = new Token();
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
-        }
-        return token;
-    }
-
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.tabId = this.route.params['value'].id;
-            this.storeManager.getStore()
-                .then(store => {
-                    this.store = store;
-                    this.mediaPath = `${this.store.link}/static/products/`;
-                    this.mediaPathPaint = `${this.store.link}/static/custompaint/`;
-                    return this.getOrder(this.tabId, this.getToken());
-                })
-                .then(order => {
-                    this.order = order;
-                    this.titleService.setTitle(`Pedido #${this.order.orderNumber}`);
-                })
-                .catch(error => {
-                    swal('Erro ao exibir o pedido', error.text(), 'error');
-                    this.parentRouter.navigateByUrl('/conta/pedidos');
-                });
-        }
+        this.tabId = this.route.params['value'].id;
+        this.getStore()
+            .then(store => {
+                this.store = store;
+                this.mediaPath = `${this.store.link}/static/products/`;
+                return this.getOrder(this.tabId);
+            })
+            .then(order => {
+                this.order = order;
+            })
+            .catch(error => {
+                swal('Erro ao exibir o pedido', error.text(), 'error');
+                this.parentRouter.navigateByUrl('/conta/pedidos');
+            });
     }
 
-    getOrder(orderId: string, token: Token): Promise<Order> {
+    getOrder(orderId: string): Promise<Order> {
         return new Promise((resolve, reject) => {
-            this.service.getOrder(this.tabId, this.getToken())
+            this.orderManager.getOrder(orderId)
                 .subscribe(order => {
                     resolve(order);
                 }), (error => {
@@ -80,16 +54,64 @@ export class MyOrderPanelComponent implements OnInit {
         });
     }
 
-    orderPipeline() {
-        if (this.order.status == OrderStatusEnum.NewOrder || this.order.status == OrderStatusEnum.PendingOrder)
-            return 1;
-        else if (this.order.status == OrderStatusEnum.ApprovedOrder || this.order.status == OrderStatusEnum.FaturedOrder || this.order.status == OrderStatusEnum.ProcessOrder)
-            return 2;
-        else if (this.order.status == OrderStatusEnum.TransportedOrder)
-            return 3;
-        else if (this.order.status == OrderStatusEnum.FinishedOrder)
-            return 5;
-        else return 0;
+    isNewOrder(): boolean {
+        if (this.order.historyStatus.find(a => a.status == OrderStatusEnum.NewOrder) != null)
+            return true;
+        return false;
+    }
+
+    newOrderDate(): Date{
+        return this.order.historyStatus.find(a => a.status == OrderStatusEnum.NewOrder).alterDate
+    }
+
+    isAprovedOrder(): boolean {
+        if (this.order.historyStatus.find(a => a.status == OrderStatusEnum.ApprovedOrder) != null)
+            return true;
+        return false;
+    }
+
+    aprovedOrderDate(): Date {
+        return this.order.historyStatus.find(a => a.status == OrderStatusEnum.ApprovedOrder).alterDate
+    }
+
+    isTransportedOrder(): boolean {
+        if (this.order.historyStatus.find(a => a.status == OrderStatusEnum.TransportedOrder) != null)
+            return true;
+        return false;
+    }
+
+    transportedOrderDate(): Date {
+        return this.order.historyStatus.find(a => a.status == OrderStatusEnum.TransportedOrder).alterDate
+    }
+
+    isFaturedOrder(): boolean {
+        if (this.order.historyStatus.find(a => a.status == OrderStatusEnum.FaturedOrder) != null)
+            return true;
+        return false;
+    }
+
+    faturedOrderDate():Date{
+        return this.order.historyStatus.find(a => a.status == OrderStatusEnum.TransportedOrder).alterDate
+    }
+
+    isFinishOrder(): boolean {
+        if (this.order.historyStatus.find(a => a.status == OrderStatusEnum.FinishedOrder) != null)
+            return true;
+        return false;
+    }
+
+    finishedOrderDate(): Date{
+        return this.order.historyStatus.find(a => a.status == OrderStatusEnum.FinishedOrder).alterDate
+    }
+
+    isCanceledOrder(): boolean {
+        if (this.order.historyStatus.find(a => a.status == OrderStatusEnum.CanceledOrder) != null)
+            return true;
+        return false;
+    }
+
+    canceledOrderDate():Date{
+        return this.order.historyStatus.find(a => a.status == OrderStatusEnum.CanceledOrder).alterDate
     }
 
     isCreditCard(): boolean {
@@ -105,7 +127,7 @@ export class MyOrderPanelComponent implements OnInit {
     }
 
     isHiddenVariation(): boolean {
-        let type = this.globals.store.settings.find(s => s.type == 4);
+        let type = this.store.settings.find(s => s.type == 4);
         if (type)
             return type.status;
         else
@@ -121,7 +143,7 @@ export class MyOrderPanelComponent implements OnInit {
     }
 
     getSubTotal() {
-        return this.order.totalProductsPrice + this.order.totalServicePrice + this.order.totalPaintsPrice;
+        return this.order.totalProductsPrice + this.order.totalServicePrice;
     }
 
     getTotal() {
@@ -136,19 +158,25 @@ export class MyOrderPanelComponent implements OnInit {
         return this.order.totalProductsPrice
     }
 
-    getTotalPaints(): number {
-        return this.order.totalPaintsPrice;
-    }
-
     getNumItemsInCart() {
         if (this.order) {
             let numItems = 0;
             numItems += (this.order.products) ? this.order.products.length : 0;
             numItems += (this.order.services) ? this.order.services.length : 0;
-            numItems += (this.order.paints) ? this.order.paints.length : 0;
 
             return numItems;
         }
         else return 0;
+    }
+
+    private getStore(): Promise<Store> {
+        return new Promise((resolve, reject) => {
+            this.storeManager.getStore()
+                .subscribe(store => {
+                    resolve(store);
+                }, error => {
+                    reject(error);
+                });
+        });
     }
 }

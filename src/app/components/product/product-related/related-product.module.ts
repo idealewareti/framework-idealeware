@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { RelatedProductsComponent }  from './related-product.component';
 
 @NgModule({
     declarations: [ RelatedProductsComponent ],
-    imports: [ BrowserModule ],
-    providers: [],
+    imports: [ CommonModule ],
     exports: [ RelatedProductsComponent ]
 })
 export class RelatedProductsModule {}

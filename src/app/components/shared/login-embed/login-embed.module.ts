@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { LoginEmbedComponent }  from './login-embed.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @NgModule({
     declarations: [ LoginEmbedComponent ],
-    imports: [ BrowserModule, FormsModule, ReactiveFormsModule, ],
-    providers: [],
+    imports: [ CommonModule, FormsModule, ReactiveFormsModule, ],
     exports: [ LoginEmbedComponent ]
 })
 export class LoginEmbedModule {}

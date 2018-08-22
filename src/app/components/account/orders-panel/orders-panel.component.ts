@@ -1,41 +1,25 @@
-import { Component, Input, OnInit, PLATFORM_ID, Inject } from '@angular/core';
-import { OrderService } from "../../../services/order.service";
+import { Component, Input } from '@angular/core';
 import { Order } from "../../../models/order/order";
 import { OrderStatusEnum } from "../../../enums/order-status.enum";
-import { Title } from "@angular/platform-browser";
-import { isPlatformBrowser } from '@angular/common';
-import { Token } from '../../../models/customer/token';
+import { OrderManager } from '../../../managers/order.manager';
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-order-panel',
-    templateUrl: '../../../template/account/orders-panel/orders-panel.html',
-    styleUrls: ['../../../template/account/orders-panel/orders-panel.scss']
+    selector: 'order-panel',
+    templateUrl: '../../../templates/account/orders-panel/orders-panel.html',
+    styleUrls: ['../../../templates/account/orders-panel/orders-panel.scss']
 })
 export class OrderPanelComponent {
     @Input() tabId: string;
     orders: Order[] = [];
 
-    constructor(private service: OrderService, private titleService: Title, @Inject(PLATFORM_ID) private platformId: Object) {}
-
-    private getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token = new Token();
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
-        }
-        return token;
-    }
+    constructor(
+        private orderManager: OrderManager) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-        this.service.getOrders(this.getToken())
+        this.orderManager.getOrders()
             .subscribe(orders => {
                 this.orders = orders;
-                this.orders.forEach((order)=>{
+                this.orders.forEach((order) => {
                     const labels = [
                         { id: 0, label: 'Novo Pedido' },
                         { id: 1, label: 'Pedido Aprovado' },
@@ -48,10 +32,7 @@ export class OrderPanelComponent {
                     ]
                     order.labelStatus = labels.filter(s => s.id == order.status)[0].label;
                 })
-            }), (error => console.log(error));
-
-        this.titleService.setTitle('Meus Pedidos');
-        }
+            });
     }
 
     showList() {
@@ -65,6 +46,5 @@ export class OrderPanelComponent {
         else if (order.status == OrderStatusEnum.PendingOrder)
             return 'status-yellow';
         else return 'status-green';
-
     }
 }

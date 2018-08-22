@@ -8,7 +8,6 @@ import { CheckoutCreditCardFormModule } from '../checkout-creditcard-form/checko
 @NgModule({
     declarations: [ CheckoutPaymentsComponent ],
     imports: [ CommonModule, CurrencyFormatModule, WaitLoaderModule, CheckoutCreditCardFormModule ],
-    exports: [ CheckoutPaymentsComponent ],
-    providers: [],
+    exports: [ CheckoutPaymentsComponent ]
 })
 export class CheckoutPaymentsModule {}

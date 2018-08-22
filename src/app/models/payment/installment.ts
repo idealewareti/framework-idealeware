@@ -1,5 +1,4 @@
-export class Installment{
-    
+export class Installment {
     id: string;
     number: number;
     interest: number;
@@ -19,6 +18,6 @@ export class Installment{
         }
 
         return model;
-            
     }
+
 }

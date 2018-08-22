@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { SearchPaginationComponent }  from './search-pagination.component';
+import { CommonModule } from "@angular/common";
 
 @NgModule({
     declarations: [ SearchPaginationComponent ],
-    imports: [ BrowserModule ],
-    providers: [],
+    imports: [ CommonModule ],
     exports: [ SearchPaginationComponent ]
 })
 export class SearchPaginationModule {}

@@ -1,62 +1,41 @@
-import { Component, OnInit, AfterContentChecked, Inject, PLATFORM_ID, Input } from "@angular/core";
+import { Component, OnInit, Inject, PLATFORM_ID, Input } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { PopUp } from "../../../models/popup/popup";
-import { PopUpService } from "../../../services/pop-up.service";
-import { Globals } from "../../../models/globals";
 import { Store } from "../../../models/store/store";
-import { makeStateKey, TransferState } from "@angular/platform-browser";
-
-const POPUP_KEY = makeStateKey('popup_key');
+import { PopUpManager } from "../../../managers/pop-up.manager";
+import { CookieService } from "ngx-cookie-service";
 
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-popup',
-    templateUrl: '../../../template/home/pop-up/popup.html',
-    styleUrls: ['../../../template/home/pop-up/popup.scss']
+    selector: 'popup',
+    templateUrl: '../../../templates/home/pop-up/popup.html',
+    styleUrls: ['../../../templates/home/pop-up/popup.scss']
 })
 export class PopUpComponent implements OnInit {
     popUpAssortment: PopUp = null;
-    mediaPath: string;
     private popupEnabled: boolean = false;
     @Input() store: Store;
 
     constructor(
-        private service: PopUpService,
-        private state: TransferState,
+        private cookie: CookieService,
+        private manager: PopUpManager,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-    }
+    ) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.getPopUp();
-        }
-    }
-
-    ngAfterContentChecked() {
-        if (!this.mediaPath && this.store) {
-            this.mediaPath = `${this.store.link}/static/popups/`;
-        }
+        this.loadPopUp();
     }
 
     getPopUpPicture(): string {
         return `${this.store.link}/static/popups/${this.popUpAssortment.picture}`;
     }
 
-    getPopUp() {
-        const popup = this.state.get(POPUP_KEY, null as any);
-        if (popup) {
-            this.initData(popup);
-            return;
-        }
-
-        this.service.getPopUp()
+    loadPopUp() {
+        this.manager.getPopUp()
             .subscribe(response => {
-                this.state.set(POPUP_KEY, response as any);
                 this.initData(response);
-            }, error => console.log(error));
+            });
     }
 
     ngAfterViewChecked() {
@@ -67,9 +46,13 @@ export class PopUpComponent implements OnInit {
 
     showPopupModal() {
         if (isPlatformBrowser(this.platformId)) {
-            if (this.popUpAssortment != null) {
+            if (this.popUpAssortment != null && !this.cookie.check('popup')) {
+                let self = this;
                 this.popupEnabled = true;
                 $('#popUpModal').fadeIn(function () {
+                    let expiredDate = new Date();
+                    expiredDate.setDate(expiredDate.getDate() + 1);
+                    self.cookie.set('popup', 'true', expiredDate);
                     $(document).on('click', '#popUpModal .btn-close-clickview, #popUpModal .mask', function () {
                         $('#popUpModal').fadeOut();
                     });

@@ -1,4 +1,4 @@
-export class PagseguroCardBrand{
+export class PagseguroCardBrand {
     name: string;
     bin: number;
     cvvSize: number;

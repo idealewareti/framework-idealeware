@@ -8,9 +8,15 @@ import { CheckoutButtonModule } from '../../shared/checkout-button/checkout-butt
 import { WaitLoaderModule } from '../../shared/wait-loader/wait-loader.module';
 
 @NgModule({
-    declarations: [ MiniCartComponent ],
-    imports: [ CommonModule, FormsModule, RouterModule, CurrencyFormatModule, CheckoutButtonModule, WaitLoaderModule ],
-    exports: [ MiniCartComponent ],
-    providers: [],
+    declarations: [MiniCartComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule,
+        CurrencyFormatModule,
+        CheckoutButtonModule, 
+        WaitLoaderModule
+    ],
+    exports: [MiniCartComponent],
 })
-export class MiniCartModule {}
+export class MiniCartModule { }

@@ -6,7 +6,6 @@ import { CommonModule } from "@angular/common";
 @NgModule({
     declarations: [ MyOrderPanelComponent ],
     imports: [ CommonModule, CurrencyFormatModule ],
-    providers: [],
     exports: [ MyOrderPanelComponent ]
 })
 export class MyOrderPanelModule {}

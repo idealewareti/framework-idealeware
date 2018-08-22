@@ -1,7 +1,6 @@
 import { Installment } from "../payment/installment";
 
 export class PagseguroInstallment {
-    
     installmentAmount: number;
     interestFree: boolean;
     quantity: number;

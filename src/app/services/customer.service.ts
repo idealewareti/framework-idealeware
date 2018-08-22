@@ -1,105 +1,63 @@
 import { Injectable } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Customer } from '../models/customer/customer';
 import { CustomerAddress } from '../models/customer/customer-address';
-import { Login } from '../models/customer/login';
 import { Token } from '../models/customer/token';
 import { HttpClientHelper } from '../helpers/http.helper';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class CustomerService {
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
     createCustomer(customer: Customer): Observable<Customer> {
         let url = `${environment.API_CUSTOMER}/customers`;
-        return this.client.post(url, customer)
-            .map(res => res.json());
+        return this.client.post(url, customer);
 
     }
 
-    login(user, password): Promise<Token> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_AUTHENTICATE}/authenticate/login`;
-            this.client.post(url, new Login(user, password))
-                .map(res => res.json())
-                .subscribe(authenticate => {
-                    let user = new Customer(authenticate.customer);
-                    let token: Token = new Token();
-                    token.accessToken = authenticate.accessToken;
-                    token.tokenType = authenticate.tokenType;
-                    token.expiresIn = authenticate.expiresIn;
-                    token.createdDate = new Date(authenticate.createdDate);
-                    token.customer = authenticate.customer;
-                    resolve(token);
-                }, error => reject(error));
-
-        });
+    login(user, password): Observable<Token> {
+        let url = `${environment.API_AUTHENTICATE}/authenticate/login`;
+        return this.client.post(url, { cpfEmail: user, password: password })
+            .pipe(map(res => res.body));
     }
 
-    getUser(token: Token): Observable<Customer> {
+    getUser(): Observable<Customer> {
         let url = `${environment.API_CUSTOMER}/customers`;
-        return this.client.get(url, token)
-            .map(res => res.json());
+        return this.client.get(url);
     }
 
-    saveAddress(address: CustomerAddress, token: Token): Observable<CustomerAddress> {
+    saveAddress(address: CustomerAddress): Observable<CustomerAddress> {
         let url = `${environment.API_CUSTOMER}/customers/address`;
-        return this.client.post(url, address, token)
-            .map(res => res.json());
+        return this.client.post(url, address);
 
     }
 
-    updateAddress(address: CustomerAddress, token: Token): Observable<CustomerAddress> {
+    updateAddress(address: CustomerAddress): Observable<CustomerAddress> {
         let url = `${environment.API_CUSTOMER}/customers/address`;
-        return this.client.put(url, address, token)
-            .map(res => res.json());
+        return this.client.put(url, address);
     }
 
-    deleteAddress(addressId: string, token: Token): Promise<{}> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CUSTOMER}/customers/${addressId}`;
-            this.client.delete(url, token)
-                .map(res => {
-                    if (res.status == 200)
-                        resolve(res.text());
-
-                    return res.json();
-                })
-                .subscribe(() => {
-                    resolve();
-                }, error => reject(error));
-        });
+    deleteAddress(addressId: string): Observable<{}> {
+        let url = `${environment.API_CUSTOMER}/customers/${addressId}`;
+        return this.client.delete(url);
     }
 
-    updateCustomer(customer: Customer, token: Token): Observable<Customer> {
+    updateCustomer(customer: Customer): Observable<Customer> {
         let url = `${environment.API_CUSTOMER}/customers`;
-        return this.client.put(url, customer, token)
-            .map(res => res.json())
+        return this.client.put(url, customer);
     }
 
-    recoverPassword(cpf_cnpj: string, email: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            let url = `${environment.API_CUSTOMER}/customers/${cpf_cnpj}/${email}`;
-            this.client.put(url, null)
-                .map(res => {
-                    if (res.status == 200) {
-                        resolve(res.text());
-                    }
-                    else {
-                        reject(res.text());
-                    }
-                    return res.json();
-                })
-                .subscribe(response => {
-                    resolve(response);
-                }, error => reject(error));
-        });
+    recoverPassword(cpf_cnpj: string, email: string): Observable<string> {
+        let url = `${environment.API_CUSTOMER}/customers/${cpf_cnpj}/${email}`;
+        return this.client.put(url, null);
     }
 }

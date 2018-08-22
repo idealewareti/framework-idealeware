@@ -1,14 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
-    selector: 'app-wait-loader',
-    templateUrl: '../../../template/shared/wait-loader/wait-loader.html',
-    styleUrls: ['../../../template/shared/wait-loader/wait-loader.scss']
+    selector: 'wait-loader',
+    templateUrl: '../../../templates/shared/wait-loader/wait-loader.html',
+    styleUrls: ['../../../templates/shared/wait-loader/wait-loader.scss']
 })
-export class WaitLoaderComponent implements OnInit {
+export class WaitLoaderComponent {
     @Input() small: boolean = false;
-
-    constructor() { }
-
-    ngOnInit() { }
 }

@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, AfterViewInit, OnChanges, SimpleChange, OnDestroy, SimpleChanges, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, PLATFORM_ID, Inject } from '@angular/core';
 import { ProductPicture } from "../../../models/product/product-picture";
 import { Sku } from "../../../models/product/sku";
-import { Globals } from "../../../models/globals";
 import { isPlatformBrowser } from '@angular/common';
 import { AppCore } from '../../../app.core';
 import { Store } from '../../../models/store/store';
@@ -9,10 +8,9 @@ import { Store } from '../../../models/store/store';
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-product-gallery',
-    templateUrl: '../../../template/product/product-gallery/product-gallery.html',
-    styleUrls: ['../../../template/product/product-gallery/product-gallery.scss']
+    selector: 'product-gallery',
+    templateUrl: '../../../templates/product/product-gallery/product-gallery.html',
+    styleUrls: ['../../../templates/product/product-gallery/product-gallery.scss']
 })
 export class ProductGalleryComponent implements OnInit, OnChanges {
 
@@ -21,45 +19,42 @@ export class ProductGalleryComponent implements OnInit, OnChanges {
     coverImg: ProductPicture = null;
     pictures: ProductPicture[] = [];
     mediaPath: string;
-    private zoomChecked = false;
 
-    constructor( @Inject(PLATFORM_ID) private platformId: Object) { }
+    slideConfig = {
+        infinite: true,
+        slidesToShow: 5,
+        slidesToScroll: 3
+    };
+
+    slideConfigMobile = {
+        dots: true,
+        infinite: true
+    };
+
+
+    constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.pictures = this.sku.pictures;
-            this.setCoverImage((this.sku.pictures.length > 0) ? this.sku.pictures[0] : new ProductPicture());
-        }
+        this.pictures = this.sku.pictures;
+        this.setCoverImage((this.sku.pictures.length > 0) ? this.sku.pictures[0] : new ProductPicture());
     }
 
     ngAfterViewInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.imageZoom(this.coverImg);
-            this.buildGallery();
-        }
+        this.imageZoom(this.coverImg);
     }
 
 
     ngOnChanges(changes: SimpleChanges) {
-        if (isPlatformBrowser(this.platformId)) {
-            if (changes['sku'] && !changes.sku.firstChange) {
-
-                if (changes.sku.previousValue.id != changes.sku.currentValue.id) {
-                    this.pictures = this.sku.pictures;
-                    this.setCoverImage((this.sku.pictures.length > 0) ? this.sku.pictures[0] : new ProductPicture());
-                }
+        if (changes['sku'] && !changes.sku.firstChange) {
+            if (changes.sku.previousValue.id != changes.sku.currentValue.id) {
+                this.pictures = this.sku.pictures;
+                this.setCoverImage((this.sku.pictures.length > 0) ? this.sku.pictures[0] : new ProductPicture());
             }
         }
     }
 
-    ngAfterViewChecked() {
-
-    }
-
     ngOnDestroy() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.destroyZoom();
-        }
+        this.destroyZoom();
     }
 
     setCoverImage(image: ProductPicture, event = null) {
@@ -77,11 +72,13 @@ export class ProductGalleryComponent implements OnInit, OnChanges {
     }
 
     imageZoom(coverImg: ProductPicture) {
-        let imgFull = this.getFullPictureUrl(coverImg);
-        if (isPlatformBrowser(this.platformId)) {
-            if ($ && $.fn.zoom && !this.isMobile()) {
-                this.destroyZoom();
-                $('.image').zoom({ url: imgFull });
+        if (this.pictures.length > 0) {
+            let imgFull = this.getFullPictureUrl(coverImg);
+            if (isPlatformBrowser(this.platformId)) {
+                if ($ && $.fn.zoom && !this.isMobile()) {
+                    this.destroyZoom();
+                    $('.image').zoom({ url: imgFull });
+                }
             }
         }
     }
@@ -92,24 +89,8 @@ export class ProductGalleryComponent implements OnInit, OnChanges {
         }
     }
 
-    /* Gallery */
-    buildGallery() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.isMobile()) {
-                $('.image-group').slick({
-                    dots: true,
-                    infinite: true
-                });
-            }
-            else {
-                $('#image-thumb').slick({
-                    infinite: true,
-                    slidesToShow: 5,
-                    slidesToScroll: 3
-                });
-
-            }
-        }
+    isBrowser() {
+        return isPlatformBrowser(this.platformId);
     }
 
     getPictureUrl(picture: ProductPicture): string {

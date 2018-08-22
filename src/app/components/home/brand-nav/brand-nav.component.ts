@@ -1,50 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import { PLATFORM_ID, Inject, Input } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Store } from '../../../models/store/store';
 import { Brand } from '../../../models/brand/brand';
-import { BrandService } from '../../../services/brand.service';
 import { AppCore } from '../../../app.core';
-import { Subscriber } from 'rxjs/Subscriber';
-import { makeStateKey, TransferState } from '@angular/platform-browser';
-
-const BRAND_KEY = makeStateKey('nav_brand_key');
+import { BrandManager } from '../../../managers/brand.manager';
 
 declare var $: any;
 
 @Component({
-    selector: 'app-brand-nav',
-    templateUrl: '../../../template/home/brand-nav/brand-nav.html',
-    styleUrls: ['../../../template/home/brand-nav/brand-nav.scss']
+    selector: 'brand-nav',
+    templateUrl: '../../../templates/home/brand-nav/brand-nav.html',
+    styleUrls: ['../../../templates/home/brand-nav/brand-nav.scss']
 })
-export class BrandNavComponent implements OnInit {
+export class BrandNavComponent implements OnInit, AfterViewChecked {
     @Input() store: Store;
-    allBrands: Brand[] = [];
     brands: Brand[] = [];
 
     constructor(
-        private service: BrandService,
+        private manager: BrandManager,
         @Inject(PLATFORM_ID) private platformId: Object,
-        private state: TransferState
     ) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            const response = this.state.get(BRAND_KEY, null as any);
-            if (response) {
-                this.allBrands = response;
-                this.removeBrandWithoutPicture();
-                return;
-            }
-            this.service.getAll()
-                .subscribe(brands => {
-                    this.state.set(BRAND_KEY, brands as any);
-                    this.allBrands = brands;
-                    this.removeBrandWithoutPicture();
-                }, e => {
-                    console.log(e);
-                });
-        }
+        this.manager.getAll()
+            .subscribe(brands => {
+                this.brands = brands;
+            });
     }
 
     ngAfterViewChecked() {
@@ -60,15 +42,8 @@ export class BrandNavComponent implements OnInit {
         }
     }
 
-    private removeBrandWithoutPicture() {
-        this.allBrands.forEach(brand => {
-            if (brand.picture)
-                this.brands.push(brand);
-        });
-    }
-
     getRoute(brand: Brand): string {
-        return `/marcas/${brand.id}/${AppCore.getNiceName(brand.name)}`;
+        return `/marcas/${AppCore.getNiceName(brand.name)}-${brand.id}`;
     }
 
     getPictureUrl(brand: Brand): string {

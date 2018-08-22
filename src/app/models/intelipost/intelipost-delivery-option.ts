@@ -9,7 +9,7 @@ export class IntelipostDeliveryOption {
     delivery_method_name: string;
     logistic_provider_name: string;
     delivery_note: string;
-
+    
     constructor(object = null) {
         if (object) return this.createFromResponse(object);
     }

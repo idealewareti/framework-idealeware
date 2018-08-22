@@ -1,114 +1,40 @@
 import { Injectable, Inject, PLATFORM_ID } from "@angular/core";
-import { CustomerService } from "../../app/services/customer.service";
-import { Login } from "../../app/models/customer/login";
-import { CartManager } from "../../app/managers/cart.manager";
-import { Customer } from "../../app/models/customer/customer";
-import { Globals } from "../../app/models/globals";
-import { Observable } from "rxjs/Observable";
-import { Token } from "../models/customer/token";
+import { CustomerService } from "../services/customer.service";
+import { Login } from "../models/customer/login";
+import { Customer } from "../models/customer/customer";
 import { isPlatformBrowser } from "@angular/common";
-import { AppConfig } from "../app.config";
-import { Store } from "../models/store/store";
+import { Observable, BehaviorSubject } from "rxjs";
+import { Token } from "../models/customer/token";
+import { JwtHelperService } from "@auth0/angular-jwt";
+import { CustomerAddress } from "../models/customer/customer-address";
+import { map } from "../../../node_modules/rxjs/operators";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class CustomerManager {
+
+    private customerSubject = new BehaviorSubject<Customer>(null);
 
     constructor(
         private service: CustomerService,
-        private cartManager: CartManager,
-        private globals: Globals,
+        private jwtService: JwtHelperService,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-        this.persistLocalStorage();
-     }
-
-
-    getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token = new Token();
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
-        }
-        return token;
-    }
-
-    private setToken(authenticate: any, user: Customer) {
-        if (isPlatformBrowser(this.platformId)) {
-            let token = new Token();
-            token.accessToken = authenticate.accessToken;
-            token.tokenType = authenticate.tokenType;
-            token.createdDate = authenticate.createdDate;
-            token.expiresIn = authenticate.expiresIn;
-
-            localStorage.setItem('customer', user.firstname_Companyname);
-            localStorage.setItem('customer_mail', user.email);
-            localStorage.setItem('auth', token.accessToken);
-            localStorage.setItem('auth_create', token.createdDate.toString());
-            localStorage.setItem('auth_expires', token.expiresIn.toString());
-        }
-    }
-
-    private persistLocalStorage() {
-        if (isPlatformBrowser(this.platformId)) {
-            let store: Store = JSON.parse(sessionStorage.getItem('store'));
-            if (store && store.domain != AppConfig.DOMAIN) {
-                localStorage.clear();
-            }
-        }
-    }
-
-    hasToken(): boolean {
-        if (isPlatformBrowser(this.platformId)) {
-            if (localStorage.getItem('auth')) {
-                return true;
-            }
-            return false;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private getCartId(): string {
-        let cartId: string = null;
-        if (isPlatformBrowser(this.platformId)) {
-            cartId = localStorage.getItem('cart_id');
-        }
-        return cartId;
-    }
+    ) { this.loadCustomer(); }
 
     /**
      * Realiza o login do cliente na loja
      * 
      * @param {Login} login Dados de login (E-mail/CPF e Senha)
-     * @returns {Promise<Customer>} 
+     * @returns {Observable<Customer>} 
      * @memberof CustomerManager
      */
-    signIn(login: Login): Promise<Customer> {
-        let customer: Customer = new Customer();
-        return new Promise((resolve, reject) => {
-            this.service.login(login.cpfEmail, login.password)
-                .then(response => {
-                    customer = response.customer;
-                    this.setToken(response, response.customer);
-                    let cartId: string = this.getCartId();
-                    if (!cartId) {
-                        resolve(customer);
-                    }
-                    else {
-                        return this.cartManager.setCustomerToCart(cartId)
-                    }
-                })
-                .then(cart => {
-                    resolve(customer);
-                })
-                .catch(error => {
-                    reject(error);
-                });
-        });
+    signIn(login: Login): Observable<Customer> {
+        return this.service.login(login.cpfEmail, login.password)
+            .pipe(map(token => {
+                this.setToken(token);
+                return token.customer;
+            }));
     }
 
     /**
@@ -118,24 +44,16 @@ export class CustomerManager {
      * @returns {Promise<Customer>} 
      * @memberof CustomerManager
      */
-    signUp(customer: Customer): Promise<Customer> {
-        return new Promise((resolve, reject) => {
-            this.service.createCustomer(customer)
-                .subscribe(response => {
-                    let login: Login = new Login(customer.email, customer.password);
-                    this.signIn(login)
-                        .then(loggedCustomer => {
-                            resolve(loggedCustomer);
-                        })
-                        .catch(error => {
-                            reject(error);
-                        });
-                }, error => reject(error));
-        })
+    signUp(customer: Customer): Observable<Customer> {
+        return this.service.createCustomer(customer);
     }
 
+    /**
+     * Realiza o 
+     */
     logOff() {
-        if (isPlatformBrowser(this.platformId)) {
+        if (this.isLoggedIn()) {
+            this.customerSubject.next(null);
             localStorage.removeItem('customer');
             localStorage.removeItem('customer_mail');
             localStorage.removeItem('auth');
@@ -145,16 +63,45 @@ export class CustomerManager {
     }
 
     getUser(): Observable<Customer> {
-        let token: Token = this.getToken();
-        return this.service.getUser(token);
+        return this.service.getUser();
     }
 
-    updateUserOnStorage(customer: Customer): Promise<Customer> {
+    loadCustomer(): void {
+        if (this.isLoggedIn()) {
+            let customer: Customer = new Customer();
+            customer.firstname_Companyname = localStorage.getItem('customer');
+            customer.email = localStorage.getItem('customer_mail');
+            this.customerSubject.next(customer);
+        }
+    }
+
+    /**
+	 * Valida se o cliente está logado
+	 * @returns {boolean} 
+	 * @memberof AppComponent
+	 */
+    isLoggedIn(): boolean {
+        return !this.jwtService.isTokenExpired();
+    }
+
+    /**
+     * Recupera Senha
+     * @param cpf_cnpj 
+     * @param email 
+     */
+    recoverPassword(cpf_cnpj, email) {
+        return this.service.recoverPassword(cpf_cnpj, email);
+    }
+
+    updateCustomer(customer: Customer): Promise<Customer> {
         return new Promise((resolve, reject) => {
-            if (this.hasToken) {
-                localStorage.setItem('customer', customer.firstname_Companyname);
-                localStorage.setItem('customer_mail', customer.email);
-                resolve(customer);
+            if (this.isLoggedIn()) {
+                this.service.updateCustomer(customer).subscribe(updated_customer => {
+                    localStorage.setItem('customer', updated_customer.firstname_Companyname);
+                    localStorage.setItem('customer_mail', updated_customer.email);
+                    this.customerSubject.next(updated_customer);
+                    resolve(updated_customer);
+                });
             }
             else {
                 reject('Não foi possível atualizar');
@@ -162,17 +109,44 @@ export class CustomerManager {
         })
     }
 
-    getUserFromStorage(): Promise<Customer> {
-        return new Promise((resolve, reject) => {
-            if (this.hasToken) {
-                let user = new Customer();
-                user.firstname_Companyname = localStorage.getItem('customer');
-                user.email = localStorage.getItem('customer_mail');
-                resolve(user);
+    getCustomer(): Observable<Customer> {
+        return this.customerSubject.asObservable();
+    }
+
+    saveAddress(address: CustomerAddress): Observable<CustomerAddress> {
+        return this.service.saveAddress(address);
+    }
+
+    updateAddress(address: CustomerAddress): Observable<CustomerAddress> {
+        return this.service.updateAddress(address);
+    }
+
+    deleteAddress(id: string): Observable<{}> {
+        return this.service.deleteAddress(id);
+    }
+
+    private setToken(token: Token) {
+        if (isPlatformBrowser(this.platformId)) {
+            this.customerSubject.next(token.customer);
+            localStorage.setItem('customer', token.customer.firstname_Companyname);
+            localStorage.setItem('customer_mail', token.customer.email);
+            localStorage.setItem('auth', token.accessToken);
+            localStorage.setItem('auth_create', token.createdDate.toString());
+            localStorage.setItem('auth_expires', token.expiresIn.toString());
+        }
+    }
+
+    getToken(): Token {
+        if (isPlatformBrowser(this.platformId)) {
+            let token = new Token();
+            if (isPlatformBrowser(this.platformId)) {
+                token = new Token();
+                token.accessToken = localStorage.getItem('auth');
+                token.createdDate = new Date(localStorage.getItem('auth_create'));
+                token.expiresIn = Number(localStorage.getItem('auth_expires'));
+                token.tokenType = 'Bearer';
             }
-            else {
-                reject('Usuário não logado');
-            }
-        })
+            return token;
+        }
     }
 }

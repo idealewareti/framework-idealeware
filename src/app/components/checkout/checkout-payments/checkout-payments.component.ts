@@ -1,39 +1,40 @@
 import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges, AfterViewInit, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+
 import { PaymentManager } from '../../../managers/payment.manager';
-import { CartManager } from '../../../managers/cart.manager';
 import { Payment } from '../../../models/payment/payment';
-import { Globals } from '../../../models/globals';
 import { Cart } from '../../../models/cart/cart';
 import { EnumShippingType } from '../../../enums/shipping-type.enum';
 import { PaymentSelected } from '../../../models/payment/checkout-payment';
 import { PaymentMethod } from '../../../models/payment/payment-method';
 import { PagseguroMethod } from '../../../models/pagseguro/pagseguro-method';
 import { PagseguroOption } from '../../../models/pagseguro/pagseguro-option';
-import { PagseguroInstallment } from '../../../models/pagseguro/pagseguro-installment';
 import { PagseguroPayment } from '../../../models/pagseguro/pagseguro';
 import { MercadoPagoPayment } from '../../../models/mercadopago/mercadopago';
 import { MercadoPagoPaymentMethod } from '../../../models/mercadopago/mercadopago-paymentmethod';
 import { CreditCard } from '../../../models/payment/credit-card';
 import { MundipaggPayment } from '../../../models/mundipagg/mundipagg';
 import { AppCore } from '../../../app.core';
-import { isPlatformBrowser } from '@angular/common';
 
 declare var $: any;
 declare var swal: any;
-declare var toastr: any;
 declare var PagSeguroDirectPayment: any;
 declare var Mercadopago: any;
 
 @Component({
-    selector: 'app-checkout-payments',
-    templateUrl: '../../../template/checkout/checkout-payments/checkout-payments.html',
-    styleUrls: ['../../../template/checkout/checkout-payments/checkout-payments.scss']
+    selector: 'checkout-payments',
+    templateUrl: '../../../templates/checkout/checkout-payments/checkout-payments.html',
+    styleUrls: ['../../../templates/checkout/checkout-payments/checkout-payments.scss']
 })
 export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewInit {
+    @Input() cart: Cart = null;
     @Input() payments: Payment[] = [];
     @Input() shippingCost: number;
     @Output() paymentUpdated: EventEmitter<PaymentSelected> = new EventEmitter<PaymentSelected>();
     @Output() creditCardUpdated: EventEmitter<CreditCard> = new EventEmitter<CreditCard>();
+
+    listenerOldMethod: PaymentMethod = null;
+    listenerOldCrediCard: CreditCard = null;
 
     payment: Payment = new Payment();
     selected: PaymentSelected = new PaymentSelected();
@@ -48,54 +49,51 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
 
     constructor(
         private paymentManager: PaymentManager,
-        private cartManager: CartManager,
-        private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.hasPagseguro()) {
-                // Inicia a sessão no Pagseguro
-                this.getPagseguroMethods();
-            }
-            if (this.hasMercadoPago()) {
-                // Obtem os métodos de pagamento do Mercado Pago
-                this.getMercadoPagoMethods();
-            }
-
-            this.mundipagg.bankslip = this.paymentManager.getMundipaggBankslip(this.payments);
-            this.mundipagg.creditCard = this.paymentManager.getMundipaggCreditCard(this.payments);
+        if (this.hasPagseguro()) {
+            // Inicia a sessão no Pagseguro
+            this.getPagseguroMethods();
         }
+        if (this.hasMercadoPago()) {
+            // Obtem os métodos de pagamento do Mercado Pago
+            this.getMercadoPagoMethods();
+        }
+        this.getPaymentDefault();
+        this.mundipagg.bankslip = this.paymentManager.getMundipaggBankslip(this.payments);
+        this.mundipagg.creditCard = this.paymentManager.getMundipaggCreditCard(this.payments);
+    }
+
+    getPaymentDefault() {
+        let payment: Payment = this.getDefaultPayment();
+        this.selectPayment(payment);
     }
 
     ngAfterViewInit() {
         if (isPlatformBrowser(this.platformId)) {
-            let payment: Payment = this.getDefaultPayment();
-            this.selectPayment(payment);
-            $(`#tab-payment-${this.getPaymentNicename(payment)}`).collapse();
+            $(`#tab-payment-${this.getPaymentNicename(this.payment)}`).collapse();
         }
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (isPlatformBrowser(this.platformId)) {
-            if (changes['shippingCost'] && !changes.shippingCost.firstChange) {
-                if (changes.shippingCost.currentValue != changes.shippingCost.previousValue) {
-                    this.resetPayment();
-                }
+        if (changes['shippingCost'] && !changes.shippingCost.firstChange) {
+            if (changes.shippingCost.currentValue != changes.shippingCost.previousValue) {
+                this.resetPayment();
             }
         }
     }
 
     resetPayment() {
+        this.selected = new PaymentSelected();
+        this.pagseguro.optionSelected = new PagseguroOption();
+        this.pagseguro.methodSelected = new PagseguroMethod();
+        this.mundipagg.methodSelected = new PaymentMethod();
+        this.mercadopago.methodSelected = new MercadoPagoPaymentMethod();
+        this.emitPayment();
+        this.handleCreditCartUpdated(new CreditCard());
         if (isPlatformBrowser(this.platformId)) {
-            this.selected = new PaymentSelected();
-            this.pagseguro.optionSelected = new PagseguroOption();
-            this.pagseguro.methodSelected = new PagseguroMethod();
-            this.mundipagg.methodSelected = new PaymentMethod();
-            this.mercadopago.methodSelected = new MercadoPagoPaymentMethod();
-            this.emitPayment();
-            this.handleCreditCartUpdated(new CreditCard());
             $('#accordion-payments').collapse('hide');
         }
     }
@@ -107,7 +105,8 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
      * @memberof CheckoutPaymentsComponent
      */
     getDefaultPayment(): Payment {
-        return this.payments.find(p => p.default == true);
+        const payment: Payment = this.payments.find(p => p.default == true);
+        return payment;
     }
 
     /**
@@ -206,6 +205,7 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
 
         this.payment = payment;
         this.selected.payment = payment;
+        this.selected.method = this.listenerOldMethod;
 
         if (this.isMundipaggBankslip(payment))
             this.selectMundipaggMethod(payment.paymentMethods[0]);
@@ -242,7 +242,12 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
      * @memberof CheckoutPaymentsComponent
      */
     handleCreditCartUpdated(event: CreditCard) {
-        this.creditCardUpdated.emit(event);
+        if (event.payment)
+            this.listenerOldCrediCard = event;
+        if (this.listenerOldCrediCard)
+            this.creditCardUpdated.emit(this.listenerOldCrediCard);
+        else
+            this.creditCardUpdated.emit(event);
     }
 
     /**
@@ -263,6 +268,7 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
      */
     handleMundipaggUpdated(event: PaymentMethod) {
         this.selected.method = event;
+        this.listenerOldMethod = event;
         this.emitPayment();
     }
 
@@ -284,7 +290,7 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
      * @memberof CheckoutPaymentsComponent
      */
     isPickUpStoreAvailable(): boolean {
-        let cart: Cart = this.globals.cart;
+        let cart: Cart = this.cart;
         if (cart.shipping && cart.shipping.shippingType == EnumShippingType.PickuUpStore)
             return true;
         else
@@ -363,9 +369,10 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
         if (isPlatformBrowser(this.platformId)) {
             this.pagseguro_error = null;
             this.paymentManager.createPagSeguroSession()
-                .then(session => {
+                .subscribe(session => {
+                    this.pagseguro = new PagseguroPayment();
                     this.pagseguro.session = session;
-                    let totalPurchasePrice: number = this.globals.cart.totalPurchasePrice;
+                    let totalPurchasePrice: number = this.cart.totalPurchasePrice;
                     PagSeguroDirectPayment.setSessionId(this.pagseguro.session);
                     // this.loaderService.start();
                     PagSeguroDirectPayment.getPaymentMethods({
@@ -374,7 +381,6 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
                             for (let k in response.paymentMethods) {
                                 this.pagseguro.methods.push(new PagseguroMethod(response.paymentMethods[k]));
                             }
-
                             if (this.pagseguro.methods.length == 0) {
                                 swal('Erro ao obter as formas de pagamento', 'Falha ao obter as formas de pagamento do Pagseguro', 'error');
                             }
@@ -382,15 +388,10 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
                         error: response => {
                             this.pagseguro_error = 'Não foi possível obter as formas de pagamento do Pagseguro';
                             swal('Erro ao obter as formas de pagamento', 'Falha ao obter as formas de pagamento do Pagseguro', 'error');
-                        },
-                        complete: response => {
-                            // this.loaderService.done();
                         }
                     });
-                })
-                .catch(error => {
-                    let message: string = (error.status != 0) ? error.text() : '';
-                    console.log(error);
+                }, err => {
+                    let message: string = (err.status != 0) ? err.error : '';
                     this.pagseguro_error = 'Não foi possível obter as formas de pagamento do Pagseguro';
                     swal({
                         title: 'Erro ao criar a sessão no Pagseguro',
@@ -414,7 +415,10 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
      * @memberof CheckoutPaymentsComponent
      */
     availablePagseguroMethods(): PagseguroMethod[] {
-        return this.pagseguro.methods.filter(m => m.code == 1 || m.code == 2);
+        if (this.pagseguro.methods)
+            return this.pagseguro.methods.filter(m => m.code == 1 || m.code == 2);
+        else
+            return [];
     }
 
     /**
@@ -437,8 +441,10 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
      * @memberof CheckoutPaymentsComponent
      */
     isPagseguroCreditCard(): boolean {
-        if (this.pagseguro.methodSelected.code == 1)
-            return true;
+        if (this.pagseguro.methodSelected)
+            if (this.pagseguro.methodSelected.code == 1)
+                return true;
+            else return false;
         else return false;
     }
 
@@ -489,22 +495,17 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
 
         // Obtem os métodos de pagamento do Mercado Pago
         this.paymentManager.getMercadoPagoMethods()
-            .then(response => {
+            .subscribe(response => {
                 this.mercadopago.methods = response.filter(m => m.status == 'active');
-            })
-            .catch(error => {
-                console.log(error);
+            }, err => {
                 this.mercadopago_error = 'Erro ao obter as formas de pagamento do Mercado Pago';
             });
 
         // Obtem a public_key do Mercado Pago e instancia a mesma
         this.paymentManager.getMercadoPagoPublicKey()
-            .then(value => {
+            .subscribe(value => {
                 this.mercadopago.public_key = value;
                 Mercadopago.setPublishableKey(this.mercadopago.public_key);
-            })
-            .catch(error => {
-                console.log(error);
             });
     }
 
@@ -539,7 +540,6 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
     getMercadoPagoTicket(): MercadoPagoPaymentMethod {
         return this.mercadopago.methods.filter(m => m.payment_type_id == 'ticket')[0];
     }
-
 
     /**
      * Informa se o método selecionado é boleto do Mercado Pago
@@ -637,5 +637,4 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
         this.selected = new PaymentSelected(this.payment, method);
         this.emitPayment();
     }
-
 }

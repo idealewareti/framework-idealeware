@@ -6,19 +6,4 @@ export class DneAddress {
     zipCode: string;
     alterDate: Date;
     state: string;
-
-    constructor(object = null) {
-        if (object) return this.createFromResponse(object);
-    }
-
-    public createFromResponse(response): DneAddress {
-        let model = new DneAddress();
-
-        for (var k in response) {
-            model[k] = response[k];
-        }
-
-        return model;
-
-    }
 }

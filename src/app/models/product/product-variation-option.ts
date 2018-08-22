@@ -1,14 +1,8 @@
-export class VariationOption{
-    /**
-     * Id da Opção da Variação
-     * 
-     * @type {string}
-     * @memberof VariationOption
-     */
+export class VariationOption {
     id: string;
     name: string;
     picture: string;
-    quantity: number = 0;
+    quantity: number;
 
     constructor(option = null){
         if(option) return this.createFromResponse(option);

@@ -19,19 +19,4 @@ export class BudgetCustomer {
     deliveryDistrict: string;
     deliveryCity: string;
     deliveryState: string;
-
-    constructor(object = null) {
-        if (object) return this.createFromResponse(object);
-    }
-
-    createFromResponse(object): BudgetCustomer {
-        let model = new BudgetCustomer();
-
-        for (var k in object) {
-            model[k] = object[k];
-        }
-
-        return model;
-    }
-
 }

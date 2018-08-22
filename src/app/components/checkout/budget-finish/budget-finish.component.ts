@@ -1,30 +1,11 @@
-import { Component, OnInit ,Inject, PLATFORM_ID} from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Order } from "../../../models/order/order";
-import { OrderService } from "../../../services/order.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
-import { BudgetService } from "../../../services/budget.service";
 
 @Component({
-    moduleId: module.id,
-    selector: 'budget-finish',
-    templateUrl: '../../../template/checkout/budget-finish/budget-finish.html',
-    styleUrls: ['../../../template/checkout/budget-finish/budget-finish.scss']
+    templateUrl: '../../../templates/checkout/budget-finish/budget-finish.html',
+    styleUrls: ['../../../templates/checkout/budget-finish/budget-finish.scss']
 })
-export class BudgetFinishComponent implements OnInit {
-    order: Order = new Order();
-
-    constructor(
-        private route: ActivatedRoute,
-        private parentRouter: Router,
-        private titleService: Title,
-        @Inject(PLATFORM_ID) private platformId: Object
-    ) { }
-
-    ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-        this.titleService.setTitle('Seu Orçamento Foi Gerado');
-        }
-    }
-}
+export class BudgetFinishComponent {}

@@ -1,0 +1,225 @@
+<main role="main" class="container checkout-page" *ngIf="store">
+    <div class="row">
+        <div class="checkout-title">
+            <h2 class="page-title col-md-8 col-sm-12">MEU CARRINHO</h2>
+            <span class="col-md-4 col-sm-12" *ngIf="modality > -1 && getNumItemsInCart() > 0">
+                <checkout-button *ngIf="cart" [store]="store" [cart]="cart" icon="true" [text]="buttonLabel"></checkout-button>
+            </span>
+        </div>
+    </div>
+    <div class="row row-desktop-cart hidden-xs">
+        <!--Produtos-->
+        <table class="table table-checkout" *ngIf="getNumProductsInCart() > 0">
+            <thead>
+                <tr>
+                    <td colspan="2">{{ (getNumProductsInCart() > 1) ? 'Produtos' : 'Produto' }}</td>
+                    <td class="text-center" width="150px">Quantidade</td>
+                    <td class="text-center" width="150px" *ngIf="showProductValue">Valor Unitário</td>
+                    <td class="text-center" width="150px" *ngIf="showProductValue">Total</td>
+                    <td width="45px"></td>
+                </tr>
+            </thead>
+            <tbody *ngIf="getNumProductsInCart() > 0">
+                <tr *ngFor="let item of getProducts(); trackBy: trackById">
+                    <td class="thumb-cart">
+                        <img [attr.src]="getPicture(item.sku)" class="img-responsive image" [attr.alt]="item.name">
+                    </td>
+                    <td>
+                        <b class="name">{{item.name}}</b>
+                        <span class="sku">Cód. {{item.sku.code}}</span>
+                        <span *ngIf="!isHiddenVariation()">
+                            <span class="variations" *ngFor="let variation of item.sku.variations">{{variation.name + ': ' + variation.option.name}}</span>
+                        </span>
+                        <span class="variations" *ngIf="item.sku.feature">{{item.sku.feature}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="qty-box">
+                            <input type="number" name="qty" [ngModel]="item.quantity" [attr.title]="item.quantity" (ngModelChange)="updateItem($event, item)"
+                                min="1" step="1">
+                        </span>
+                        <div *ngIf="isStorePackageActive() && item.isPackage" class="form-group" style="margin-top: 10%">
+                            <input attr.id="package-{{item.id}}" type="checkbox" [checked]="item.isPackageProduct" (click)="updateIsPackageItem($event.target.checked, item)">
+                            <label attr.for="package-{{item.id}}">Para Presente?</label>
+                        </div>
+                    </td>
+                    <td class="text-center" *ngIf="showProductValue">
+                        <span class="regular-price">{{item.totalUnitPrice | currencyFormat }}</span>
+                    </td>
+                    <td class="text-center" *ngIf="showProductValue">
+                        <span class="total-price">{{item.totalPrice | currencyFormat }}</span>
+                    </td>
+                    <td class="text-center">
+                        <a (click)="deleteItem(item)" class="btn-remove" href="javascript:void(0)">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="getNumProductsInCart() == 0">
+                <tr>
+                    <td colspan="6">
+                        <p class="text-muted">Seu carrinho está vazio ou expirado</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!--Serviços-->
+        <table class="table table-checkout" *ngIf="hasServices()">
+            <thead>
+                <tr>
+                    <td>Serviço(s)</td>
+                    <td class="text-center">Regras</td>
+                    <td class="text-center" width="120px">Quantidade</td>
+                    <td class="text-center" width="150px" *ngIf="showProductValue">Valor Unitário</td>
+                    <td class="text-center" width="150px" *ngIf="showProductValue">Total</td>
+                    <td width="45px"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of cart.services">
+                    <td>{{item.serviceType}}</td>
+                    <td>{{item.rules}}</td>
+                    <td class="text-center">
+                        <span class="qty-box">
+                            <input type="number" name="qty" [ngModel]="item.quantity" [attr.title]="item.quantity" (ngModelChange)="updateItemService($event, item)"
+                                min="1" step="1">
+                        </span>
+                    </td>
+                    <td class="text-center" *ngIf="showProductValue">
+                        <span class="regular-price">{{item.totalUnitPrice | currencyFormat }}</span>
+                    </td>
+                    <td class="text-center" *ngIf="showProductValue">
+                        <span class="total-price">{{(item.totalPrice) | currencyFormat }}</span>
+                    </td>
+                    <td class="text-center">
+                        <a (click)="deleteItemService(item)" class="btn-remove" href="javascript:void(0)">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row row-mobile-cart hidden-lg hidden-md">
+        <ul class="mobile-cart-items">
+            <!-- Products -->
+            <li *ngFor="let item of getProducts()" class="mobile-cart-item clearfix">
+                <span class="actions pull-right">
+                    <button class="btn-remove" (click)="deleteItem(item)">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        <span class="sr-only">Remover do Carrinho</span>
+                    </button>
+                    <span class="update-qty">
+                        <input type="number" min="1" step="1" [ngModel]="item.quantity" (ngModelChange)="updateItem($event, item)">
+                    </span>
+                    <div *ngIf="isStorePackageActive() && item.isPackage" class="form-group" style="margin-top: 10%">
+                        <input attr.id="package-{{item.id}}" type="checkbox">
+                        <span attr.for="package-{{item.id}}">Para Presente?</span>
+                    </div>
+                </span>
+                <span class="thumb pull-left">
+                    <a [routerLink]="['/produto/' + item.sku.id]" class="link-product">
+                        <img [attr.src]="getPicture(item.sku)" class="img-responsive image" [attr.alt]="item.name" width="50" height="50">
+                    </a>
+                </span>
+                <span class="details overflow-hidden">
+                    <a [routerLink]="['/produto/' + item.sku.id]" class="link-product">
+                        <b>{{item.name}} {{item.sku.code}} {{item.sku.feature}}</b>
+                        <span *ngIf="!isHiddenVariation()">
+                            <span class="variations" *ngFor="let variation of item.sku.variations">{{variation.name + ': ' + variation.option.name}}</span>
+                        </span>
+                        <strong>
+                            <span class="regular-price">{{item.totalUnitPrice | currencyFormat }}</span>
+                        </strong>
+                    </a>
+                </span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row row-no-products-in-cart" *ngIf="getNumItemsInCart() == 0">
+        <div class="container">
+            <p>Seu carrinho está vazio ou expirado</p>
+            <a [routerLink]="['/']" class="btn btn-info pull-right">{{(modality == 1) ? 'CONTINUAR COMPRANDO' : 'CONTINUAR ORÇANDO'}}</a>
+        </div>
+    </div>
+
+    <div class="row checkout-total" *ngIf="getNumItemsInCart()">
+        <div class="col-sm-12 col-md-5" *ngIf=" !isCatalog()">
+            <coupon [cart]="cart" (cartUpdated)="handleCartUpdated($event)"></coupon>
+            <shipping-calc [cart]="cart" (cartUpdated)="handleCartUpdated($event)"></shipping-calc>
+        </div>
+
+        <div [ngClass]="{'col-md-12': isCatalog(), 'col-sm-12 col-md-5 col-md-offset-2 col-lg-4 col-lg-offset-3': !isCatalog()}">
+            <div class="total-box">
+                <table *ngIf="showProductValue">
+                    <tbody>
+                        <tr class="subtotal">
+                            <td class="text-left">
+                                <span>Subtotal ({{getNumItemsInCart() + ' ' + (getNumItemsInCart() > 1 ? 'itens' : 'item')}})</span>
+                            </td>
+                            <td class="text-right">
+                                <strong>{{getSubTotal() | currencyFormat }}</strong>
+                            </td>
+                        </tr>
+                        <tr class="descont" *ngIf="!isCatalog()">
+                            <td class="text-left">
+                                <span>Desconto</span>
+                            </td>
+                            <td class="text-right">
+                                <strong *ngIf="getDiscount()">- {{getDiscount() | currencyFormat }}</strong>
+                            </td>
+                        </tr>
+                        <tr class="services" *ngIf="getTotalService() > 0">
+                            <td class="text-left">
+                                <span>Serviços</span>
+                            </td>
+                            <td class="text-right">
+                                <strong>{{getTotalService() | currencyFormat }}</strong>
+                            </td>
+                        </tr>
+                        <tr class="package" *ngIf="cart.totalPackagePrice > 0">
+                            <td class="text-left">
+                                <span>Embrulho</span>
+                            </td>
+                            <td class="text-right">
+                                <strong>{{cart.totalPackagePrice | currencyFormat}}</strong>
+                            </td>
+                        </tr>
+                        <tr class="shipping" *ngIf="!isCatalog()">
+                            <td class="text-left">
+                                <span>Frete</span>
+                            </td>
+                            <td class="text-right" *ngIf="cart.shipping != null">
+                                <strong *ngIf="!getShipping() && getExistShipping()">Frete Grátis</strong>
+                                <strong *ngIf="getShipping() != 0">{{getShipping() | currencyFormat }}</strong>
+                            </td>
+                            <td class="text-right" *ngIf="cart.shipping == null">
+                                <strong>--</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="total">
+                            <th class="text-left">
+                                <span>Total</span>
+                            </th>
+                            <th class="text-right">
+                                <strong>{{getTotal() | currencyFormat }}</strong>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <checkout-button *ngIf="modality > -1" icon="true" [store]="store" [text]="buttonLabel" [cart]="cart"></checkout-button>
+
+                <a [routerLink]="['/']" class="btn btn-block btn-md btn-default btn-back-to-buy">{{(modality == 1) ? 'CONTINUAR COMPRANDO' : 'CONTINUAR ORÇANDO'}}</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="row" *ngIf="store">
+        <cart-showcase [store]="store"></cart-showcase>
+    </div>
+</main>

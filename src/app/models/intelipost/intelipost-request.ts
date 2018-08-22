@@ -1,5 +1,4 @@
 export class IntelipostRequest {
-
     session: string;
     pageName: string;
     url: string;

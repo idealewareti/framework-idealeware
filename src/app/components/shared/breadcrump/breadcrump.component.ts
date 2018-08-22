@@ -1,41 +1,37 @@
-import { Component, Input, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Category } from '../../../models/category/category';
-import { CategoryService } from '../../../services/category.service';
 import { AppCore } from '../../../app.core';
+import { CategoryManager } from '../../../managers/category.manager';
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-bread-crump',
-    templateUrl: '../../../template/shared/breadcrump/breadcrump.html',
-    styleUrls: ['../../../template/shared/breadcrump/breadcrump.scss']
+    selector: 'bread-crump',
+    templateUrl: '../../../templates/shared/breadcrump/breadcrump.html',
+    styleUrls: ['../../../templates/shared/breadcrump/breadcrump.scss']
 })
-export class BreadcrumpComponent implements OnInit {
+export class BreadcrumpComponent implements OnChanges {
 
     @Input() categorys: Category[];
 
     crumps: Category[] = [];
 
     constructor(
-        private service: CategoryService,
-        @Inject(PLATFORM_ID) private platformId: Object
+        private categoryManager: CategoryManager,
     ) { }
 
-    ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.categorys.forEach((category) => {
-                if (category && category.id) {
-                    this.crumps.push(category);
-                    if (category['parentCategoryId'] && !AppCore.isGuidEmpty(category.parentCategoryId)) {
-                        this.getParent(category.parentCategoryId);
-                    }
+    ngOnChanges() {
+        this.crumps = [];
+        this.categorys.forEach((category) => {
+            if (category && category.id) {
+                this.crumps.push(category);
+                if (category['parentCategoryId'] && !AppCore.isGuidEmpty(category.parentCategoryId)) {
+                    this.getParent(category.parentCategoryId);
                 }
-            });
-        }
+            }
+        });
     }
 
     getParent(parentCategoryId: string) {
-        this.service.getCategory(parentCategoryId)
+        this.categoryManager.getCategory(parentCategoryId)
             .subscribe(category => {
                 this.crumps.push(category);
                 if (category.parentCategoryId && !AppCore.isGuidEmpty(category.parentCategoryId))
@@ -43,6 +39,10 @@ export class BreadcrumpComponent implements OnInit {
                 else {
                     this.crumps = this.crumps.reverse();
                 }
-            }, error => console.log(error));
+            });
+    }
+
+    getRouteCategory(crump: Category) {
+        return `${AppCore.getNiceName(crump.name)}-${crump.id}`;
     }
 }

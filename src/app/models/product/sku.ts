@@ -1,7 +1,7 @@
-import {Variation} from './variation';
-import {ProductPicture} from './product-picture';
+import { Variation } from './variation';
+import { ProductPicture } from './product-picture';
 
-export class Sku{
+export class Sku {
       id: string;
       idProduct: string;
       code: string;
@@ -15,46 +15,46 @@ export class Sku{
       costPrice: number;
       initialPromotionalDate: Date;
       endPromotionalDate: Date;
-      variations: Variation[] = [];
+      variations: Variation[];
       installmentLimit: number;
       feature: string;
       available: boolean;
       picture: ProductPicture;
-      pictures: ProductPicture[] = [];
+      pictures: ProductPicture[];
       alternativePicture: ProductPicture;
       name: string;
-      Quantity: number;
+      quantity: number;
+      isPackageProduct: boolean;
 
-      constructor(sku = null){
-            if(sku) return this.CreateFromResponse(sku);
+      constructor(sku = null) {
+            if (sku) return this.CreateFromResponse(sku);
       }
 
-      CreateFromResponse(object) : Sku{
+      CreateFromResponse(object): Sku {
             let sku = new Sku();
 
-            for(var k in object){
-                  if(k == 'variations'){
+            for (var k in object) {
+                  if (k == 'variations') {
                         sku.variations = object.variations.map(v => new Variation(v));
                   }
-                  else if(k == 'picture'){
+                  else if (k == 'picture') {
                         sku.picture = new ProductPicture(object.picture);
                   }
-                  else if(k == 'pictures'){
+                  else if (k == 'pictures') {
                         sku.pictures = object.pictures.map(p => p = new ProductPicture(p));
                   }
-                  else if(k == 'alternativePicture')
-                  {
+                  else if (k == 'alternativePicture') {
                         sku.alternativePicture = new ProductPicture(object.alternativePicture);
                   }
-                  else{
+                  else {
                         sku[k] = object[k];
                   }
             }
 
             let name = '';
             sku.variations.forEach(v => name += v.option.name + ' ');
-            
-            if(sku.promotionalPrice > 0)
+
+            if (sku.promotionalPrice > 0)
                   sku.actualPrice = sku.promotionalPrice;
             else sku.actualPrice = sku.price;
 

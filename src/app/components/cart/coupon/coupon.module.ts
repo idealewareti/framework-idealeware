@@ -5,9 +5,14 @@ import { CurrencyFormatModule } from '../../../pipes/currency-format/currency-fo
 import { CommonModule } from '@angular/common';
 
 @NgModule({
-    declarations: [ CouponComponent ],
-    imports: [ CommonModule, CurrencyFormatModule, FormsModule, ReactiveFormsModule ],
+    declarations: [CouponComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        CurrencyFormatModule
+    ],
     providers: [],
-    exports: [ CouponComponent ]
+    exports: [CouponComponent]
 })
-export class CouponModule {}
+export class CouponModule { }

@@ -1,5 +1,4 @@
-import { Component, OnInit, AfterContentChecked, Input, Output, EventEmitter, SimpleChanges, SimpleChange, PLATFORM_ID, Inject } from '@angular/core';
-import { ProductService } from "../../../services/product.service";
+import { Component, OnInit, AfterContentChecked, Input, Output, EventEmitter, SimpleChange, PLATFORM_ID, Inject } from '@angular/core';
 import { Product } from "../../../models/product/product";
 import { ProductRatingCreate } from "../../../models/product-rating/product-rating-create";
 import { CustomerService } from "../../../services/customer.service";
@@ -14,10 +13,9 @@ declare var swal: any;
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-product-rating',
-    templateUrl: '../../../template/product/product-rating/product-rating.html',
-    styleUrls: ['../../../template/product/product-rating/product-rating.scss']
+    selector: 'product-rating',
+    templateUrl: '../../../templates/product/product-rating/product-rating.html',
+    styleUrls: ['../../../templates/product/product-rating/product-rating.scss']
 })
 export class ProductRatingComponent implements AfterContentChecked {
     ratingForm: FormGroup;
@@ -42,18 +40,6 @@ export class ProductRatingComponent implements AfterContentChecked {
             ratingTitle: ['', Validators.required],
             ratingComment: ['', Validators.required]
         });
-    }
-
-    private getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token = new Token();
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
-        }
-        return token;
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
@@ -83,8 +69,6 @@ export class ProductRatingComponent implements AfterContentChecked {
                 this.productsRating = productsRating;
                 this.SumNote();
                 this.ratingUpdated.emit(productsRating);
-            }, error => {
-                console.log(error);
             });
     }
 
@@ -120,13 +104,13 @@ export class ProductRatingComponent implements AfterContentChecked {
 
     submitRating() {
         if (isPlatformBrowser(this.platformId)) {
-            this.serviceCustomer.getUser(this.getToken())
+            this.serviceCustomer.getUser()
                 .subscribe(customer => {
                     this.productsRatingCreate.customers.customerId = customer.id;
                     this.productsRatingCreate.customers.name = customer.firstname_Companyname;
                     if (this.productsRatingCreate.customers.note == null)
                         this.productsRatingCreate.customers.note = 1;
-                    return this.service.createProductRating(this.productsRatingCreate, this.getToken())
+                    return this.service.createProductRating(this.productsRatingCreate)
                         .subscribe(ratingResponse => {
                             swal({
                                 title: 'Avaliação de Produto',
@@ -148,8 +132,7 @@ export class ProductRatingComponent implements AfterContentChecked {
                             $('#btn-productsrating').button('reset');
 
                         });
-                }, (error) => {
-                    console.log(error);
+                }, () => {
                     $('#btn-productsrating').button('reset');
                 });
         }
@@ -179,5 +162,8 @@ export class ProductRatingComponent implements AfterContentChecked {
 
     hasError(key: string): boolean {
         return (this.ratingForm.controls[key].touched && this.ratingForm.controls[key].invalid);
+    }
+    isProductRating() {
+        return this.productsRating && this.productsRating.customers && this.productsRating.customers.length > 0;
     }
 }

@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output, Inject, PLATFORM_ID, SimpleChanges } from '@angular/core';
-import { IntelipostService } from "../../../services/intelipost.service";
+import { isPlatformBrowser } from '@angular/common';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+
 import { Intelipost } from "../../../models/intelipost/intelipost";
 import { IntelipostRequest } from "../../../models/intelipost/intelipost-request";
 import { IntelipostDeliveryOption } from "../../../models/intelipost/intelipost-delivery-option";
@@ -7,188 +9,96 @@ import { Shipping } from "../../../models/shipping/shipping";
 import { DeliveryInformation } from "../../../models/shipping/delivery-information";
 import { Cart } from "../../../models/cart/cart";
 import { CartManager } from "../../../managers/cart.manager";
-import { Globals } from '../../../models/globals';
-import { isPlatformBrowser } from '@angular/common';
 import { AppConfig } from '../../../app.config';
 import { AppCore } from '../../../app.core';
 import { Branch } from '../../../models/branch/branch';
-import { BranchService } from '../../../services/branch.service';
 import { EnumShippingType } from '../../../enums/shipping-type.enum';
+import { Store } from '../../../models/store/store';
+import { IntelispostManager } from '../../../managers/intelispost.manager';
+import { StoreManager } from '../../../managers/store.manager';
+import { BranchManager } from '../../../managers/branch.manager';
 
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-shipping-calc',
-    templateUrl: '../../../template/cart/shipping/shipping.html',
-    styleUrls: ['../../../template/cart/shipping/shipping.scss']
+    selector: 'shipping-calc',
+    templateUrl: '../../../templates/cart/shipping/shipping.html',
+    styleUrls: ['../../../templates/cart/shipping/shipping.scss']
 })
 export class ShippingCalcComponent implements OnInit {
+    formShipping: FormGroup;
+
     private intelipost: Intelipost;
     private deliveryOptions: IntelipostDeliveryOption[] = [];
     private branches: Branch[] = [];
     private shippingSelected: Shipping = new Shipping();
-    @Input() zipCode: string;
+    private store: Store;
+
     @Input() cart: Cart;
     @Output() cartUpdated: EventEmitter<Cart> = new EventEmitter<Cart>();
 
     loading: boolean = false;
 
     constructor(
-        private service: IntelipostService,
-        private branchService: BranchService,
+        private intelipostManager: IntelispostManager,
         private cartManager: CartManager,
-        private globals: Globals,
+        private branchManager: BranchManager,
+        private storeManager: StoreManager,
+        private formBuilder: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
-    ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (!this.zipCode && localStorage.getItem('customer_zipcode'))
-                this.zipCode = localStorage.getItem('customer_zipcode');
-        }
-    }
-
-    ngOnChanges(changes: SimpleChanges) {
-        if (isPlatformBrowser(this.platformId)) {
-            if (changes['cart'] && !changes.cart.firstChange) {
-                if (changes.cart.currentValue.shipping == null) {
-                    this.deliveryOptions = [];
-                    this.branches = [];
-                }
-            }
-        }
-    }
-
-    sendRequest(): Promise<Intelipost> {
-        if (isPlatformBrowser(this.platformId)) {
-
-            return new Promise((resolve, reject) => {
-                if (!this.zipCode) {
-                    swal({ title: 'Erro!', text: 'CEP Inválido', type: 'warning', confirmButtonText: 'OK' });
-                    reject(null);
-                }
-                else if (this.zipCode.length < 9) {
-                    swal({ title: 'Erro!', text: 'CEP Inválido', type: 'warning', confirmButtonText: 'OK' });
-                    reject(null);
-                }
-
-                let zipCode = Number(this.zipCode.replace('-', ''));
-                if (!localStorage.getItem('cart_id')) {
-                    swal({ title: 'Erro!', text: 'Carrinho vazio', type: 'warning', confirmButtonText: 'OK' });
-                }
-                else {
-                    this.loading = true;
-                    this.cartManager.getCart(localStorage.getItem('cart_id').toString())
-                        .then(cart => {
-                            if (cart.products.length == 0) {
-                                swal({ title: 'Erro!', text: 'Carrinho vazio', type: 'warning', confirmButtonText: 'OK' });
-                                reject(null);
-                            }
-
-                            let request = new IntelipostRequest(
-                                localStorage.getItem('session_id'),
-                                AppConfig.NAME,
-                                this.globals.store.link,
-                                zipCode.toString());
-                            return this.service.getShipping(request, localStorage.getItem('cart_id'));
-                        })
-                        .then(response => {
-                            this.loading = false;
-                            resolve(response);
-                        })
-                        .catch(error => {
-                            this.loading = false;
-                            reject(error);
-                        });
-                }
-            });
-        }
-    }
-
-    calculate(event) {
-        if (isPlatformBrowser(this.platformId)) {
-            event.preventDefault();
-            this.deliveryOptions = [];
-            this.branches = [];
-            this.loading = true;
-            this.sendRequest()
-                .then(response => {
-                    this.intelipost = response;
-                    this.deliveryOptions = this.intelipost.content.delivery_options;
-                    this.loading = false;
-                })
-                .catch(error => {
-                    if (error.status == 400)
-                        swal({
-                            title: 'Erro ao calcular o frete!',
-                            text: "Sem opções de entrega viável. Por favor, verifique se os códigos postais estão corretos!",
-                            type: 'warning',
-                            confirmButtonText: 'OK'
-                        });
-                    else
-                        swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
-                    console.log(error);
-                    this.loading = false;
-                });
-            this.getBranches(this.zipCode);
-        }
+    ngOnInit(): void {
+        this.getStore();
+        this.formShipping = this.formBuilder.group({
+            zipCode: [
+                '',
+                [
+                    Validators.required,
+                    Validators.minLength(9)
+                ]
+            ]
+        });
     }
 
     /**
-     * Adiciona o frete selecionado ao carrinho
-     * 
-     * @param {any} event 
-     * @param {IntelipostDeliveryOption} [intelipostOption=null] 
-     * @param {Branch} [branch=null] 
-     * @returns {Promise<Cart>} 
-     * @memberof CheckoutShippingComponent
+     * Selecionar loja acessada
      */
-    addShippingToCart(event, intelipostOption: IntelipostDeliveryOption = null, branch: Branch = null): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            if (event)
-                event.preventDefault();
-            let shipping = new Shipping();
-            let delivery = new DeliveryInformation();
+    getStore(): void {
+        this.storeManager.getStore()
+            .subscribe(store => this.store = store);
+    }
 
-            if (intelipostOption) {
-                shipping.shippingType = EnumShippingType.Delivery;
-                delivery.quotId = this.intelipost.content.id.toString();
-                delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
-                //delivery.shippingCost = this.shippingCost(intelipostOption);
-                console.log(intelipostOption);
-                delivery.shippingCost = intelipostOption.final_shipping_cost;
-                delivery.deliveryMethodName = intelipostOption.delivery_method_name;
-                delivery.deliveryProviderName = intelipostOption.logistic_provider_name;
-                delivery.deliveryEstimateBusinessDays = intelipostOption.delivery_estimate_business_days;
-                shipping.deliveryInformation = delivery;
-            }
-            else if (branch) {
-                shipping.shippingType = EnumShippingType.PickuUpStore;
-                shipping.branch = branch;
-                delivery.quotId = branch.id;
-                delivery.deliveryMethodId = branch.id;
-                delivery.deliveryMethodName = 'Retirar na Loja';
-                delivery.shippingCost = 0.0;
-                delivery.deliveryProviderName = branch.name;
-                delivery.deliveryEstimateBusinessDays = branch.replenishmentTime;
-                shipping.deliveryInformation = delivery;
-            }
-
-            this.cartManager.setShipping(shipping, localStorage.getItem('cart_id'))
-                .then(cart => {
-                    this.cart = cart;
-                    this.globals.cart = cart;
-                    this.shippingSelected = shipping;
-                    this.cartUpdated.emit(this.cart);
-                    this.loading = false;
-                })
-                .catch(error => {
-                    swal({ title: 'Erro!', text: 'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK' });
-                    console.log(error);
-                    this.loading = false;
-                });
-        });
+    /**
+     * Listar fretes disponiveis quando o usuário clicar no button
+     */
+    calculate() {
+        this.loading = true;
+        const zipCode = this.formShipping.get('zipCode').value;
+        this.intelipostManager.getShipping(
+            new IntelipostRequest(
+                localStorage.getItem('session_id'),
+                AppConfig.NAME,
+                this.store.link,
+                zipCode.toString()),
+            this.cartManager.getCartId())
+            .subscribe(intelipost => {
+                this.intelipost = intelipost;
+                this.deliveryOptions = intelipost.content.delivery_options;
+                this.loading = false;
+            }, err => {
+                if (err.status == 400)
+                    swal({
+                        title: 'Erro ao calcular o frete!',
+                        text: "Sem opções de entrega viável. Por favor, verifique se os códigos postais estão corretos!",
+                        type: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                else
+                    swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
+                this.loading = false;
+            });
+        this.getBranches(zipCode);
     }
 
     /**
@@ -199,15 +109,74 @@ export class ShippingCalcComponent implements OnInit {
      */
     getBranches(zipcode: string) {
         zipcode = zipcode.replace('-', '');
-        this.branchService.getBranches(zipcode)
+        this.branchManager.getBranches(zipcode)
             .subscribe(branches => {
                 this.branches = branches;
-            }, error => console.log(error));
+            });
+    }
+
+    /**
+     * Seleciona o frete escolhido
+     * @param intelipostOption 
+     */
+    addShippingIntelipostToCart(intelipostOption: IntelipostDeliveryOption) {
+        let shipping = new Shipping();
+        let delivery = new DeliveryInformation();
+
+        delivery.quotId = this.intelipost.content.id.toString();
+        delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
+        delivery.shippingCost = intelipostOption.final_shipping_cost;
+        delivery.deliveryMethodName = intelipostOption.delivery_method_name;
+        delivery.deliveryProviderName = intelipostOption.logistic_provider_name;
+        delivery.deliveryEstimateBusinessDays = intelipostOption.delivery_estimate_business_days;
+
+        shipping.shippingType = EnumShippingType.Delivery;
+        shipping.deliveryInformation = delivery;
+
+        this.setShipping(shipping);
+    }
+
+    /**
+     * Seleciona a retirada na loja escolhida
+     * @param branch 
+     */
+    addShippingBranchToCart(branch: Branch) {
+        let shipping = new Shipping();
+        let delivery = new DeliveryInformation();
+
+        delivery.quotId = branch.id;
+        delivery.deliveryMethodId = branch.id;
+        delivery.deliveryMethodName = 'Retirar na Loja';
+        delivery.shippingCost = 0.0;
+        delivery.deliveryProviderName = branch.name;
+        delivery.deliveryEstimateBusinessDays = branch.replenishmentTime;
+
+        shipping.shippingType = EnumShippingType.PickuUpStore;
+        shipping.branch = branch;
+        shipping.deliveryInformation = delivery;
+
+        this.setShipping(shipping);
+    }
+
+    /**
+     * Persistir o frete escolhido
+     * @param shipping 
+     */
+    setShipping(shipping: Shipping) {
+        this.cartManager.setShipping(shipping, this.cartManager.getCartId())
+            .subscribe(cart => {
+                this.cart = cart;
+                this.shippingSelected = shipping;
+                this.cartUpdated.emit(this.cart);
+                this.loading = false;
+            }, err => {
+                swal({ title: 'Erro!', text: 'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK' });
+                this.loading = false;
+            });
     }
 
     /**
      * Habilita retirada na loja
-     * 
      * @returns {Branch[]} 
      * @memberof CheckoutShippingComponent
      */
@@ -217,7 +186,6 @@ export class ShippingCalcComponent implements OnInit {
 
     /**
      * Marca a opção de frete selecionada
-     * 
      * @param {string} methodName 
      * @param {Branch} [branch=null] 
      * @returns {boolean} 
@@ -240,12 +208,6 @@ export class ShippingCalcComponent implements OnInit {
                 return true;
             else return false;
         }
-    }
-
-    shippingCost(deliveryOption: IntelipostDeliveryOption): number {
-        if (deliveryOption.final_shipping_cost < deliveryOption.provider_shipping_cost)
-            return deliveryOption.final_shipping_cost;
-        else return deliveryOption.provider_shipping_cost;
     }
 
     isMobile(): boolean {

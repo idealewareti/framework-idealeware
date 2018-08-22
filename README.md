@@ -1,65 +1,46 @@
-# Trabalhando com Angular 
+# Angular Universal Starter
 
-## O que será necessário instalar:
+![Angular Universal](https://angular.io/assets/images/logos/concept-icons/universal.png)
 
-NodeJS
-https://nodejs.org/en/
+A minimal Angular starter for Universal JavaScript using the [Angular CLI](https://github.com/angular/angular-cli)
+If you're looking for the Angular Universal repo go to [**angular/universal**](https://github.com/angular/universal)  
 
-Angular CLI (Compilador oficial do Angular 4), após o NodeJS instalado digite no Terminal/Prompt de Comando
-> `npm install -g @angular/cli`
+## Getting Started
 
-Visual Studio Code
-https://code.visualstudio.com/
+This demo is built following the [Angular-CLI Wiki guide](https://github.com/angular/angular-cli/wiki/stories-universal-rendering)
+
+We're utilizing packages from the [Angular Universal @nguniversal](https://github.com/angular/universal) repo, such as [ng-module-map-ngfactory-loader](https://github.com/angular/universal/modules/module-map-ngfactory-loader) to enable Lazy Loading.
+
+---
+
+### Build Time Prerendering Vs. Server Side Rendering(ssr)
+This repo demonstrates the use of 2 different forms of Server Side Rendering.
+
+**Prerender** 
+* Happens at build time
+* Renders your application and replaces the dist index.html with a version rendered at the route `/`.
+
+**Server-Side Rendering(ssr)**
+* Happens at runtime
+* Uses `ngExpressEngine` to render your application on the fly at the requested url.
+
+---
+
+### Installation
+* `npm install` or `yarn`
+
+### Development (Client-side only rendering)
+* run `npm run start` which will start `ng serve`
+
+### Production (also for testing SSR/Pre-rendering locally)
+**`npm run build:ssr && npm run serve:ssr`** - Compiles your application and spins up a Node Express to serve your Universal application on `http://localhost:4000`.
+
+**`npm run build:prerender && npm run serve:prerender`** - Compiles your application and prerenders your applications files, spinning up a demo http-server so you can view it on `http://localhost:8080`
+**Note**: To deploy your static site to a static hosting platform you will have to deploy the `dist/browser` folder, rather than the usual `dist`
 
 
-## A estrutura do projeto
+## Universal "Gotchas"
+Moved to [/angular/universal/blob/master/docs/gotchas.md](https://github.com/angular/universal/blob/master/docs/gotchas.md)
 
-O nosso frontend segue o seguinte padrão:
-
-Pasta/Arquivo            | Descrição
------------------------- | ------------------------------------------------------------------------------------
-/dist 						       |    _Arquivos compilados do projeto. Criada quando o projeto for compilado_
-/node_modules 					 |			_Dependências do projeto. Criado quando o NPM baixar as dependências_
-/package.json						 |			_Configurações dos pacotes do NodeJS no projeto_
-/src										 |			_Todo código-fonte_
-/src/app 								 |			_Aonde todo o código fonte se encontra_
-/src/app/app.component.ts| 		_Componente principal do projeto_
-/src/app/app.config 		 |			_Configurações do cliente_
-/src/app/app.module.ts 	 |			_Módulo do projeto, importa todos os módulos, serviços, componentes, etc_
-/src/app/index.html			 |		_Página do projeto_
-/src/app/components      |     _Componentes do projeto_
-/src/app/managers   |   _Gerenciadores de funcionalidades_
-/src/app/services        |     _Providers do projetos que irão se comunicar com as API's_
-/src/app/views 					 |			_HTML das views dos componentes_
-/src/assets			 				 |			_Arquivos estáticos: , Imagens e etc_
-/src/scripts                   |       _Scripts adicionais da loja_
-/src/styles                   |       _Estilos CSS da loja_
-/src/app/template       |   _Template da loja: HTML e folhas de estilo SASS_
-
-
-## Iniciando um server Angular para desenvolvimento
-
-Pelo Powershell ou Prompt de Comando, entre na pasta do projeto, e execute os comandos:
-
-Para baixar as dependências do projeto
-> `npm install`
-
-Para iniciar o servidor. O caminho padrão que estamos usando é: http://localhost:4200
-> `ng serve` 
-
-## Gerando a publicação
-
-Para publicação, basta digitar no terminal 
-> `npm run build:ssr`
-
-Para visualizar uma loja rodando com Server-Side Rendering (Angular Universal)
-(Este comando necessita que a publicação seja gerada e irá ser executado em http://localhost na porta definida em app.config.ts)
-> `npm run serve:ssr`
-
-## Testes da loja
-
-Antes do envio do layout personalizado para atualização na AWS é de responsabilidade do parceiro realizar testes básicos que são considerados como críticos para a loja virtual como:
-* Navegação entre as páginas da loja virtual
-* Cadastrar um novo cliente
-* Realizar uma simulação de frete
-* Efetivar uma compra com cartão de crédito e boleto
+# License
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE)

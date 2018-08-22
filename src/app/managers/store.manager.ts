@@ -1,45 +1,31 @@
-import { Injectable, Inject, PLATFORM_ID } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { Store } from '../models/store/store';
-import { TransferState, makeStateKey } from "@angular/platform-browser";
-import { isPlatformBrowser } from "@angular/common";
-import { AppConfig } from "../app.config";
 import { StoreService } from "../services/store.service";
+import { Store } from "../models/store/store";
+import { Observable } from "rxjs";
+import { Injectable } from "@angular/core";
+import { shareReplay } from "rxjs/operators";
 
-const STORE_MANAGER_KEY = makeStateKey('store_manager_key');
+const CACHE_SIZE = 1;
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class StoreManager {
 
-    constructor(
-        private service: StoreService,
-        @Inject(PLATFORM_ID) private platformId: Object,
-        private state: TransferState
-    ) {
-    }
+    private cache$: Observable<Store>;
 
-    getStore(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            const store = this.state.get(STORE_MANAGER_KEY, null as any);
-            if (store) {
-                if (isPlatformBrowser(this.platformId)) {
-                    sessionStorage.setItem('store', JSON.stringify(store));
-                }
-                resolve(store);
-            } else {
-                this.service
-                    .getStore()
-                    .subscribe(response => {
-                        this.state.set(STORE_MANAGER_KEY, response as any);
-                        if (isPlatformBrowser(this.platformId)) {
-                            sessionStorage.setItem('store', JSON.stringify(store));
-                        }
-                        resolve(response);
-                    }, error => {
-                        reject(error);
-                    });
-            }
+    constructor(private service: StoreService) { }
 
-        });
+    /**
+     * Retorna as informações da loja
+     * @returns {Observable<Store>} 
+     * @memberof StoreService
+     */
+    getStore(): Observable<Store> {
+        if (!this.cache$) {
+            this.cache$ = this.service.getStore().pipe(
+                shareReplay(CACHE_SIZE)
+            );
+        }
+        return this.cache$;
     }
 }

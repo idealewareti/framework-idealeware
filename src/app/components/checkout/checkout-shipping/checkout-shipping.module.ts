@@ -6,7 +6,6 @@ import { CurrencyFormatModule } from '../../../pipes/currency-format/currency-fo
 @NgModule({
     declarations: [ CheckoutShippingComponent ],
     imports: [ CommonModule, CurrencyFormatModule ],
-    exports: [ CheckoutShippingComponent ],
-    providers: [],
+    exports: [ CheckoutShippingComponent ]
 })
 export class CheckoutShippingModule {}

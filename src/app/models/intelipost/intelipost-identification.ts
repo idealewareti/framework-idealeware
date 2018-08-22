@@ -1,5 +1,4 @@
 export class IntelipostIdentification {
-
     session: string;
     ip: string;
     pageName: string;

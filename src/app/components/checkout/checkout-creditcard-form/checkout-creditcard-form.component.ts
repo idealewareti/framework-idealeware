@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MercadoPagoPaymentMethod } from '../../../models/mercadopago/mercadopago-paymentmethod';
 import { MercadoPagoPayment } from '../../../models/mercadopago/mercadopago';
 import { CreditCard } from '../../../models/payment/credit-card';
-import { Globals } from '../../../models/globals';
 import { PaymentManager } from '../../../managers/payment.manager';
 import { MercadoPagoInstallmentResponse } from '../../../models/mercadopago/mercadopago-installment-response';
 import { PagseguroPayment } from '../../../models/pagseguro/pagseguro';
@@ -15,6 +14,7 @@ import { PaymentMethod } from '../../../models/payment/payment-method';
 import { MundipaggPayment } from '../../../models/mundipagg/mundipagg';
 import { Installment } from '../../../models/payment/installment';
 import { isPlatformBrowser } from '@angular/common';
+import { Cart } from '../../../models/cart/cart';
 
 declare var $: any;
 declare var Mercadopago: any;
@@ -23,16 +23,16 @@ declare var swal: any;
 declare var toastr: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-checkout-creditcard-form',
-    templateUrl: '../../../template/checkout/checkout-creditcard-form/checkout-creditcard-form.html',
-    styleUrls: ['../../../template/checkout/checkout-creditcard-form/checkout-creditcard-form.scss'],
+    selector: 'checkout-creditcard-form',
+    templateUrl: '../../../templates/checkout/checkout-creditcard-form/checkout-creditcard-form.html',
+    styleUrls: ['../../../templates/checkout/checkout-creditcard-form/checkout-creditcard-form.scss'],
 })
 export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     @Input() mercadopago: MercadoPagoPayment = null;
     @Input() mundipagg: MundipaggPayment = null;
     @Input() pagseguro: PagseguroPayment = null;
     @Input() payment: Payment = new Payment();
+    @Input() cart: Cart = null;
 
     @Output() creditCardUpdated: EventEmitter<CreditCard> = new EventEmitter<CreditCard>();
     @Output() pagseguroUpdated: EventEmitter<PagseguroOption> = new EventEmitter<PagseguroOption>();
@@ -57,12 +57,13 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     }
 
     constructor(
-        private globals: Globals,
         private manager: PaymentManager,
-        formBuilder: FormBuilder,
+        private formBuilder: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-        this.creditCardForm = formBuilder.group({
+    ) { }
+
+    ngOnInit(): void {
+        this.creditCardForm = this.formBuilder.group({
             cardNumber: ['', Validators.required],
             installment: ['', Validators.required],
             holder: ['', Validators.required],
@@ -75,8 +76,6 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
         });
     }
 
-    ngOnInit() { }
-
     ngOnChanges(changes: SimpleChanges) {
         if (isPlatformBrowser(this.platformId)) {
             if (changes['payment'] && !changes.payment.firstChange) {
@@ -86,6 +85,8 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     }
 
     resetCard() {
+        console.log('cart resetado');
+
         if (this.pagseguro)
             this.pagseguro.optionSelected = new PagseguroOption();
         else if (this.mundipagg)
@@ -96,7 +97,6 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
         this.creditCard = new CreditCard();
         this.bin = null;
         this.creditCardUpdated.emit(this.creditCard);
-
     }
 
     /**
@@ -158,7 +158,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      */
     getMinInstallments(): number {
         let installmentLimitMin = Number.MAX_SAFE_INTEGER;
-        this.globals.cart.products.forEach(product => {
+        this.cart.products.forEach(product => {
             if (product.installmentLimit != 0 && product.installmentLimit < installmentLimitMin)
                 installmentLimitMin = product.installmentLimit;
         });
@@ -381,16 +381,15 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      */
     MercadoPagoGetInstallments(method: MercadoPagoPaymentMethod) {
         if (isPlatformBrowser(this.platformId)) {
-            let totalPurchase: number = this.globals.cart.totalPurchasePrice;
+            let totalPurchase: number = this.cart.totalPurchasePrice;
             this.manager.getMercadoPagoInstalments(method.id, totalPurchase)
-                .then(response => {
+                .subscribe(response => {
                     this.mercadopago.installmentResponse = response;
                     this.getMinInstallments();
                     this.mercadoPagoUpdated.emit(method);
                     // this.loaderService.done;
-                })
-                .catch(error => {
-                    toastr['error'](error);
+                }, err => {
+                    toastr['error'](err.error);
                     // this.loaderService.done;
                     swal('Erro ao obter o parcelamento', 'Falha ao obter o parcelamento do MercadoPago', 'error');
                 });
@@ -471,7 +470,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     PagseguroGetInstallments(): Promise<PagseguroInstallment[]> {
         return new Promise((resolve, reject) => {
             PagSeguroDirectPayment.getInstallments({
-                amount: this.globals.cart.totalPurchasePrice,
+                amount: this.cart.totalPurchasePrice,
                 brand: this.creditCard.creditCardBrand,
                 maxInstallmentNoInterest: this.PagseguroNoInterestInstallmentQuantity(),
                 success: response => {
@@ -632,14 +631,11 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
             return new Promise((resolve, reject) => {
                 let cartId: string = localStorage.getItem('cart_id');
                 this.manager.simulateInstallmentsByCartId(cartId)
-                    .then(payments => {
+                    .subscribe(payments => {
                         let simulated: Payment = payments.find(p => p.id == this.mundipagg.creditCard.id);
                         let method: PaymentMethod = simulated.paymentMethods.find(m => m.name == this.creditCard.creditCardBrand.toUpperCase());
                         this.mundipaggUpdated.emit(method);
                         resolve(method);
-                    })
-                    .catch(error => {
-                        reject(error);
                     });
             });
         }

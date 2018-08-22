@@ -2,27 +2,28 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { ShowcaseGroup } from "../models/showcase/showcase-group";
 import { environment } from "../../environments/environment";
-import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
-import { Product } from "../models/product/product";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class CarouselService {
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
-    getCarousels() : Observable<ShowcaseGroup[]>{
+    getCarousels(): Observable<ShowcaseGroup[]> {
         let url = `${environment.API_CAROUSEL}/carousels`;
         return this.client.get(url)
-            .map(res => res.json().carousels)
+            .pipe(map(res => res.carousels));
     }
 
     getCarouselProducts(carouselId: string): Observable<ShowcaseGroup> {
         let url = `${environment.API_CAROUSEL}/carousels/${carouselId}`;
-        return this.client.get(url)
-            .map(res => res.json())
+        return this.client.get(url);
     }
 }

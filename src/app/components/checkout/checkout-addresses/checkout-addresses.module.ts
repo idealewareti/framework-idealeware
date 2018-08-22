@@ -6,7 +6,6 @@ import { CheckoutAddressesComponent } from './checkout-addresses.component';
 @NgModule({
     declarations: [ CheckoutAddressesComponent ],
     imports: [ CommonModule, RouterModule ],
-    exports: [ CheckoutAddressesComponent ],
-    providers: [],
+    exports: [ CheckoutAddressesComponent ]
 })
 export class CheckoutAddressesModule {}

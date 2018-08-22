@@ -2,27 +2,27 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { Brand } from "../models/brand/brand";
 import { environment } from "../../environments/environment";
-import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class BrandService {
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
     getAll(): Observable<Brand[]> {
         let url = `${environment.API_BRAND}/brands`;
-        return this.client.get(url)
-            .map(res => res.json())
+        return this.client.get(url);
     }
 
     getBrand(id: string): Observable<Brand> {
         let url = `${environment.API_BRAND}/brands/${id}`
-        return this.client.get(url)
-            .map(res => res.json())
+        return this.client.get(url);
     }
 }

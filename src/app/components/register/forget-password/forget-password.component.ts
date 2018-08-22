@@ -1,21 +1,20 @@
-import { Component, OnInit, AfterContentChecked, Inject, PLATFORM_ID } from '@angular/core';
-import { Title } from "@angular/platform-browser";
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { equalsValidator } from "../../../directives/equals/equals.directive";
 import { validEmail } from "../../../directives/email-validator/email-validator.directive";
 import { CustomerService } from "../../../services/customer.service";
 import { Router } from "@angular/router";
 import { isPlatformBrowser } from '@angular/common';
+import { CustomerManager } from '../../../managers/customer.manager';
 
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-forget-password',
-    templateUrl: '../../../template/register/forget-password/forget-password.html',
-    styleUrls: ['../../../template/register/forget-password/forget-password.scss'],
+    selector: 'forget-password',
+    templateUrl: '../../../templates/register/forget-password/forget-password.html',
+    styleUrls: ['../../../templates/register/forget-password/forget-password.scss'],
 })
-export class ForgetPasswordComponent implements OnInit {
+export class ForgetPasswordComponent {
 
     public email: string;
     confirmEmail: string;
@@ -24,35 +23,25 @@ export class ForgetPasswordComponent implements OnInit {
     formRecoverPassword: FormGroup;
 
     constructor(
-        private titleService: Title,
-        private service: CustomerService,
+        private manager: CustomerManager,
         private parentRouter: Router,
         builder: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object,
     ) {
-        if (isPlatformBrowser(this.platformId)) {
-            this.formRecoverPassword = builder.group({
-                email: ['', Validators.compose([
-                    Validators.required,
-                    validEmail()
-                ])],
-                confirmEmail: ['', Validators.compose([
-                    Validators.required,
-                    validEmail(),
-                    equalsValidator(this.email)
+        this.formRecoverPassword = builder.group({
+            email: ['', Validators.compose([
+                Validators.required,
+                validEmail()
+            ])],
+            confirmEmail: ['', Validators.compose([
+                Validators.required,
+                validEmail(),
+                equalsValidator(this.email)
 
-                ])],
-                cpf_cnpj: ['', Validators.required]
-            });
-        }
+            ])],
+            cpf_cnpj: ['', Validators.required]
+        });
 
-    }
-
-    ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.titleService.setTitle('Recuperar Senha');
-            window.scrollTo(0, 0);
-        }
     }
 
     recoverPassword(event) {
@@ -72,8 +61,8 @@ export class ForgetPasswordComponent implements OnInit {
                 });
             }
             else {
-                this.service.recoverPassword(this.cpf_cnpj, this.email)
-                    .then(response => {
+                this.manager.recoverPassword(this.cpf_cnpj, this.email)
+                    .subscribe(() => {
                         swal({
                             title: 'Solicitação Enviada!',
                             text: 'Um e-mail contendo informações para a recuperação de senha foi enviado para você',
@@ -82,16 +71,13 @@ export class ForgetPasswordComponent implements OnInit {
                         });
                         this.parentRouter.navigateByUrl('/');
 
-                    })
-                    .catch(error => {
+                    }, err => {
                         swal({
                             title: 'Erro ao solicitar recuperação de senha',
-                            text: error.text(),
+                            text: err.error,
                             type: 'error',
                             confirmButtonText: 'OK'
                         });
-
-                        console.log(error);
                     })
             }
         }

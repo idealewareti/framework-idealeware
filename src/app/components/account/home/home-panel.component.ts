@@ -1,57 +1,49 @@
-import { Component, OnInit, Input, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Customer } from "../../../models/customer/customer";
 import { Store } from "../../../models/store/store";
-import { Router } from "@angular/router";
-import { CustomerService } from "../../../services/customer.service";
 import { Order } from "../../../models/order/order";
-import { Title } from "@angular/platform-browser";
-import { Token } from '../../../models/customer/token';
-import { isPlatformBrowser } from '@angular/common';
 import { StoreManager } from '../../../managers/store.manager';
+import { OrderStatusEnum } from '../../../enums/order-status.enum';
+import { OrderManager } from '../../../managers/order.manager';
+import { CustomerManager } from '../../../managers/customer.manager';
 
 @Component({
-    selector: 'app-home-panel',
-    templateUrl: '../../../template/account/account-home/account-home.html',
-    styleUrls: ['../../../template/account/account-home/account-home.scss']
+    selector: 'home-panel',
+    templateUrl: '../../../templates/account/account-home/account-home.html',
+    styleUrls: ['../../../templates/account/account-home/account-home.scss']
 })
 export class AccountHomeComponent implements OnInit {
     customer: Customer = new Customer();
     store: Store;
-    public lastOrder: Order = null;
+    lastOrder: Order = null;
     private logged: boolean;
 
     constructor(
-        private service: CustomerService,
-        private storeManager: StoreManager,
-        private parentRouter: Router,
-        titleService: Title,
-        @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-        titleService.setTitle('Minha Conta');
-    }
+        private customerManager: CustomerManager,
+        private orderManager: OrderManager,
+        private storeManager: StoreManager
+    ) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.getStore()
-                .then(store => {
-                    return this.getCustomer();
-                })
-                .catch(error => {
-                    this.parentRouter.navigateByUrl('/login');
-                })
-        }
-    }
-
-    private getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token = new Token();
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
-        }
-        return token;
+        this.getStore()
+            .then(() => {
+                this.orderManager.getOrders()
+                    .subscribe(orders => {
+                        this.lastOrder = orders[0];
+                        const labels = [
+                            { id: 0, label: 'Novo Pedido' },
+                            { id: 1, label: 'Pedido Aprovado' },
+                            { id: 2, label: 'Em Transporte' },
+                            { id: 3, label: 'Pedido Concluído' },
+                            { id: 10, label: 'Pedido Faturado' },
+                            { id: 11, label: 'Pendente' },
+                            { id: 12, label: 'Pedido Cancelado' },
+                            { id: 13, label: 'Em Processamento' }
+                        ]
+                        this.lastOrder.labelStatus = labels.filter(s => s.id == this.lastOrder.status)[0].label;
+                    });
+                return this.getCustomer();
+            });
     }
 
     getCustomer(): Promise<Customer> {
@@ -60,8 +52,7 @@ export class AccountHomeComponent implements OnInit {
                 resolve(this.customer);
             }
             else {
-                let token: Token = this.getToken();
-                this.service.getUser(token)
+                this.customerManager.getUser()
                     .subscribe(customer => {
                         this.customer = customer;
                         this.logged = true;
@@ -84,15 +75,21 @@ export class AccountHomeComponent implements OnInit {
                 resolve(this.store);
 
             this.storeManager.getStore()
-                .then(store => {
+                .subscribe(store => {
                     this.store = store;
                     resolve(store);
-                })
-                .catch(error => {
-                    console.log(error);
+                }, error => {
                     reject(error);
                 });
         });
 
+    }
+
+    statusClass(order: Order): string {
+        if (order.status == OrderStatusEnum.CanceledOrder)
+            return 'status-red';
+        else if (order.status == OrderStatusEnum.PendingOrder)
+            return 'status-yellow';
+        else return 'status-green';
     }
 }

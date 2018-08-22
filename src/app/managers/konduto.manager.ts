@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Meta } from "@angular/platform-browser";
-import { AccountComponent } from "../components/account/account.component";
 import { Product } from "../models/product/product";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class KondutoManager {
     // Metadata Naming
     readonly pageTagName = 'kdt:page';

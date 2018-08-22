@@ -1,31 +1,31 @@
-import { Component, Input, AfterViewChecked, OnInit, AfterContentChecked, Inject, PLATFORM_ID } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, PLATFORM_ID, OnInit, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Title } from "@angular/platform-browser";
 import { Customer } from '../../../models/customer/customer';
-import { FormHelper } from '../../../helpers/formhelper';
+import { FormHelper } from '../../../helpers/form.helper';
 import { AppTexts } from '../../../app.texts';
 import { CustomerManager } from '../../../managers/customer.manager';
-import { DneAddressService } from '../../../services/dneaddress.service';
-import { CartManager } from '../../../managers/cart.manager';
 import { CustomerAddress } from '../../../models/customer/customer-address';
 import { strongPasswordValidator } from '../../../directives/strong-password/strong-password.directive';
 import { Validations } from '../../../directives/validations';
 import { equalsControlValidator } from '../../../directives/equals/equals.directive';
 import { AppCore } from '../../../app.core';
 import { isPlatformBrowser } from '@angular/common';
+import { DneAddressManager } from '../../../managers/dneaddress.manager';
+import { SeoManager } from '../../../managers/seo.manager';
+import { Login } from '../../../models/customer/login';
+import { resolve } from 'url';
 
 declare var $: any;
 declare var swal: any;
 declare var toastr: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-signup-form',
-    templateUrl: '../../../template/register/signup/signup.html',
-    styleUrls: ['../../../template/register/signup/signup.scss']
+    selector: 'signup-form',
+    templateUrl: '../../../templates/register/signup/signup.html',
+    styleUrls: ['../../../templates/register/signup/signup.scss']
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnInit, AfterViewInit {
     customer: Customer;
     confirmPassword: string;
     myForm: FormGroup;
@@ -36,55 +36,59 @@ export class SignUpComponent {
     public readonly strongPasswordRegex = /(?=.*\d)(?=.*[a-z]).{6,}/;
 
     constructor(
-        formBuilder: FormBuilder,
         private formHelper: FormHelper,
-        private manager: CustomerManager,
-        private dneService: DneAddressService,
-        private cartManager: CartManager,
+        private customerManager: CustomerManager,
+        private dneMananger: DneAddressManager,
+        private seoManager: SeoManager,
         private parentRouter: Router,
-        private titleService: Title,
         @Inject(PLATFORM_ID) private platformId: Object,
+        formBuilder: FormBuilder,
     ) {
-        if (isPlatformBrowser(this.platformId)) {
-            this.customer = new Customer({ type: 1, gender: 'M' });
-            this.titleService.setTitle('Cadastre-se');
-            this.customer.addresses.push(new CustomerAddress({ addressType: 1 }));
+        this.customer = new Customer();
+        this.customer.addresses.push(new CustomerAddress());
 
-            this.myForm = formBuilder.group({
-                firstname_Companyname: ['', Validators.required],
-                lastname_Tradingname: ['', Validators.required],
-                cpf_Cnpj: ['', Validators.required],
-                rg_Ie: [''],
-                phone: ['', Validators.required],
-                celPhone: [''],
-                email: ['', Validators.required],
-                password: ['', Validators.compose([
-                    strongPasswordValidator(this.strongPasswordRegex)
-                ])],
-                confirmPassword: ['', Validators.compose([
-                    Validators.required,
-                    Validators.minLength(6),
-                    equalsControlValidator('password')
-                ])],
-                gender: ['', Validators.required],
-                birthdate: [''],
-                zipCode: ['', Validators.required],
-                addressType: ['', Validators.required],
-                addressLine1: ['', Validators.required],
-                addressLine2: [''],
-                district: ['', Validators.required],
-                city: ['', Validators.required],
-                state: ['', Validators.required],
-                number: ['', Validators.required],
-                receivePromotionalAndNews: ['']
-            });
-        }
+        this.myForm = formBuilder.group({
+            firstname_Companyname: ['', Validators.required],
+            lastname_Tradingname: ['', Validators.required],
+            cpf_Cnpj: ['', Validators.required],
+            rg_Ie: [''],
+            phone: ['', Validators.required],
+            celPhone: [''],
+            email: ['', Validators.required],
+            password: ['', Validators.compose([
+                strongPasswordValidator(this.strongPasswordRegex)
+            ])],
+            confirmPassword: ['', Validators.compose([
+                Validators.required,
+                Validators.minLength(6),
+                equalsControlValidator('password')
+            ])],
+            gender: ['', Validators.required],
+            birthdate: [''],
+            zipCode: ['', Validators.required],
+            addressType: ['', Validators.required],
+            addressLine1: ['', Validators.required],
+            addressLine2: [''],
+            district: ['', Validators.required],
+            city: ['', Validators.required],
+            state: ['', Validators.required],
+            number: ['', Validators.required],
+            receivePromotionalAndNews: ['']
+        });
     }
 
-    ngOnInit() { }
-
-    ngAfterContentChecked() { }
-
+    ngOnInit() {
+        this.seoManager.setTags({
+            title: 'Cadastrar',
+            description: 'Cadastrar',
+        });
+    }
+    
+    ngDoCheck() {
+        if (isPlatformBrowser(this.platformId)) {
+            $('.date').mask('00/00/0000');
+        }
+    }
     ngAfterViewInit() {
         if (isPlatformBrowser(this.platformId)) {
             $('.date').mask('00/00/0000');
@@ -111,30 +115,30 @@ export class SignUpComponent {
             if (this.customer.type == 1) {
                 this.customer.birthdate = AppCore.ConvertTextToDate(this.customer.date);
             }
-            this.manager.signUp(this.customer)
-                .then(response => {
+            this.signUpApi()
+                .then(() => {
                     let cartId = localStorage.getItem('cart_id');
-                    if (cartId)
-                        this.parentRouter.navigateByUrl(`/checkout`);
-                    else {
+                    // if (cartId)
+                    //     this.parentRouter.navigateByUrl(`/checkout`);
+                    // else {
                         this.parentRouter.navigateByUrl(`/`);
-                    }
+                    //}
                 })
-                .catch(error => {
+                .catch(err => {
                     let title = '';
                     let message = '';
 
-                    if (error.status == 0) {
+                    if (err.status == 0) {
                         title = AppTexts.SIGNUP_ERROR_TITLE;
                         message = AppTexts.SIGNUP_API_OFFLINE;
                     }
                     else {
                         title = AppTexts.SIGNUP_ERROR_TITLE;
-                        if (new RegExp(/\[(.*?)\]/g).test(error.text())) {
-                            let response = error.text().match(/\[(.*?)\]/g)
+                        if (new RegExp(/\[(.*?)\]/g).test(err)) {
+                            let response = err.match(/\[(.*?)\]/g)
                             message = response[response.length - 1].replace('["', '').replace('"]', '');
                         }
-                        else message = error.text();
+                        else message = err;
                     }
 
                     swal({
@@ -145,6 +149,26 @@ export class SignUpComponent {
                     });
                 });
         }
+    }
+
+    private signUpApi(): Promise<Customer> {
+        return new Promise((resolve, reject) => {
+            this.customerManager.signUp(this.customer)
+                .subscribe(() => {
+
+                    let login: Login = {
+                        cpfEmail: this.customer.email,
+                        password: this.customer.password
+                    };
+                    this.customerManager.signIn(login)
+                        .subscribe(loggedCustomer => {
+                            resolve(loggedCustomer);
+                        }, err => {
+                            reject(err);
+                        });
+                }, err => reject(err.error));
+        });
+
     }
 
     public errorMessage(message: string) {
@@ -176,7 +200,7 @@ export class SignUpComponent {
         event.preventDefault();
         if (this.customer.addresses[0] != null && this.customer.addresses[0].zipCode) {
             toastr['info']('Localizando o endereço');
-            this.dneService.getAddress(this.customer.addresses[0].zipCode)
+            this.dneMananger.getAddress(this.customer.addresses[0].zipCode)
                 .subscribe(response => {
                     this.customer.addresses[0].district = response.neighborhoods;
                     this.customer.addresses[0].city = response.city;
@@ -188,8 +212,7 @@ export class SignUpComponent {
                     else {
                         toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
                     }
-                }), error => {
-                    console.log(error);
+                }), () => {
                     toastr['error']('Endereço não encontrado, preencha os campos manualmente');
                 };
         }

@@ -1,54 +1,51 @@
 import { Component, OnChanges, Input, SimpleChange, Inject, PLATFORM_ID } from "@angular/core";
 import { Banner } from "../../../models/banner/banner";
-import { BannerService } from "../../../services/banner.service";
-import { Globals } from "../../../models/globals";
 import { isPlatformBrowser } from "@angular/common";
 import { AppCore } from "../../../app.core";
+import { BannerManager } from "../../../managers/banner.manager";
+import { Store } from "../../../models/store/store";
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-banner-side',
-    templateUrl: '../../../template/search/banner-side/banner-side.html',
-    styleUrls: ['../../../template/search/banner-side/banner-side.scss']
+    selector: 'banner-side',
+    templateUrl: '../../../templates/search/banner-side/banner-side.html',
+    styleUrls: ['../../../templates/search/banner-side/banner-side.scss']
 })
 export class BannerSideComponent implements OnChanges {
     @Input() module: string = null;
     @Input() moduleId: string = null;
     @Input() place: number;
+    @Input() store: Store;
+    mediaPath: string;
     bannersSide: Banner[] = [];
 
-    mediaPath: string;
-
     constructor(
-        private service: BannerService,
-        private globals: Globals,
+        private bannerManager: BannerManager,
         @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-        this.mediaPath = `${this.globals.store.link}/static/banners/`;
-    }
+    ) { }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+        this.mediaPath = `${this.store.link}/static/banners/`;
 
-        if (changes['moduleId'].currentValue != changes['moduleId'].previousValue) {
+        if (changes['moduleId']) {
             switch (this.module) {
                 case 'category':
-                    this.service.getBannersFromCategory(this.moduleId, this.place)
-                        .subscribe(banners => this.bannersSide = banners, error => console.log(error));
+                    this.bannerManager.getBannersFromCategory(this.moduleId, this.place)
+                        .subscribe(banners => this.bannersSide = banners);
                     break;
 
                 case 'brand':
-                    this.service.getBannersFromBrand(this.moduleId, this.place)
-                        .subscribe(banners => this.bannersSide = banners, error => console.log(error));
+                    this.bannerManager.getBannersFromBrand(this.moduleId, this.place)
+                        .subscribe(banners => this.bannersSide = banners);
                     break;
 
                 case 'group':
-                    this.service.getBannersFromGroup(this.moduleId, this.place)
-                        .subscribe(banners => this.bannersSide = banners, error => console.log(error));
+                    this.bannerManager.getBannersFromGroup(this.moduleId, this.place)
+                        .subscribe(banners => this.bannersSide = banners);
                     break;
 
                 default:
-                    this.service.getBannersFromCategory(this.moduleId, this.place)
-                        .subscribe(banners => this.bannersSide = banners, error => console.log(error));
+                    this.bannerManager.getBannersFromCategory(this.moduleId, this.place)
+                        .subscribe(banners => this.bannersSide = banners);
                     break;
             }
         }

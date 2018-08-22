@@ -1,27 +1,30 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { Cart } from '../../../models/cart/cart';
-import { Router } from '@angular/router';
+
+import { Component, Input, Inject, PLATFORM_ID, AfterViewChecked } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
+import { Router } from "@angular/router";
+
+import { Cart } from "../../../models/cart/cart";
+import { Store } from "../../../models/store/store";
 
 declare var $: any;
 
 @Component({
-    selector: 'app-checkout-button',
-    templateUrl: '../../../template/shared/checkout-button/checkout-button.html',
-    styleUrls: ['../../../template/shared/checkout-button/checkout-button.scss']
+    selector: 'checkout-button',
+    templateUrl: '../../../templates/shared/checkout-button/checkout-button.html',
+    styleUrls: ['../../../templates/shared/checkout-button/checkout-button.scss']
 })
-export class CheckoutButtonComponent implements OnInit {
+export class CheckoutButtonComponent implements AfterViewChecked {
+
     @Input() icon: boolean = false;
     @Input() text: string = 'Fechar Pedido';
     @Input() cart: Cart;
+    @Input() store: Store;
+
 
     constructor(
-        private parentRouter: Router,
+        private router: Router,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
-
-    ngOnInit() { }
 
     ngAfterViewChecked() {
         if (isPlatformBrowser(this.platformId)) {
@@ -36,15 +39,10 @@ export class CheckoutButtonComponent implements OnInit {
 
     checkout(event) {
         event.preventDefault();
-        if (isPlatformBrowser(this.platformId)) {
-            let auth: string = localStorage.getItem('auth');
-            if (auth) {
-                this.parentRouter.navigateByUrl('/checkout');
-            }
-            else {
-                this.parentRouter.navigateByUrl('/login;step=checkout');
-            }
-        }
+        if (this.store.modality == 1)
+            this.router.navigateByUrl('/checkout');
+        else if (this.store.modality == 0)
+            this.router.navigate(['checkout', 'orcamento']);
     }
 
     getNumItemsInCart(): number {
@@ -52,7 +50,6 @@ export class CheckoutButtonComponent implements OnInit {
             let numItems = 0;
             numItems += (this.cart.products) ? this.cart.products.length : 0;
             numItems += (this.cart.services) ? this.cart.services.length : 0;
-            numItems += (this.cart.paints) ? this.cart.paints.length : 0;
             return numItems;
         }
         else return 0;

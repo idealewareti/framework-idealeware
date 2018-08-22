@@ -1,39 +1,24 @@
 import { Component, Input, OnInit, EventEmitter, Output, Inject, PLATFORM_ID } from '@angular/core';
 import { CustomerAddress } from '../../../models/customer/customer-address';
-import { CustomerService } from '../../../services/customer.service';
 import { isPlatformBrowser } from '@angular/common';
-import { Token } from '../../../models/customer/token';
+import { CustomerManager } from '../../../managers/customer.manager';
 
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-address-panel-list',
-    templateUrl: '../../../template/account/address-list/address-panel-list.html',
-    styleUrls: ['../../../template/account/address-list/address-panel-list.scss']
+    selector: 'address-panel-list',
+    templateUrl: '../../../templates/account/address-list/address-panel-list.html',
+    styleUrls: ['../../../templates/account/address-list/address-panel-list.scss']
 })
 
-export class AddressPanelListComponent implements OnInit {
+export class AddressPanelListComponent {
     @Input() address: CustomerAddress;
     @Output() addressDeleted: EventEmitter<CustomerAddress> = new EventEmitter<CustomerAddress>();
 
-    constructor(private service: CustomerService,
+    constructor(
+        private customerManager: CustomerManager,
         @Inject(PLATFORM_ID) private platformId: Object, ) {
         this.address = new CustomerAddress();
-    }
-
-    ngOnInit() { }
-
-    private getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token = new Token();
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
-        }
-        return token;
     }
 
     askForDelete() {
@@ -51,20 +36,17 @@ export class AddressPanelListComponent implements OnInit {
                 })
             }, function () {
             })
-                .then(() => this.delete())
-                .catch(error => console.log(error));
+                .then(() => this.delete());
         }
     }
 
     private delete() {
         if (isPlatformBrowser(this.platformId)) {
-            let token: Token = this.getToken();
-            this.service.deleteAddress(this.address.id, token)
-                .then(() => {
+            this.customerManager.deleteAddress(this.address.id)
+                .subscribe(() => {
                     swal('Endereço removido');
                     this.addressDeleted.emit(this.address);
-                })
-                .catch(error => {
+                }, error => {
                     swal('Falha ao remover o endereço', error, 'error');
                 });
         }

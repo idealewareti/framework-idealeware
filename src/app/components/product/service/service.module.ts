@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { ServiceComponent } from './service.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CurrencyFormatModule } from '../../../pipes/currency-format/currency-format.module';
@@ -7,8 +7,7 @@ import { ZipCodeMaskModule } from '../../../directives/zipcode-mask/zipcode-mask
 
 @NgModule({
     declarations: [ ServiceComponent ],
-    imports: [ BrowserModule, FormsModule, ReactiveFormsModule, CurrencyFormatModule, ZipCodeMaskModule ],
-    providers: [],
+    imports: [ CommonModule, FormsModule, ReactiveFormsModule, CurrencyFormatModule, ZipCodeMaskModule ],
     exports: [ ServiceComponent ]
 })
 export class ServiceModule {}

@@ -12,10 +12,9 @@ import { CartManager } from "../../../managers/cart.manager";
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-service',
-    templateUrl: '../../../template/product/service/service.html',
-    styleUrls: ['../../../template/product/service/service.scss']
+    selector: 'service',
+    templateUrl: '../../../templates/product/service/service.html',
+    styleUrls: ['../../../templates/product/service/service.scss']
 })
 export class ServiceComponent {
     services: Service[] = [];
@@ -66,9 +65,8 @@ export class ServiceComponent {
                         if (this.services.length == 0) {
                             swal("Nenhum serviço encontrado", "Não foi encontrado nenhum serviço para a sua localidade");
                         }
-                    }, error => {
+                    }, () => {
                         swal("Falha ao localizar serviços", "Não foi encontrado nenhum serviço no momento");
-                        console.log(error);
                     });
                 this.messageZipCode = null;
             }

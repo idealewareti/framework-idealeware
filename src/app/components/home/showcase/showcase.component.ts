@@ -1,102 +1,49 @@
 import { Component, OnInit } from '@angular/core';
-import { Title, Meta, makeStateKey, TransferState } from '@angular/platform-browser';
-import { PLATFORM_ID, Inject, Input } from '@angular/core';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { Globals } from '../../../models/globals';
-import { ShowCaseService } from '../../../services/showcase.service';
 import { ShowCaseBanner } from '../../../models/showcase/showcase-banner';
 import { ShowCase } from '../../../models/showcase/showcase';
 import { EnumBannerType } from '../../../enums/banner-type.enum';
 import { Store } from '../../../models/store/store';
-import { AppCore } from '../../../app.core';
-import { ShowcaseGroup } from '../../../models/showcase/showcase-group';
-import { Router } from '@angular/router';
-import { AppConfig } from '../../../app.config';
+import { ShowCaseManager } from '../../../managers/showcase.manager';
 import { StoreManager } from '../../../managers/store.manager';
-
-const SHOWCASE_KEY = makeStateKey('showcase_key');
+import { SeoManager } from '../../../managers/seo.manager';
 
 @Component({
-    selector: 'app-showcase',
-    templateUrl: '../../../template/home/showcase/showcase.html',
-    styleUrls: ['../../../template/home/showcase/showcase.scss']
+    selector: 'showcase',
+    templateUrl: '../../../templates/home/showcase/showcase.html',
+    styleUrls: ['../../../templates/home/showcase/showcase.scss']
 })
 export class ShowcaseComponent implements OnInit {
     banners: ShowCaseBanner[] = [];
     stripeBanners: ShowCaseBanner[] = [];
     halfBanners: ShowCaseBanner[] = [];
-    // groups: ShowcaseGroup[] = [];
-    showcase: ShowCase = new ShowCase();
     store: Store;
 
     constructor(
-        private titleService: Title,
-        private metaService: Meta,
-        private service: ShowCaseService,
         private storeManager: StoreManager,
-        private globals: Globals,
-        private router: Router,
-        private state: TransferState,
-        @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-        this.state.remove(SHOWCASE_KEY);
-    }
+        private showCasemanager: ShowCaseManager,
+        private seoManager: SeoManager
+    ) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.storeManager.getStore()
-                .then(store => {
-                    this.store = store;
-                    this.showcase = this.state.get(SHOWCASE_KEY, null as any);
-                    if (this.showcase) {
-                        this.initData(this.showcase);
-                        return;
-                    }
-
-                    this.service.getBannersFromStore()
-                        .subscribe(showcase => {
-                            this.state.set(SHOWCASE_KEY, showcase as any);
-                            this.showcase = showcase;
-                            this.initData(showcase);
-                        }, error => console.log(error));
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        }
-    }
-
-    ngOnDestroy() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.showcase = null;
-            this.metaService.removeTag("name='title'");
-            this.metaService.removeTag("name='description'");
-            this.state.remove(SHOWCASE_KEY);
-        }
+        this.storeManager.getStore()
+            .subscribe(result => {
+                this.store = result;
+                this.showCasemanager.getBannersFromStore()
+                    .subscribe(showcase => {
+                        this.initData(showcase);
+                    });
+            })
     }
 
     private initData(data: ShowCase): void {
-        // this.groups = data.groups;
         this.banners = data.banners.filter(b => b.bannerType == EnumBannerType.Full);
         this.stripeBanners = data.banners.filter(b => b.bannerType == EnumBannerType.Tarja);
         this.halfBanners = data.banners.filter(b => b.bannerType == EnumBannerType.Half);
 
-        let title = (data.metaTagTitle) ? data.metaTagTitle : data.name;
-        this.metaService.addTags([
-            { name: 'title', content: data.metaTagTitle },
-            { name: 'description', content: data.metaTagDescription }
-        ]);
-        this.titleService.setTitle(data.metaTagTitle);
-    }
-
-    isMobile(): boolean {
-        if (isPlatformBrowser(this.platformId)) {
-            return AppCore.isMobile(window);
-        }
-        else return false;
-    }
-
-    getStore(): Store {
-        return this.store;
+        this.seoManager.setTags({
+            title: data.metaTagTitle,
+            description: data.metaTagDescription,
+            image: `${this.store.link}/static/store/${this.store.logo}`
+        });
     }
 }

@@ -1,24 +1,27 @@
 import { HttpClientHelper } from "../helpers/http.helper";
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+
 import { Budget } from "../models/budget/budget";
 import { environment } from "../../environments/environment";
-import { Token } from "../models/customer/token";
 
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class BudgetService {
 
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
-    public createBudget(cartId: string, token: Token): Observable<Budget> {
+    public createBudget(cartId: string): Observable<Budget> {
         let url = `${environment.API_BUDGET}/budgets/${cartId}`;
-        return this.client.post(url, null, token)
-            .map(res => res.json());
+        return this.client.post(url)
+        .pipe(map(res => res.body));
     }
 }

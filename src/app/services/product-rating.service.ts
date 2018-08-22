@@ -3,27 +3,26 @@ import { HttpClientHelper } from "../helpers/http.helper";
 import { ProductRating } from "../models/product-rating/product-rating";
 import { environment } from "../../environments/environment";
 import { ProductRatingCreate } from "../models/product-rating/product-rating-create";
-import { Token } from "../models/customer/token";
-import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class ProductRatingService {
     client: HttpClientHelper;
     
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
     
     getProductRating(id:string) : Observable<ProductRating>{
         let url = `${environment.API_PRODUCTRATING}/productrating/Approved/${id}`;
-        return this.client.get(url)
-        .map(res => res.json())
+        return this.client.get(url);
     }
 
-    createProductRating(productRating: ProductRatingCreate, token: Token): Observable<ProductRatingCreate>{
+    createProductRating(productRating: ProductRatingCreate): Observable<ProductRatingCreate>{
         let url = `${environment.API_PRODUCTRATING}/productrating`;
-        return this.client.post(url, productRating, token)
-        .map(res => res.json())
+        return this.client.post(url, productRating);
     }
 }

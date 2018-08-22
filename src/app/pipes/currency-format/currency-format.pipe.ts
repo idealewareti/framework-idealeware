@@ -12,8 +12,8 @@ export class CurrencyFormatPipe implements PipeTransform {
         }
 
         let currencyPipe: CurrencyPipe = new CurrencyPipe('pt_BR');
-        let newValue: string = currencyPipe.transform(value, currencyCode, null, digits);
+        let newValue: string = currencyPipe.transform(value, currencyCode, symbolDisplay, digits);
 
-        return newValue.replace('$', '$ ');
+        return newValue;
     }
 }

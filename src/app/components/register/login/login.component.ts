@@ -1,28 +1,22 @@
-import { Input, Component, AfterViewChecked, OnInit, Inject, PLATFORM_ID, Renderer2, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { Http } from '@angular/http';
-import { RouterModule } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, Form } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
+import { Component, Inject, PLATFORM_ID, Renderer2, ViewChild, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Login } from '../../../models/customer/login';
 import { CartManager } from "../../../managers/cart.manager";
 import { CustomerManager } from "../../../managers/customer.manager";
 import { isPlatformBrowser } from '@angular/common';
 import { AppConfig } from '../../../app.config';
+import { SeoManager } from '../../../managers/seo.manager';
 
-//declare var $: any;
-declare var S: any;
 declare var swal: any;
 declare var toastr: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-login',
-    templateUrl: '../../../template/register/login/login.html',
-    styleUrls: ['../../../template/register/login/login.scss']
-
+    selector: 'login',
+    templateUrl: '../../../templates/register/login/login.html',
+    styleUrls: ['../../../templates/register/login/login.scss']
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
     private step: string = '';
     login: Login;
     formLogin: FormGroup;
@@ -31,16 +25,15 @@ export class LoginComponent implements OnDestroy {
     kondutoScriptId = 'konduto-event-script';
 
     constructor(
-        private titleService: Title,
         private route: ActivatedRoute,
         private parentRouter: Router,
-        private manager: CustomerManager,
-        private cartManager: CartManager,
+        private customerManager: CustomerManager,
+        private seoManager: SeoManager,
         private renderer: Renderer2,
         builder: FormBuilder,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
-        this.login = new Login('', '');
+        this.login = new Login();
         this.formLogin = builder.group({
             cpfEmail: ['', Validators.required],
             password: ['', Validators.required]
@@ -48,13 +41,14 @@ export class LoginComponent implements OnDestroy {
     }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.step = this.route.params['value'].step;
-            if (this.isNewCustomer())
-                this.parentRouter.navigateByUrl('/cadastro');
-            else this.titleService.setTitle('Login');
-        }
+        this.step = this.route.queryParams['value'].step;
+        if (this.isNewCustomer())
+            this.parentRouter.navigateByUrl('/cadastro');
 
+        this.seoManager.setTags({
+            title: 'Login',
+            description: 'Login',
+        });
     }
 
     ngOnDestroy() {
@@ -77,41 +71,20 @@ export class LoginComponent implements OnDestroy {
     }
 
     signIn() {
-        this.manager.signIn(this.login)
-            .then(customer => {
+        this.login = this.formLogin.getRawValue();
+        this.customerManager.signIn(this.login)
+            .subscribe(customer => {
                 toastr['success'](`Bem-${customer.gender == 'F' ? 'vinda' : 'vindo'}, ${customer.firstname_Companyname}`);
                 this.injectKondutoIdentifier(this.login.cpfEmail);
-                this.route.params
-                    .map(params => params)
-                    .subscribe((params) => {
-                        let step = ((params['step']) ? params['step'] : '');
 
-                        if (step == 'checkout') {
-                            this.parentRouter.navigateByUrl(`/checkout`);
-                        }
-                        else {
-                            if (isPlatformBrowser(this.platformId)) {
-                                this.cartManager.getCart(localStorage.getItem('cart_id'))
-                                    .then(response => {
-                                        if (response.products.length > 0) {
-                                            this.parentRouter.navigateByUrl(`/carrinho`);
-                                        }
-                                        else {
-                                            this.parentRouter.navigateByUrl(`/`);
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.log(error);
-                                        this.parentRouter.navigateByUrl(`/`);
-                                    });
-                            }
-                        }
-                    });
-            })
-            .catch(error => {
-                console.log(error);
+                if (this.step)
+                    this.parentRouter.navigateByUrl(this.step);
+                else
+                    this.parentRouter.navigateByUrl('/');
+
+            }, err => {
                 if (isPlatformBrowser(this.platformId)) {
-                    swal('Não foi possível acessar sua conta', error.text(), 'error');
+                    swal('Não foi possível acessar sua conta', err.error, 'error');
                 }
             });
     }

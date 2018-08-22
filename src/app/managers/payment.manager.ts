@@ -1,138 +1,138 @@
-import { Injectable, Inject, PLATFORM_ID } from "@angular/core";
 import { PaymentService } from "../services/payment.service";
-import { Sku } from "../models/product/sku";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
 import { Payment } from "../models/payment/payment";
+import { PaymentMethodTypeEnum } from "../enums/payment-method-type.enum";
+import { EnumPaymentType } from "../models/payment/payment-type.enum";
+import { InstallmentsSimulation } from "../models/payment/installments-simulation";
 import { MercadoPagoPaymentMethod } from "../models/mercadopago/mercadopago-paymentmethod";
 import { MercadoPagoInstallmentResponse } from "../models/mercadopago/mercadopago-installment-response";
-import { PaymentMethodTypeEnum } from "../enums/payment-method-type.enum";
-import { EnumPaymentType } from "../enums/payment-type.enum";
+import { Sku } from "../models/product/sku";
 import { PaymentMethod } from "../models/payment/payment-method";
 import { PaymentSetting } from "../models/payment/payment-setting";
-import { MercadoPagoError } from "../models/mercadopago/mercadopago-error";
 import { PagSeguroSimulationResponse } from "../models/pagseguro/pagseguro-simulation";
-import { isPlatformBrowser } from "@angular/common";
-import { Token } from "../models/customer/token";
-import { Observable } from "rxjs";
-import { InstallmentsSimulation } from "../models/payment/installments-simulation";
+import { shareReplay } from "rxjs/operators";
+import { CartManager } from "./cart.manager";
+import { PagseguroCreditCard } from "../models/pagseguro/pagseguro-card";
+import { CreditCard } from "../models/payment/credit-card";
+import { MercadoPagoCreditCard } from "../models/mercadopago/mercadopago-creditcard";
 
-@Injectable()
+const CACHE_SIZE = 1;
+
+@Injectable({
+    providedIn: 'root'
+})
 export class PaymentManager {
-    constructor(private service: PaymentService, @Inject(PLATFORM_ID) private platformId: Object) { }
 
-    private getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
+    private cache$ = new Map<String, Observable<any>>();
+
+    constructor(
+        private service: PaymentService,
+        private cartManager: CartManager
+    ) { }
+
+    /**
+     * Seleciona todos pagamentos
+     */
+    getAll(): Observable<Payment[]> {
+        return this.service.getAll()
+    }
+
+    /**
+     * Seleciona pagamento default
+     */
+    getDefault(): Observable<Payment> {
+        return this.service.getDefault();
+    }
+
+    /**
+     * Seleciona uma simulação de pagamento do sku
+     * @param skuId 
+     */
+    simulateInstallmentsBySkuId(skuId: string): Observable<Payment[]> {
+        if (!this.cache$[skuId]) {
+            this.cache$[skuId] = this.service.simulateInstallmentsBySkuId(skuId).pipe(
+                shareReplay(CACHE_SIZE)
+            );
         }
-        return token;
+        return this.cache$[skuId];
     }
 
-    getAll(): Promise<Payment[]> {
-        return new Promise((resolve, reject) => {
-            this.service.getAll()
-                .subscribe(response => {
-                    let payments = response.map(p => p = new Payment(p));
-                    resolve(payments);
-                }, error => reject(error));
-        })
-    }
-
-    getDefault(): Promise<Payment> {
-        return new Promise((resolve, reject) => {
-            this.service.getDefault()
-                .subscribe(response => {
-                    let payment: Payment = new Payment(response);
-                    resolve(payment);
-
-                }, error => reject(error));
-        });
-    }
-
-    simulateInstallmentsBySkuId(skuId: string): Promise<Payment[]> {
-        return new Promise((resolve, reject) => {
-            this.service.simulateInstallmentsBySkuId(skuId)
-                .subscribe(response => {
-                    let simulator = response.map(p => p = new Payment(p));
-                    resolve(simulator);
-                }, error => reject(error));
-        });
-    }
-
-    getInstallmentsSimulationSimpleBySkuId(skuId : string) : Promise<InstallmentsSimulation>{
-        return new Promise((resolve, reject)=>{
-            this.service.getInstallmentsSimulationSimpleBySkuId(skuId)
-                .subscribe(installments => resolve(installments), error => reject(error));
-        })
-    }
-
-    simulateInstallmentsBySkuIdDefault(skuId: string): Promise<Payment> {
-        return new Promise((resolve, reject) => {
-            let sessionId = this.getPagSeguroSession();
-            this.service.simulateInstallmentsBySkuIdDefault(skuId, sessionId)
-                .subscribe(response => {
-                    let simulator = new Payment(response);
-                    resolve(simulator);
-                }, error => reject(error));
-        });
-    }
-
-    simulateInstallmentsByCartId(cartId: string): Promise<Payment[]> {
-        if (isPlatformBrowser(this.platformId)) {
-            let token = this.getToken();
-            return new Promise((resolve, reject) => {
-                this.service.simulateInstallments(cartId, token)
-                    .subscribe(response => {
-                        let payments = response.map(p => p = new Payment(p));
-                        resolve(payments);
-                    }, error => reject(error));
-            });
+    /**
+     * Seleciona simulação simples de pagamento do sku
+     * @param skuId 
+     */
+    getInstallmentsSimulationSimpleBySkuId(skuId: string): Observable<InstallmentsSimulation> {
+        if (!this.cache$[`modal-${skuId}`]) {
+            this.cache$[`modal-${skuId}`] = this.service.getInstallmentsSimulationSimpleBySkuId(skuId).pipe(
+                shareReplay(CACHE_SIZE)
+            );
         }
+        return this.cache$[`modal-${skuId}`];
     }
 
-    getMercadoPagoMethods(): Promise<MercadoPagoPaymentMethod[]> {
-        return new Promise((resolve, reject) => {
-            this.service.MercadoPagoGetPaymentsMethods()
-                .subscribe(response => {
-                    let payments = response.map(g => g = new MercadoPagoPaymentMethod(g));
-                    resolve(payments);
-                }, error => reject(error));
-
-        })
+    /**
+     * Seleciona simulação de pagamento default do sku
+     * @param skuId 
+     */
+    simulateInstallmentsBySkuIdDefault(skuId: string): Observable<Payment> {
+        let sessionId = this.getPagSeguroSession();
+        return this.service.simulateInstallmentsBySkuIdDefault(skuId, sessionId);
     }
 
-    getMercadoPagoPublicKey(): Promise<string> {
-        if (isPlatformBrowser(this.platformId)) {
-            let token = this.getToken();
-            return this.service.GetMercadoPagoPublicKey(token);
-        }
+    /**
+     * Seleciona simulação de pagamento do carrinho
+     * @param cartId 
+     */
+    simulateInstallmentsByCartId(cartId: string): Observable<Payment[]> {
+        return this.service.simulateInstallments(cartId);
     }
 
-    getMercadoPagoInstalments(methodId: string, totalPurchasePrice: number): Promise<MercadoPagoInstallmentResponse> {
-        return new Promise((resolve, reject) => {
-            this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice)
-                .subscribe(response => {
-                    resolve(new MercadoPagoInstallmentResponse(response));
-                }, error => reject(error));
-        });
+    /**
+     * Seleciona todos os metodos de pagamentos
+     */
+    getMercadoPagoMethods(): Observable<MercadoPagoPaymentMethod[]> {
+        return this.service.MercadoPagoGetPaymentsMethods();
+    }
+
+    /**
+     * Seleciona a chave publica do mercado pago
+     */
+    getMercadoPagoPublicKey(): Observable<string> {
+        return this.service.GetMercadoPagoPublicKey();
+    }
+
+    /**
+     * Seleciona formas de pagamentos do mercado pago
+     * @param methodId 
+     * @param totalPurchasePrice 
+     */
+    getMercadoPagoInstalments(methodId: string, totalPurchasePrice: number): Observable<MercadoPagoInstallmentResponse> {
+        return this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice);
     }
 
     /*
     ** Validações de pagamentos - INICIO
     */
-
     hasMercadoPago(payments: Payment[]): boolean {
         if (payments.findIndex(p => p.name.toLowerCase() == 'mercadopago') > -1)
             return true;
         else return false;
     }
 
+    /**
+     * Filtra pagamentos do mercado pago
+     * @param payments 
+     */
     getMercadoPago(payments: Payment[]): Payment {
         return payments.find(p => p.name.toLowerCase() == 'mercadopago');
     }
 
+    /**
+     * Valida se o pagamento é para o mercado pago
+     * @param paymentSelected 
+     * @param payments 
+     */
     isMercadoPago(paymentSelected: Payment, payments: Payment[]): boolean {
         let mercadopago = this.getMercadoPago(payments);
         if (paymentSelected && mercadopago && paymentSelected.id == mercadopago.id)
@@ -140,16 +140,29 @@ export class PaymentManager {
         else return false;
     }
 
+    /**
+     * Valida se contem pagamento do pag seguro
+     * @param payments 
+     */
     hasPagSeguro(payments: Payment[]): boolean {
         if (payments.findIndex(p => p.name.toLowerCase() == 'pagseguro') > -1)
             return true;
         else return false;
     }
 
+    /**
+     * Filtra pagamentos do pag seguro
+     * @param payments 
+     */
     getPagSeguro(payments: Payment[]): Payment {
         return payments.find(p => p.name.toLowerCase() == 'pagseguro');
     }
 
+    /**
+     * Valida se o pagamento é pag seguro
+     * @param paymentSelected 
+     * @param payments 
+     */
     isPagSeguro(paymentSelected: Payment, payments: Payment[]): boolean {
         let pagseguro = this.getPagSeguro(payments);
         if (paymentSelected && pagseguro && paymentSelected.id == pagseguro.id)
@@ -157,6 +170,10 @@ export class PaymentManager {
         else return false;
     }
 
+    /**
+     * Valida se contem pagamentos da mundipagg
+     * @param payments 
+     */
     hasMundipagg(payments: Payment[]): boolean {
         if (payments.findIndex(p => p.name.toLowerCase() == 'mundipagg') > -1)
             return true;
@@ -164,10 +181,18 @@ export class PaymentManager {
             return false;
     }
 
+    /**
+     * Filtra pagamentos do mundipagg
+     * @param payments 
+     */
     getMundipagg(payments: Payment[]): Payment[] {
         return payments.filter(p => p.name.toLowerCase() == 'mundipagg');
     }
 
+    /**
+     * Valida se contem pagamentos mundipagg
+     * @param payments 
+     */
     hasMundipaggBankslip(payments: Payment[]): boolean {
         if (this.hasMundipagg(payments)) {
             let payment = this.getMundipagg(payments).find(p => p.paymentMethods.length == 1);
@@ -179,6 +204,10 @@ export class PaymentManager {
         else return false;
     }
 
+    /**
+     * 
+     * @param payments 
+     */
     getMundipaggBankslip(payments: Payment[]): Payment {
         return payments
             .filter(p => p.name.toLowerCase() == 'mundipagg')
@@ -264,43 +293,33 @@ export class PaymentManager {
     /*
     ** Validações de pagamentos - FIM
     */
-
-    createPagSeguroSession(): Promise<string> {
-        if (isPlatformBrowser(this.platformId)) {
-            let token = this.getToken();
-            return this.service.createPagSeguroSession(token);
-        }
+    createPagSeguroSession(): Observable<string> {
+        return this.service.createPagSeguroSession();
     }
 
-    createPagSeguroSessionSimulator(): Promise<string> {
+    createPagSeguroSessionSimulator(): Observable<string> {
         return this.service.createPagSeguroSessionSimulator();
     }
 
     getPagSeguroSession(): string {
-        if (isPlatformBrowser(this.platformId)) {
-            return localStorage.getItem('pagseguro_session');
-        }
-        else {
-            return null;
-        }
+        return localStorage.getItem('pagseguro_session');
+    }
+
+    setPagSeguroSession(sessionId): void {
+        localStorage.setItem('pagseguro_session', sessionId);
     }
 
     getPagSeguroStoredSession(): Promise<string> {
         return new Promise((resolve, reject) => {
-            if (isPlatformBrowser(this.platformId)) {
-                let session: string = this.getPagSeguroSession();
-                if (session)
-                    resolve(session);
-                else {
-                    let auth: string = localStorage.getItem('auth');
-                    if (auth)
-                        return this.createPagSeguroSession();
-                    else
-                        return this.createPagSeguroSessionSimulator();
-                }
-            }
+            let session: string = this.getPagSeguroSession();
+            if (session)
+                resolve(session);
             else {
-                resolve(null);
+                let auth: string = null//localStorage.getItem('auth');
+                if (auth)
+                    return this.createPagSeguroSession();
+                else
+                    return this.createPagSeguroSessionSimulator();
             }
         })
     }
@@ -308,43 +327,16 @@ export class PaymentManager {
     /*
     ** Simulador de Parcelas - INÍCIO
     */
-    getInstallments(sku: Sku): Promise<Payment> {
+    getInstallments(sku: Sku): Observable<Payment> {
         return this.simulateInstallmentsBySkuIdDefault(sku.id);
     }
 
-    simulateInstallments(sku: Sku, payment: Payment): Promise<Payment> {
-        let cardBrand: string = 'visa';
-        let noInterestInstallmentQuantity: number = Number.parseInt(payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
-        let productPrice: number = (sku.promotionalPrice > 0) ? sku.promotionalPrice : sku.price;
-
-        return new Promise((resolve, reject) => {
-            this.simulateInstallmentsBySkuId(sku.id)
-                .then(payments => {
-                    if (this.isMundiPagg(payment)) {
-                        let simulated: Payment = this.getMundipagg(payments)[0];
-                        payment.paymentMethods = simulated.paymentMethods;
-                        resolve(payment);
-                    }
-                    else if (this.isMercadoPago(payment, payments)) {
-                        let simulated: Payment = this.getMercadoPago(payments);
-                        payment.paymentMethods = simulated.paymentMethods;
-                        resolve(payment)
-                    }
-                })
-                .catch(error => reject(error));
-            // }
-        })
+    simulateInstallments(sku: Sku, payment: Payment): Observable<Payment> {
+        return this.simulateInstallmentsBySkuId(sku.id)[0];
     }
 
-    getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Promise<PagSeguroSimulationResponse> {
-        return new Promise((resolve, reject) => {
-            this.service.getPagSeguroInstallments(sessionId, amount, creditCardBrand, maxInstallmentNoInterest, isSandBox)
-                .subscribe(response => {
-                    resolve(response);
-                }, error => {
-                    reject(error);
-                });
-        });
+    getPagSeguroInstallments(sessionId: string, amount: number, creditCardBrand: string, maxInstallmentNoInterest: number, isSandBox: boolean): Observable<PagSeguroSimulationResponse> {
+        return this.service.getPagSeguroInstallments(sessionId, amount, creditCardBrand, maxInstallmentNoInterest, isSandBox);
     }
 
     getInstallmentText(gateway: Payment, method: PaymentMethod): string {
@@ -366,7 +358,7 @@ export class PaymentManager {
             installment = installment.replace(/[(].+[)]/g, '').replace(' parcelas', 'x');
             return installment;
         }
-        else { //else if(gateway.name.toLowerCase() == 'pagseguro'){
+        else {
             let index = method.installment.length - 1;
             maxInstallment = method.installment[index].number;
             let installmentValue = method.installment[index].installmentPrice.toFixed(2).replace('.', ',')
@@ -374,67 +366,67 @@ export class PaymentManager {
         }
 
     }
-    /*
-    ** Simulador de Parcelas - FIM
 
-
-    /*
-    ** Erros Mercado Pago - INICIO
-    */
-    getMercadoPagoError(code: string): MercadoPagoError {
-        let errors: MercadoPagoError[] = [];
-        errors.push(new MercadoPagoError("310", "Erro ao validar o cliente, tente novamente. Caso o erro persista, recarregue seu navegador", 400),
-            new MercadoPagoError("200", "Chave pública não pode ser vazia. Caso o erro persista, recarregue seu navegador", 400),
-            new MercadoPagoError("302", "Chave pública inválida. Caso o erro persista, recarregue seu navegador", 400),
-            new MercadoPagoError("219", "Identificação do cliente não pode ser vazia. Caso o erro persista, recarregue seu navegador", 400),
-            new MercadoPagoError("315", "Erro ao validar a loja. Caso o erro persista, recarregue seu navegador", 400),
-            new MercadoPagoError("222", "Erro ao validar a loja. Caso o erro persista, recarregue seu navegador", 400),
-            new MercadoPagoError("318", "Número de cartão inválido", 400),
-            new MercadoPagoError("304", "Número de cartão incompleto", 400),
-            new MercadoPagoError("703", "Número de cartão incompleto", 400),
-            new MercadoPagoError("319", "Número de cartão inválido", 400),
-            new MercadoPagoError("701", "Número de cartão inválido", 400),
-            new MercadoPagoError("321", "Código de segurança inválido", 400),
-            new MercadoPagoError("700", "Código de segurança inválido", 400),
-            new MercadoPagoError("307", "Código de segurança inválido", 400),
-            new MercadoPagoError("704", "Código de segurança inválido", 400),
-            new MercadoPagoError("305", "Nome do titular do cartão inválido", 400),
-            new MercadoPagoError("210", "O nome do titular do cartão não pode ser em branco", 400),
-            new MercadoPagoError("316", "Nome do titular do cartão inválido", 400),
-            new MercadoPagoError("211", "O número do CPF não pode ser em branco", 400),
-            new MercadoPagoError("322", "CPF inválido", 400),
-            new MercadoPagoError("323", "CPF inválido", 400),
-            new MercadoPagoError("213", "CPF inválido", 400),
-            new MercadoPagoError("324", "CPF inválido", 400),
-            new MercadoPagoError("325", "Mês de validade do cartão inválido", 400),
-            new MercadoPagoError("326", "Ano de validade do cartão inválido", 400),
-            new MercadoPagoError("702", "Ano de validade do cartão inválido", 400),
-            new MercadoPagoError("301", "Data de validade do cartão inválida", 400),
-            new MercadoPagoError("317", "Identificação do cartão inválida", 400),
-            new MercadoPagoError("320", "Data de validade do cartão inválida", 400),
-            new MercadoPagoError("E111", "Requisição inválida", 400),
-            new MercadoPagoError("E114", "O nome do titular do cartão não pode ser em branco", 400),
-            new MercadoPagoError("E115", "Chave Pública não pode ser inválida", 400),
-            new MercadoPagoError("E202", "Número de cartão de crédito inválido", 400),
-            new MercadoPagoError("E203", "Código de segurança inválido", 400),
-            new MercadoPagoError("E213", "invalid parameter card_present", 400),
-            new MercadoPagoError("E301", "Número de cartão incompleto", 400),
-            new MercadoPagoError("E302", "Código de segurança inválido", 400),
-            new MercadoPagoError("E305", "CPF Inválido", 400),
-            new MercadoPagoError("E501", "Chave Pública não encontrada", 400),
-            new MercadoPagoError("E601", "An error ocurred doing POST cardtoken", 500),
-            new MercadoPagoError("E602", "An error ocurred doing POST cardtoken", 500),
-            new MercadoPagoError("E603", "An error ocurred doing POST cardtoken", 500),
-            new MercadoPagoError("E604", "An error ocurred doing POST cardtoken", 500),
-            new MercadoPagoError("E701", "An error ocurred doing PUT cardtoken", 500),
-            new MercadoPagoError("E801", "An error ocurred trying to GET public_key data", 500),
-            new MercadoPagoError("E502", "not found cardtoken", 404),
-            new MercadoPagoError("E503", "not found user", 404)
-        );
-
-        return errors.find(e => e.code == code);
+    PagseguroBankSlip(hash: string): Observable<string> {
+        return this.service.PagseguroBankSlip(this.cartManager.getCartId(), hash);
     }
-    /*
-    ** Erros Mercado Pago - FIM
-    */
+
+    pickUpStoreTransaction(): Observable<string> {
+        return this.service.pickUpStoreTransaction(this.cartManager.getCartId());
+    }
+
+    delivertPayment(changeFor: number = null): Observable<string> {
+        return this.service.delivertPayment(this.cartManager.getCartId(), changeFor);
+    }
+
+    PagseguroCreditCard(hash: string, creditCard: PagseguroCreditCard): Observable<string> {
+        return this.service.PagseguroCreditCard(
+            this.cartManager.getCartId(),
+            hash,
+            creditCard
+        )
+    }
+
+    creditCardTransaction(creditcard: CreditCard): Observable<string> {
+        return this.service.creditCardTransaction(this.cartManager.getCartId(), creditcard);
+    }
+
+    MercadoPagoBankSlip(): Observable<string> {
+        return this.service.MercadoPagoBankSlip(this.cartManager.getCartId());
+    }
+
+    MercadoPagoCreditCard(creditCard: MercadoPagoCreditCard): Observable<string> {
+        return this.service.MercadoPagoCreditCard(this.cartManager.getCartId(), creditCard);
+    }
+
+    bankSlipTransaction(): Observable<string> {
+        return this.service.bankSlipTransaction(this.cartManager.getCartId());
+    }
+
+    isCardOK(creditCard: CreditCard): boolean {
+        if (creditCard) {
+            if (!creditCard.creditCardBrand)
+                return false;
+            else if (!creditCard.creditCardNumber)
+                return false;
+            else if (!creditCard.expMonth)
+                return false;
+            else if (!creditCard.expYear)
+                return false;
+            else if (!creditCard.holderName)
+                return false;
+            else if (!creditCard.installmentCount)
+                return false;
+            else if (!creditCard.installmentValue)
+                return false;
+            else if (!creditCard.securityCode)
+                return false;
+            else if (creditCard.payment == 'pagseguro' && !creditCard.taxId)
+                return false;
+            else if (creditCard.payment == 'pagseguro' && !creditCard.birthDate)
+                return false;
+            else
+                return true;
+        }
+    }
 }

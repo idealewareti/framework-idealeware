@@ -9,7 +9,7 @@ export class PaymentSelected {
     pagseguro: PagseguroOption;
     mercadopago: MercadoPagoPaymentMethod; 
     changeFor: number;
-    valid: boolean = true;
+    valid: boolean;
 
     constructor(
         payment: Payment = null, 

@@ -23,5 +23,4 @@ export class ProductPicture{
 
         return picture;
     }
-    
 }

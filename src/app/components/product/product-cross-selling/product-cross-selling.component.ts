@@ -1,7 +1,5 @@
-import { Component, Input, OnInit, AfterViewChecked, AfterContentInit, OnDestroy, OnChanges, SimpleChanges, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, PLATFORM_ID, Inject } from '@angular/core';
 import { Product } from '../../../models/product/product';
-import { Sku } from '../../../models/product/sku';
-import { ProductPicture } from '../../../models/product/product-picture';
 import { ProductService } from '../../../services/product.service';
 import { Store } from "../../../models/store/store";
 import { isPlatformBrowser } from '@angular/common';
@@ -9,10 +7,9 @@ import { isPlatformBrowser } from '@angular/common';
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-cross-selling',
-    templateUrl: '../../../template/product/product-cross-selling/product-cross-selling.html',
-    styleUrls: ['../../../template/product/product-cross-selling/product-cross-selling.scss']
+    selector: 'cross-selling',
+    templateUrl: '../../../templates/product/product-cross-selling/product-cross-selling.html',
+    styleUrls: ['../../../templates/product/product-cross-selling/product-cross-selling.scss']
 })
 export class ProductCrossSellingComponent implements OnChanges {
 

@@ -19,7 +19,7 @@ export class CustomerAddress {
         else {
             this.id = null;
             this.mainAddress = false;
-            this.addressType = null;
+            this.addressType = 1;
             this.zipCode = null;
             this.addressLine1 = null;
             this.addressLine2 = null;

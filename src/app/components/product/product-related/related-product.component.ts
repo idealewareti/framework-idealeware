@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { RelatedProductGroup } from "../../../models/related-products/related-product-group";
 import { EnVariationType } from "../../../enums/variationtype.enum";
 import { ProductReference } from "../../../models/related-products/product-reference";
@@ -6,10 +6,9 @@ import { ProductService } from "../../../services/product.service";
 import { Product } from "../../../models/product/product";
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-related-products',
-    templateUrl: '../../../template/product/product-related/related-products.html',
-    styleUrls: ['../../../template/product/product-related/related-products.scss']
+    selector: 'related-products',
+    templateUrl: '../../../templates/product/product-related/related-products.html',
+    styleUrls: ['../../../templates/product/product-related/related-products.scss']
 })
 export class RelatedProductsComponent implements OnInit {
 

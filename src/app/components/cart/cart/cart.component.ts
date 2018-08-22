@@ -1,81 +1,80 @@
-import { Component, AfterViewChecked, AfterContentChecked, OnInit, PLATFORM_ID, Inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, PLATFORM_ID, Inject, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Product } from '../../../models/product/product';
+
 import { Sku } from '../../../models/product/sku';
 import { Cart } from '../../../models/cart/cart';
 import { CartItem } from '../../../models/cart/cart-item';
 import { CartManager } from '../../../managers/cart.manager';
-import { ProductService } from '../../../services/product.service';
 import { Service } from "../../../models/product-service/product-service";
-import { Globals } from "../../../models/globals";
 import { Store } from "../../../models/store/store";
-import { isPlatformBrowser } from '@angular/common';
 import { AppCore } from '../../../app.core';
-import { error } from 'util';
-import { Paint } from '../../../models/custom-paint/custom-paint';
 import { Shipping } from '../../../models/shipping/shipping';
-import { AppConfig } from '../../../app.config';
 import { StoreManager } from '../../../managers/store.manager';
+import { EnumShippingType } from '../../../enums/shipping-type.enum';
 
-//declare var $: any;
-declare var S: any;
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-cart',
-    templateUrl: '../../../template/cart/cart/cart.html',
-    styleUrls: ['../../../template/cart/cart/cart.scss']
+    templateUrl: '../../../templates/cart/cart/cart.html',
+    styleUrls: ['../../../templates/cart/cart/cart.scss']
 })
-export class CartComponent {
+export class CartComponent implements OnInit {
     mediaPath: string;
-    mediaPathPaint: string;
     cartReady: boolean = false;
     buttonLabel: string;
     modality: number = -1;
     showProductValue: boolean = false;
     store: Store;
     shipping: Shipping = null;
+    cart: Cart = new Cart();
 
     constructor(
-        private manager: CartManager,
-        private productService: ProductService,
+        private cartManager: CartManager,
         private storeManager: StoreManager,
         private titleService: Title,
-        private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
-    ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            window.scrollTo(0, 0);
-
-            let cartId = localStorage.getItem('cart_id');
-            this.storeManager.getStore()
-                .then(store => {
-                    this.store = store;
-                    this.globals.store = store;
-                    this.mediaPath = `${this.globals.store.link}/static/products/`;
-                    this.mediaPathPaint = `${this.globals.store.link}/static/custompaint/`;
-                    return this.manager.getCart(cartId);
-                })
-                .then((cart) => {
-                    this.globals.cart = cart;
-                    this.shipping = cart.shipping;
-                    this.cartReady = true;
-                })
-                .catch(e => console.log(e));
-        }
+    ngOnInit(): void {
+        this.getStore()
+            .then(() => {
+                return this.getCart()
+            })
+            .then(() => {
+                this.initComponent();
+            })
     }
 
-    ngAfterContentChecked() {
+    getStore(): Promise<Store> {
+        return new Promise(resolve => {
+            this.storeManager.getStore()
+                .subscribe(store => {
+                    this.store = store;
+                    this.mediaPath = `${this.store.link}/static/products/`;
+                    resolve(store);
+                })
+        })
+    }
+
+    getCart(): Promise<Cart> {
+        return new Promise(resolve => {
+            this.cartManager.getCart()
+                .subscribe(cart => {
+                    this.cart = cart;
+                    this.shipping = cart.shipping;
+                    this.cartReady = true;
+                    resolve(cart);
+                });
+        })
+    }
+
+    initComponent(): void {
         if (isPlatformBrowser(this.platformId)) {
-            if (this.globals.cart)
+            if (this.cart)
                 this.titleService.setTitle(`Meu Carrinho - (${this.getNumItemsInCart()}) item(ns)`);
-            if (this.getStore() && this.modality == -1) {
-                this.modality = this.globals.store.modality;
+            if (this.store && this.modality == -1) {
+                this.modality = this.store.modality;
                 this.showProductValue = this.showValues();
                 if (this.modality == 0)
                     this.buttonLabel = 'FINALIZAR ORÇAMENTO';
@@ -85,171 +84,113 @@ export class CartComponent {
         }
     }
 
-    getProducts() {
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId = localStorage.getItem('cart_id');
-            this.manager.getCart(cartId)
-                .then((cart) => {
-                    this.cartReady = true;
-                })
-                .catch(e => console.log(e));
-        }
+    getProducts(): CartItem[] {
+        if (this.cart)
+            return this.cart.products;
     }
 
-    updateItem(quantity, item: CartItem) {
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId = localStorage.getItem('cart_id');
-            item.quantity = quantity;
-            this.manager.updateItem(item, cartId)
-                .then(cart => this.globals.cart = cart)
-                .catch(error => {
-                    swal("Falha ao adicionar o produto ao carrinho", error.text(), "warning");
-                });
-        }
-
+    updateItem(quantity, item: CartItem): void {
+        let cartId = localStorage.getItem('cart_id');
+        item.quantity = quantity;
+        this.cartManager.updateItem(item, cartId)
+            .subscribe(cart => this.cart = cart, err => swal("Falha ao adicionar o produto ao carrinho", err.error, "warning"));
     }
 
-    updateItemService(quantity, item: Service) {
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId = localStorage.getItem('cart_id');
-            item.quantity = quantity;
-            this.manager.updateItemService(item, cartId)
-                .then(cart => this.globals.cart = cart)
-                .catch(error => {
-                    swal("Falha ao alterar ao carrinho", error.text(), "warning");
-                });
-        }
+    updateIsPackageItem(isPackageProduct, item: CartItem): void {
+        item.isPackageProduct = isPackageProduct;
+        item.sku.isPackageProduct = isPackageProduct;
+        this.cartManager.updateIsPackageItem(item, this.cartManager.getCartId())
+            .subscribe(() => { }, err => swal("Falha ao adicionar o produto ao carrinho", err.error, "warning"));
     }
 
-    updatePaint(quantity, item: CartItem) {
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId = localStorage.getItem('cart_id');
-            item.quantity = quantity;
-            this.manager.updatePaint(item, cartId)
-                .then(cart => this.globals.cart = cart)
-                .catch(error => {
-                    swal("Falha ao alterar ao carrinho", error.text(), "warning");
-                });
-        }
+    updateItemService(quantity, item: Service): void {
+        item.quantity = quantity;
+        this.cartManager.updateItemService(item, this.cartManager.getCartId())
+            .subscribe(() => { }, err => swal("Falha ao alterar ao carrinho", err.error, "warning"));
     }
 
-    deleteItem(event, item: CartItem) {
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId = localStorage.getItem('cart_id');
-            event.preventDefault();
-            this.manager.deleteItem(item, cartId)
-                .then(cart => this.globals.cart = cart)
-                .catch(error => {
-                    swal("Falha ao remover o produto do carrinho", error.text(), "warning");
-                });
-        }
+    deleteItem(item: CartItem): void {
+        this.cartManager.deleteItem(item, this.cartManager.getCartId())
+            .subscribe(() => { }, err => swal("Falha ao remover o produto do carrinho", err.error, "warning"));
     }
 
-    deleteItemService(event, item: Service) {
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId = localStorage.getItem('cart_id');
-            event.preventDefault();
-            this.manager.deleteService(item.id, cartId)
-                .then(cart => this.globals.cart = cart)
-                .catch(error => {
-                    swal("Falha ao remover o serviço do carrinho", error.text(), "warning");
-                });
-        }
+    deleteItemService(item: Service): void {
+        this.cartManager.deleteService(item.id, this.cartManager.getCartId())
+            .subscribe(() => { }, err => swal("Falha ao remover o serviço do carrinho", err.error, "warning"));
     }
 
-    deletePaint(event, item: CartItem) {
-        if (isPlatformBrowser(this.platformId)) {
-            let cartId = localStorage.getItem('cart_id');
-            event.preventDefault();
-            this.manager.deletePaint(item, cartId)
-                .then(cart => this.globals.cart = cart)
-                .catch(error => {
-                    swal("Falha ao remover a tinta do carrinho", error.text(), "warning");
-                });
-        }
+    handleCartUpdated(cart: Cart): void {
+        this.shipping = cart.shipping;
     }
 
-    handleCartUpdated(event: Cart) {
-        this.shipping = event.shipping;
-        this.globals.cart = new Cart(event);
+    getDiscount(): number {
+        return this.cart.totalDiscountPrice;
     }
 
-    getDiscount() {
-        return this.globals.cart.totalDiscountPrice;
+    getExistShipping(): EnumShippingType {
+        return this.cart.shipping.shippingType;
     }
 
-    getExistShipping() {
-        return this.globals.cart.shipping.shippingType;
+    getShipping(): number {
+        return this.cart.totalFreightPrice;
     }
 
-    getShipping() {
-        return this.globals.cart.totalFreightPrice;
+    getSubTotal(): number {
+        return this.cart.totalProductsPrice + this.cart.totalServicesPrice;
     }
 
-    getSubTotal() {
-        return this.globals.cart.totalProductsPrice + this.globals.cart.totalServicesPrice + this.globals.cart.totalCustomPaintPrice;
+    getTotal(): number {
+        return (this.cart) ? this.cart.totalPurchasePrice : 0;
     }
 
-    getTotal() {
-        return (this.globals.cart) ? this.globals.cart.totalPurchasePrice : 0;
-    }
-
-    getNumItemsInCart() {
-        if (this.globals.cart) {
+    getNumItemsInCart(): number {
+        if (this.cart) {
             let numItems = 0;
-            numItems += (this.globals.cart['products']) ? this.globals.cart.products.length : 0;
-            numItems += (this.globals.cart['services']) ? this.globals.cart.services.length : 0;
-            numItems += (this.globals.cart['paints']) ? this.globals.cart.paints.length : 0;
+            numItems += (this.cart['products']) ? this.cart.products.length : 0;
+            numItems += (this.cart['services']) ? this.cart.services.length : 0;
 
             return numItems;
         }
         else return 0;
     }
 
-    getNumProductsInCart() {
-        if (this.globals.cart)
-            return this.globals.cart.products.length;
+    getNumProductsInCart(): number {
+        if (this.cart)
+            return this.cart.products.length;
         else return 0;
     }
 
-    getNumServicesInCart() {
-        if (this.globals.cart)
-            return this.globals.cart.services.length;
-        else return 0;
-    }
-
-    getNumPaintsInCart() {
-        if (this.globals.cart)
-            return this.globals.cart.paints.length;
+    getNumServicesInCart(): number {
+        if (this.cart)
+            return this.cart.services.length;
         else return 0;
     }
 
     getTotalService(): number {
-        if (this.globals.cart)
-            return this.globals.cart.totalServicesPrice;
+        if (this.cart)
+            return this.cart.totalServicesPrice;
         else return 0;
     }
 
     isMobile(): boolean {
-        if (isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId))
             return AppCore.isMobile(window);
-        }
-        else return false;
+        return false;
     }
 
     showValues(): boolean {
         if (this.modality == 1) {
             return true;
         }
-        else if (this.modality == 0 && this.globals.store.settings.find(s => s.type == 3 && s.status == true)) {
+        else if (this.modality == 0 && this.store.settings.find(s => s.type == 3 && s.status == true)) {
             return true;
         }
         else return false;
     }
 
     hasServices(): boolean {
-        if (this.globals.cart) {
-            if (this.globals.cart.services && this.globals.cart.services.length > 0)
+        if (this.cart) {
+            if (this.cart.services && this.cart.services.length > 0)
                 return true;
             else return false;
         }
@@ -263,19 +204,15 @@ export class CartComponent {
     }
 
     isHiddenVariation(): boolean {
-        let type = this.globals.store.settings.find(s => s.type == 4);
+        let type = this.store.settings.find(s => s.type == 4);
         if (type)
             return type.status;
         else
             return false;
     }
 
-    getCart(): Cart {
-        return this.globals.cart;
-    }
-
-    getStore(): Store {
-        return this.store;
+    isStorePackageActive(): boolean {
+        return this.store.settings.find(s => s.type == 8).status;
     }
 
     getPicture(sku: Sku): string {
@@ -287,17 +224,12 @@ export class CartComponent {
         }
     }
 
-    getPaintPicture(paint: Paint): string {
-        if (paint && paint.optionPicture) {
-            return `${this.store.link}/static/custompaint/${paint.optionPicture}`;
-        }
-        else {
-            return 'assets/images/no-image.jpg';
-        }
-    }
-
     getProductRoute(product: CartItem): string {
         return `/${AppCore.getNiceName(product.name)}-${product.sku.id}`;
+    }
+
+    trackById(index, item) {
+        return item.id;
     }
 }
 

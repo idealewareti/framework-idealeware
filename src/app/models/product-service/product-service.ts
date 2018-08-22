@@ -1,13 +1,13 @@
-export class Service{
-      id: string;
-      serviceType: string;
-      rules: string;
-      price: number;
-      quantity: number = 0;
-      totalPrice: number;
-      unitType: number;
-      totalUnitPrice: number;
-      totalDiscountPrice: number;
+export class Service {
+    id: string;
+    serviceType: string;
+    rules: string;
+    price: number;
+    quantity: number;
+    totalPrice: number;
+    unitType: number;
+    totalUnitPrice: number;
+    totalDiscountPrice: number;
 
     constructor(object = null){
         if(object) return this.createFromResponse(object);

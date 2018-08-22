@@ -1,19 +1,17 @@
 import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, Input } from '@angular/core';
-import { ProductService } from '../../../services/product.service';
+import { isPlatformBrowser } from '@angular/common';
+
 import { CartShowCase } from '../../../models/cart-showcase/cart-showcase';
 import { Product } from '../../../models/product/product';
 import { Store } from "../../../models/store/store";
-import { Globals } from "../../../models/globals";
-import { CartShowcaseService } from '../../../services/cart-showcase.service';
-import { isPlatformBrowser } from '@angular/common';
+import { CartShowcaseManager } from '../../../managers/cart-showcase.manager';
 
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-cart-showcase',
-    templateUrl: '../../../template/cart/cart-showcase/cart-showcase.html',
-    styleUrls: ['../../../template/cart/cart-showcase/cart-showcase.scss']
+    selector: 'cart-showcase',
+    templateUrl: '../../../templates/cart/cart-showcase/cart-showcase.html',
+    styleUrls: ['../../../templates/cart/cart-showcase/cart-showcase.scss']
 })
 export class CartShowCaseComponent implements OnInit, OnDestroy {
     cartShowCase: CartShowCase = new CartShowCase();
@@ -21,9 +19,7 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
     @Input() store: Store = new Store();
 
     constructor(
-        private service: CartShowcaseService,
-        private productService: ProductService,
-        private globals: Globals,
+        private cartShowcaseManager: CartShowcaseManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
@@ -46,13 +42,13 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
     }
 
     getShowCases() {
-        this.service.getCartShowCase()
-            .subscribe(response => {
-                this.cartShowCase = response;
-                if (this.cartShowCase.products.length > 0) {
-                    this.products = response.products;
+        this.cartShowcaseManager.getCartShowCase()
+            .subscribe(cartShowCase => {
+                this.cartShowCase = cartShowCase;
+                if (this.cartShowCase && this.cartShowCase.products.length > 0) {
+                    this.products = cartShowCase.products;
                 }
-            }, error => console.log(error));
+            });
     }
 
     private buildCarousel() {
@@ -65,7 +61,7 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
                     margin: 10,
                     loop: false,
                     nav: true,
-                    rewind:true,
+                    rewind: true,
                     navText: [
                         '<i class="fa fa-angle-left" aria-hidden="true"></i>',
                         '<i class="fa fa-angle-right" aria-hidden="true"></i>'

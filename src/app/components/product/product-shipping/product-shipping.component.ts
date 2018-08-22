@@ -5,23 +5,21 @@ import { isPlatformBrowser } from '@angular/common';
 import { Branch } from '../../../models/branch/branch';
 import { Intelipost } from "../../../models/intelipost/intelipost";
 import { IntelipostDeliveryOption } from "../../../models/intelipost/intelipost-delivery-option";
-import { IntelipostRequest } from "../../../models/intelipost/intelipost-request";
 import { AppConfig } from '../../../app.config';
-import { Globals } from '../../../models/globals';
-import { IntelipostService } from "../../../services/intelipost.service";
 import { BranchService } from '../../../services/branch.service';
 import { ProductShippingModel } from '../../../models/product/product-shipping';
 import { IntelipostIdentification } from '../../../models/intelipost/intelipost-identification';
 import { Product } from '../../../models/product/product';
+import { Store } from '../../../models/store/store';
+import { ProductManager } from '../../../managers/product.manager';
 
 
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
     selector: "product-shipping",
-    templateUrl: "../../../template/product/product-shipping/product-shipping.component.html",
-    styleUrls: ["../../../template/product/product-shipping/product-shipping.component.scss"]
+    templateUrl: "../../../templates/product/product-shipping/product-shipping.component.html",
+    styleUrls: ["../../../templates/product/product-shipping/product-shipping.component.scss"]
 })
 export class ProductShipping {
     private intelipost: Intelipost;
@@ -32,21 +30,21 @@ export class ProductShipping {
     private intelipostIdentification: IntelipostIdentification;
 
     @Input() zipCode: string;
+    @Input() store: Store;
     @Input() product: Product;
     @Input() quantity: number;
     loading: boolean = false;
 
     constructor(
         private storeManager: StoreManager,
-        private service: IntelipostService,
-        private globals: Globals,
+        private productManager: ProductManager,
         private branchService: BranchService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnChanges(): void {
         if (isPlatformBrowser(this.platformId)) {
-            if (this.zipCode.split('').length == 9) {
+            if (this.zipCode && this.zipCode.split('').length == 9) {
                 this.calculate(null);
             } else {
                 this.deliveryOptions = [];
@@ -81,18 +79,19 @@ export class ProductShipping {
                 this.intelipostIdentification = new IntelipostIdentification();
                 this.intelipostIdentification.session = localStorage.getItem('session_id');
                 this.intelipostIdentification.pageName = AppConfig.NAME;
-                this.intelipostIdentification.url = this.globals.store.link;
+                this.intelipostIdentification.url = this.store.link;
 
                 this.productShipping = new ProductShippingModel();
                 this.productShipping.Identification = this.intelipostIdentification;
                 this.productShipping.ZipCode = zipCode.toString();
                 this.product.skuBase.price = this.validPromotionalPrice();
                 this.productShipping.Products = this.product.skuBase;
-                this.productShipping.Products.Quantity = this.quantity;
+                this.productShipping.Products.quantity = this.quantity;
 
-                return this.service.getProductShipping(this.productShipping)
-                    .then(res => resolve(res))
-                    .catch(err => reject(err));
+                return this.productManager.getShippingProduct(this.productShipping)
+                    .subscribe(intelipost => {
+                        resolve(intelipost);
+                    }, error => reject(error))
             });
         }
     }
@@ -108,7 +107,7 @@ export class ProductShipping {
         this.branchService.getBranches(zipcode)
             .subscribe(branches => {
                 this.branches = branches;
-            }, error => console.log(error));
+            });
     }
 
     calculate(event) {
@@ -140,7 +139,6 @@ export class ProductShipping {
                             });
                         else
                             swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
-                        console.log(error);
                         this.loading = false;
                     });
                 this.getBranches(this.zipCode);

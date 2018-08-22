@@ -1,4 +1,4 @@
-export class PagseguroCreditCard{
+export class PagseguroCreditCard {
   creditCardToken: string;
   installmentQuantity: number;
   installmentValue: number;

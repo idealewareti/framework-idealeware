@@ -1,10 +1,10 @@
 import { BannerSideComponent } from "./banner-side.component";
-import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @NgModule({
     declarations: [ BannerSideComponent ],
-    imports: [ BrowserModule ],
+    imports: [ CommonModule ],
     exports: [ BannerSideComponent ]
 })
 export class BannerSideModule {}

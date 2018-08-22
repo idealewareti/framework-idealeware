@@ -3,17 +3,10 @@ import { DeliveryInformation } from "./delivery-information";
 import { EnumShippingType } from "../../enums/shipping-type.enum";
 
 export class Shipping {
-
-    /**
-     * [1: PickuUpStore | 2: Delivery]
-     * 
-     * @type {number}
-     * @memberof Shipping
-     */
-    shippingType: EnumShippingType = 0;
+    shippingType: EnumShippingType;
     branch: Branch;
     deliveryInformation: DeliveryInformation;
-    
+
     constructor(object = null){
         if(object) return this.createFromResponse(object);
     }
@@ -37,5 +30,4 @@ export class Shipping {
         return model;
             
     }
-    
 }

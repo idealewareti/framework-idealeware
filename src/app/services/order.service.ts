@@ -1,41 +1,41 @@
 import { Injectable } from '@angular/core';
-import { Token } from '../models/customer/token';
 import { Order } from '../models/order/order';
 import { Cart } from "../models/cart/cart";
 import { HttpClientHelper } from '../helpers/http.helper';
-import { Http } from '@angular/http';
 import { environment } from '../../environments/environment';
-import { Observable } from 'rxjs/Observable';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class OrderService {
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
-    getOrder(id: string, token: Token): Observable<Order> {
+    getOrder(id: string): Observable<Order> {
         let url = `${environment.API_ORDER}/order/${id}`;
-        return this.client.get(url, token)
-            .map(res => res.json());
+        return this.client.get(url);
     }
 
-    getOrders(token: Token): Observable<Order[]> {
+    getOrders(): Observable<Order[]> {
         let url = `${environment.API_ORDER}/order/customer`
-        return this.client.get(url, token)
-            .map(res => res.json());
+        return this.client.get(url);
     }
 
-    placeOrder(cartId: string, token: Token): Observable<Order> {
+    placeOrder(cartId: string): Observable<Order> {
         let url = `${environment.API_ORDER}/Order/${cartId}`;
-        return this.client.post(url, null, token)
-            .map(res => res.json());
+        return this.client.post(url, null)
+            .pipe(map(res => res.body));
     }
 
-    validateOrder(cartId: string, token: Token): Observable<Cart> {
+    validateOrder(cartId: string): Observable<Cart> {
         let url = `${environment.API_ORDERVALIDATION}/OrderValidation/${cartId}`;
-        return this.client.post(url, null, token)
-            .map(res => res.json());
+        return this.client.post(url, null)
+            .pipe(map(res => res.body));
     }
 }

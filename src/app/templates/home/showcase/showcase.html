@@ -1,0 +1,10 @@
+<!-- Parte principal do site -->
+<main *ngIf="store" role="main">
+    <showcase-banner-stripe [store]="store" [banners]="stripeBanners"></showcase-banner-stripe>
+    <showcase-banner [store]="store" [banners]="banners"></showcase-banner>
+    <brand-nav [store]="store"></brand-nav>
+    <showcase-banner-half [store]="store" [banners]="halfBanners"></showcase-banner-half>
+    <div class="container">
+        <showcase-group [store]="store"></showcase-group>
+    </div>
+</main>

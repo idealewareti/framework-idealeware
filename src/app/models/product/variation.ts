@@ -2,12 +2,11 @@ import { VariationOption } from "./product-variation-option";
 import { EnVariationType } from "../../enums/variationtype.enum";
 
 export class Variation {
-
     id: string;
     name: string;
     type : EnVariationType;
     option: VariationOption;
-    quantity: number = 0;
+    quantity: number;
 
     constructor(variation = null){
         if(variation) return this.createFromResponse(variation);

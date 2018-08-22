@@ -6,5 +6,4 @@ export class MercadoPagoSettings {
     bin: Bin;
     card_number: MercadoPagoCardNumber;
     security_code: MercadoPagoSecurityCode;
-
 }

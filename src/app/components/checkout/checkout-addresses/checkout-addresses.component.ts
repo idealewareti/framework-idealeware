@@ -1,20 +1,18 @@
 import { Component, OnInit, Input, Output, EventEmitter, PLATFORM_ID, Inject } from '@angular/core';
 import { CustomerAddress } from '../../../models/customer/customer-address';
 import { Cart } from '../../../models/cart/cart';
-import { Globals } from '../../../models/globals';
 import { CartManager } from '../../../managers/cart.manager';
 import { isPlatformBrowser } from '@angular/common';
 
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-checkout-addresses',
-    templateUrl: '../../../template/checkout/checkout-addresses/checkout-addresses.html',
-    styleUrls: ['../../../template/checkout/checkout-addresses/checkout-addresses.html']
+    selector: 'checkout-addresses',
+    templateUrl: '../../../templates/checkout/checkout-addresses/checkout-addresses.html',
+    styleUrls: ['../../../templates/checkout/checkout-addresses/checkout-addresses.html']
 })
 export class CheckoutAddressesComponent implements OnInit {
-
+    @Input() cart: Cart;
     @Input() addresses: CustomerAddress[] = [];
     @Output() addressUpdated: EventEmitter<CustomerAddress[]> = new EventEmitter<CustomerAddress[]>();
 
@@ -24,7 +22,6 @@ export class CheckoutAddressesComponent implements OnInit {
     retryShippingAddress: boolean = true;
 
     constructor(
-        private globals: Globals,
         private cartManager: CartManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
@@ -33,23 +30,21 @@ export class CheckoutAddressesComponent implements OnInit {
     ** Lifecycles
     */
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.setBillingAddress(this.getFirstOrDefault())
-                .then(cart => {
-                    return this.setShippingAddress(this.getFirstOrDefault());
-                });
-        }
+        this.setBillingAddress(this.getFirstOrDefault())
+            .then(cart => {
+                return this.setShippingAddress(this.getFirstOrDefault());
+            });
     }
 
     /*
     ** Helpers
     */
     billingAddressOrDefault(): CustomerAddress {
-        return this.globals.cart.billingAddress;
+        return this.cart.billingAddress;
     }
 
     shippingAddressOrDefault(): CustomerAddress {
-        return this.globals.cart.deliveryAddress;
+        return this.cart.deliveryAddress;
     }
 
     showMyAddresses(event, isBillingAddress: boolean = false) {
@@ -95,31 +90,29 @@ export class CheckoutAddressesComponent implements OnInit {
                     this.retryBillingAddress = true;
                 }
                 if (this.retryBillingAddress) {
-                    this.globals.cart.billingAddress = address;
-                    this.cartManager.addBillingAddress(this.globals.cart.id, address.id)
-                        .then(cart => {
+                    this.cart.billingAddress = address;
+                    this.cartManager.addBillingAddress(this.cart.id, address.id)
+                        .subscribe(cart => {
                             this.showBillingAddresses = false;
                             this.retryBillingAddress = false;
                             resolve(cart);
-                        })
-                        .catch(error => {
+                        }, err => {
                             this.retryBillingAddress = false;
-                            console.log(error);
+                            console.log(err);
                             swal({
                                 title: 'Erro ao definir o endereço de cobrança',
-                                text: error.text(),
+                                text: err.error,
                                 type: 'error',
                                 showCancelButton: true,
                                 confirmButtonText: 'Tentar novamente',
                                 cancelButtonText: 'Cancelar',
                                 confirmButtonColor: '#3085d6',
                                 cancelButtonColor: '#d33',
-                            })
-                                .then(() => {
-                                    this.retryBillingAddress = true;
-                                    this.setBillingAddress(address);
-                                });
-                            reject(error);
+                            }).then(() => {
+                                this.retryBillingAddress = true;
+                                this.setBillingAddress(address);
+                            });
+                            reject(err);
                         });
                 }
             });
@@ -142,31 +135,29 @@ export class CheckoutAddressesComponent implements OnInit {
                     this.retryShippingAddress = true;
                 }
                 if (this.retryShippingAddress) {
-                    this.globals.cart.deliveryAddress = address;
-                    this.cartManager.addDeliveryAddress(this.globals.cart.id, address.id)
-                        .then(cart => {
+                    this.cart.deliveryAddress = address;
+                    this.cartManager.addDeliveryAddress(this.cart.id, address.id)
+                        .subscribe(cart => {
                             this.showShippingAddresses = false;
                             this.retryShippingAddress = false;
                             resolve(cart);
-                        })
-                        .catch(error => {
+                        }, err => {
                             this.retryShippingAddress = false;
-                            console.log(error);
+                            console.log(err);
                             swal({
                                 title: 'Erro ao definir o endereço de entrega',
-                                text: error.text(),
+                                text: err.error,
                                 type: 'error',
                                 showCancelButton: true,
                                 confirmButtonText: 'Tentar novamente',
                                 cancelButtonText: 'Cancelar',
                                 confirmButtonColor: '#3085d6',
                                 cancelButtonColor: '#d33',
-                            })
-                                .then(() => {
-                                    this.retryShippingAddress = true;
-                                    this.setShippingAddress(address);
-                                });
-                            reject(error);
+                            }).then(() => {
+                                this.retryShippingAddress = true;
+                                this.setShippingAddress(address);
+                            });
+                            reject(err);
                         });
                 }
             });

@@ -1,115 +1,120 @@
 import { Injectable } from "@angular/core";
-import { Http, Headers } from "@angular/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { Observable } from "rxjs";
 import { AppConfig } from "../app.config";
-import { Token } from "../models/customer/token";
-import { Observable } from 'rxjs';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class HttpClientHelper {
-    headers: Headers;
 
-    constructor(private http: Http) {
-        this.headers = new Headers();
-    }
+    constructor(private http: HttpClient) { }
 
     /**
      * Adiciona o cabeçalho para cada requisição nas API's
-     * @param {any} [params=[]] 
-     * @param {Token} [token=null]
+     * @param {string} [zipcode=null]
      * @memberof HttpClientHelper
      */
-    setHeaders(params = [], token: Token = null, zipcode: string = null) {
-        this.headers = new Headers();
+    getHeaders(zipcode: string = null): HttpHeaders {
         let domain: string = AppConfig.DOMAIN;
-        this.headers.append('Content-Type', 'application/json');
-        this.headers.append('Access-Control-Allow-Origin', '*');
-        this.headers.append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
-        this.headers.append('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token, X-Pagination');
-        this.headers.append('Access-Control-Expose-Headers', 'X-Pagination');
-        this.headers.append('Cache-control', 'no-cache');
-        this.headers.append('Cache-control', 'no-store');
-        this.headers.append('Expires', '0');
-        this.headers.append('Pragma', 'no-cache');
-        this.headers.append('Domain', domain);
-        this.headers.append('storeId', domain);
-        this.headers.append('ZipCode', zipcode);
+        let headers = new HttpHeaders()
+            .append('Content-Type', 'application/json')
+            .append('Access-Control-Allow-Origin', '*')
+            .append('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
+            .append('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token, X-Pagination')
+            .append('Access-Control-Expose-Headers', 'X-Pagination')
+            .append('Cache-control', 'no-cache')
+            .append('Cache-control', 'no-store')
+            .append('Expires', '0')
+            .append('Pragma', 'no-cache')
+            .append('Domain', domain)
+            .append('storeId', domain);
 
-        params.forEach(param => {
-            this.headers.append(param['key'], param['value']);
-        });
 
-        if (token) {
-            this.authorize(token);
+        if (zipcode) {
+            headers = headers
+                .append('ZipCode', zipcode);
         }
+
+        return headers;
     }
 
     /**
-     * Adiciona o Token ao cabeçalho da requisição
-     * @param {Token} token 
+     * Adiciona o parametros para cada requisição nas API's
+     * @param {any} [params=[]] 
+     * @returns 
      * @memberof HttpClientHelper
      */
-    authorize(token: Token) {
-        this.headers.append('Authorization', `${token.tokenType} ${token.accessToken}`);
-    }
-
-    getHeaders(): Headers {
-        return this.headers;
+    getParams(params = []): HttpParams {
+        let httpParams = new HttpParams();
+        params.forEach(param => {
+            httpParams = httpParams.set(param['key'], param['value']);
+        });
+        return httpParams;
     }
 
     /**
      * Executa uma requisição do tipo GET
      * @param {any} url 
-     * @param {Token} [token=null] 
      * @param {any} [params=[]] 
      * @returns 
      * @memberof HttpClientHelper
      */
-    get(url, token: Token = null, params = []): Observable<any> {
-        this.setHeaders(params, token);
-        return this.http.get(url, { headers: this.headers });
+    get(url, params = []): Observable<any> {
+        return this.http.get(url, { headers: this.getHeaders(), params: this.getParams(params), responseType: 'json' }, );
+    }
+
+     /**
+     * Executa uma requisição do tipo GET
+     * @param {any} url 
+     * @param {any} [params=[]] 
+     * @returns 
+     * @memberof HttpClientHelper
+     */
+    getText(url, params = []): Observable<any> {
+        return this.http.get(url, { headers: this.getHeaders(), params: this.getParams(params), responseType: 'text' }, );
     }
 
     /**
      * Executa uma requisição do tipo POST
      * @param {any} url 
      * @param {any} data 
-     * @param {Token} [token=null] 
      * @returns {Observable<any>} 
      * @memberof HttpClient
      */
-    post(url, data, token: Token = null): Observable<any> {
-        this.setHeaders([], token);
-        return this.http.post(url, data, {
-            headers: this.headers
-        });
+    post(url, data = null): Observable<any> {
+        return this.http.post(url, data, { headers: this.getHeaders(), observe: 'response', responseType: 'json' });
+    }
+
+    /**
+     * Executa uma requisição do tipo POST
+     * @param {any} url 
+     * @param {any} data 
+     * @returns {Observable<any>} 
+     * @memberof HttpClient
+     */
+    postText(url, data = null): Observable<any> {
+        return this.http.post(url, data, { headers: this.getHeaders(), observe: 'response', responseType: 'text' });
     }
 
     /**
      * Executa uma requisição do tipo PUT
     * @param {any} url 
     * @param {any} data 
-    * @param {Token} [token=null] 
     * @returns {Observable<any>} 
     * @memberof HttpClient
     */
-    put(url, data, token: Token = null): Observable<any> {
-        this.setHeaders([], token);
-        return this.http.put(url, data, {
-            headers: this.headers
-        });
+    put(url, data = null): Observable<any> {
+        return this.http.put(url, data, { headers: this.getHeaders(), responseType: 'json' });
     }
 
     /**
      * Executa uma requisição do tipo DELETE
      * @param {any} url 
-     * @param {Token} [token=null] 
      * @returns {Observable<any>} 
      * @memberof HttpClient
     */
-    delete(url, token: Token = null): Observable<any> {
-        this.setHeaders([], token);
-        return this.http.delete(url, {
-            headers: this.headers
-        });
+    delete(url): Observable<any> {
+        return this.http.delete(url, { headers: this.getHeaders(), responseType: 'json' });
     }
 }

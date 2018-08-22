@@ -1,7 +1,5 @@
-import { ProductPicture } from '../product/product-picture';
-import { Product } from '../product/product';
 import { Sku } from '../product/sku';
-import { CustomPaintCombination } from '../custom-paint/custom-paint-combination';
+import { Product } from '../product/product';
 
 export class CartItem {
     productItemId: string;
@@ -21,19 +19,8 @@ export class CartItem {
     totalDiscountPrice: number;
     totalPrice: number;
     dateAddCart: Date;
-    //CustomPaint
-    manufacturer: string;
-    optionCode: string;
-    optionHeight: number;
-    optionId: string;
-    optionLength: number;
-    optionName: string;
-    optionPicture: string;
-    optionStatus: boolean;
-    optionWeight: number;
-    optionWidth: number;
-    variationName: string;
-
+    isPackageProduct: boolean;
+    
     constructor(object = null) {
         if (object) return this.createFromResponse(object);
     }
@@ -68,15 +55,6 @@ export class CartItem {
         item.quantity = quantity;
         item.sku = sku;
         item.sku.feature = feature;
-        return item;
-    }
-
-    createFromPaint(paint: CustomPaintCombination, manufacturer: string, quantity: number): CartItem {
-        let item = new CartItem();
-        item.id = paint.id;
-        item.manufacturer = manufacturer;
-        item.quantity = quantity;
-
         return item;
     }
 }

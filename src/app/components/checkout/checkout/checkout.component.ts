@@ -1,40 +1,29 @@
 import { Component, OnInit, PLATFORM_ID, Inject, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+
 import { Cart } from '../../../models/cart/cart';
 import { Customer } from '../../../models/customer/customer';
 import { CustomerAddress } from '../../../models/customer/customer-address';
-import { Intelipost } from '../../../models/intelipost/intelipost';
 import { Shipping } from '../../../models/shipping/shipping';
 import { Payment } from '../../../models/payment/payment';
 import { AppTexts } from '../../../app.texts';
 import { CreditCard } from '../../../models/payment/credit-card';
 import { PaymentMethod } from '../../../models/payment/payment-method';
-import { PagseguroOption } from '../../../models/pagseguro/pagseguro-option';
-import { MercadoPagoPaymentMethod } from '../../../models/mercadopago/mercadopago-paymentmethod';
 import { Branch } from '../../../models/branch/branch';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Title } from '@angular/platform-browser';
 import { CartManager } from '../../../managers/cart.manager';
-import { CustomerService } from '../../../services/customer.service';
-import { BranchService } from '../../../services/branch.service';
-import { IntelipostService } from '../../../services/intelipost.service';
-import { PaymentService } from '../../../services/payment.service';
 import { PaymentManager } from '../../../managers/payment.manager';
-import { OrderService } from '../../../services/order.service';
-import { Globals } from '../../../models/globals';
 import { Store } from '../../../models/store/store';
-import { EnumStoreModality } from '../../../enums/store-modality.enum';
 import { PaymentSelected } from '../../../models/payment/checkout-payment';
 import { Order } from '../../../models/order/order';
 import { PagseguroCreditCard } from '../../../models/pagseguro/pagseguro-card';
 import { MercadoPagoCreditCard } from '../../../models/mercadopago/mercadopago-creditcard';
 import { Token } from '../../../models/customer/token';
-import { isPlatformBrowser } from '@angular/common';
 import { AppCore } from '../../../app.core';
-import { StoreManager } from '../../../managers/store.manager';
-import { debuglog } from 'util';
-import { retry } from 'rxjs/operators/retry';
-import { fail } from 'assert';
 import { AppConfig } from '../../../app.config';
+import { CartItem } from '../../../models/cart/cart-item';
+import { OrderManager } from '../../../managers/order.manager';
+import { CustomerManager } from '../../../managers/customer.manager';
 
 declare var swal: any;
 declare var toastr: any;
@@ -43,25 +32,22 @@ declare var Mercadopago: any;
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-checkout',
-    templateUrl: '../../../template/checkout/checkout/checkout.html',
-    styleUrls: ['../../../template/checkout/checkout/checkout.scss']
+    selector: 'checkout',
+    templateUrl: '../../../templates/checkout/checkout/checkout.html',
+    styleUrls: ['../../../templates/checkout/checkout/checkout.scss']
 })
 export class CheckoutComponent implements OnInit {
-    logged: boolean = false;
-    private customer: Customer;
-    private customer_ip = {};
-    private intelipost: Intelipost = new Intelipost();
-    private shippingSelected: Shipping = new Shipping();
-    private payment: Payment = new Payment();
-    private payments: Payment[] = [];
-    private methodType: number;
+    customer: Customer;
+    payments: Payment[];
+    cart: Cart;
+    store: Store;
+    stateProcessCheckout: boolean = false;
+
+    private shippingSelected: Shipping = null;
     private token: string;
 
     mediaPath: string;
     mediaPathPayments: string;
-    mediaPathPaint: string;
     readonly paymentMethodTypes = AppTexts.PAYMENT_METHOD_TYPES;
 
     billingAddress: CustomerAddress;
@@ -73,72 +59,61 @@ export class CheckoutComponent implements OnInit {
     branches: Branch[] = [];
     changeFor: number = null;
     defaultPayment: Payment;
-    store: Store;
     @ViewChild('scriptContainer') scriptContainer: ElementRef;
     kondutoScript: HTMLElement;
     kondutoScriptId = 'konduto-event-script';
     kondutoIdentified: boolean = false;
 
     constructor(
-        private route: ActivatedRoute,
-        private parentRouter: Router,
-        private titleService: Title,
-        private manager: CartManager,
-        private customerService: CustomerService,
-        private branchService: BranchService,
-        private shippingService: IntelipostService,
-        private paymentService: PaymentService,
+        private activatedRoute: ActivatedRoute,
+        private cartManager: CartManager,
         private paymentManager: PaymentManager,
-        private orderService: OrderService,
+        private orderManager: OrderManager,
+        private customerManager: CustomerManager,
+        private parentRouter: Router,
         private renderer: Renderer2,
-        private storeManager: StoreManager,
-        private globals: Globals,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
-    /*
-    ** Lifecycle
-    */
-    ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.titleService.setTitle('Finalização da Compra');
-            this.storeManager.getStore()
-                .then(store => {
-                    this.store = store;
-                    this.globals.store = store;
-                    this.mediaPath = `${store.link}/static/products/`;
-                    this.mediaPathPayments = `${store.link}/static/payments/`;
-                    this.mediaPathPaint = `${store.link}/static/custompaint/`;
-                    this.loadCart();
-                    this.getPayments();
-                    if (isPlatformBrowser(this.platformId)) {
-                        this.getCustomer()
-                            .then(customer => {
-                                return this.manager.setCustomerToCart(localStorage.getItem('cart_id').toString());
-                            })
-                            .then(cart => {
-                                this.globals.cart = cart;
-                            });
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-        }
+    ngOnInit(): void {
+        this.getStore();
+        this.getCart();
+        this.getPayments();
+        this.getCustomer();
+    }
+
+    getStore(): void {
+        this.store = this.activatedRoute.snapshot.data.store;
+        this.mediaPath = `${this.store.link}/static/products/`;
+        this.mediaPathPayments = `${this.store.link}/static/payments/`;
+    }
+
+    getCart(): void {
+        this.cartManager.getCart()
+            .subscribe(cart => {
+                this.cart = cart;
+                this.shippingAddress = cart.deliveryAddress;
+                this.billingAddress = cart.billingAddress;
+            });
+    }
+
+    getPayments(): void {
+        this.payments = this.activatedRoute.snapshot.data.payments;
+        this.methodSelected = null;
+        this.createPagseguroSession();
+    }
+
+    getCustomer(): void {
+        this.customer = this.activatedRoute.snapshot.data.customer;
+        this.cartManager.setCustomerToCart()
+            .subscribe(cart => this.cart = cart);
     }
 
     ngAfterViewChecked() {
         if (isPlatformBrowser(this.platformId)) {
-            if (this.store && this.store.modality == EnumStoreModality.Budget) {
-                this.parentRouter.navigateByUrl('/orcamento');
-            }
-
-
             if (!this.kondutoIdentified) {
                 this.kondutoIdentified = true;
-                this.getCustomer().then(
-                    customer => this.injectKondutoIdentifier(customer.email)
-                )
+                customer => this.injectKondutoIdentifier(customer.email)
             }
         }
     }
@@ -187,92 +162,6 @@ export class CheckoutComponent implements OnInit {
         return AppConfig.KONDUTO;
     }
 
-    /*
-    ** Setting up 
-    */
-    private loadCart(): any {
-        if (isPlatformBrowser(this.platformId)) {
-            this.manager.getCart(localStorage.getItem('cart_id'))
-                .then(response => {
-                    this.titleService.setTitle('Finalização da Compra');
-                    this.globals.cart = response;
-                    this.shippingAddress = response.deliveryAddress;
-                    this.billingAddress = response.billingAddress;
-
-                    if (this.getNumItemsInCart() == 0) {
-                        this.parentRouter.navigateByUrl('/carrinho');
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    this.parentRouter.navigateByUrl('/');
-                });
-        }
-    }
-
-    private getToken(): Token {
-        if (isPlatformBrowser(this.platformId)) {
-            let token = new Token();
-            if (isPlatformBrowser(this.platformId)) {
-                token = new Token();
-                token.accessToken = localStorage.getItem('auth');
-                token.createdDate = new Date(localStorage.getItem('auth_create'));
-                token.expiresIn = Number(localStorage.getItem('auth_expires'));
-                token.tokenType = 'Bearer';
-            }
-            return token;
-        }
-    }
-
-    /**
-     * Obtem o cliente autenticado
-     * 
-     * @private
-     * @returns {Promise<Customer>} 
-     * @memberof CheckoutComponent
-     */
-    private getCustomer(): Promise<Customer> {
-        return new Promise((resolve, reject) => {
-            if (this.logged) {
-                resolve(this.customer);
-            }
-            else {
-                this.customerService.getUser(this.getToken())
-                    .subscribe(customer => {
-                        this.customer = customer;
-                        this.logged = true;
-                        resolve(customer);
-                    }, error => {
-                        this.logged = false;
-                        reject(error);
-                    });
-            }
-        });
-    }
-
-    /**
-     * Obtem da API todas as formas de pagamento disponíveis na loja
-     * 
-     * @memberof CheckoutComponent
-     */
-    getPayments(): Promise<Payment[]> {
-        if (isPlatformBrowser(this.platformId)) {
-            return new Promise((resolve, reject) => {
-                this.paymentManager.getAll()
-                    .then(payments => {
-                        this.payments = payments;
-                        this.createPagseguroSession();
-                        resolve(payments);
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        swal('Erro ao obter as formas de pagamento', 'Não foi possível obter as formas de pagamento no momento', 'error');
-                        reject(error);
-                    });
-            })
-        }
-    }
-
     /**
      * Verifica se a loja possui pagseguro
      * @returns {boolean} 
@@ -291,44 +180,23 @@ export class CheckoutComponent implements OnInit {
             return;
         }
 
-        let token: Token = this.getToken();
+        let token: Token = this.customerManager.getToken();
 
         if (isPlatformBrowser(this.platformId)) {
-            if (token) {
-                this.paymentService.createPagSeguroSession(token)
-                    .then(sessionId => {
-                        localStorage.setItem('pagseguro_session', sessionId);
-                    })
-                    .catch(error => {
-                        console.log(`ERRO AO GERAR A SESSÃO DO PAGSEGURO: ${error}`);
+            if (token)
+                this.paymentManager.createPagSeguroSession()
+                    .subscribe(sessionId => {
+                        this.paymentManager.setPagSeguroSession(sessionId);
+                    }, err => {
+                        console.log(err);
                     });
-            }
-            else {
+            else
                 this.paymentManager.createPagSeguroSessionSimulator()
-                    .then(sessionId => {
-                        localStorage.setItem('pagseguro_session', sessionId);
-                    })
-                    .catch(error => {
-                        console.log(`ERRO AO GERAR A SESSÃO DO PAGSEGURO: ${error}`);
+                    .subscribe(sessionId => {
+                        this.paymentManager.setPagSeguroSession(sessionId);
                     });
-            }
         }
     }
-
-    /*
-    ** Getters
-    */
-
-    /**
-     * 
-     * Obtem o carrinho do Globals
-     * @returns {Cart} 
-     * @memberof CheckoutComponent
-     */
-    getCart(): Cart {
-        return this.globals.cart;
-    }
-
 
     /**
      * 
@@ -337,7 +205,7 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getDiscount(): number {
-        return this.globals.cart.totalDiscountPrice;
+        return this.cart.totalDiscountPrice;
     }
 
     /**
@@ -347,7 +215,7 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getShipping(): number {
-        return this.globals.cart.totalFreightPrice;
+        return this.cart.totalFreightPrice;
     }
 
     /**
@@ -357,7 +225,7 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getSubTotal() {
-        return this.globals.cart.totalProductsPrice + this.globals.cart.totalServicesPrice + this.globals.cart.totalCustomPaintPrice;
+        return this.cart.totalProductsPrice + this.cart.totalServicesPrice;
     }
 
     /**
@@ -367,10 +235,10 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getTotal(): number {
-        if (this.isMundipaggBankslip() && this.methodSelected.discount > 0) {
-            return this.globals.cart.totalPurchasePrice - (this.globals.cart.totalPurchasePrice * (this.methodSelected.discount / 100));
+        if (this.isMundipaggBankslip() && this.methodSelected && this.methodSelected.discount > 0) {
+            return this.cart.totalPurchasePrice - (this.cart.totalPurchasePrice * (this.methodSelected.discount / 100));
         }
-        return this.globals.cart.totalPurchasePrice;
+        return this.cart.totalPurchasePrice;
     }
 
     /**
@@ -382,7 +250,7 @@ export class CheckoutComponent implements OnInit {
     getTotalCreditCard(): number {
         if (!this.creditCard.totalPurchasePrice)
             return 0;
-        else if (this.creditCard.totalPurchasePrice != this.globals.cart.totalPurchasePrice)
+        else if (this.creditCard.totalPurchasePrice != this.cart.totalPurchasePrice)
             return this.creditCard.totalPurchasePrice;
         else return 0;
     }
@@ -394,7 +262,7 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getTotalServices(): number {
-        return this.globals.cart.totalServicesPrice;
+        return this.cart.totalServicesPrice;
     }
 
     /**
@@ -435,11 +303,10 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getNumItemsInCart(): number {
-        if (this.globals.cart) {
+        if (this.cart) {
             let numItems = 0;
-            numItems += (this.globals.cart.products) ? this.globals.cart.products.length : 0;
-            numItems += (this.globals.cart.services) ? this.globals.cart.services.length : 0;
-            numItems += (this.globals.cart.paints) ? this.globals.cart.paints.length : 0;
+            numItems += (this.cart.products) ? this.cart.products.length : 0;
+            numItems += (this.cart.services) ? this.cart.services.length : 0;
             return numItems;
         }
         else return 0;
@@ -452,7 +319,7 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getDeliveryAddress(): CustomerAddress {
-        return this.globals.cart.deliveryAddress;
+        return this.cart.deliveryAddress;
     }
 
     /*
@@ -499,7 +366,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     isHiddenVariation(): boolean {
-        let type = this.globals.store.settings.find(s => s.type == 4);
+        let type = this.store.settings.find(s => s.type == 4);
         if (type)
             return type.status;
         else
@@ -517,7 +384,6 @@ export class CheckoutComponent implements OnInit {
         let empty = false;
 
         if ((cart.products == null || cart.products.length < 1) &&
-            (cart.paints == null || cart.paints.length < 1) &&
             (cart.services == null || cart.services.length < 1))
             empty = true;
 
@@ -606,7 +472,7 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     hasShippingSelected(): boolean {
-        if (this.shippingSelected.shippingType == 0)
+        if (!this.shippingSelected || this.shippingSelected.shippingType == 0)
             return false;
         else return true;
     }
@@ -619,8 +485,8 @@ export class CheckoutComponent implements OnInit {
      * 
      * @memberof CheckoutComponent
      */
-    hasPaymentMethodSelected(cartId: string): boolean {
-        if ((this.methodSelected && this.methodSelected['id'])
+    hasPaymentMethodSelected(): boolean {
+        if ((this.paymentSelected.method && this.paymentSelected.method['id'])
             || this.paymentSelected.pagseguro
             || this.paymentSelected.mercadopago
             || this.isPickUpStorePayment(this.paymentSelected.payment)
@@ -651,7 +517,7 @@ export class CheckoutComponent implements OnInit {
     validChangeFor(): boolean {
         let isValid = true;
         if (this.methodSelected.type == 3) {
-            if (this.changeFor && this.changeFor <= this.globals.cart.totalPurchasePrice) {
+            if (this.changeFor && this.changeFor <= this.cart.totalPurchasePrice) {
                 isValid = false;
             }
         }
@@ -680,7 +546,7 @@ export class CheckoutComponent implements OnInit {
                 type = 'warning';
                 valid = false;
             }
-            else if (!this.hasPaymentMethodSelected(cartId)) {
+            else if (!this.hasPaymentMethodSelected()) {
                 title = 'Forma de pagamento não selecionada';
                 message = 'Selecione uma forma de pagamento';
                 type = 'warning';
@@ -715,63 +581,57 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     placeOrder(event) {
-        if (isPlatformBrowser(this.platformId)) {
-            event.preventDefault();
-            $('#btn_place-order').button('loading');
+        event.preventDefault();
+        $('#btn_place-order').button('loading');
+        this.stateProcessCheckout = true;
 
-            if (!this.checkoutIsValid()) {
-                $('#btn_place-order').button('reset');
-                return;
-            }
-
-            if (!this.validChangeFor()) {
-                swal('Valor inválido', 'O valor para troco deve ser maior do que o valor total da compra', 'warning');
-                $('#btn_place-order').button('reset');
-                return;
-            }
-
-            let cartId = localStorage.getItem('cart_id');
-
-            this.manager.getCart(cartId).then(cart => {
-                if (this.isCartEmpty(cart)) {
-                    this.parentRouter.navigateByUrl("/carrinho");
-                    return;
-                }
-
-                /* Pagamento Offline */
-                if (this.paymentSelected.payment.type == 2) {
-                    this.payWithOfflineMethod(cartId);
-                }
-                /* Pagamento com cartão de crédito mundipagg */
-                else if (this.isMundipaggCreditCard()) {
-                    this.payWithMundipaggCreditCard(cartId);
-                }
-                /* Pagamento com boleto mundipagg */
-                else if (this.isMundipaggBankslip()) {
-                    this.payWithMundipaggBankslip(cartId);
-                }
-                /* Pagamento boleto pagseguro */
-                else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code == 202) {
-                    this.payWithPagseguroBankSlip(cartId);
-                }
-                /* Pagamento cartão de crédito pagseguro */
-                else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code >= 100 && this.paymentSelected.pagseguro.code <= 199) {
-                    this.payWithPagseguroCreditCard(cartId);
-                }
-                /* Pagamento boleto mercado pago */
-                else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'ticket') {
-                    this.payWithMercadoPagoBankSlip(cartId);
-                }
-                /* Pagamento cartão de crédito mercado pago */
-                else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'credit_card') {
-                    this.payWithMercadoPagoCreditCard(cartId);
-                }
-                else {
-                    swal('Não foi possível realizar o pedido', 'Nenhuma forma de pagamento selecionada', 'error');
-                    $('#btn_place-order').button('reset');
-                }
-            });
+        if (!this.checkoutIsValid()) {
+            $('#btn_place-order').button('reset');
+            this.stateProcessCheckout = false;
+            return;
         }
+
+        if (!this.validChangeFor()) {
+            swal('Valor inválido', 'O valor para troco deve ser maior do que o valor total da compra', 'warning');
+            $('#btn_place-order').button('reset');
+            this.stateProcessCheckout = false;
+            return;
+        }
+
+        /* Pagamento Offline */
+        if (this.paymentSelected.payment.type == 2) {
+            this.payWithOfflineMethod();
+        }
+        /* Pagamento com cartão de crédito mundipagg */
+        else if (this.isMundipaggCreditCard()) {
+            this.payWithMundipaggCreditCard();
+        }
+        /* Pagamento com boleto mundipagg */
+        else if (this.isMundipaggBankslip()) {
+            this.payWithMundipaggBankslip();
+        }
+        /* Pagamento boleto pagseguro */
+        else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code == 202) {
+            this.payWithPagseguroBankSlip();
+        }
+        /* Pagamento cartão de crédito pagseguro */
+        else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code >= 100 && this.paymentSelected.pagseguro.code <= 199) {
+            this.payWithPagseguroCreditCard();
+        }
+        /* Pagamento boleto mercado pago */
+        else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'ticket') {
+            this.payWithMercadoPagoBankSlip();
+        }
+        /* Pagamento cartão de crédito mercado pago */
+        else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'credit_card') {
+            this.payWithMercadoPagoCreditCard();
+        }
+        else {
+            swal('Não foi possível realizar o pedido', 'Nenhuma forma de pagamento selecionada', 'error');
+            $('#btn_place-order').button('reset');
+            this.stateProcessCheckout = false;
+        }
+        // });
     }
 
     /**
@@ -782,10 +642,10 @@ export class CheckoutComponent implements OnInit {
      */
     finish(order: Order) {
         if (isPlatformBrowser(this.platformId)) {
-
+            $('#btn_place-order').button('reset');
+            this.stateProcessCheckout = false;
             toastr['success']('Pedido realizado com sucesso!');
-            this.globals.cart = null;
-            localStorage.removeItem('cart_id');
+            this.cartManager.removeCart();
             this.parentRouter.navigateByUrl(`/checkout/concluido/${order.id}`);
         }
     }
@@ -797,64 +657,86 @@ export class CheckoutComponent implements OnInit {
      * @param {string} cartId 
      * @memberof CheckoutComponent
      */
-    private payWithOfflineMethod(cartId: string) {
+    private payWithOfflineMethod() {
         if (isPlatformBrowser(this.platformId)) {
             toastr['info']('Aguarde, validando seu pedido...');
-            this.validateOrder(cartId, this.getToken())
+            this.validateOrder()
                 .then(cart => {
                     toastr['success']('Pedido validado. Processando informações de pagamento..');
                     let paymentRef = this.paymentSelected.payment.name.toLowerCase();
                     if (paymentRef == 'pagamento na loja') {
-                        return this.paymentService.pickUpStoreTransaction(cartId, this.getToken());
+                        return this.pickUpStoreTransaction();
                     }
                     else if (paymentRef = 'pagamento na entrega') {
-                        return this.paymentService.delivertPayment(cartId, this.getToken(), this.changeFor);
+                        return this.delivertPayment();
                     }
                 })
                 .then(response => {
                     toastr['success']('Pagamento confirmado. Realizando pedido...');
-                    return this.placeOrderApi(cartId, this.getToken());
+                    return this.placeOrderApi();
                 })
                 .then(order => {
                     this.finish(order);
                 })
-                .catch(error => {
-                    console.log(error);
-                    swal('Erro ao criar o pedido', error.text(), 'error');
+                .catch(err => {
+                    console.log(err);
+                    swal('Erro ao criar o pedido', err.error, 'error');
                     $('#btn_place-order').button('reset');
+                    this.stateProcessCheckout = false;
                 });
         }
+    }
+
+    private pickUpStoreTransaction(): Promise<string> {
+        return new Promise(resolve => {
+            this.paymentManager.pickUpStoreTransaction()
+                .subscribe(str => resolve(str));
+        });
+    }
+
+    private delivertPayment(): Promise<string> {
+        return new Promise(resolve => {
+            this.paymentManager.delivertPayment()
+                .subscribe(str => resolve(str))
+        });
     }
 
     /**
      * Pagamento com Boleto Pagseguro
      * 
      * @private
-     * @param {string} cartId 
      * @memberof CheckoutComponent
      */
-    private payWithPagseguroBankSlip(cartId: string) {
+    private payWithPagseguroBankSlip() {
         if (isPlatformBrowser(this.platformId)) {
             toastr['info']('Aguarde, validando seu pedido...');
             let hash = PagSeguroDirectPayment.getSenderHash();
-            this.validateOrder(cartId, this.getToken())
+            this.validateOrder()
                 .then(cart => {
                     toastr['success']('Pedido validado. Processando informações de pagamento..');
-                    return this.paymentService.PagseguroBankSlip(cartId, hash, this.getToken())
+                    return this.PagseguroBankSlip(hash);
                 })
                 .then(response => {
                     toastr['success']('Pagamento confirmado. Realizando pedido...');
-                    return this.placeOrderApi(cartId, this.getToken());
+                    return this.placeOrderApi();
                 })
                 .then(order => {
                     this.finish(order);
                 })
-                .catch(error => {
-                    console.log(error);
-                    swal('Erro ao criar o pedido', error.text(), 'error');
+                .catch(err => {
+                    console.log(err);
+                    swal('Erro ao criar o pedido', err.error, 'error');
                     $('#btn_place-order').button('reset');
+                    this.stateProcessCheckout = false;
                 });
         }
+    }
+
+    private PagseguroBankSlip(hash): Promise<string> {
+        return new Promise(resolve => {
+            this.paymentManager.PagseguroBankSlip(hash)
+                .subscribe(str => resolve(str))
+        })
     }
 
     /**
@@ -864,16 +746,17 @@ export class CheckoutComponent implements OnInit {
      * @param {string} cartId 
      * @memberof CheckoutComponent
      */
-    private payWithPagseguroCreditCard(cartId: string) {
+    private payWithPagseguroCreditCard() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.creditCard != null && !this.creditCard.isCardOK()) {
+            if (!this.paymentManager.isCardOK(this.creditCard)) {
                 swal('Erro', 'Verifique os dados do cartão', 'error');
                 $('#btn_place-order').button('reset');
+                this.stateProcessCheckout = false;
                 return;
             }
             toastr['info']('Criando a sessão no Pagseguro...');
             this.paymentManager.createPagSeguroSession()
-                .then(session => {
+                .subscribe(session => {
                     toastr['success']('Sessão no Pagseguro criada');
                     PagSeguroDirectPayment.setSessionId(session);
                     toastr['info']('Aguarde, validando seu pedido...');
@@ -885,7 +768,7 @@ export class CheckoutComponent implements OnInit {
                         expirationYear: this.creditCard.expYear,
                         success: response => {
                             this.token = response.card.token
-                            this.validateOrder(cartId, this.getToken())
+                            this.validateOrder()
                                 .then(cart => {
                                     toastr['success']('Pedido validado. Processando informações de pagamento..');
                                     let creditCard = new PagseguroCreditCard();
@@ -895,24 +778,25 @@ export class CheckoutComponent implements OnInit {
                                     creditCard.birthDate = this.creditCard.birthDate;
                                     creditCard.phone = this.creditCard.phone.replace(/\D/g, '');
                                     creditCard.installmentQuantity = this.creditCard.installmentCount;
+
                                     creditCard.installmentValue = this.creditCard.installmentValue;
                                     creditCard.noInterestInstallmentQuantity = Number.parseInt(this.paymentSelected.payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value);
-
-                                    return this.paymentService.PagseguroCreditCard(cartId, hash, creditCard, this.getToken())
+                                    return this.PagseguroCreditCard(hash, creditCard);
                                 })
                                 .then(response => {
                                     toastr['success']('Pagamento confirmado. Realizando pedido...');
-                                    return this.placeOrderApi(cartId, this.getToken());
+                                    return this.placeOrderApi();
                                 })
                                 .then(order => {
                                     this.finish(order);
                                 })
-                                .catch(error => {
-                                    console.log(error);
-                                    let message = (error.status != 0) ? error.text().replace(/"/g, '') : 'Erro ao finalizar a compra com o Pagseguro';
+                                .catch(err => {
+                                    console.log(err);
+                                    let message = (err.status != 0) ? err.error.replace(/"/g, '') : 'Erro ao finalizar a compra com o Pagseguro';
                                     swal('Erro ao criar o pedido', (message.split('|')[1]) ? message.split('|')[1] : message, 'error');
 
                                     $('#btn_place-order').button('reset');
+                                    this.stateProcessCheckout = false;
                                 });
                         }, error: response => {
                             console.log(response);
@@ -928,15 +812,23 @@ export class CheckoutComponent implements OnInit {
                             swal('Erro ao criar o pedido', message, 'error');
 
                             $('#btn_place-order').button('reset');
+                            this.stateProcessCheckout = false;
                         }
                     });
-                })
-                .catch(error => {
-                    swal('Erro ao criar a sessão no Pagseguro', 'Falha ao criar a sessão no pagseguro', 'error');
-                    console.log(error);
+                }, err => {
+                    // swal('Erro ao criar a sessão no Pagseguro', 'Falha ao criar a sessão no pagseguro', 'error');
+                    // console.log(err);
                     $('#btn_place-order').button('reset');
+                    this.stateProcessCheckout = false;
                 });
         }
+    }
+
+    private PagseguroCreditCard(hash, creditCard): Promise<string> {
+        return new Promise(resolve => {
+            this.paymentManager.PagseguroCreditCard(hash, creditCard)
+                .subscribe(str => resolve(str))
+        });
     }
 
     /**
@@ -946,27 +838,37 @@ export class CheckoutComponent implements OnInit {
      * @param {string} cartId 
      * @memberof CheckoutComponent
      */
-    private payWithMundipaggBankslip(cartId: string) {
+    private payWithMundipaggBankslip() {
         if (isPlatformBrowser(this.platformId)) {
             toastr['info']('Aguarde, validando seu pedido...');
-            this.validateOrder(cartId, this.getToken())
+            this.validateOrder()
                 .then(cart => {
                     toastr['success']('Pedido validado. Processando informações de pagamento..');
-                    return this.paymentService.bankSlipTransaction(cartId, this.getToken());
+                    return this.bankSlipTransaction();
                 })
                 .then(response => {
                     toastr['success']('Pagamento confirmado. Realizando pedido...');
-                    return this.placeOrderApi(cartId, this.getToken());
+                    return this.placeOrderApi();
                 })
                 .then(order => {
                     this.finish(order);
                 })
-                .catch(error => {
-                    console.log(error);
-                    swal('Erro ao criar o pedido', error.text(), 'error');
+                .catch(err => {
+                    console.log(err);
+                    swal('Erro ao criar o pedido', err.error, 'error');
                     $('#btn_place-order').button('reset');
+                    this.stateProcessCheckout = false;
                 });
         }
+    }
+
+    private bankSlipTransaction(): Promise<string> {
+        return new Promise(resolve => {
+            this.paymentManager.bankSlipTransaction()
+                .subscribe(str => {
+                    resolve(str);
+                });
+        });
     }
 
     /**
@@ -976,31 +878,31 @@ export class CheckoutComponent implements OnInit {
      * @param {string} cartId 
      * @memberof CheckoutComponent
      */
-    private payWithMundipaggCreditCard(cartId: string) {
+    private payWithMundipaggCreditCard() {
         if (isPlatformBrowser(this.platformId)) {
             toastr['info']('Aguarde, validando seu pedido...');
-            this.validateOrder(cartId, this.getToken())
+            this.validateOrder()
                 .then(cart => {
                     toastr['success']('Pedido validado. Processando informações de pagamento..');
-                    return this.paymentService.creditCardTransaction(cartId, this.creditCard, this.getToken());
+                    return this.creditCardTransaction(this.creditCard);
                 })
                 .then(response => {
                     toastr['success']('Pagamento confirmado. Realizando pedido...');
-                    return this.placeOrderApi(cartId, this.getToken());
+                    return this.placeOrderApi();
                 })
                 .then(order => {
                     this.finish(order);
                 })
-                .catch(error => {
-                    console.log(error);
-                    let message = error.text().replace(/"/g, '');
+                .catch(err => {
+                    console.log(err);
+                    let message = err.error.replace(/"/g, '');
                     swal('Erro ao criar o pedido', (message.split('|')[1]) ? message.split('|')[1] : message, 'error')
                         .then(() => {
-                            if (error.status == (402) && message.split('|')[0] == "C003" || message.split('|')[0] == '"C003') {
+                            if (err.status == (402) && message.split('|')[0] == "C003" || message.split('|')[0] == '"C003') {
                                 this.parentRouter.navigateByUrl(`/carrinho`);
                                 location.reload();
                             }
-                            else if (error.status == (402) && message.split('|')[0] == "C05"
+                            else if (err.status == (402) && message.split('|')[0] == "C05"
                                 || message.split('|')[0] == '"C05'
                                 || message.split('|')[0] == '"C01'
                                 || message.split('|')[0] == 'C01') {
@@ -1009,8 +911,23 @@ export class CheckoutComponent implements OnInit {
                             }
                         });
                     $('#btn_place-order').button('reset');
+                    this.stateProcessCheckout = false;
                 });
         }
+    }
+
+    creditCardTransaction(creditCard: CreditCard): Promise<string> {
+        return new Promise(resolve => {
+            this.paymentManager.creditCardTransaction(creditCard)
+                .subscribe(str => {
+                    resolve(str);
+                }, err => {
+                    console.log(err);
+                    swal('Erro ao criar o pedido', err.error, 'error');
+                    $('#btn_place-order').button('reset');
+                    this.stateProcessCheckout = false;
+                });
+        })
     }
 
     /**
@@ -1020,28 +937,45 @@ export class CheckoutComponent implements OnInit {
      * @param {string} cartId 
      * @memberof CheckoutComponent
      */
-    private payWithMercadoPagoBankSlip(cartId: string) {
-        if (isPlatformBrowser(this.platformId)) {
-            toastr['info']('Aguarde, validando seu pedido...');
-            this.validateOrder(cartId, this.getToken())
-                .then(cart => {
-                    toastr['success']('Pedido validado. Processando informações de pagamento..');
-                    return this.paymentService.MercadoPagoBankSlip(cartId, this.getToken())
-                })
-                .then(response => {
-                    toastr['success']('Pagamento confirmado. Realizando pedido...');
-                    return this.placeOrderApi(cartId, this.getToken());
-                })
-                .then(order => {
-                    this.finish(order);
-                })
-                .catch(error => {
-                    Mercadopago.clearSession();
-                    console.log(error);
-                    swal('Erro ao criar o pedido', error.text(), 'error');
-                    $('#btn_place-order').button('reset');
-                });
-        }
+    private payWithMercadoPagoBankSlip() {
+        toastr['info']('Aguarde, validando seu pedido...');
+        this.validateOrder()
+            .then(() => {
+                debugger
+                toastr['success']('Pedido validado. Processando informações de pagamento..');
+                return this.MercadoPagoBankSlip();
+            })
+            .then(() => {
+                debugger
+                toastr['success']('Pagamento confirmado. Realizando pedido...');
+                return this.placeOrderApi();
+            })
+            .then(order => {
+                debugger
+                this.finish(order);
+            })
+            .catch(error => {
+                debugger
+                Mercadopago.clearSession();
+                console.log(error);
+                swal('Erro ao criar o pedido', error.text(), 'error');
+                $('#btn_place-order').button('reset');
+                this.stateProcessCheckout = false;
+            });
+    }
+
+
+    MercadoPagoBankSlip(): Promise<string> {
+        return new Promise(resolve => {
+            this.paymentManager.MercadoPagoBankSlip()
+                .subscribe(
+                    str => {
+                        resolve(str)
+                    },
+                    err => {
+                        console.log(err);
+                    })
+        });
     }
 
     /**
@@ -1051,74 +985,83 @@ export class CheckoutComponent implements OnInit {
      * @param {string} cartId
      * @memberof CheckoutComponent
      */
-    private payWithMercadoPagoCreditCard(cartId: string) {
+    private payWithMercadoPagoCreditCard() {
         if (isPlatformBrowser(this.platformId)) {
-            if (!this.creditCard.isCardOK()) {
+            if (!this.paymentManager.isCardOK(this.creditCard)) {
                 $('#btn_place-order').button('reset');
+                this.stateProcessCheckout = false;
                 swal('Erro ao criar o pedido', 'Verifique os dados do cartão', 'error');
                 return;
             }
 
             toastr['info']('Aguarde, validando seu pedido...');
-            this.validateOrder(cartId, this.getToken())
+            this.validateOrder()
                 .then(cart => {
                     toastr['success']('Pedido validado. Processando informações de pagamento..');
-                    return this.paymentService.GetMercadoPagoPublicKey(this.getToken());
+                    return this.GetMercadoPagoPublicKey();
                 })
                 .then(public_key => {
                     Mercadopago.setPublishableKey(public_key);
                     const form = document.querySelector('#mercadoPagoForm');
-                    return new Promise((resolve, reject) => {
-                        Mercadopago.createToken(form, (status, response) => {
-                            if (status === 200) {
-                                resolve(response.id);
-                            }
-                            else {
-                                reject(this.paymentManager.getMercadoPagoError(response.cause[0].code));
-                            }
-                        });
-                    });
+                    return new Promise(resolve =>
+                        Mercadopago.createToken(form, (status, response) =>
+                            resolve(response.id)));
                 })
                 .then(cardToken => {
                     toastr['success']('Processando pagamento com cartão de crédito..');
                     let card: MercadoPagoCreditCard = new MercadoPagoCreditCard();
-                    card.cartToken = cardToken.toString();
+                    card.cartToken = cardToken ? cardToken.toString() : undefined;
                     card.installmentQuantity = this.creditCard.installmentCount;
                     card.paymentMethodId = this.paymentSelected.mercadopago.id;
                     card.cpf = this.creditCard.taxId.replace(/\D/g, '');
-                    return this.paymentService.MercadoPagoCreditCard(cartId, card, this.getToken())
+                    return this.MercadoPagoCreditCard(card);
                 })
                 .then(response => {
                     toastr['success'](`${response}. Gerando o pedido...`);
-                    return this.placeOrderApi(cartId, this.getToken());
+                    return this.placeOrderApi();
                 })
                 .then(order => {
                     this.finish(order);
                 })
-                .catch(error => {
+                .catch(err => {
                     Mercadopago.clearSession();
                     $('#btn_place-order').button('reset');
-                    console.log(error);
+                    this.stateProcessCheckout = false;
+                    console.log(err);
                     let message: string = '';
-                    if (!error)
+                    if (!err)
                         message = 'Erro no gateway de pagamentos';
-                    else if (error['_body'])
-                        message = error.text();
-                    else if (error['message'])
-                        message = error.message;
-                    else if (error['code'])
-                        message = `${error.code} - ${error.message}`
+                    else if (err['_body'])
+                        message = err.error;
+                    else if (err['message'])
+                        message = err.error;
+                    else if (err['code'])
+                        message = `${err.code} - ${err.error}`
 
                     swal('Erro ao criar o pedido', message, 'error');
                 });
         }
     }
 
+    MercadoPagoCreditCard(creditCard: MercadoPagoCreditCard): Promise<string> {
+        return new Promise((resolve, reject) => {
+            this.paymentManager.MercadoPagoCreditCard(creditCard)
+                .subscribe(str => resolve(str), err => reject(err));
+        });
+    }
+
+    GetMercadoPagoPublicKey(): Promise<string> {
+        return new Promise(resolve => {
+            this.paymentManager.getMercadoPagoPublicKey()
+                .subscribe(str => resolve(str))
+        });
+    }
+
 
     /* Order Methods */
-    private validateOrder(cartId: string, token: Token): Promise<Cart> {
+    private validateOrder(): Promise<Cart> {
         return new Promise((resolve, reject) => {
-            this.orderService.validateOrder(cartId, token)
+            this.orderManager.validateOrder()
                 .subscribe(cart => {
                     resolve(new Cart(cart));
                 }, error => reject(error));
@@ -1126,12 +1069,29 @@ export class CheckoutComponent implements OnInit {
         });
     }
 
-    private placeOrderApi(cartId: string, token: Token): Promise<Order> {
+    private placeOrderApi(): Promise<Order> {
         return new Promise((resolve, reject) => {
-            this.orderService.placeOrder(cartId, token)
+            this.orderManager.placeOrder()
                 .subscribe(order => {
                     resolve(order);
                 }, error => reject(error));
         });
+    }
+
+    isPackage(item: CartItem) {
+        return item.isPackageProduct ? 'Sim' : 'Não';
+    }
+
+    isStorePackageActive(): boolean {
+        return this.store.settings.find(s => s.type == 8).status;
+    }
+
+    /**
+     * Verifica se a loja possui pagseguro
+     * @returns {boolean} 
+     * @memberof AppComponent
+     */
+    hasProcessCheckout(): boolean {
+        return this.stateProcessCheckout;
     }
 }

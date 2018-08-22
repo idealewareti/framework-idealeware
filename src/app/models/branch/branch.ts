@@ -13,11 +13,11 @@ export class Branch {
     district: string;
     city: string;
     zipCode: string;
-    locals: BranchLocal[] = [];
+    locals: BranchLocal[];
     status: boolean;
     number: string;
     allowPickupStore: boolean;
-    replenishmentTime: number
+    replenishmentTime: number;
 
     constructor(object = null) {
         if (object) return this.createFromResponse(object);
@@ -37,5 +37,4 @@ export class Branch {
 
         return model;
     }
-
 }

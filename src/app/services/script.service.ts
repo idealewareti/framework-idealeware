@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 
 declare let document: any;
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class ScriptService {
 
-    constructor() {
-    }
-    
+    constructor() {}
+
     loadScript(path: string) {
         //load script
         return new Promise((resolve, reject) => {

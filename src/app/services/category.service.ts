@@ -1,40 +1,27 @@
 import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
+import { HttpClient } from "@angular/common/http";
 import { Category } from "../models/category/category";
+import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
-import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
 
-
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class CategoryService {
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
     getTree(): Observable<Category[]> {
         let url = `${environment.API_CATEGORY}/categories/tree`;
-        return this.client.get(url)
-            .map(res => res.json())
+        return this.client.get(url);
     }
 
     getCategory(id: string): Observable<Category> {
         let url = `${environment.API_CATEGORY}/categories/${id}`;
-        return this.client.get(url)
-            .map(res => res.json())
-    }
-
-    getChildren(id: string): Promise<Category[]> {
-        return new Promise((resolve, reject) => {
-            this.getTree()
-                .subscribe(categories => {
-                    let category = categories.filter(c => c.id == id)[0];
-                    if (category && category.children)
-                        resolve(category.children);
-                    else resolve([]);
-                }, error => reject(error));
-        });
+        return this.client.get(url);
     }
 }

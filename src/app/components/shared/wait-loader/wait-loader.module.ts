@@ -5,7 +5,6 @@ import { WaitLoaderComponent } from './wait-loader.component';
 @NgModule({
     declarations: [ WaitLoaderComponent ],
     imports: [ CommonModule ],
-    exports: [ WaitLoaderComponent ],
-    providers: [],
+    exports: [ WaitLoaderComponent ]
 })
 export class WaitLoaderModule {}

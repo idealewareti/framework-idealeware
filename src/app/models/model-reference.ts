@@ -1,7 +1,7 @@
-export class ModelReference{
+export class ModelReference {
     id: string;
     name: string;
-    
+
     constructor(object = null){
         if(object) return this.createFromResponse(object);
     }
@@ -16,5 +16,4 @@ export class ModelReference{
         return model;
             
     }
-    
 }

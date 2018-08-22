@@ -1,71 +1,55 @@
-import { Component, Input, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
-import { Title, DomSanitizer, SafeResourceUrl, Meta } from '@angular/platform-browser';
+import { Component, Input, OnDestroy, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location, isPlatformBrowser } from '@angular/common';
 import { Product } from '../../../models/product/product';
 import { Sku } from '../../../models/product/sku';
 import { ProductPicture } from '../../../models/product/product-picture';
-import { Cart } from '../../../models/cart/cart';
-import { CartItem } from '../../../models/cart/cart-item';
 import { Category } from '../../../models/category/category';
-import { ProductService } from '../../../services/product.service';
 import { CartManager } from '../../../managers/cart.manager';
 import { ProductAwaited } from "../../../models/product-awaited/product-awaited";
 import { ProductRating } from "../../../models/product-rating/product-rating";
-import { CustomerProductRating } from "../../../models/product-rating/customer-product-rating";
-import { CustomerService } from "../../../services/customer.service";
-import { Customer } from "../../../models/customer/customer";
-import { ProductRatingCreate } from "../../../models/product-rating/product-rating-create";
 import { Service } from "../../../models/product-service/product-service";
 import { Store } from "../../../models/store/store";
-import { RelatedProductsService } from "../../../services/related-products.service";
 import { EnumStoreModality } from "../../../enums/store-modality.enum";
 import { RelatedProductGroup } from "../../../models/related-products/related-product-group";
-import { Globals } from "../../../models/globals";
-import { SelfColor } from "../../../models/self-color/self-color";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { validEmail } from '../../../directives/email-validator/email-validator.directive';
 import { AppCore } from '../../../app.core';
-import { ProductAwaitedService } from '../../../services/product-awaited.service';
-import { error } from 'util';
 import { ProductManager } from '../../../managers/product.manager';
-import { AppConfig } from '../../../app.config';
-import { StoreManager } from '../../../managers/store.manager';
 import { KondutoManager } from '../../../managers/konduto.manager';
+import { SeoManager } from '../../../managers/seo.manager';
 
 declare var $: any;
-declare var S: any;
 declare var swal: any;
 declare var toastr: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-product',
-    templateUrl: '../../../template/product/product/product.html',
-    styleUrls: ['../../../template/product/product/product.scss']
+    selector: 'product',
+    templateUrl: '../../../templates/product/product/product.html',
+    styleUrls: ['../../../templates/product/product/product.scss']
 })
-export class ProductComponent implements OnDestroy {
+export class ProductComponent implements OnInit, OnDestroy {
 
     id: string;
     productsRating: ProductRating = new ProductRating();
     productsAwaited: ProductAwaited = new ProductAwaited();
     parcelValue: number;
-    product: Product = new Product();
-    sku: Sku = new Sku();
+    product: Product = null;
+    sku: Sku = null;
     pictures: ProductPicture[] = [];
     feature: string = null;
     services: Service[] = [];
     videoSafeUrl: SafeResourceUrl;
     fileGuideSafeUrl: SafeResourceUrl;
-    allOptionsSelected: boolean = false;
     coverImg: ProductPicture = new ProductPicture();
     mediaPath: string;
     related: RelatedProductGroup = new RelatedProductGroup();
     modality: EnumStoreModality = -1;
     showValuesProduct: boolean = false;
+    allOptionsSelected: boolean = false;
     totalNote: number = 0;
     installment: string = '';
-    selfColor: SelfColor = null;
     productAwaitedForm: FormGroup;
     store: Store;
 
@@ -73,21 +57,14 @@ export class ProductComponent implements OnDestroy {
     @Input() areaSizer: number = 0;
 
     constructor(
-        formBuilder: FormBuilder,
-        private route: ActivatedRoute,
-        private service: ProductService,
-        private manager: ProductManager,
-        private storeManager: StoreManager,
-        private serviceAwaited: ProductAwaitedService,
-        private relatedService: RelatedProductsService,
+        private seoManager: SeoManager,
+        private kondutoManager: KondutoManager,
         private cartManager: CartManager,
-        private parentRouter: Router,
-        private titleService: Title,
-        private metaService: Meta,
+        private manager: ProductManager,
+        private route: ActivatedRoute,
+        private router: Router,
         private location: Location,
         private sanitizer: DomSanitizer,
-        private globals: Globals,
-        private kondutoManager: KondutoManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.productAwaitedForm = new FormBuilder().group({
@@ -101,52 +78,28 @@ export class ProductComponent implements OnDestroy {
 
     /* Lifecycle events */
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.storeManager.getStore()
-                .then(store => {
-                    this.store = store;
-                    this.mediaPath = `${this.store.link}/static/products/`;
-                    this.modality = this.store.modality;
-                    this.showValuesProduct = this.showValues(this.store);
+        this.route.params.subscribe(() => {
+            this.store = this.route.snapshot.data.store;
+            this.mediaPath = `${this.store.link}/static/products/`;
+            this.modality = this.store.modality;
+            this.showValuesProduct = this.showValues(this.store);
 
-                    if (isPlatformBrowser(this.platformId)) {
-                        $('body').addClass('product');
-                        window.scrollTo(0, 0);
-                    }
+            if (isPlatformBrowser(this.platformId)) {
+                $('body').addClass('product');
+            }
 
-                    this.route.params
-                        .map(params => params)
-                        .subscribe((params) => {
-                            if (params['id']) {
-                                this.id = params['id'];
-                                this.getProductBySku(this.id);
-                            }
-                            else if (params['product']) {
-                                let paramProduct = params['product'];
-                                this.id = paramProduct.substr(params['product'].length - 36);
-                                if (this.isGuid(this.id))
-                                    this.getProductBySku(this.id);
-                                else {
-                                    let routeParam = decodeURI(this.parentRouter.url).slice(1);
-                                    this.parentRouter.navigateByUrl(`/redirect/${routeParam}`);
-                                }
-                            }
-                        });
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        }
+            this.id = this.route.snapshot.params.produto_id;
+            this.id = this.id.substr(this.id.length - 36);
+
+            this.loadProduct(this.route.snapshot.data.product);
+        });
     }
 
     ngOnDestroy() {
         if (isPlatformBrowser(this.platformId)) {
             this.kondutoManager.clearProductMeta();
-            this.metaService.removeTag("name='title'");
-            this.metaService.removeTag("name='description'");
             $('body').removeClass('product');
         }
-
     }
 
     isMobile(): boolean {
@@ -173,52 +126,51 @@ export class ProductComponent implements OnDestroy {
 
     /* Cart Events */
     addToCart() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.product.selfColor && !this.feature) {
-                swal({
-                    title: "Cor necessária",
-                    text: "É necessário escolher uma cor para o produto",
-                    type: "warning",
-                    confirmButtonText: "OK"
-                });
-            }
-            else if (!this.allOptionsSelected) {
-                swal({
-                    title: 'Característica não selecionada',
-                    text: 'Selecione as características desejadas antes de adicionar ao carrinho',
-                    type: 'warning',
-                    confirmButtonText: 'OK'
-                });
-            }
-            else {
-                this.cartManager.purchase(localStorage.getItem('cart_id'), this.product, this.sku, this.quantity, this.feature)
-                    .then(() => {
+        if (this.product.selfColor && !this.feature) {
+            swal({
+                title: "Cor necessária",
+                text: "É necessário escolher uma cor para o produto",
+                type: "warning",
+                confirmButtonText: "OK"
+            });
+        }
+        else if (!this.allOptionsSelected) {
+            swal({
+                title: 'Característica não selecionada',
+                text: 'Selecione as características desejadas antes de adicionar ao carrinho',
+                type: 'warning',
+                confirmButtonText: 'OK'
+            });
+        }
+        else {
+            this.cartManager.purchase(/*localStorage.getItem('cart_id'), */this.product, this.sku, this.quantity, this.feature)
+                .subscribe(cart => {
+                    this.cartManager.addItem(cart.id, this.sku.id, this.quantity, this.feature).subscribe(cartAdd => {
                         toastr['success']('Produto adicionado ao carrinho');
                         if (this.services.length > 0)
                             this.services.forEach(service => {
                                 this.cartManager.addService(service.id, service.quantity, localStorage.getItem('cart_id'));
                             });
-                        this.parentRouter.navigateByUrl('/carrinho');
+                        this.router.navigateByUrl('/carrinho');
                     })
-                    .catch(error => {
-                        swal({
-                            title: "Falha ao adicionar o produto ao carrinho",
-                            text: error.text(),
-                            type: "warning",
-                            confirmButtonText: "OK"
-                        });
-                        console.log(error);
+                }, err => {
+                    swal({
+                        title: "Falha ao adicionar o produto ao carrinho",
+                        text: err.error,
+                        type: "warning",
+                        confirmButtonText: "OK"
                     });
-            }
+                });
         }
     }
+
 
     /* Get SKU */
     open(event, item: string) {
         if (event)
             event.preventDefault()
         this.setCurrentSku(item);
-        this.location.replaceState(`/produto/${item}/${AppCore.getNiceName(this.product.name)}`);
+        this.location.replaceState(`${AppCore.getNiceName(this.product.name)}-${item}`);
     }
 
     handleSkuUpdated(event: Sku) {
@@ -237,14 +189,9 @@ export class ProductComponent implements OnDestroy {
         this.allOptionsSelected = event;
     }
 
-    public handleFeatureUpdated(event: SelfColor) {
-        this.selfColor = event;
-        this.feature = `${this.selfColor.code} - ${this.selfColor.name}`;
-    }
-
     setCurrentSku(skuId: string = null) {
         this.allOptionsSelected = true;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             if (skuId)
                 this.sku = this.manager.getSku(skuId, this.product);
             else
@@ -260,57 +207,44 @@ export class ProductComponent implements OnDestroy {
 
     }
 
-    getProductBySku(id) {
-        this.fetchProductBySku(id)
-            .then(product => {
-                this.product = product;
-                this.kondutoManager.addProductMeta(this.product);
-                if (this.product.name.toLowerCase().indexOf('tinta') !== -1 && this.store.domain === 'ecommerce') {
-                    this.product.selfColor = true;
-                }
-                if (product.videoEmbed) {
-                    this.videoSafeUrl = this.createSafeUrl(this.product.videoEmbed);
-                }
-                if (product.fileGuide) {
-                    this.fileGuideSafeUrl = this.createSafeUrl(`javascript:window.open('${this.mediaPath}${product.fileGuide}');`);
-                }
-                this.setCurrentSku(id);
-                if (this.isProductRelated()) {
-                    this.relatedService.getRelatedProductGroupById(this.product.relatedProductsId)
-                        .subscribe(related => {
-                            this.related = related;
-                            if (this.related.products.length == 0)
-                                this.product.relatedProductsId = null;
-                        }, error => {
-                            console.log(error);
-                        });
-                }
-                this.setTitle(this.product, this.sku);
-                this.metaService.addTags([
-                    { name: 'title', content: this.product.metaTagTitle },
-                    { name: 'description', content: this.product.metaTagDescription },
-                    { name: 'og:image', content: this.getMainImage() }
-                ]);
-            })
-            .catch(error => {
-                console.log(error);
-                this.parentRouter.navigate(['/404']);
-            });
+    private loadProduct(product: Product) {
+        this.product = product;
+        this.setCurrentSku(this.id);
+
+        this.seoManager.setTags({
+            title: product.metaTagTitle || product.name,
+            description: product.metaTagDescription || product.briefDescription,
+            image: this.getImageProduct(product)
+        });
+
+        this.kondutoManager.addProductMeta(this.product);
+
+        if (this.product.name.toLowerCase().indexOf('tinta') !== -1 && this.store.domain === 'ecommerce') {
+            this.product.selfColor = true;
+        }
+        if (product.videoEmbed) {
+            this.videoSafeUrl = this.createSafeUrl(this.product.videoEmbed);
+        }
+        if (product.fileGuide) {
+            this.fileGuideSafeUrl = this.createSafeUrl(`javascript:window.open('${this.mediaPath}${product.fileGuide}');`);
+        }
+
+        if (this.isProductRelated()) {
+            this.manager.getRelatedProductGroupById(this.product.relatedProductsId)
+                .subscribe(related => {
+                    this.related = related;
+                    if (this.related.products.length == 0)
+                        this.product.relatedProductsId = null;
+                });
+        }
     }
 
-    private setTitle(product: Product, sku: Sku = null) {
-        let title = (product.metaTagTitle) ? product.metaTagTitle : product.name;
-        this.titleService.setTitle(title);
-    }
 
     /* Breadcrump */
     getBreadCrump(): Category[] {
-         return this.product.categories;
+        return this.product.categories;
     }
 
-    private arrangeCategories() {
-        let categories = this.product.categories;
-    }
 
     /* Installment Simulator */
     private getInstallmentValue() {
@@ -352,14 +286,13 @@ export class ProductComponent implements OnDestroy {
 
                 this.productsAwaited.productName = productName;
                 this.productsAwaited.skuId = this.sku.id;
-                this.serviceAwaited.createProductAwaited(this.productsAwaited)
-                    .subscribe(newsletter => {
+                this.manager.createProductAwaited(this.productsAwaited)
+                    .subscribe(() => {
                         swal('Avise-me quando chegar', 'E-mail cadastrado com sucesso.', 'success');
                         this.productsAwaited = new ProductAwaited();
                         this.productAwaitedForm.reset();
-                    }, error => {
+                    }, () => {
                         swal('Erro ao cadastrar email', 'Não foi possível cadastrar seu email', 'error');
-                        console.log(error);
                     });
             }
         }
@@ -499,7 +432,7 @@ export class ProductComponent implements OnDestroy {
 
     downloadGuide(event) {
         event.preventDefault();
-        this.parentRouter.navigateByUrl(this.mediaPath + this.product.fileGuide);
+        this.router.navigateByUrl(this.mediaPath + this.product.fileGuide);
     }
 
     isGuid(value: string): boolean {
@@ -525,13 +458,6 @@ export class ProductComponent implements OnDestroy {
         return false;
     }
 
-    private fetchProductBySku(skuId: string): Promise<Product> {
-        return new Promise((resolve, reject) => {
-            this.service.getProductBySku(skuId)
-                .subscribe(product => resolve(product), error => reject(error));
-        });
-    }
-
     getProduct(): Product {
         if (this.product && this.product.id) {
             return this.product;
@@ -546,13 +472,12 @@ export class ProductComponent implements OnDestroy {
         return false;
     }
 
-    getMainImage(): string {
-        if (this.sku.pictures.length > 0) {
-            return `${this.store.link}/static/products/${this.sku.pictures[0].showcase}`;
+    getImageProduct(product: Product): string {
+        let picture = product.skuBase.picture || null;
+        if (picture) {
+            return `${this.store.link}/static/products/${picture.showcase}`;
         }
-        else {
-            return `${this.store.link}/static/store/${this.store.logo}`;
-        }
+        return `${this.store.link}/static/store/${this.store.logo}`;
     }
 
     /**

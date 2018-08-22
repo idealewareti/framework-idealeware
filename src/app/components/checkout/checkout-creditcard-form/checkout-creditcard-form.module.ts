@@ -10,7 +10,6 @@ import { PhoneMaskModule } from '../../../directives/phone-mask/phone-mask.modul
 @NgModule({
     declarations: [ CheckoutCreditCardFormComponent ],
     imports: [ CommonModule, FormsModule, ReactiveFormsModule, CreditCartdMaskModule, CpfMaskModule, PhoneMaskModule, CurrencyFormatModule ],
-    exports: [ CheckoutCreditCardFormComponent ],
-    providers: [],
+    exports: [ CheckoutCreditCardFormComponent ]
 })
 export class CheckoutCreditCardFormModule {}

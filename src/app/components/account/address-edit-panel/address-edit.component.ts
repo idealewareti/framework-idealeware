@@ -1,22 +1,19 @@
 import { Component, Input, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Title } from "@angular/platform-browser";
 import { CustomerAddress } from '../../../models/customer/customer-address';
-import { CustomerService } from '../../../services/customer.service';
 import { AppTexts } from '../../../app.texts';
-import { DneAddressService } from '../../../services/dneaddress.service';
 import { isPlatformBrowser } from '@angular/common';
-import { Token } from '../../../models/customer/token';
+import { CustomerManager } from '../../../managers/customer.manager';
+import { DneAddressManager } from '../../../managers/dneaddress.manager';
 
 declare var swal: any;
 declare var toastr: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-edit-address',
-    templateUrl: '../../../template/account/address-edit-panel/address-edit.html',
-    styleUrls: ['../../../template/account/address-edit-panel/address-edit.scss']
+    selector: 'edit-address',
+    templateUrl: '../../../templates/account/address-edit-panel/address-edit.html',
+    styleUrls: ['../../../templates/account/address-edit-panel/address-edit.scss']
 })
 export class AddressEditComponent implements OnInit {
     @Input() tabId: string;
@@ -29,11 +26,10 @@ export class AddressEditComponent implements OnInit {
 
     constructor(
         builder: FormBuilder,
-        private service: CustomerService,
-        private dneService: DneAddressService,
         private parentRouter: Router,
         private route: ActivatedRoute,
-        private titleService: Title,
+        private customerManager: CustomerManager,
+        private dneManager: DneAddressManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
         this.address = new CustomerAddress();
@@ -52,7 +48,6 @@ export class AddressEditComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
         this.tabId = this.route.params['value'].id;
         if (this.tabId && this.tabId != 'novo') {
             this.isEdit = true;
@@ -60,78 +55,55 @@ export class AddressEditComponent implements OnInit {
         }
         else {
             this.isEdit = false;
-            this.titleService.setTitle('Cadastar Novo Endereço');
         }
-    }
     }
 
     submit(event) {
         event.preventDefault();
-        debugger;
         if (this.isEdit) this.update();
         else this.save();
     }
 
-    private getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token = new Token();
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
-        }
-        return token;
-    }
-
     private save() {
-        if(this.address.id){
+        if (this.address.id) {
             this.update();
-        }else{
+        } else {
             this.insert();
         }
     }
 
-    private insert(){
+    private insert() {
         if (isPlatformBrowser(this.platformId)) {
-            let token: Token = this.getToken();
-            this.service.saveAddress(this.address, token)
+            this.customerManager.saveAddress(this.address)
                 .subscribe(address => {
                     swal('Sucesso!', `Endereço ${address.addressName} cadastrado com sucesso!`, 'success');
                     this.parentRouter.navigateByUrl(`/conta/enderecos`)
-                }), error => {
-                    swal('Erro ao cadastrar novo endereço', error, 'error');
-                    console.log(error);
+                }), err => {
+                    swal('Erro ao cadastrar novo endereço', err.error, 'error');
                 };
         }
     }
 
     private update() {
         if (isPlatformBrowser(this.platformId)) {
-            let token: Token = this.getToken();
-            this.service.updateAddress(this.address, token)
+            this.customerManager.updateAddress(this.address)
                 .subscribe(address => {
                     swal('Sucesso!', `Endereço ${address.addressName} alterado com sucesso!`, 'success');
                     this.parentRouter.navigateByUrl(`/conta/enderecos`)
-                }), (error => {
-                    swal('Erro ao cadastrar novo endereço', error, 'error');
-                    console.log(error);
+                }), (err => {
+                    swal('Erro ao cadastrar novo endereço', err.error, 'error');
                 });
         }
     }
 
     private getAddress() {
-        if (isPlatformBrowser(this.platformId)) {
-            let token: Token = this.getToken();
-            this.service.getUser(token)
-                .subscribe(user => {
-                    this.address = user.addresses.filter(a => a.id == this.tabId)[0]
-                    this.titleService.setTitle('Editar Endereço');
-                }), error => {
-                    swal(error);
-                    this.parentRouter.navigateByUrl(`/conta/enderecos`)
-                };
-        }
+        this.customerManager.getUser()
+            .subscribe(user => {
+                this.address = user.addresses.filter(a => a.id == this.tabId)[0]
+            }), error => {
+                swal(error);
+                this.parentRouter.navigateByUrl(`/conta/enderecos`)
+            };
     }
 
     getDne(event) {
@@ -139,7 +111,7 @@ export class AddressEditComponent implements OnInit {
             event.preventDefault();
             if (this.address != null && this.address.zipCode) {
                 toastr['info']('Localizando o endereço');
-                this.dneService.getAddress(this.address.zipCode)
+                this.dneManager.getAddress(this.address.zipCode)
                     .subscribe(response => {
                         this.address.district = response.neighborhoods;
                         this.address.city = response.city;
@@ -152,9 +124,8 @@ export class AddressEditComponent implements OnInit {
                             toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
                         }
 
-                    }), error => {
+                    }), () => {
                         toastr['error']('Endereço não encontrado, preencha os campos manualmente');
-                        console.log(error)
                     };
             }
         }

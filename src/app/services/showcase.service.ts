@@ -2,21 +2,22 @@ import { Injectable } from "@angular/core";
 import { HttpClientHelper } from "../helpers/http.helper";
 import { ShowCase } from "../models/showcase/showcase";
 import { environment } from "../../environments/environment";
-import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
-import { ShowCaseBanner } from "../models/showcase/showcase-banner";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
-@Injectable()
+
+@Injectable({
+    providedIn: 'root'
+})
 export class ShowCaseService {
     client: HttpClientHelper;
 
-    constructor(http: Http) {
+    constructor(http: HttpClient) {
         this.client = new HttpClientHelper(http);
     }
 
     public getBannersFromStore() : Observable<ShowCase>{
         let url = `${environment.API_SHOWCASE}/showcases/active`;
-        return this.client.get(url)
-            .map(res => res.json());
+        return this.client.get(url);
     }
 }

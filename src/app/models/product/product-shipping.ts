@@ -1,4 +1,4 @@
-import { IntelipostIdentification } from '../../models/intelipost/intelipost-identification';
+import { IntelipostIdentification } from '../intelipost/intelipost-identification';
 import { Sku } from './sku';
 
 export class ProductShippingModel {

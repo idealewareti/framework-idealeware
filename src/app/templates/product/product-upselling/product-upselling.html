@@ -1,0 +1,10 @@
+<div class="showcase showcase-owl produtos-relacionados" *ngIf="products.length > 0">
+    <h3 class="title">
+        <b>QUEM VIU, VIU TAMBÉM</b>
+    </h3>
+    <ul id="up-selling-items" class="showcase-items list-style-none" [ngClass]="{'owl-carousel owl-theme': products.length > 3}">
+        <li class="showcase-item" *ngFor="let product of products" [ngClass]="{'col-md-4': products.length < 4}">
+            <product-grid-item [product]="product" [store]="store"></product-grid-item>
+        </li>
+    </ul>
+</div>

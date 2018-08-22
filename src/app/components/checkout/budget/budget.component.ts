@@ -1,144 +1,75 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
-import { Cart } from "../../../models/cart/cart";
-import { Customer } from "../../..//models/customer/customer";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Http } from "@angular/http";
-import { Title } from "@angular/platform-browser";
-import { CartManager } from "../../..//managers/cart.manager";
-import { CustomerService } from "../../..//services/customer.service";
-import { BudgetService } from "../../..//services/budget.service";
-import { Sku } from "../../..//models/product/sku";
-import { Globals } from "../../..//models/globals";
-import { Token } from '../../../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
+
+import { Cart } from "../../../models/cart/cart";
+import { Customer } from "../../../models/customer/customer";
+import { CartManager } from "../../../managers/cart.manager";
+import { Sku } from "../../../models/product/sku";
 import { Store } from '../../../models/store/store';
-import { Budget } from '../../../models/budget/budget';
-import { StoreManager } from '../../../managers/store.manager';
+import { BudgetManager } from '../../../managers/budget.manager';
 
 declare var swal: any;
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-budget',
-    templateUrl: '../../../template/checkout/budget/budget.html',
-    styleUrls: ['../../../template/checkout/budget/budget.scss']
+    selector: 'budget',
+    templateUrl: '../../../templates/checkout/budget/budget.html',
+    styleUrls: ['../../../templates/checkout/budget/budget.scss']
 })
 export class BudgetComponent implements OnInit {
-    private cart: Cart;
-    logged: boolean = false;
-    private customer: Customer;
-    private customer_ip = {};
+    cart: Cart;
+    customer: Customer;
+    private store: Store;
     mediaPath: string;
 
     constructor(
-        private route: ActivatedRoute,
-        private parentRouter: Router,
-        private http: Http,
-        private titleService: Title,
-        private manager: CartManager,
-        private customerService: CustomerService,
-        private storeManager: StoreManager,
-        private service: BudgetService,
-        private globals: Globals,
+        private activatedRoute: ActivatedRoute,
+        private cartManager: CartManager,
+        private budgetManager: BudgetManager,
+        private router: Router,
         @Inject(PLATFORM_ID) private platformId: Object,
     ) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-        this.mediaPath = `${this.globals.store.link}/static/products/`;
-        let cartId = localStorage.getItem('cart_id');
-        this.storeManager.getStore()
-            .then(store => {
-                if (store.modality == 1) {
-                    this.parentRouter.navigateByUrl('/checkout');
-                }
-                else
-                    return this.getCustomer();
-            })
-            .then(customer => {
-                this.customer_ip = JSON.parse(localStorage.getItem('customer_ip'));
-            })
-            .catch(error => {
-                console.log(error);
-                this.parentRouter.navigateByUrl('/');
-            });
-
-        this.manager.getCart(cartId)
-            .then(response => {
-                this.titleService.setTitle('Finalização da Compra');
-                this.cart = response;
-                if (this.isCartEmpty(this.cart)) {
-                    this.parentRouter.navigateByUrl('/');
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                this.parentRouter.navigateByUrl('/');
-            });
-        }
+        this.getStore();
+        this.getCustomer();
+        this.getCart();
     }
 
-    private getToken(): Token {
-        let token = new Token();
-        if (isPlatformBrowser(this.platformId)) {
-            token = new Token();
-            token.accessToken = localStorage.getItem('auth');
-            token.createdDate = new Date(localStorage.getItem('auth_create'));
-            token.expiresIn = Number(localStorage.getItem('auth_expires'));
-            token.tokenType = 'Bearer';
-        }
-        return token;
+    private getCart() {
+        this.cart = this.activatedRoute.snapshot.data.cart;
     }
 
-    private getCustomer(): Promise<Customer> {
-        return new Promise((resolve, reject) => {
-            if (this.logged) {
-                resolve(this.customer);
-            }
-            else {
-                let token = this.getToken();
-                this.customerService.getUser(token)
-                    .subscribe(customer => {
-                        this.customer = customer;
-                        this.logged = true;
-                        resolve(customer);
-                    }), ((error) => {
-                        this.logged = false;
-                        reject(error);
-                    });
-            }
-        });
+    private getStore() {
+        this.store = this.activatedRoute.snapshot.data.store;
+        this.mediaPath = `${this.store.link}/static/products/`;
+    }
+
+    private getCustomer() {
+        this.customer = this.activatedRoute.snapshot.data.customer;
+        this.cartManager.setCustomerToCart()
+            .subscribe(cart => {
+                this.cart = cart;
+            });
     }
 
     placeOrder(event) {
-        if (isPlatformBrowser(this.platformId)) {
-            event.preventDefault();
-            $('.btn-checkout').button('loading');
-            let cartId = localStorage.getItem('cart_id');
-            let token = this.getToken();
-            this.manager.setCustomerToCart(cartId)
-                .then(cart => {
-                    this.globals.cart = cart;
-                    return this.service.createBudget(cartId, token)
-                        .subscribe(budget => {
-                            localStorage.removeItem('cart_id');
-                            this.globals.cart = null;
-                            this.parentRouter.navigateByUrl(`/orcamento/concluido/${budget.numberBudget}`);
-                        }
-                        )
-                })
-                .catch(error => {
-                    $('.btn-checkout').button('reset');
-                    swal({
-                        title: 'Erro ao criar o orçamento',
-                        text: error.text(),
-                        type: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                    console.log(error);
+        event.preventDefault();
+        $('.btn-checkout').button('loading');
+        this.budgetManager.createBudget()
+            .subscribe(budget => {
+                this.cartManager.removeCart();
+                this.router.navigate(['checkout', 'orcamento', 'concluido', budget.numberBudget])
+            }, err => {
+                $('.btn-checkout').button('reset');
+                swal({
+                    title: 'Erro ao criar o orçamento',
+                    text: err.error,
+                    type: 'error',
+                    confirmButtonText: 'OK'
                 });
-        }
+            });
     }
 
     isCartEmpty(cart: Cart): boolean {
@@ -146,10 +77,7 @@ export class BudgetComponent implements OnInit {
 
         if (cart.products && this.cart.products.length == 0)
             empty = false;
-
-        if (cart.paints && this.cart.paints.length == 0)
-            empty = false;
-
+            
         return empty;
     }
 

@@ -10,7 +10,7 @@ export class Coupon {
     quantityUsed: number;
     maxUtilization: number;
     expired: boolean;
-    customers: CouponCustomer[] = [];
+    customers: CouponCustomer[];
 
     constructor(object = null) {
         if (object) return this.createFromResponse(object);
@@ -34,5 +34,4 @@ export class Coupon {
 
         return model;
     }
-
 }

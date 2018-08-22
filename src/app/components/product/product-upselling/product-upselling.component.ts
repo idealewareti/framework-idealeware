@@ -1,7 +1,5 @@
-import { Component, Input, OnInit, AfterViewChecked, AfterContentInit, OnDestroy, OnChanges, SimpleChanges, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, Inject, PLATFORM_ID } from '@angular/core';
 import { Product } from '../../../models/product/product';
-import { Sku } from '../../../models/product/sku';
-import { ProductPicture } from '../../../models/product/product-picture';
 import { ProductService } from '../../../services/product.service';
 import { Store } from "../../../models/store/store";
 import { isPlatformBrowser } from '@angular/common';
@@ -9,10 +7,9 @@ import { isPlatformBrowser } from '@angular/common';
 declare var $: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-up-selling',
-    templateUrl: '../../../template/product/product-upselling/product-upselling.html',
-    styleUrls: ['../../../template/product/product-upselling/product-upselling.scss']
+    selector: 'up-selling',
+    templateUrl: '../../../templates/product/product-upselling/product-upselling.html',
+    styleUrls: ['../../../templates/product/product-upselling/product-upselling.scss']
 })
 export class ProductUpSellingComponent implements OnChanges {
 

@@ -1,16 +1,15 @@
 import { Component, PLATFORM_ID, Inject, Input, OnInit } from '@angular/core';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Product } from '../../../models/product/product';
 import { Store } from '../../../models/store/store';
 import { Sku } from '../../../models/product/sku';
-import { Router } from '@angular/router';
 import { AppCore } from '../../../app.core';
 import { EnumStoreModality } from '../../../enums/store-modality.enum';
 
 @Component({
-    selector: 'app-product-grid-item',
-    templateUrl: '../../../template/shared/product-grid-item/product-grid-item.html',
-    styleUrls: ['../../../template/shared/product-grid-item/product-grid-item.scss']
+    selector: 'product-grid-item',
+    templateUrl: '../../../templates/shared/product-grid-item/product-grid-item.html',
+    styleUrls: ['../../../templates/shared/product-grid-item/product-grid-item.scss']
 })
 export class ProductGridItemComponent implements OnInit {
     @Input() product: Product;
@@ -27,20 +26,13 @@ export class ProductGridItemComponent implements OnInit {
     private alternative: boolean = false;
 
     constructor(
-        private parentRouter: Router,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.sku = this.product.skuBase;
-            this.price = this.sku.price;
-            this.promotionalPrice = this.sku.promotionalPrice;
-
-            if (this.store.modality == EnumStoreModality.Ecommerce) {
-                this.simulateInstallments();
-            }
-        }
+        this.sku = this.product.skuBase;
+        this.price = this.sku.price;
+        this.promotionalPrice = this.sku.promotionalPrice;
     }
 
     getRoute(): string {
@@ -129,14 +121,6 @@ export class ProductGridItemComponent implements OnInit {
                     compare.splice(index, 1);
                     localStorage.setItem('compare', JSON.stringify(compare));
                 }
-            }
-        }
-    }
-
-    simulateInstallments() {
-        if (isPlatformBrowser(this.platformId)) {
-            if (this.product.installmentNumber > 0 && this.product.installmentValue > 0) {
-                this.product.installmentText = `em ${this.product.installmentNumber}x de R$ ${this.product.installmentValue.toFixed(2).toString().replace('.', ',')}`;
             }
         }
     }

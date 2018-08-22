@@ -2,14 +2,12 @@ import { CartItem } from './cart-item';
 import { Customer } from '../customer/customer';
 import { CustomerAddress } from '../customer/customer-address';
 import { Coupon } from "../coupon/coupon";
-import { Paint } from '../custom-paint/custom-paint';
 import { Service } from '../product-service/product-service';
 import { Shipping } from '../shipping/shipping';
 
 export class Cart {
     id: string;
     products: CartItem[] = [];
-    paints: Paint[] = [];
     services: Service[] = [];
     customer: Customer;
     deliveryAddress: CustomerAddress;
@@ -18,7 +16,6 @@ export class Cart {
     coupons: Coupon[] = [];
     totalProductsPrice: number;
     totalServicesPrice: number;
-    totalCustomPaintPrice: number;
     totalFreightPrice: number;
     totalDiscountPrice: number;
     totalPurchasePrice: number;
@@ -53,9 +50,6 @@ export class Cart {
             else if (k == 'billingAddress') {
                 model.billingAddress = new CustomerAddress(object.billingAddress);
             }
-            else if (k == 'paints') {
-                model[k] = object[k].map(paint => new Paint(paint));
-            }
             else if (k == 'services') {
                 model[k] = object[k].map(service => new Service(service));
             }
@@ -69,5 +63,4 @@ export class Cart {
 
         return model
     }
-
 }

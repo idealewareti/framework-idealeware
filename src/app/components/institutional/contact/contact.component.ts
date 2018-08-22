@@ -1,8 +1,6 @@
-import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, PLATFORM_ID, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { FormHelper } from "../../../helpers/formhelper";
-import { Contact } from "../../..//models/contact/contact";
-import { Title } from "@angular/platform-browser";
+import { Contact } from "../../../models/contact/contact";
 import { ContactService } from "../../../services/contact.service";
 import { validEmail } from '../../../directives/email-validator/email-validator.directive';
 import { isPlatformBrowser } from '@angular/common';
@@ -10,39 +8,32 @@ import { isPlatformBrowser } from '@angular/common';
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-contact',
-    templateUrl: '../../../template/institutional/contact/contact.html',
-    styleUrls: ['../../../template/institutional/contact/contact.scss']
+    selector: 'contact',
+    templateUrl: '../../../templates/institutional/contact/contact.html',
+    styleUrls: ['../../../templates/institutional/contact/contact.scss']
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent {
     contactForm: FormGroup;
     contact: Contact;
     messageSent: boolean = false;
 
     constructor(
         formBuilder: FormBuilder,
-        private formHelper: FormHelper,
-        private titleService: Title,
         private service: ContactService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) {
-        if (isPlatformBrowser(this.platformId)) {
-            this.contactForm = formBuilder.group({
-                name: ['', Validators.required],
-                email: ['', Validators.compose([
-                    Validators.required,
-                    validEmail()
-                ])],
-                title: ['', Validators.required],
-                message: ['', Validators.required]
-            });
+        this.contactForm = formBuilder.group({
+            name: ['', Validators.required],
+            email: ['', Validators.compose([
+                Validators.required,
+                validEmail()
+            ])],
+            title: ['', Validators.required],
+            message: ['', Validators.required]
+        });
 
-            this.contact = new Contact();
-        }
+        this.contact = new Contact();
     }
-
-    ngOnInit() { }
 
     submit(event) {
         event.preventDefault();
@@ -61,7 +52,7 @@ export class ContactComponent implements OnInit {
             }
             else {
                 this.service.sendContact(this.contact)
-                    .subscribe(contact => {
+                    .subscribe(() => {
                         this.messageSent = true;
 
                         swal({
@@ -83,7 +74,6 @@ export class ContactComponent implements OnInit {
                             type: "error",
                             confirmButtonText: "OK"
                         });
-
                     });
             }
         }

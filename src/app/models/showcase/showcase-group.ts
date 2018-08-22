@@ -1,8 +1,8 @@
-import {Product} from '../product/product';
+import { Product } from '../product/product';
 
-export class ShowcaseGroup{
+export class ShowcaseGroup {
     id: string;
     name: string;
     position: number;
-    products :Product[];
+    products: Product[];
 }

@@ -6,7 +6,6 @@ import { CommonModule } from "@angular/common";
 @NgModule({
     declarations: [ AddressPanelListComponent ],
     imports: [ CommonModule, RouterModule ],
-    providers: [],
     exports: [ AddressPanelListComponent ]
 })
 export class AddressPanelListModule {}

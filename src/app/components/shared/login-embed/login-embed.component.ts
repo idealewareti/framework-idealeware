@@ -9,10 +9,9 @@ declare var $: any;
 declare var swal: any;
 
 @Component({
-    moduleId: module.id,
-    selector: 'app-login-embed',
-    templateUrl: '../../../template/shared/login-embed/login-embed.html',
-    styleUrls: ['../../../template/shared/login-embed/login-embed.scss']
+    selector: 'login-embed',
+    templateUrl: '../../../templates/shared/login-embed/login-embed.html',
+    styleUrls: ['../../../templates/shared/login-embed/login-embed.scss']
 })
 export class LoginEmbedComponent implements OnInit, OnChanges {
 
@@ -21,7 +20,7 @@ export class LoginEmbedComponent implements OnInit, OnChanges {
     @Output() modalIsOpened: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() isLogged: EventEmitter<Customer> = new EventEmitter<Customer>();
 
-    login: Login = new Login(null, null);
+    login: Login = new Login();
     formLogin: FormGroup;
 
     constructor(private manager: CustomerManager,
@@ -30,10 +29,8 @@ export class LoginEmbedComponent implements OnInit, OnChanges {
     ngOnInit() { }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (isPlatformBrowser(this.platformId)) {
-            if (changes['openModal'].currentValue) {
-                this.open();
-            }
+        if (changes['openModal'].currentValue) {
+            this.open();
         }
     }
 
@@ -53,7 +50,7 @@ export class LoginEmbedComponent implements OnInit, OnChanges {
     submitLogin(event) {
         if (isPlatformBrowser(this.platformId)) {
             event.preventDefault();
-            this.manager.signIn(new Login(this.login.cpfEmail, this.login.password))
+            this.signIn(this.login)
                 .then(() => {
                     return this.manager.getUser();
                 })
@@ -66,5 +63,14 @@ export class LoginEmbedComponent implements OnInit, OnChanges {
                     swal('Erro', 'Usuário ou senha inválido', 'error');
                 })
         }
+    }
+
+    signIn(login: Login): Promise<Customer> {
+        return new Promise((resolve, reject) => {
+            this.manager.signIn(login)
+                .subscribe((customer) => {
+                    resolve(customer);
+                }, err => reject(err))
+        });
     }
 }

@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { ProductGalleryComponent }  from './product-gallery.component';
+import { CommonModule } from '@angular/common';
+import { SlickModule } from 'ngx-slick';
+import { ProductGalleryComponent } from './product-gallery.component';
 
 @NgModule({
-    declarations: [ ProductGalleryComponent ],
-    imports: [ BrowserModule ],
-    providers: [],
-    exports: [ ProductGalleryComponent ]
+    declarations: [ProductGalleryComponent],
+    imports: [CommonModule, SlickModule.forRoot()],
+    exports: [ProductGalleryComponent]
 })
-export class ProductGalleryModule {}
+export class ProductGalleryModule { }

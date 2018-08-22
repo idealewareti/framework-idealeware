@@ -1,17 +1,9 @@
 # Changelog
 
-## 3.2.3
-- Melhoria retirado sessão e parcelamento do pagseguro da detalhes,retornando completo da api.
-
-## 3.2.2
-- Melhoria vitrine do carrinho retornando produtos prontos
-- Retirado requisição da store para json
-- Alterado plugin de owl com ajuste do parcelamento - retirado loop
-- Melhoria Breadcump categoria - detahles do produto
-
-## 3.2.1
-- Controle de request via client
-- Correções no calculo de frete da detalhes
+## 4.0.0
+-  Reformulado estrutura da loja.
+-  Atualização da versão do Angular.
+-  Melhoria de performance
 
 ## 3.2.0
 -  Reformulado carregamento da vitrine da loja

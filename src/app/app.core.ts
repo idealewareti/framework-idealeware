@@ -1,4 +1,4 @@
-export class AppCore{
+export class AppCore {
     /**
      * Cria um nome amigável para a string
      * @static
@@ -6,7 +6,7 @@ export class AppCore{
      * @returns {string} 
      * @memberof AppSettings
      */
-    public static getNiceName(name: string): string{
+    public static getNiceName(name: string): string {
         return this.slug(name);
     }
 
@@ -18,7 +18,7 @@ export class AppCore{
      * @returns {boolean} 
      * @memberof AppSettings
      */
-    public static isGuid(value: string): boolean{
+    public static isGuid(value: string): boolean {
         return /^[0-9A-Fa-f]{8}[-]?([[0-9A-Fa-f]{4}[-]?){3}[[0-9A-Fa-f]{12}$/.test(value);
     }
 
@@ -30,12 +30,12 @@ export class AppCore{
      * @returns {boolean} 
      * @memberof AppSettings
      */
-    public static isGuidEmpty(value: string): boolean{
+    public static isGuidEmpty(value: string): boolean {
         if (value) {
-            if (value === '00000000-0000-0000-0000-000000000000'){
+            if (value === '00000000-0000-0000-0000-000000000000') {
                 return true;
             }
-            else{
+            else {
                 return false;
             }
         }
@@ -80,27 +80,25 @@ export class AppCore{
         str = str.replace(/^\s+|\s+$/g, '');
         str = str.toLowerCase();
         const from = "ãàáäâẽèéëêìíïîõòóöôùúüûñç·/_,:;";
-        const to   = "aaaaaeeeeeiiiiooooouuuunc------";
-        for (let i=0, l=from.length ; i<l ; i++) {
-          str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+        const to = "aaaaaeeeeeiiiiooooouuuunc------";
+        for (let i = 0, l = from.length; i < l; i++) {
+            str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
         }
         str = str.replace(/[^a-z0-9 -]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-');
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
         return str;
-      };
+    };
 
-      public static ConvertTextToDate(textDate:string){
-        debugger;
-        var array = textDate.split('/').map((item,index)=>
-        {
-            if(index == 1){
+    public static ConvertTextToDate(textDate: string) {
+        var array = textDate.split('/').map((item, index) => {
+            if (index == 1) {
                 return parseInt(item) - 1;
-            }else{
+            } else {
                 return parseInt(item);
             }
-        }); 
-        
+        });
+
         var date = new Date(array[2], array[1], array[0]);
         return date;
     }
