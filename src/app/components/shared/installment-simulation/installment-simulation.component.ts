@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Payment } from "../../../models/payment/payment";
 import { Sku } from "../../../models/product/sku";
 import { PaymentManager } from "../../../managers/payment.manager";
@@ -26,7 +27,8 @@ export class InstallmentSimulationComponent implements OnInit, OnChanges {
     private id: string;
 
     constructor(
-        private manager: PaymentManager
+        private manager: PaymentManager,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
@@ -41,38 +43,42 @@ export class InstallmentSimulationComponent implements OnInit, OnChanges {
     }
 
     getSimulationSimple() {
-        this.manager.getInstallmentsSimulationSimpleBySkuId(this.sku.id)
-            .subscribe(installments => this.installments = installments);
+        if (isPlatformBrowser(this.platformId)) {
+            this.manager.getInstallmentsSimulationSimpleBySkuId(this.sku.id)
+                .subscribe(installments => this.installments = installments);
+        }
     }
 
     getSimulation(event = null) {
-        if (event)
-            event.preventDefault();
-        this.error = null;
-        this.id = this.sku.id;
-        this.payments = [];
-        this.manager.simulateInstallmentsBySkuId(this.id)
-            .subscribe(simulations => {
-                if (simulations.length == 0) {
-                    this.error = 'Não há formas de pagamentos definidas';
-                    return;
-                }
-                this.payments = simulations;
-
-                this.payments.forEach(payment => {
-                    if (!this.isPagseguro(payment)) {
-                        let installmentLimit: PaymentSetting = payment.settings.find(s => s.name.toLowerCase() == 'installmentlimit');
-                        if (installmentLimit) {
-                            payment.paymentMethods[0].installment = payment.paymentMethods[0].installment.slice(0, Number.parseInt(installmentLimit.value));
-                        }
+        if (isPlatformBrowser(this.platformId)) {
+            if (event)
+                event.preventDefault();
+            this.error = null;
+            this.id = this.sku.id;
+            this.payments = [];
+            this.manager.simulateInstallmentsBySkuId(this.id)
+                .subscribe(simulations => {
+                    if (simulations.length == 0) {
+                        this.error = 'Não há formas de pagamentos definidas';
+                        return;
                     }
-                });
+                    this.payments = simulations;
 
-                this.selectGateway(this.defaultPayment(this.payments));
-            }, error => {
-                this.error = `Não foi possível obter o parcelamento (Erro: ${error.status})`;
-                this.payments = [];
-            });
+                    this.payments.forEach(payment => {
+                        if (!this.isPagseguro(payment)) {
+                            let installmentLimit: PaymentSetting = payment.settings.find(s => s.name.toLowerCase() == 'installmentlimit');
+                            if (installmentLimit) {
+                                payment.paymentMethods[0].installment = payment.paymentMethods[0].installment.slice(0, Number.parseInt(installmentLimit.value));
+                            }
+                        }
+                    });
+
+                    this.selectGateway(this.defaultPayment(this.payments));
+                }, error => {
+                    this.error = `Não foi possível obter o parcelamento (Erro: ${error.status})`;
+                    this.payments = [];
+                });
+        }
     }
 
     hasSimulation(): boolean {

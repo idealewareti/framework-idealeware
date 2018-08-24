@@ -181,8 +181,8 @@
                                         <a (click)="addFilter($event, 'category', category.id)" [attr.id]="'#collapse-header-category-' + category.id" data-parent="#collapse-categories"
                                             data-toggle="collapse" role="button" [attr.aria-expanded]="isChecked('category', category.id)"
                                             [attr.aria-controls]="'collapse-category-' + category.id">
-                                            <i class="fa fa-caret-right" aria-hidden="true"></i>
-                                            <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                            <i *ngIf="category.children.length > 0" class="fa fa-caret-right" aria-hidden="true"></i>
+                                            <i *ngIf="category.children.length > 0" class="fa fa-caret-down" aria-hidden="true"></i>
                                             {{category.name}}
                                             <small *ngIf="category.quantity > 0">({{category.quantity}})</small>
                                         </a>

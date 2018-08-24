@@ -333,7 +333,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
     /* Rating */
     getRating() {
-        if (this.productsRating) {
+        if (this.productsRating.customers) {
             let total = 0;
             this.productsRating.customers.forEach(a => {
                 total += a.note;

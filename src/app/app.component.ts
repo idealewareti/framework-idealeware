@@ -408,10 +408,12 @@ export class AppComponent implements OnInit, AfterViewInit {
      * @memberof AppComponent
      */
 	private loadPagesInstitutionals() {
-		this.institutionalManager.getAll()
-			.subscribe(response => {
-				this.institutionals = response
-			});
+		if (isPlatformBrowser(this.platformId)) {
+			this.institutionalManager.getAll()
+				.subscribe(response => {
+					this.institutionals = response
+				});
+		}
 	}
 
 	/**
@@ -420,12 +422,14 @@ export class AppComponent implements OnInit, AfterViewInit {
      * @memberof AppComponent
      */
 	private loadPayments() {
-		this.paymentManager.getAll()
-			.subscribe(payments => {
-				this.payments = payments;
-				this.addPagseguro();
-				this.addMercadoPago();
-			});
+		if (isPlatformBrowser(this.platformId)) {
+			this.paymentManager.getAll()
+				.subscribe(payments => {
+					this.payments = payments;
+					this.addPagseguro();
+					this.addMercadoPago();
+				});
+		}
 	}
 
 	/**
@@ -433,10 +437,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 	 * @memberof AppComponent
 	 */
 	private loadGoogle() {
-		this.googleManager.getAll()
-			.subscribe(google => {
-				this.injectGoogleManagerScript(google.uaCode);
-			});
+		if (isPlatformBrowser(this.platformId)) {
+			this.googleManager.getAll()
+				.subscribe(google => {
+					this.injectGoogleManagerScript(google.uaCode);
+				});
+		}
 	}
 
 	/**
@@ -445,8 +451,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 	 * @memberof AppComponent
 	 */
 	private loadFacebookUrl() {
-		let url = `https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F${AppConfig.FACEBOOK_PAGE}%2F&tabs&width=340&height=214&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=214403341930049`;
-		this.facebookSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+		if (isPlatformBrowser(this.platformId)) {
+			let url = `https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F${AppConfig.FACEBOOK_PAGE}%2F&tabs&width=340&height=214&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=214403341930049`;
+			this.facebookSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+		}
 	}
 
 	/**
@@ -472,7 +480,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 		/*Capturar mudanças na rotas para da um scroll para topo */
 		this.router.events.subscribe((evt) => {
 
-			$('.collapse').collapse('hide');
+			$('#navbar.collapse').collapse('hide');
 
 			if (evt instanceof ActivationStart) {
 				const routeName = evt.snapshot.data.name || '';
