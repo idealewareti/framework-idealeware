@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , Inject, PLATFORM_ID} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Customer } from "../../../models/customer/customer";
 import { Store } from "../../../models/store/store";
 import { Order } from "../../../models/order/order";
@@ -21,75 +22,85 @@ export class AccountHomeComponent implements OnInit {
     constructor(
         private customerManager: CustomerManager,
         private orderManager: OrderManager,
-        private storeManager: StoreManager
+        private storeManager: StoreManager,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
-        this.getStore()
-            .then(() => {
-                this.orderManager.getOrders()
-                    .subscribe(orders => {
-                        this.lastOrder = orders[0];
-                        const labels = [
-                            { id: 0, label: 'Novo Pedido' },
-                            { id: 1, label: 'Pedido Aprovado' },
-                            { id: 2, label: 'Em Transporte' },
-                            { id: 3, label: 'Pedido Concluído' },
-                            { id: 10, label: 'Pedido Faturado' },
-                            { id: 11, label: 'Pendente' },
-                            { id: 12, label: 'Pedido Cancelado' },
-                            { id: 13, label: 'Em Processamento' }
-                        ]
-                        this.lastOrder.labelStatus = labels.filter(s => s.id == this.lastOrder.status)[0].label;
-                    });
-                return this.getCustomer();
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.getStore()
+                .then(() => {
+                    this.orderManager.getOrders()
+                        .subscribe(orders => {
+                            this.lastOrder = orders[0];
+                            const labels = [
+                                { id: 0, label: 'Novo Pedido' },
+                                { id: 1, label: 'Pedido Aprovado' },
+                                { id: 2, label: 'Em Transporte' },
+                                { id: 3, label: 'Pedido Concluído' },
+                                { id: 10, label: 'Pedido Faturado' },
+                                { id: 11, label: 'Pendente' },
+                                { id: 12, label: 'Pedido Cancelado' },
+                                { id: 13, label: 'Em Processamento' }
+                            ]
+                            this.lastOrder.labelStatus = labels.filter(s => s.id == this.lastOrder.status)[0].label;
+                        });
+                    return this.getCustomer();
+                });
+        }
     }
 
     getCustomer(): Promise<Customer> {
-        return new Promise((resolve, reject) => {
-            if (this.logged) {
-                resolve(this.customer);
-            }
-            else {
-                this.customerManager.getUser()
-                    .subscribe(customer => {
-                        this.customer = customer;
-                        this.logged = true;
-                        resolve(customer)
-                    }), (error) => {
-                        this.logged = false;
-                        reject(error);
-                    };
-            }
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                if (this.logged) {
+                    resolve(this.customer);
+                }
+                else {
+                    this.customerManager.getUser()
+                        .subscribe(customer => {
+                            this.customer = customer;
+                            this.logged = true;
+                            resolve(customer)
+                        }), (error) => {
+                            this.logged = false;
+                            reject(error);
+                        };
+                }
+            });
+        }
     }
 
     isLogged() {
-        return this.logged;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.logged;
+        }
     }
 
     getStore(): Promise<Store> {
-        return new Promise((resolve, reject) => {
-            if (this.store)
-                resolve(this.store);
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                if (this.store)
+                    resolve(this.store);
 
-            this.storeManager.getStore()
-                .subscribe(store => {
-                    this.store = store;
-                    resolve(store);
-                }, error => {
-                    reject(error);
-                });
-        });
-
+                this.storeManager.getStore()
+                    .subscribe(store => {
+                        this.store = store;
+                        resolve(store);
+                    }, error => {
+                        reject(error);
+                    });
+            });
+        }
     }
 
     statusClass(order: Order): string {
-        if (order.status == OrderStatusEnum.CanceledOrder)
-            return 'status-red';
-        else if (order.status == OrderStatusEnum.PendingOrder)
-            return 'status-yellow';
-        else return 'status-green';
+        if (isPlatformBrowser(this.platformId)) {
+            if (order.status == OrderStatusEnum.CanceledOrder)
+                return 'status-red';
+            else if (order.status == OrderStatusEnum.PendingOrder)
+                return 'status-yellow';
+            else return 'status-green';
+        }
     }
 }

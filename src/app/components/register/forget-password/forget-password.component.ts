@@ -85,30 +85,38 @@ export class ForgetPasswordComponent {
 
     /* Validators */
     fieldIsBlank(field: string): boolean {
-        if (!this.formRecoverPassword.controls[field].untouched && this.formRecoverPassword.controls[field].errors)
-            if (this.formRecoverPassword.controls[field].errors['required'])
-                return true;
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.formRecoverPassword.controls[field].untouched && this.formRecoverPassword.controls[field].errors)
+                if (this.formRecoverPassword.controls[field].errors['required'])
+                    return true;
 
-        return false;
+            return false;
+        }
     }
 
     invalidEmail(field: string): boolean {
-        if (!this.formRecoverPassword.controls[field].untouched && this.formRecoverPassword.controls[field].errors)
-            if (this.formRecoverPassword.controls[field].errors['invalidEmail'])
-                return true;
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.formRecoverPassword.controls[field].untouched && this.formRecoverPassword.controls[field].errors)
+                if (this.formRecoverPassword.controls[field].errors['invalidEmail'])
+                    return true;
 
-        return false;
+            return false;
+        }
     }
 
     emailNotConfirmed(): boolean {
-        if (!this.formRecoverPassword.controls['confirmEmail'].untouched && this.formRecoverPassword.controls['confirmEmail'].errors)
-            if (this.formRecoverPassword.controls['confirmEmail'].errors['equalsTo'])
-                return true;
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.formRecoverPassword.controls['confirmEmail'].untouched && this.formRecoverPassword.controls['confirmEmail'].errors)
+                if (this.formRecoverPassword.controls['confirmEmail'].errors['equalsTo'])
+                    return true;
 
-        return false;
+            return false;
+        }
     }
 
     hasError(key: string): boolean {
-        return (this.formRecoverPassword.controls[key].touched && this.formRecoverPassword.controls[key].invalid);
+        if (isPlatformBrowser(this.platformId)) {
+            return (this.formRecoverPassword.controls[key].touched && this.formRecoverPassword.controls[key].invalid);
+        }
     }
 }

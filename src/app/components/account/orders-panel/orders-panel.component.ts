@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Order } from "../../../models/order/order";
 import { OrderStatusEnum } from "../../../enums/order-status.enum";
 import { OrderManager } from '../../../managers/order.manager';
@@ -13,38 +14,45 @@ export class OrderPanelComponent {
     orders: Order[] = [];
 
     constructor(
-        private orderManager: OrderManager) { }
+        private orderManager: OrderManager,
+        @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit() {
-        this.orderManager.getOrders()
-            .subscribe(orders => {
-                this.orders = orders;
-                this.orders.forEach((order) => {
-                    const labels = [
-                        { id: 0, label: 'Novo Pedido' },
-                        { id: 1, label: 'Pedido Aprovado' },
-                        { id: 2, label: 'Em Transporte' },
-                        { id: 3, label: 'Pedido Concluído' },
-                        { id: 10, label: 'Pedido Faturado' },
-                        { id: 11, label: 'Pendente' },
-                        { id: 12, label: 'Pedido Cancelado' },
-                        { id: 13, label: 'Em Processamento' }
-                    ]
-                    order.labelStatus = labels.filter(s => s.id == order.status)[0].label;
-                })
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.orderManager.getOrders()
+                .subscribe(orders => {
+                    this.orders = orders;
+                    this.orders.forEach((order) => {
+                        const labels = [
+                            { id: 0, label: 'Novo Pedido' },
+                            { id: 1, label: 'Pedido Aprovado' },
+                            { id: 2, label: 'Em Transporte' },
+                            { id: 3, label: 'Pedido Concluído' },
+                            { id: 10, label: 'Pedido Faturado' },
+                            { id: 11, label: 'Pendente' },
+                            { id: 12, label: 'Pedido Cancelado' },
+                            { id: 13, label: 'Em Processamento' }
+                        ]
+                        order.labelStatus = labels.filter(s => s.id == order.status)[0].label;
+                    })
+                });
+        }
     }
 
     showList() {
-        if (this.tabId) return false;
-        else return true;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.tabId) return false;
+            else return true;
+        }
     }
 
     statusClass(order: Order): string {
-        if (order.status == OrderStatusEnum.CanceledOrder)
-            return 'status-red';
-        else if (order.status == OrderStatusEnum.PendingOrder)
-            return 'status-yellow';
-        else return 'status-green';
+        if (isPlatformBrowser(this.platformId)) {
+            if (order.status == OrderStatusEnum.CanceledOrder)
+                return 'status-red';
+            else if (order.status == OrderStatusEnum.PendingOrder)
+                return 'status-yellow';
+            else return 'status-green';
+        }
     }
 }

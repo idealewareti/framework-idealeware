@@ -27,39 +27,47 @@ export class CompareComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.route.params
-            .subscribe(params => {
-                this.storeManager.getStore()
-                    .subscribe(store => {
-                        this.store = store;
-                        let productsId: ModelReference[] = params['compare'].toString().split(',').map(p => p = { 'id': p });
-                        let title: string = 'Comparando Produtos:';
-                        if (productsId.length > 0) {
-                            productsId.forEach(p => {
-                                this.productManager.getProductBySku(p.id)
-                                    .subscribe(product => {
-                                        this.products.push(product);
-                                        title += ` ${product.name}`;
-                                    }, error => {
-                                        if (isPlatformBrowser(this.platformId)) {
-                                            swal('Erro ao comparar', 'Não foi possível comparar os produtos.', 'error');
-                                        }
-                                    });
-                            });
-                        }
-                    });
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.route.params
+                .subscribe(params => {
+                    this.storeManager.getStore()
+                        .subscribe(store => {
+                            this.store = store;
+                            let productsId: ModelReference[] = params['compare'].toString().split(',').map(p => p = { 'id': p });
+                            let title: string = 'Comparando Produtos:';
+                            if (productsId.length > 0) {
+                                productsId.forEach(p => {
+                                    this.productManager.getProductBySku(p.id)
+                                        .subscribe(product => {
+                                            this.products.push(product);
+                                            title += ` ${product.name}`;
+                                        }, error => {
+                                            if (isPlatformBrowser(this.platformId)) {
+                                                swal('Erro ao comparar', 'Não foi possível comparar os produtos.', 'error');
+                                            }
+                                        });
+                                });
+                            }
+                        });
+                });
+        }
     }
 
     getStore(): Store {
-        return this.store;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.store;
+        }
     }
 
     getProductUrl(product: Product): string {
-        return `/${AppCore.getNiceName(product.name)}-${product.skuBase.id}`;
+        if (isPlatformBrowser(this.platformId)) {
+            return `/${AppCore.getNiceName(product.name)}-${product.skuBase.id}`;
+        }
     }
 
     getCoverImage(product: Product): string {
-        return `${this.store.link}${this.productManager.getCoverImage(product)}`;
+        if (isPlatformBrowser(this.platformId)) {
+            return `${this.store.link}${this.productManager.getCoverImage(product)}`;
+        }
     }
 }

@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, Inject, PLATFORM_ID } from '@angular/core';
 import { Category } from '../../../models/category/category';
 import { AppCore } from '../../../app.core';
+import { isPlatformBrowser } from '@angular/common';
 import { CategoryManager } from '../../../managers/category.manager';
 
 @Component({
@@ -16,33 +17,40 @@ export class BreadcrumpComponent implements OnChanges {
 
     constructor(
         private categoryManager: CategoryManager,
+        @Inject(PLATFORM_ID) private platformId: Object,
     ) { }
 
     ngOnChanges() {
-        this.crumps = [];
-        this.categorys.forEach((category) => {
-            if (category && category.id) {
-                this.crumps.push(category);
-                if (category['parentCategoryId'] && !AppCore.isGuidEmpty(category.parentCategoryId)) {
-                    this.getParent(category.parentCategoryId);
+        if (isPlatformBrowser(this.platformId)) {
+            this.crumps = [];
+            this.categorys.forEach((category) => {
+                if (category && category.id) {
+                    this.crumps.push(category);
+                    if (category['parentCategoryId'] && !AppCore.isGuidEmpty(category.parentCategoryId)) {
+                        this.getParent(category.parentCategoryId);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     getParent(parentCategoryId: string) {
-        this.categoryManager.getCategory(parentCategoryId)
-            .subscribe(category => {
-                this.crumps.push(category);
-                if (category.parentCategoryId && !AppCore.isGuidEmpty(category.parentCategoryId))
-                    this.getParent(category.parentCategoryId);
-                else {
-                    this.crumps = this.crumps.reverse();
-                }
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.categoryManager.getCategory(parentCategoryId)
+                .subscribe(category => {
+                    this.crumps.push(category);
+                    if (category.parentCategoryId && !AppCore.isGuidEmpty(category.parentCategoryId))
+                        this.getParent(category.parentCategoryId);
+                    else {
+                        this.crumps = this.crumps.reverse();
+                    }
+                });
+        }
     }
 
     getRouteCategory(crump: Category) {
-        return `${AppCore.getNiceName(crump.name)}-${crump.id}`;
+        if (isPlatformBrowser(this.platformId)) {
+            return `${AppCore.getNiceName(crump.name)}-${crump.id}`;
+        }
     }
 }

@@ -48,10 +48,12 @@ export class ServiceComponent {
 
 
     private getServiceId() {
-        if (this.product != null && this.product.services != null) {
-            this.product.services.forEach(service => {
-                this.servicesIds.push(service);
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.product != null && this.product.services != null) {
+                this.product.services.forEach(service => {
+                    this.servicesIds.push(service);
+                });
+            }
         }
     }
 
@@ -88,27 +90,32 @@ export class ServiceComponent {
     }
 
     deleteService(serviceId: string, event) {
-        event.preventDefault();
-        let serviceSelected = this.services.filter(s => s.id == serviceId)[0];
-        serviceSelected.quantity = 0;
-        this.serviceUpdated.emit(serviceSelected);
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            let serviceSelected = this.services.filter(s => s.id == serviceId)[0];
+            serviceSelected.quantity = 0;
+            this.serviceUpdated.emit(serviceSelected);
+        }
     }
 
     changeTotalService(id: string): number {
-        let quantity = this.services.filter(s => s.id == id)[0].quantity;
-        let price = this.services.filter(s => s.id == id)[0].price;
+        if (isPlatformBrowser(this.platformId)) {
+            let quantity = this.services.filter(s => s.id == id)[0].quantity;
+            let price = this.services.filter(s => s.id == id)[0].price;
 
-        if (quantity == 0)
-            quantity = 1;
+            if (quantity == 0)
+                quantity = 1;
 
-        return (quantity * price);
-
+            return (quantity * price);
+        }
     }
 
     isServiceSelected(service: Service): boolean {
-        if (this.selectedServices.findIndex(s => s.id == service.id) > -1)
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.selectedServices.findIndex(s => s.id == service.id) > -1)
+                return true;
+            else return false;
+        }
     }
 
 

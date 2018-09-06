@@ -28,8 +28,8 @@ export class NewsLetterComponent {
     }
 
     signupNewsLetter(event) {
-        event.preventDefault();
         if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
             if (this.newsletterForm.invalid) {
                 for (let i in this.newsletterForm.controls) {
                     (<any>this.newsletterForm.controls[i])._touched = true;
@@ -57,7 +57,9 @@ export class NewsLetterComponent {
     }
 
     hasError(key: string): boolean {
-        let error: boolean = (this.newsletterForm.controls[key].touched && this.newsletterForm.controls[key].invalid);
-        return error;
+        if (isPlatformBrowser(this.platformId)) {
+            let error: boolean = (this.newsletterForm.controls[key].touched && this.newsletterForm.controls[key].invalid);
+            return error;
+        }
     }
 }

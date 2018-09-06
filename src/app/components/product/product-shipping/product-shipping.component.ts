@@ -103,11 +103,13 @@ export class ProductShipping {
      * @memberof CheckoutShippingComponent
      */
     getBranches(zipcode: string) {
-        zipcode = zipcode.replace('-', '');
-        this.branchService.getBranches(zipcode)
-            .subscribe(branches => {
-                this.branches = branches;
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            zipcode = zipcode.replace('-', '');
+            this.branchService.getBranches(zipcode)
+                .subscribe(branches => {
+                    this.branches = branches;
+                });
+        }
     }
 
     calculate(event) {
@@ -147,8 +149,10 @@ export class ProductShipping {
     }
 
     validPromotionalPrice() {
-        return this.product.skuBase.promotionalPrice > 0
-            ? this.product.skuBase.promotionalPrice
-            : this.product.skuBase.price;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.product.skuBase.promotionalPrice > 0
+                ? this.product.skuBase.promotionalPrice
+                : this.product.skuBase.price;
+        }
     }
 }

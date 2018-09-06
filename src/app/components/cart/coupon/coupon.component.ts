@@ -29,39 +29,45 @@ export class CouponComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.formCoupon = this.formBuilder.group({
-            code: [
-                '',
-                [
-                    Validators.required,
-                    Validators.minLength(1)
+        if (isPlatformBrowser(this.platformId)) {
+            this.formCoupon = this.formBuilder.group({
+                code: [
+                    '',
+                    [
+                        Validators.required,
+                        Validators.minLength(1)
+                    ]
                 ]
-            ]
-        });
+            });
+        }
     }
 
     applyDiscount() {
-        const code = this.formCoupon.get('code').value;
-        this.couponManager.getCouponDiscount(this.cartManager.getCartId(), code)
-            .subscribe(cart => {
-                swal('Cupom', 'Cupom adicionado com sucesso.', 'success');   
-                this.cartManager.updateCartFromEmitter(cart);           
-                this.formCoupon.reset();
-                this.cartUpdated.emit(cart);
-            }, err => {
-                swal('Problemas ao adicionar cupom.', err.error, 'error', 'OK');
-            })
+        if (isPlatformBrowser(this.platformId)) {
+            const code = this.formCoupon.get('code').value;
+            this.couponManager.getCouponDiscount(this.cartManager.getCartId(), code)
+                .subscribe(cart => {
+                    swal('Cupom', 'Cupom adicionado com sucesso.', 'success');
+                    this.cartManager.updateCartFromEmitter(cart);
+                    this.formCoupon.reset();
+                    this.cartUpdated.emit(cart);
+                }, err => {
+                    swal('Problemas ao adicionar cupom.', err.error, 'error', 'OK');
+                })
+        }
     }
 
     removeDiscount(couponId: string) {
-        this.couponManager.deleteCouponDiscount(this.cartManager.getCartId(), couponId)
-            .subscribe(cart => {
-                swal('Cupom', 'Cupom removido com sucesso.', 'success');
-                this.cartManager.updateCartFromEmitter(cart);
-                this.cartUpdated.emit(cart);
-            }, err => {
-                swal('Problemas ao remover cupom', err.error, 'error', 'OK');
-            })
+        if (isPlatformBrowser(this.platformId)) {
+            this.couponManager.deleteCouponDiscount(this.cartManager.getCartId(), couponId)
+                .subscribe(cart => {
+                    swal('Cupom', 'Cupom removido com sucesso.', 'success');
+                    this.cartManager.updateCartFromEmitter(cart);
+                    this.cartUpdated.emit(cart);
+                }, err => {
+                    swal('Problemas ao remover cupom', err.error, 'error', 'OK');
+                })
+        }
     }
 
     public isMobile(): boolean {

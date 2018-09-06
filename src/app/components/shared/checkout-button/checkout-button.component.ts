@@ -38,20 +38,24 @@ export class CheckoutButtonComponent implements AfterViewChecked {
     }
 
     checkout(event) {
-        event.preventDefault();
-        if (this.store.modality == 1)
-            this.router.navigateByUrl('/checkout');
-        else if (this.store.modality == 0)
-            this.router.navigate(['checkout', 'orcamento']);
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            if (this.store.modality == 1)
+                this.router.navigateByUrl('/checkout');
+            else if (this.store.modality == 0)
+                this.router.navigate(['checkout', 'orcamento']);
+        }
     }
 
     getNumItemsInCart(): number {
-        if (this.cart) {
-            let numItems = 0;
-            numItems += (this.cart.products) ? this.cart.products.length : 0;
-            numItems += (this.cart.services) ? this.cart.services.length : 0;
-            return numItems;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.cart) {
+                let numItems = 0;
+                numItems += (this.cart.products) ? this.cart.products.length : 0;
+                numItems += (this.cart.services) ? this.cart.services.length : 0;
+                return numItems;
+            }
+            else return 0;
         }
-        else return 0;
     }
 }

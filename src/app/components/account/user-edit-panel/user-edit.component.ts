@@ -45,43 +45,57 @@ export class UserEditComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.manager.getUser()
-            .subscribe(user => {
-                this.customer = user;
-                this.birthdate = this.dateToText(this.customer.birthdate);
-            }), (error => {
-                swal('Erro', 'Falha ao carregar o usuário', 'error');
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.manager.getUser()
+                .subscribe(user => {
+                    this.customer = user;
+                    this.birthdate = this.dateToText(this.customer.birthdate);
+                }), (error => {
+                    swal('Erro', 'Falha ao carregar o usuário', 'error');
+                });
+        }
     }
 
     dateToText(date) {
-        return new Date(date).toISOString().substring(0, 10);
+        if (isPlatformBrowser(this.platformId)) {
+            return new Date(date).toISOString().substring(0, 10);
+        }
     }
 
     textToDate(event) {
-        this.customer.birthdate = new Date(this.birthdate.split('-').map((item, index) => Number(item) - index % 2).toString());
+        if (isPlatformBrowser(this.platformId)) {
+            this.customer.birthdate = new Date(this.birthdate.split('-').map((item, index) => Number(item) - index % 2).toString());
+        }
     }
 
     validCPF(): boolean {
-        return Validations.validCPF(this.customer.cpf_Cnpj);
+        if (isPlatformBrowser(this.platformId)) {
+            return Validations.validCPF(this.customer.cpf_Cnpj);
+        }
     }
     validCNPJ(): boolean {
-        return Validations.validCNPJ(this.customer.cpf_Cnpj);
+        if (isPlatformBrowser(this.platformId)) {
+            return Validations.validCNPJ(this.customer.cpf_Cnpj);
+        }
     }
 
     strongPassword(): boolean {
-        if (this.customer.password)
-            return Validations.strongPassword(this.customer.password);
-        else return true;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.customer.password)
+                return Validations.strongPassword(this.customer.password);
+            else return true;
+        }
     }
 
     hasError(key: string): boolean {
-        return (this.userEditForm.controls[key].touched && this.userEditForm.controls[key].invalid);
+        if (isPlatformBrowser(this.platformId)) {
+            return (this.userEditForm.controls[key].touched && this.userEditForm.controls[key].invalid);
+        }
     }
 
     updateAccount(event) {
-        event.preventDefault();
         if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
             if (this.userEditForm.invalid) {
                 swal('Erro ao atualizar o cadastro', 'Os campos obrigatórios não foram preenchidos', 'warning');
             }

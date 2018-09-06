@@ -29,22 +29,28 @@ export class LoginEmbedComponent implements OnInit, OnChanges {
     ngOnInit() { }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['openModal'].currentValue) {
-            this.open();
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes['openModal'].currentValue) {
+                this.open();
+            }
         }
     }
 
     open() {
-        this.modalIsOpened.emit(false);
-        $('#login').fadeIn(function () {
-            $(document).on('click', '#login .mask, #login .btn-close-clickview', function () {
-                $('#login').fadeOut();
+        if (isPlatformBrowser(this.platformId)) {
+            this.modalIsOpened.emit(false);
+            $('#login').fadeIn(function () {
+                $(document).on('click', '#login .mask, #login .btn-close-clickview', function () {
+                    $('#login').fadeOut();
+                });
             });
-        });
+        }
     }
 
     close() {
-        $('#login').fadeOut();
+        if (isPlatformBrowser(this.platformId)) {
+            $('#login').fadeOut();
+        }
     }
 
     submitLogin(event) {
@@ -66,11 +72,13 @@ export class LoginEmbedComponent implements OnInit, OnChanges {
     }
 
     signIn(login: Login): Promise<Customer> {
-        return new Promise((resolve, reject) => {
-            this.manager.signIn(login)
-                .subscribe((customer) => {
-                    resolve(customer);
-                }, err => reject(err))
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                this.manager.signIn(login)
+                    .subscribe((customer) => {
+                        resolve(customer);
+                    }, err => reject(err))
+            });
+        }
     }
 }

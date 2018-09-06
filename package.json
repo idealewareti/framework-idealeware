@@ -15,7 +15,7 @@
     "compodoc": "compodoc -p tsconfig.json",
     "build:client-and-server-bundles": "ng build --prod --build-optimizer && ng run default:server:production",
     "build:prerender": "npm run build:client-and-server-bundles && npm run webpack:server && npm run generate:prerender",
-    "build:ssr": "npm run gulp clean && npm run build:client-and-server-bundles && npm run webpack:server && npm run gulp images",
+    "build:ssr": "npm run gulp clean && npm run build:client-and-server-bundles && npm run webpack:server && npm run gulp images && npm run gulp copy-google-ownership",
     "generate:prerender": "cd dist && node prerender",
     "webpack:server": "webpack --config webpack.server.config.js --progress --colors",
     "serve:prerender": "cd dist/browser && http-server",

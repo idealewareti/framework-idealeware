@@ -114,7 +114,7 @@
                         <input type="number" min="1" step="1" [ngModel]="item.quantity" (ngModelChange)="updateItem($event, item)">
                     </span>
                     <div *ngIf="isStorePackageActive() && item.isPackage" class="form-group" style="margin-top: 10%">
-                        <input attr.id="package-{{item.id}}" type="checkbox">
+                        <input attr.id="package-{{item.id}}" type="checkbox" [checked]="item.isPackageProduct" (click)="updateIsPackageItem($event.target.checked, item)">
                         <span attr.for="package-{{item.id}}">Para Presente?</span>
                     </div>
                 </span>

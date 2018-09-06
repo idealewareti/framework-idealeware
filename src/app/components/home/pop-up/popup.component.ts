@@ -24,23 +24,31 @@ export class PopUpComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.loadPopUp();
+        if (isPlatformBrowser(this.platformId)) {
+            this.loadPopUp();
+        }
     }
 
     getPopUpPicture(): string {
-        return `${this.store.link}/static/popups/${this.popUpAssortment.picture}`;
+        if (isPlatformBrowser(this.platformId)) {
+            return `${this.store.link}/static/popups/${this.popUpAssortment.picture}`;
+        }
     }
 
     loadPopUp() {
-        this.manager.getPopUp()
-            .subscribe(response => {
-                this.initData(response);
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.manager.getPopUp()
+                .subscribe(response => {
+                    this.initData(response);
+                });
+        }
     }
 
     ngAfterViewChecked() {
-        if (!this.popupEnabled) {
-            this.showPopupModal();
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.popupEnabled) {
+                this.showPopupModal();
+            }
         }
     }
 
@@ -62,11 +70,13 @@ export class PopUpComponent implements OnInit {
     }
 
     private initData(data: PopUp): void {
-        if (data && data.id) {
-            this.popUpAssortment = data;
-        }
-        else {
-            this.popUpAssortment = null;
+        if (isPlatformBrowser(this.platformId)) {
+            if (data && data.id) {
+                this.popUpAssortment = data;
+            }
+            else {
+                this.popUpAssortment = null;
+            }
         }
     }
 }

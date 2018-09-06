@@ -1,4 +1,5 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from "@angular/router";
 
 import { Order } from "../../../models/order/order";
@@ -20,51 +21,57 @@ export class CheckoutFinishComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.order = this.activatedRoute.snapshot.data.order;
+        if (isPlatformBrowser(this.platformId)) {
+            this.order = this.activatedRoute.snapshot.data.order;
 
-        var products = [];
+            var products = [];
 
-        this.order.products.forEach((product) => {
-            products.push(
-                {
-                    'name': product.name,
-                    'id': product.sku.code,
-                    'price': product.totalUnitPrice,
-                    'variant': product.sku.variations.map(v => v.option.name).join(", "),
-                    'quantity': product.quantity
+            this.order.products.forEach((product) => {
+                products.push(
+                    {
+                        'name': product.name,
+                        'id': product.sku.code,
+                        'price': product.totalUnitPrice,
+                        'variant': product.sku.variations.map(v => v.option.name).join(", "),
+                        'quantity': product.quantity
+                    }
+                );
+            });
+
+            dataLayer.push({
+                'ecommerce': {
+                    'currencyCode': 'BRL',
+                    'purchase': {
+                        'actionField': {
+                            'id': this.order.orderNumber,
+                            'affiliation': this.order.domain,
+                            'revenue': this.order.orderPrice,
+                            'shipping': this.order.totalFreightPrice,
+                            'coupon': this.order.coupons.map(c => c.name).join(", ")
+                        },
+                        'products': products
+                    }
                 }
-            );
-        });
-
-        dataLayer.push({
-            'ecommerce': {
-                'currencyCode': 'BRL',
-                'purchase': {
-                    'actionField': {
-                        'id': this.order.orderNumber,
-                        'affiliation': this.order.domain,
-                        'revenue': this.order.orderPrice,
-                        'shipping': this.order.totalFreightPrice,
-                        'coupon': this.order.coupons.map(c => c.name).join(", ")
-                    },
-                    'products': products
-                }
-            }
-        });
+            });
+        }
 
     }
 
     isBankSlip(): boolean {
-        let check = false;
-        this.order.payment.paymentMethods.forEach(m => {
-            if (m.type == 2)
-                check = true;
-        });
-        return check;
+        if (isPlatformBrowser(this.platformId)) {
+            let check = false;
+            this.order.payment.paymentMethods.forEach(m => {
+                if (m.type == 2)
+                    check = true;
+            });
+            return check;
+        }
     }
 
     getBankSlipUrl(): string {
-        let url = this.order.payment.paymentMethods.filter(m => m.type == 2)[0].bankSlipUrl;
-        return url;
+        if (isPlatformBrowser(this.platformId)) {
+            let url = this.order.payment.paymentMethods.filter(m => m.type == 2)[0].bankSlipUrl;
+            return url;
+        }
     }
 }

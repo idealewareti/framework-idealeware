@@ -34,26 +34,30 @@ export class CartManager {
      * @memberof CartManager
      */
     getCart(): Observable<Cart> {
-        return this.cartSubject.asObservable();
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cartSubject.asObservable();
+        }
     }
 
     /**
      * Pré carga do cart para que todos lugares que utilizam o cart comece a escutar o cart carregado.
      */
     loadCart(): Observable<Cart> {
-        const cartId = this.getCartId();
-        if (cartId)
-            return this.service.getCart(cartId)
-                .pipe(tap(cart => {
-                    this.nextSubject(cart);
-                    this.cart = cart;
-                }));
-        else
-            return this.service.getCart(AppCore.createGuid())
-                .pipe(tap(cart => {
-                    this.nextSubject(cart);
-                    this.cart = cart;
-                }));
+        if (isPlatformBrowser(this.platformId)) {
+            const cartId = this.getCartId();
+            if (cartId)
+                return this.service.getCart(cartId)
+                    .pipe(tap(cart => {
+                        this.nextSubject(cart);
+                        this.cart = cart;
+                    }));
+            else
+                return this.service.getCart(AppCore.createGuid())
+                    .pipe(tap(cart => {
+                        this.nextSubject(cart);
+                        this.cart = cart;
+                    }));
+        }
     }
 
     /**
@@ -113,8 +117,10 @@ export class CartManager {
      * @param cart 
      */
     nextSubject(cart: Cart) {
-        this.cartSubject.next(cart);
-        this.setCartId(cart.id);
+        if (isPlatformBrowser(this.platformId)) {
+            this.cartSubject.next(cart);
+            this.setCartId(cart.id);
+        }
     }
 
     /**
@@ -122,7 +128,9 @@ export class CartManager {
      * @param {Cart} cart Novo cart
      */
     updateCartFromEmitter(cart: Cart) {
-        this.nextSubject(cart);
+        if (isPlatformBrowser(this.platformId)) {
+            this.nextSubject(cart);
+        }
     }
 
     /**
@@ -138,33 +146,35 @@ export class CartManager {
      * @memberof CartManager
      */
     purchase(product: Product, sku: Sku, quantity: number, feature: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
 
-        dataLayer.push({
-            'event': 'addToCart',
-            'ecommerce': {
-                'currencyCode': 'BRL',
-                'add': {
-                    'products': [{
-                        'name': product.name,
-                        'id': sku.code,
-                        'price': sku.price,
-                        'variant': sku.variations.map(v => v.option.name).join(", "),
-                    }]
+            dataLayer.push({
+                'event': 'addToCart',
+                'ecommerce': {
+                    'currencyCode': 'BRL',
+                    'add': {
+                        'products': [{
+                            'name': product.name,
+                            'id': sku.code,
+                            'price': sku.price,
+                            'variant': sku.variations.map(v => v.option.name).join(", "),
+                        }]
+                    }
                 }
-            }
-        });
+            });
 
-        if (this.cart)
-            return this.addItem(this.cart.id, sku.id, quantity, feature)
-                .pipe(tap(cart => this.nextSubject(cart)))
-        else {
-            this.cart = new Cart();
-            let cartItem = new CartItem().createFromProduct(product, sku, feature, quantity);
-            this.cart.products.push(cartItem);
-            return this.createCart(this.cart).pipe(tap(cart => {
-                this.cart = cart;
-                this.nextSubject(cart);
-            }));
+            if (this.cart)
+                return this.addItem(this.cart.id, sku.id, quantity, feature)
+                    .pipe(tap(cart => this.nextSubject(cart)))
+            else {
+                this.cart = new Cart();
+                let cartItem = new CartItem().createFromProduct(product, sku, feature, quantity);
+                this.cart.products.push(cartItem);
+                return this.createCart(this.cart).pipe(tap(cart => {
+                    this.cart = cart;
+                    this.nextSubject(cart);
+                }));
+            }
         }
     }
 
@@ -179,13 +189,15 @@ export class CartManager {
      * @memberof CartManager
      */
     addItem(cartId: string, skuId: string, quantity: number, feature: string): Observable<Cart> {
-        let item = {
-            "skuId": skuId,
-            "quantity": quantity,
-            "feature": feature
-        };
-        return this.service.sendToCart(item, cartId)
-            .pipe(tap(cart => this.nextSubject(cart)));
+        if (isPlatformBrowser(this.platformId)) {
+            let item = {
+                "skuId": skuId,
+                "quantity": quantity,
+                "feature": feature
+            };
+            return this.service.sendToCart(item, cartId)
+                .pipe(tap(cart => this.nextSubject(cart)));
+        }
     }
 
     /**
@@ -198,12 +210,14 @@ export class CartManager {
      * @memberof CartManager
      */
     addService(serviceId: string, quantity: number, cartId: string): Observable<Cart> {
-        let item = {
-            "serviceId": serviceId,
-            "quantity": quantity
-        };
-        return this.service.sendServiceToCart(item, cartId)
-            .pipe(tap(cart => this.nextSubject(cart)));
+        if (isPlatformBrowser(this.platformId)) {
+            let item = {
+                "serviceId": serviceId,
+                "quantity": quantity
+            };
+            return this.service.sendServiceToCart(item, cartId)
+                .pipe(tap(cart => this.nextSubject(cart)));
+        }
     }
 
     /**
@@ -214,6 +228,7 @@ export class CartManager {
      * @memberof CartManager
      */
     private createCart(cart: Cart): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         let session_id: string = this.getSessionId();
         let zipCode: number = this.getZipcode();
         let origin = this.getOrigin();
@@ -222,6 +237,7 @@ export class CartManager {
                 this.cart = cart;
                 this.nextSubject(cart);
             }));
+        }
     }
 
     /**
@@ -233,8 +249,10 @@ export class CartManager {
      * @memberof CartManager
      */
     updateItem(item: CartItem, cartId: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         return this.service.updateItem(item, cartId)
             .pipe(tap(cart => this.nextSubject(cart)));
+        }
     }
 
     /**
@@ -246,8 +264,10 @@ export class CartManager {
      * @memberof CartManager
      */
     updateIsPackageItem(item: CartItem, cartId: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         return this.service.updateIsPackageItem(item, cartId)
             .pipe(tap(cart => this.nextSubject(cart)));
+        }
     }
 
     /**
@@ -259,8 +279,10 @@ export class CartManager {
      * @memberof CartManager
      */
     updateItemService(item: Service, cartId: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         return this.service.updateItemService(item, cartId)
             .pipe(tap(cart => this.nextSubject(cart)));
+        }
     }
 
     /**
@@ -272,6 +294,7 @@ export class CartManager {
      * @memberof CartManager
      */
     deleteItem(item: CartItem, cartId: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
 
         dataLayer.push({
             'event': 'removeFromCart',
@@ -291,6 +314,7 @@ export class CartManager {
         return this.service.deleteItem(item, cartId)
             .pipe(tap(cart => this.nextSubject(cart)))
     }
+    }
 
     /**
      * Remove um serviço do carrinho
@@ -301,8 +325,10 @@ export class CartManager {
      * @memberof CartManager
      */
     deleteService(serviceId: string, cartId: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         return this.service.deleteService(serviceId, cartId)
             .pipe(tap(cart => this.nextSubject(cart)))
+        }
 
     }
 
@@ -310,8 +336,10 @@ export class CartManager {
      * Remove o carrinho
      */
     removeCart() {
+        if (isPlatformBrowser(this.platformId)) {
         localStorage.removeItem('cart_id');
         this.nextSubject(new Cart());
+        }
     }
 
     /**
@@ -323,8 +351,10 @@ export class CartManager {
      * @memberof CartManager
      */
     setShipping(shipping: Shipping, cartId: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         return this.service.setShipping(shipping, cartId)
             .pipe(tap(cart => this.nextSubject(cart)))
+        }
     }
 
     /**
@@ -335,8 +365,10 @@ export class CartManager {
      * @memberof CartManager
      */
     setCustomerToCart(): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         return this.service.setCustomerToCart(this.getCartId())
             .pipe(tap(cart => this.setCartId(cart.id)));
+        }
     }
 
 
@@ -349,8 +381,10 @@ export class CartManager {
      * @memberof CartManager
      */
     addDeliveryAddress(cartId: string, addressId: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         return this.service.addDeliveryAddress(cartId, addressId)
             .pipe(tap(cart => this.nextSubject(cart)));
+        }
     }
 
     /**
@@ -362,8 +396,10 @@ export class CartManager {
      * @memberof CartManager
      */
     addBillingAddress(cartId: string, addressId: string): Observable<Cart> {
+        if (isPlatformBrowser(this.platformId)) {
         return this.service.addBillingAddress(cartId, addressId)
             .pipe(tap(cart => this.nextSubject(cart)));
+        }
     }
 
     isMobile(): boolean {
@@ -374,12 +410,16 @@ export class CartManager {
     }
 
     getOrigin(): string {
+        if (isPlatformBrowser(this.platformId)) {
         if (this.isMobile())
             return "mobile";
         return "desktop";
+        }
     }
 
     haveCart() {
+        if (isPlatformBrowser(this.platformId)) {
         return this.cart ? true : false;
+        }
     }
 }

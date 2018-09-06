@@ -262,6 +262,11 @@
                     <installment-simulation *ngIf="!isCatalog()" [sku]="sku"></installment-simulation>
                 </div>
 
+                <div class="col-sm-12">
+                    <hr>
+                    <product-shipping [store]="store" [product]="product" [quantity]="quantity"></product-shipping>
+                </div>
+
                 <div class="product-unavaliable" *ngIf="!isProductAvailable()">
                     <b>Produto temporariamente indisponível</b>
 

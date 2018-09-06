@@ -32,59 +32,73 @@ export class BudgetComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.getStore();
-        this.getCustomer();
-        this.getCart();
+        if (isPlatformBrowser(this.platformId)) {
+            this.getStore();
+            this.getCustomer();
+            this.getCart();
+        }
     }
 
     private getCart() {
-        this.cart = this.activatedRoute.snapshot.data.cart;
+        if (isPlatformBrowser(this.platformId)) {
+            this.cart = this.activatedRoute.snapshot.data.cart;
+        }
     }
 
     private getStore() {
-        this.store = this.activatedRoute.snapshot.data.store;
-        this.mediaPath = `${this.store.link}/static/products/`;
+        if (isPlatformBrowser(this.platformId)) {
+            this.store = this.activatedRoute.snapshot.data.store;
+            this.mediaPath = `${this.store.link}/static/products/`;
+        }
     }
 
     private getCustomer() {
-        this.customer = this.activatedRoute.snapshot.data.customer;
-        this.cartManager.setCustomerToCart()
-            .subscribe(cart => {
-                this.cart = cart;
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.customer = this.activatedRoute.snapshot.data.customer;
+            this.cartManager.setCustomerToCart()
+                .subscribe(cart => {
+                    this.cart = cart;
+                });
+        }
     }
 
     placeOrder(event) {
-        event.preventDefault();
-        $('.btn-checkout').button('loading');
-        this.budgetManager.createBudget()
-            .subscribe(budget => {
-                this.cartManager.removeCart();
-                this.router.navigate(['checkout', 'orcamento', 'concluido', budget.numberBudget])
-            }, err => {
-                $('.btn-checkout').button('reset');
-                swal({
-                    title: 'Erro ao criar o orçamento',
-                    text: err.error,
-                    type: 'error',
-                    confirmButtonText: 'OK'
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            $('.btn-checkout').button('loading');
+            this.budgetManager.createBudget()
+                .subscribe(budget => {
+                    this.cartManager.removeCart();
+                    this.router.navigate(['checkout', 'orcamento', 'concluido', budget.numberBudget])
+                }, err => {
+                    $('.btn-checkout').button('reset');
+                    swal({
+                        title: 'Erro ao criar o orçamento',
+                        text: err.error,
+                        type: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 });
-            });
+        }
     }
 
     isCartEmpty(cart: Cart): boolean {
-        let empty = true;
+        if (isPlatformBrowser(this.platformId)) {
+            let empty = true;
 
-        if (cart.products && this.cart.products.length == 0)
-            empty = false;
-            
-        return empty;
+            if (cart.products && this.cart.products.length == 0)
+                empty = false;
+
+            return empty;
+        }
     }
 
 
     hasPicture(sku: Sku): boolean {
-        if (sku.picture['thumbnail'])
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (sku.picture['thumbnail'])
+                return true;
+            else return false;
+        }
     }
 }

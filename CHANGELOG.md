@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.0.1
+-  Definições de responsabilidades - Server And Browser 
+
 ## 4.0.0
 -  Reformulado estrutura da loja.
 -  Atualização da versão do Angular.

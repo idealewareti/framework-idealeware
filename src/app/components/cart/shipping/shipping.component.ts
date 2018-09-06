@@ -49,56 +49,62 @@ export class ShippingCalcComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.getStore();
-        this.formShipping = this.formBuilder.group({
-            zipCode: [
-                '',
-                [
-                    Validators.required,
-                    Validators.minLength(9)
+        if (isPlatformBrowser(this.platformId)) {
+            this.getStore();
+            this.formShipping = this.formBuilder.group({
+                zipCode: [
+                    '',
+                    [
+                        Validators.required,
+                        Validators.minLength(9)
+                    ]
                 ]
-            ]
-        });
+            });
+        }
     }
 
     /**
      * Selecionar loja acessada
      */
     getStore(): void {
-        this.storeManager.getStore()
-            .subscribe(store => this.store = store);
+        if (isPlatformBrowser(this.platformId)) {
+            this.storeManager.getStore()
+                .subscribe(store => this.store = store);
+        }
     }
 
     /**
      * Listar fretes disponiveis quando o usuário clicar no button
      */
     calculate() {
-        this.loading = true;
-        const zipCode = this.formShipping.get('zipCode').value;
-        this.intelipostManager.getShipping(
-            new IntelipostRequest(
-                localStorage.getItem('session_id'),
-                AppConfig.NAME,
-                this.store.link,
-                zipCode.toString()),
-            this.cartManager.getCartId())
-            .subscribe(intelipost => {
-                this.intelipost = intelipost;
-                this.deliveryOptions = intelipost.content.delivery_options;
-                this.loading = false;
-            }, err => {
-                if (err.status == 400)
-                    swal({
-                        title: 'Erro ao calcular o frete!',
-                        text: "Sem opções de entrega viável. Por favor, verifique se os códigos postais estão corretos!",
-                        type: 'warning',
-                        confirmButtonText: 'OK'
-                    });
-                else
-                    swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
-                this.loading = false;
-            });
-        this.getBranches(zipCode);
+        if (isPlatformBrowser(this.platformId)) {
+            this.loading = true;
+            const zipCode = this.formShipping.get('zipCode').value;
+            this.intelipostManager.getShipping(
+                new IntelipostRequest(
+                    localStorage.getItem('session_id'),
+                    AppConfig.NAME,
+                    this.store.link,
+                    zipCode.toString()),
+                this.cartManager.getCartId())
+                .subscribe(intelipost => {
+                    this.intelipost = intelipost;
+                    this.deliveryOptions = intelipost.content.delivery_options;
+                    this.loading = false;
+                }, err => {
+                    if (err.status == 400)
+                        swal({
+                            title: 'Erro ao calcular o frete!',
+                            text: "Sem opções de entrega viável. Por favor, verifique se os códigos postais estão corretos!",
+                            type: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                    else
+                        swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
+                    this.loading = false;
+                });
+            this.getBranches(zipCode);
+        }
     }
 
     /**
@@ -108,11 +114,13 @@ export class ShippingCalcComponent implements OnInit {
      * @memberof CheckoutShippingComponent
      */
     getBranches(zipcode: string) {
-        zipcode = zipcode.replace('-', '');
-        this.branchManager.getBranches(zipcode)
-            .subscribe(branches => {
-                this.branches = branches;
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            zipcode = zipcode.replace('-', '');
+            this.branchManager.getBranches(zipcode)
+                .subscribe(branches => {
+                    this.branches = branches;
+                });
+        }
     }
 
     /**
@@ -120,20 +128,22 @@ export class ShippingCalcComponent implements OnInit {
      * @param intelipostOption 
      */
     addShippingIntelipostToCart(intelipostOption: IntelipostDeliveryOption) {
-        let shipping = new Shipping();
-        let delivery = new DeliveryInformation();
+        if (isPlatformBrowser(this.platformId)) {
+            let shipping = new Shipping();
+            let delivery = new DeliveryInformation();
 
-        delivery.quotId = this.intelipost.content.id.toString();
-        delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
-        delivery.shippingCost = intelipostOption.final_shipping_cost;
-        delivery.deliveryMethodName = intelipostOption.delivery_method_name;
-        delivery.deliveryProviderName = intelipostOption.logistic_provider_name;
-        delivery.deliveryEstimateBusinessDays = intelipostOption.delivery_estimate_business_days;
+            delivery.quotId = this.intelipost.content.id.toString();
+            delivery.deliveryMethodId = intelipostOption.delivery_method_id.toString();
+            delivery.shippingCost = intelipostOption.final_shipping_cost;
+            delivery.deliveryMethodName = intelipostOption.delivery_method_name;
+            delivery.deliveryProviderName = intelipostOption.logistic_provider_name;
+            delivery.deliveryEstimateBusinessDays = intelipostOption.delivery_estimate_business_days;
 
-        shipping.shippingType = EnumShippingType.Delivery;
-        shipping.deliveryInformation = delivery;
+            shipping.shippingType = EnumShippingType.Delivery;
+            shipping.deliveryInformation = delivery;
 
-        this.setShipping(shipping);
+            this.setShipping(shipping);
+        }
     }
 
     /**
@@ -141,21 +151,23 @@ export class ShippingCalcComponent implements OnInit {
      * @param branch 
      */
     addShippingBranchToCart(branch: Branch) {
-        let shipping = new Shipping();
-        let delivery = new DeliveryInformation();
+        if (isPlatformBrowser(this.platformId)) {
+            let shipping = new Shipping();
+            let delivery = new DeliveryInformation();
 
-        delivery.quotId = branch.id;
-        delivery.deliveryMethodId = branch.id;
-        delivery.deliveryMethodName = 'Retirar na Loja';
-        delivery.shippingCost = 0.0;
-        delivery.deliveryProviderName = branch.name;
-        delivery.deliveryEstimateBusinessDays = branch.replenishmentTime;
+            delivery.quotId = branch.id;
+            delivery.deliveryMethodId = branch.id;
+            delivery.deliveryMethodName = 'Retirar na Loja';
+            delivery.shippingCost = 0.0;
+            delivery.deliveryProviderName = branch.name;
+            delivery.deliveryEstimateBusinessDays = branch.replenishmentTime;
 
-        shipping.shippingType = EnumShippingType.PickuUpStore;
-        shipping.branch = branch;
-        shipping.deliveryInformation = delivery;
+            shipping.shippingType = EnumShippingType.PickuUpStore;
+            shipping.branch = branch;
+            shipping.deliveryInformation = delivery;
 
-        this.setShipping(shipping);
+            this.setShipping(shipping);
+        }
     }
 
     /**
@@ -163,16 +175,18 @@ export class ShippingCalcComponent implements OnInit {
      * @param shipping 
      */
     setShipping(shipping: Shipping) {
-        this.cartManager.setShipping(shipping, this.cartManager.getCartId())
-            .subscribe(cart => {
-                this.cart = cart;
-                this.shippingSelected = shipping;
-                this.cartUpdated.emit(this.cart);
-                this.loading = false;
-            }, err => {
-                swal({ title: 'Erro!', text: 'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK' });
-                this.loading = false;
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.cartManager.setShipping(shipping, this.cartManager.getCartId())
+                .subscribe(cart => {
+                    this.cart = cart;
+                    this.shippingSelected = shipping;
+                    this.cartUpdated.emit(this.cart);
+                    this.loading = false;
+                }, err => {
+                    swal({ title: 'Erro!', text: 'Não foi possível atualizar o frete', type: 'error', confirmButtonText: 'OK' });
+                    this.loading = false;
+                });
+        }
     }
 
     /**
@@ -181,7 +195,9 @@ export class ShippingCalcComponent implements OnInit {
      * @memberof CheckoutShippingComponent
      */
     allowPickUpStore(): Branch[] {
-        return this.branches.filter(b => b.allowPickupStore);
+        if (isPlatformBrowser(this.platformId)) {
+            return this.branches.filter(b => b.allowPickupStore);
+        }
     }
 
     /**
@@ -192,21 +208,23 @@ export class ShippingCalcComponent implements OnInit {
      * @memberof CheckoutShippingComponent
      */
     checkOption(methodName: string, branch: Branch = null): boolean {
-        if (methodName) {
-            if (!this.shippingSelected)
-                return false
-            if (!this.shippingSelected.deliveryInformation)
-                return false
-            else if (this.shippingSelected.deliveryInformation.deliveryMethodName == methodName)
-                return true;
-            else return false;
-        }
-        else {
-            if (!this.shippingSelected.branch)
-                return false;
-            else if (this.shippingSelected.branch.id == branch.id)
-                return true;
-            else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (methodName) {
+                if (!this.shippingSelected)
+                    return false
+                if (!this.shippingSelected.deliveryInformation)
+                    return false
+                else if (this.shippingSelected.deliveryInformation.deliveryMethodName == methodName)
+                    return true;
+                else return false;
+            }
+            else {
+                if (!this.shippingSelected.branch)
+                    return false;
+                else if (this.shippingSelected.branch.id == branch.id)
+                    return true;
+                else return false;
+            }
         }
     }
 

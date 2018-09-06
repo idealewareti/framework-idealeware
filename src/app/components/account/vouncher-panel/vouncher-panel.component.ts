@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Coupon } from "../../../models/coupon/coupon";
 import { CustomerManager } from '../../../managers/customer.manager';
 import { CouponManager } from '../../../managers/coupon.manager';
@@ -15,13 +16,16 @@ export class VouncherPanelComponent implements OnInit {
     constructor(
         private couponManager: CouponManager,
         private customerManager: CustomerManager,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     ngOnInit() {
-        this.customerManager.getUser()
-            .subscribe(customer => {
-                this.couponManager.getCouponsFromCustomer(customer.id)
-                    .subscribe(coupons => this.coupons = coupons);
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.customerManager.getUser()
+                .subscribe(customer => {
+                    this.couponManager.getCouponsFromCustomer(customer.id)
+                        .subscribe(coupons => this.coupons = coupons);
+                });
+        }
     }
 }

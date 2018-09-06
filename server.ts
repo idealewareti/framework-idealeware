@@ -9,9 +9,6 @@ import { RESPONSE } from '@nguniversal/express-engine/tokens';
 import { readFileSync } from 'fs';
 import { AppConfig } from './src/app/app.config';
 
-const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
-
 // Faster server renders w/ Prod mode (dev mode never needed)
 enableProdMode();
 
@@ -21,60 +18,46 @@ const PORT = AppConfig.PORT;
 const TITLE = `store.${AppConfig.DOMAIN}`;
 process.title = TITLE;
 
-if (cluster.isMaster) {
+const DIST_FOLDER = join(process.cwd(), 'dist');
 
-    // Fork workers.
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork();
-    }
+// * NOTE :: leave this as require() since this file is built Dynamically from webpack
+const { AppServerModuleNgFactory, LAZY_MODULE_MAP } = require('./dist/server/main');
 
-    //Check if work id is died
-    cluster.on('exit', (worker, code, signal) => {
-        console.log(`worker ${worker.process.pid} died`);
+const template = readFileSync(join(DIST_FOLDER, 'browser', 'index.html')).toString();
+
+app.engine('html', (_, options, callback) => {
+    renderModuleFactory(AppServerModuleNgFactory, {
+        document: template,
+        url: options.req.url,
+
+        extraProviders: [
+
+            <ValueProvider>{
+                provide: RESPONSE,
+                useValue: options.req.res,
+            },
+
+            provideModuleMap(LAZY_MODULE_MAP)
+        ]
+    }).then(html => {
+        callback(null, html);
     });
+});
 
-} else {
-    const DIST_FOLDER = join(process.cwd(), 'dist');
+app.set('view engine', 'html');
+app.set('views', join(DIST_FOLDER, 'browser'));
 
-    // * NOTE :: leave this as require() since this file is built Dynamically from webpack
-    const { AppServerModuleNgFactory, LAZY_MODULE_MAP } = require('./dist/server/main');
+// Server static files from /browser
+app.get('*.*', express.static(join(DIST_FOLDER, 'browser'), {
+    maxAge: '1y'
+}));
 
-    const template = readFileSync(join(DIST_FOLDER, 'browser', 'index.html')).toString();
+// All regular routes use the Universal engine
+app.get('*', (req, res) => {
+    res.render('index', { req });
+});
 
-    app.engine('html', (_, options, callback) => {
-        renderModuleFactory(AppServerModuleNgFactory, {
-            document: template,
-            url: options.req.url,
-
-            extraProviders: [
-
-                <ValueProvider>{
-                    provide: RESPONSE,
-                    useValue: options.req.res,
-                },
-
-                provideModuleMap(LAZY_MODULE_MAP)
-            ]
-        }).then(html => {
-            callback(null, html);
-        });
-    });
-
-    app.set('view engine', 'html');
-    app.set('views', join(DIST_FOLDER, 'browser'));
-
-    // Server static files from /browser
-    app.get('*.*', express.static(join(DIST_FOLDER, 'browser'), {
-        maxAge: '1y'
-    }));
-
-    // All regular routes use the Universal engine
-    app.get('*', (req, res) => {
-        res.render('index', { req });
-    });
-
-    // Start up the Node server
-    app.listen(PORT, () => {
-        console.log(`${process.title} listening on http://localhost:${PORT} - PID ${process.pid}`);
-    });
-}
+// Start up the Node server
+app.listen(PORT, () => {
+    console.log(`${process.title} listening on http://localhost:${PORT}`);
+});

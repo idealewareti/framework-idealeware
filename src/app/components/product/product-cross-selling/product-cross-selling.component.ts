@@ -26,12 +26,16 @@ export class ProductCrossSellingComponent implements OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (!changes['products'].firstChange)
-            this.destroyCarousel();
+        if (isPlatformBrowser(this.platformId)) {
+            if (!changes['products'].firstChange)
+                this.destroyCarousel();
+        }
     }
 
     ngAfterViewChecked() {
-        this.buildCarousel();
+        if (isPlatformBrowser(this.platformId)) {
+            this.buildCarousel();
+        }
     }
 
     private buildCarousel() {

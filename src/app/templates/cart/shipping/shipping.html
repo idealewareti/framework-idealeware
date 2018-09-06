@@ -5,7 +5,8 @@
             <div class="shipping-loader pull-right" *ngIf="loading">
                 <wait-loader [small]="true"></wait-loader>
             </div>
-            <a href="http://www.buscacep.correios.com.br/sistemas/buscacep/buscaCepEndereco.cfm" target="_blank" class="pull-right">Não sei meu CEP</a>
+            <a href="http://www.buscacep.correios.com.br/sistemas/buscacep/buscaCepEndereco.cfm" target="_blank" class="pull-right">Não
+                sei meu CEP</a>
             <div class="input-box overflow-hidden">
                 <input zipcodeMask formControlName="zipCode" type="text" maxlength="9" placeholder="CEP">
                 <button [disabled]="formShipping.invalid" type="submit" class="btn-send">OK</button>
@@ -19,7 +20,8 @@
             <strong>até
                 <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis -
                 <span class="" *ngIf="option.final_shipping_cost == 0">Frete Grátis</span>
-                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat }}</span>
+                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat
+                    }}</span>
             </strong>
         </a>
     </div>
@@ -34,29 +36,31 @@
 </div>
 
 <div class="shipping-box" *ngIf="isMobile()">
-    <form class="shipping-form" (submit)="calculate($event)">
+    <form [formGroup]="formShipping" class="shipping-form" (submit)="calculate($event)">
         <div class="form-group">
             <label for="shipping-number">
                 Simule o prazo de entrega e o frete para seu CEP abaixo
             </label>
-            <input type="text" class="form-control" name="zipCode" id="zipCode" [(ngModel)]="zipCode" maxlength="9" zipcodeMask placeholder="CEP">
+            <input zipcodeMask formControlName="zipCode" type="text" class="form-control" id="zipCode" maxlength="9" placeholder="CEP">
         </div>
-        <button type="submit" class="btn btn-default">Calcular Frete</button>
+        <button [disabled]="formShipping.invalid" type="submit" class="btn btn-default">Calcular Frete</button>
     </form>
     <div class="list-group" *ngIf="deliveryOptions.length > 0">
-        <a href="#" *ngFor="let option of deliveryOptions" (click)="addShippingToCart($event, option)" class="list-group-item" [ngClass]="{'list-group-item-info': checkOption(option.delivery_method_name)}">
+        <a *ngFor="let option of deliveryOptions" (click)="addShippingIntelipostToCart(option)" [ngClass]="{'list-group-item-info': checkOption(option.delivery_method_name)}"
+            class="list-group-item" href="javascript:void(0)">
             {{option.delivery_method_name}}
             <strong>até
                 <span class="time">{{option.delivery_estimate_business_days}}</span> dias úteis -
                 <span class="" *ngIf="option.final_shipping_cost == 0">Frete Grátis</span>
-                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat }}</span>
+                <span class="price" *ngIf="option.final_shipping_cost != 0">{{option.final_shipping_cost | currencyFormat
+                    }}</span>
             </strong>
         </a>
     </div>
 
     <div class="list-group shipping-list" *ngIf="branches.length > 0">
-        <a *ngFor="let option of allowPickUpStore()" (click)="addShippingToCart($event, null, option)" [ngClass]="{'list-group-item-info': checkOption(null, option)}"
-            href="" class="list-group-item">
+        <a *ngFor="let option of allowPickUpStore()" (click)="addShippingBranchToCart(option)" [ngClass]="{'list-group-item-info': checkOption(null, option)}"
+            class="list-group-item" href="javascript:void(0)">
             <strong>Retirar na Loja - </strong>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} {{option.city}}/{{option.state}}
         </a>
     </div>

@@ -76,37 +76,47 @@ export class CheckoutComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.getStore();
-        this.getCart();
-        this.getPayments();
-        this.getCustomer();
+        if (isPlatformBrowser(this.platformId)) {
+            this.getStore();
+            this.getCart();
+            this.getPayments();
+            this.getCustomer();
+        }
     }
 
     getStore(): void {
-        this.store = this.activatedRoute.snapshot.data.store;
-        this.mediaPath = `${this.store.link}/static/products/`;
-        this.mediaPathPayments = `${this.store.link}/static/payments/`;
+        if (isPlatformBrowser(this.platformId)) {
+            this.store = this.activatedRoute.snapshot.data.store;
+            this.mediaPath = `${this.store.link}/static/products/`;
+            this.mediaPathPayments = `${this.store.link}/static/payments/`;
+        }
     }
 
     getCart(): void {
-        this.cartManager.getCart()
-            .subscribe(cart => {
-                this.cart = cart;
-                this.shippingAddress = cart.deliveryAddress;
-                this.billingAddress = cart.billingAddress;
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.cartManager.getCart()
+                .subscribe(cart => {
+                    this.cart = cart;
+                    this.shippingAddress = cart.deliveryAddress;
+                    this.billingAddress = cart.billingAddress;
+                });
+        }
     }
 
     getPayments(): void {
-        this.payments = this.activatedRoute.snapshot.data.payments;
-        this.methodSelected = null;
-        this.createPagseguroSession();
+        if (isPlatformBrowser(this.platformId)) {
+            this.payments = this.activatedRoute.snapshot.data.payments;
+            this.methodSelected = null;
+            this.createPagseguroSession();
+        }
     }
 
     getCustomer(): void {
-        this.customer = this.activatedRoute.snapshot.data.customer;
-        this.cartManager.setCustomerToCart()
-            .subscribe(cart => this.cart = cart);
+        if (isPlatformBrowser(this.platformId)) {
+            this.customer = this.activatedRoute.snapshot.data.customer;
+            this.cartManager.setCustomerToCart()
+                .subscribe(cart => this.cart = cart);
+        }
     }
 
     ngAfterViewChecked() {
@@ -128,13 +138,14 @@ export class CheckoutComponent implements OnInit {
     }
 
     private injectKondutoIdentifier(id: string): void {
-        if (!this.isKondutoActived()) {
-            return;
-        }
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.isKondutoActived()) {
+                return;
+            }
 
-        let script = this.renderer.createElement('script');
-        this.renderer.setAttribute(script, 'id', this.kondutoScriptId);
-        const content = `
+            let script = this.renderer.createElement('script');
+            this.renderer.setAttribute(script, 'id', this.kondutoScriptId);
+            const content = `
             var customerID = "${id}"; // define o ID do cliente 
             (function () {
                 var period = 300;
@@ -154,12 +165,15 @@ export class CheckoutComponent implements OnInit {
             })(customerID);
         `
 
-        script.innerHTML = content;
-        this.renderer.appendChild(this.scriptContainer.nativeElement, script);
+            script.innerHTML = content;
+            this.renderer.appendChild(this.scriptContainer.nativeElement, script);
+        }
     }
 
     private isKondutoActived(): boolean {
-        return AppConfig.KONDUTO;
+        if (isPlatformBrowser(this.platformId)) {
+            return AppConfig.KONDUTO;
+        }
     }
 
     /**
@@ -168,7 +182,9 @@ export class CheckoutComponent implements OnInit {
      * @memberof AppComponent
      */
     hasPagSeguro(): boolean {
-        return this.paymentManager.hasPagSeguro(this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            return this.paymentManager.hasPagSeguro(this.payments);
+        }
     }
 
     /**
@@ -176,25 +192,27 @@ export class CheckoutComponent implements OnInit {
      * @memberof AppComponent
      */
     createPagseguroSession() {
-        if (!this.hasPagSeguro()) {
-            return;
-        }
-
-        let token: Token = this.customerManager.getToken();
-
         if (isPlatformBrowser(this.platformId)) {
-            if (token)
-                this.paymentManager.createPagSeguroSession()
-                    .subscribe(sessionId => {
-                        this.paymentManager.setPagSeguroSession(sessionId);
-                    }, err => {
-                        console.log(err);
-                    });
-            else
-                this.paymentManager.createPagSeguroSessionSimulator()
-                    .subscribe(sessionId => {
-                        this.paymentManager.setPagSeguroSession(sessionId);
-                    });
+            if (!this.hasPagSeguro()) {
+                return;
+            }
+
+            let token: Token = this.customerManager.getToken();
+
+            if (isPlatformBrowser(this.platformId)) {
+                if (token)
+                    this.paymentManager.createPagSeguroSession()
+                        .subscribe(sessionId => {
+                            this.paymentManager.setPagSeguroSession(sessionId);
+                        }, err => {
+                            console.log(err);
+                        });
+                else
+                    this.paymentManager.createPagSeguroSessionSimulator()
+                        .subscribe(sessionId => {
+                            this.paymentManager.setPagSeguroSession(sessionId);
+                        });
+            }
         }
     }
 
@@ -205,7 +223,9 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getDiscount(): number {
-        return this.cart.totalDiscountPrice;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cart.totalDiscountPrice;
+        }
     }
 
     /**
@@ -215,7 +235,9 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getShipping(): number {
-        return this.cart.totalFreightPrice;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cart.totalFreightPrice;
+        }
     }
 
     /**
@@ -225,7 +247,9 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getSubTotal() {
-        return this.cart.totalProductsPrice + this.cart.totalServicesPrice;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cart.totalProductsPrice + this.cart.totalServicesPrice;
+        }
     }
 
     /**
@@ -235,10 +259,12 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getTotal(): number {
-        if (this.isMundipaggBankslip() && this.methodSelected && this.methodSelected.discount > 0) {
-            return this.cart.totalPurchasePrice - (this.cart.totalPurchasePrice * (this.methodSelected.discount / 100));
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.isMundipaggBankslip() && this.methodSelected && this.methodSelected.discount > 0) {
+                return this.cart.totalPurchasePrice - (this.cart.totalPurchasePrice * (this.methodSelected.discount / 100));
+            }
+            return this.cart.totalPurchasePrice;
         }
-        return this.cart.totalPurchasePrice;
     }
 
     /**
@@ -248,11 +274,13 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getTotalCreditCard(): number {
-        if (!this.creditCard.totalPurchasePrice)
-            return 0;
-        else if (this.creditCard.totalPurchasePrice != this.cart.totalPurchasePrice)
-            return this.creditCard.totalPurchasePrice;
-        else return 0;
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.creditCard.totalPurchasePrice)
+                return 0;
+            else if (this.creditCard.totalPurchasePrice != this.cart.totalPurchasePrice)
+                return this.creditCard.totalPurchasePrice;
+            else return 0;
+        }
     }
 
     /**
@@ -262,7 +290,9 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getTotalServices(): number {
-        return this.cart.totalServicesPrice;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cart.totalServicesPrice;
+        }
     }
 
     /**
@@ -272,28 +302,30 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getPaymentTypeSelected(): PaymentMethod {
-        if (this.isPagSeguro()) {
-            this.methodSelected = new PaymentMethod();
-            if (this.paymentSelected.pagseguro)
-                this.methodSelected.name = (this.paymentSelected.pagseguro.name) ? this.paymentSelected.pagseguro.name : this.creditCard.creditCardBrand;
-        }
-        else if (this.isMercadoPago()) {
-            this.methodSelected = new PaymentMethod();
-            if (this.paymentSelected.mercadopago)
-                this.methodSelected.name = (this.paymentSelected.mercadopago.payment_type_id == 'ticket') ? this.paymentSelected.mercadopago.name : this.creditCard.creditCardBrand;
-        }
-        else if (this.paymentSelected && this.isPickUpStorePayment(this.paymentSelected.payment)) {
-            this.methodSelected.name = 'Pagamento na Loja';
-        }
-        else if (this.isMundipaggBankslip()) {
-            this.methodSelected = this.paymentSelected.method;
-        }
-        else if (this.isMundipaggCreditCard()) {
-            this.methodSelected = this.paymentSelected.method;
-        }
-        else this.methodSelected = new PaymentMethod();
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.isPagSeguro()) {
+                this.methodSelected = new PaymentMethod();
+                if (this.paymentSelected.pagseguro)
+                    this.methodSelected.name = (this.paymentSelected.pagseguro.name) ? this.paymentSelected.pagseguro.name : this.creditCard.creditCardBrand;
+            }
+            else if (this.isMercadoPago()) {
+                this.methodSelected = new PaymentMethod();
+                if (this.paymentSelected.mercadopago)
+                    this.methodSelected.name = (this.paymentSelected.mercadopago.payment_type_id == 'ticket') ? this.paymentSelected.mercadopago.name : this.creditCard.creditCardBrand;
+            }
+            else if (this.paymentSelected && this.isPickUpStorePayment(this.paymentSelected.payment)) {
+                this.methodSelected.name = 'Pagamento na Loja';
+            }
+            else if (this.isMundipaggBankslip()) {
+                this.methodSelected = this.paymentSelected.method;
+            }
+            else if (this.isMundipaggCreditCard()) {
+                this.methodSelected = this.paymentSelected.method;
+            }
+            else this.methodSelected = new PaymentMethod();
 
-        return this.methodSelected;
+            return this.methodSelected;
+        }
     }
 
     /**
@@ -303,13 +335,15 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getNumItemsInCart(): number {
-        if (this.cart) {
-            let numItems = 0;
-            numItems += (this.cart.products) ? this.cart.products.length : 0;
-            numItems += (this.cart.services) ? this.cart.services.length : 0;
-            return numItems;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.cart) {
+                let numItems = 0;
+                numItems += (this.cart.products) ? this.cart.products.length : 0;
+                numItems += (this.cart.services) ? this.cart.services.length : 0;
+                return numItems;
+            }
+            else return 0;
         }
-        else return 0;
     }
 
     /**
@@ -319,7 +353,9 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     getDeliveryAddress(): CustomerAddress {
-        return this.cart.deliveryAddress;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cart.deliveryAddress;
+        }
     }
 
     /*
@@ -332,8 +368,10 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     handlePaymentUpdated(paymentSelected: PaymentSelected) {
-        this.paymentSelected = paymentSelected;
-        this.getTotal();
+        if (isPlatformBrowser(this.platformId)) {
+            this.paymentSelected = paymentSelected;
+            this.getTotal();
+        }
     }
 
     /**
@@ -343,11 +381,15 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     handleShippingUpdated(shipping: Shipping) {
-        this.shippingSelected = shipping;
+        if (isPlatformBrowser(this.platformId)) {
+            this.shippingSelected = shipping;
+        }
     }
 
     handleCreditCardUpdated(event: CreditCard) {
-        this.creditCard = event;
+        if (isPlatformBrowser(this.platformId)) {
+            this.creditCard = event;
+        }
     }
     /*
     ** Validators
@@ -366,11 +408,13 @@ export class CheckoutComponent implements OnInit {
     }
 
     isHiddenVariation(): boolean {
-        let type = this.store.settings.find(s => s.type == 4);
-        if (type)
-            return type.status;
-        else
-            return false;
+        if (isPlatformBrowser(this.platformId)) {
+            let type = this.store.settings.find(s => s.type == 4);
+            if (type)
+                return type.status;
+            else
+                return false;
+        }
     }
 
     /**
@@ -381,13 +425,15 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     isCartEmpty(cart: Cart): boolean {
-        let empty = false;
+        if (isPlatformBrowser(this.platformId)) {
+            let empty = false;
 
-        if ((cart.products == null || cart.products.length < 1) &&
-            (cart.services == null || cart.services.length < 1))
-            empty = true;
+            if ((cart.products == null || cart.products.length < 1) &&
+                (cart.services == null || cart.services.length < 1))
+                empty = true;
 
-        return empty;
+            return empty;
+        }
     }
 
     /**
@@ -397,9 +443,11 @@ export class CheckoutComponent implements OnInit {
     * @memberof CheckoutComponent
     */
     isPagSeguro(payment: Payment = null): boolean {
-        if (!payment)
-            payment = this.paymentSelected.payment;
-        return this.paymentManager.isPagSeguro(payment, this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            if (!payment)
+                payment = this.paymentSelected.payment;
+            return this.paymentManager.isPagSeguro(payment, this.payments);
+        }
     }
 
     /**
@@ -409,9 +457,11 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     isMercadoPago(paymentSelected: Payment = null): boolean {
-        if (!paymentSelected)
-            paymentSelected = this.paymentSelected.payment;
-        return this.paymentManager.isMercadoPago(paymentSelected, this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            if (!paymentSelected)
+                paymentSelected = this.paymentSelected.payment;
+            return this.paymentManager.isMercadoPago(paymentSelected, this.payments);
+        }
     }
 
     /**
@@ -422,7 +472,9 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     isDeliveryPayment(payment: Payment): boolean {
-        return this.paymentManager.isDeliveryPayment(payment, this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            return this.paymentManager.isDeliveryPayment(payment, this.payments);
+        }
     }
 
     /**
@@ -432,9 +484,11 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     isMundipaggBankslip(paymentSelected: Payment = null): boolean {
-        if (!paymentSelected)
-            paymentSelected = this.paymentSelected.payment;
-        return this.paymentManager.isMundipaggBankslip(paymentSelected, this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            if (!paymentSelected)
+                paymentSelected = this.paymentSelected.payment;
+            return this.paymentManager.isMundipaggBankslip(paymentSelected, this.payments);
+        }
     }
 
     /**
@@ -444,9 +498,11 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     isMundipaggCreditCard(paymentSelected: Payment = null): boolean {
-        if (!paymentSelected)
-            paymentSelected = this.paymentSelected.payment;
-        return this.paymentManager.isMundipaggCreditCard(paymentSelected, this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            if (!paymentSelected)
+                paymentSelected = this.paymentSelected.payment;
+            return this.paymentManager.isMundipaggCreditCard(paymentSelected, this.payments);
+        }
     }
 
     /**
@@ -457,10 +513,12 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     isPickUpStorePayment(payment: Payment): boolean {
-        let pickUpStore: Payment = this.paymentManager.getPickUpStorePayment(this.payments);
-        if (pickUpStore && payment && payment.id == pickUpStore.id)
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            let pickUpStore: Payment = this.paymentManager.getPickUpStorePayment(this.payments);
+            if (pickUpStore && payment && payment.id == pickUpStore.id)
+                return true;
+            else return false;
+        }
     }
 
     /**
@@ -472,9 +530,11 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     hasShippingSelected(): boolean {
-        if (!this.shippingSelected || this.shippingSelected.shippingType == 0)
-            return false;
-        else return true;
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.shippingSelected || this.shippingSelected.shippingType == 0)
+                return false;
+            else return true;
+        }
     }
 
     /**
@@ -486,15 +546,16 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     hasPaymentMethodSelected(): boolean {
-        if ((this.paymentSelected.method && this.paymentSelected.method['id'])
-            || this.paymentSelected.pagseguro
-            || this.paymentSelected.mercadopago
-            || this.isPickUpStorePayment(this.paymentSelected.payment)
-        )
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if ((this.paymentSelected.method && this.paymentSelected.method['id'])
+                || this.paymentSelected.pagseguro
+                || this.paymentSelected.mercadopago
+                || this.isPickUpStorePayment(this.paymentSelected.payment)
+            )
+                return true;
+            else return false;
+        }
     }
-
     /**
      * Informa se há endereço de entrega selecionado
      * 
@@ -502,10 +563,12 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     hasDeliveryAddress(): boolean {
-        let address = this.getDeliveryAddress();
-        if (address && address.id)
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            let address = this.getDeliveryAddress();
+            if (address && address.id)
+                return true;
+            else return false;
+        }
     }
 
     /**
@@ -515,14 +578,16 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     validChangeFor(): boolean {
-        let isValid = true;
-        if (this.methodSelected.type == 3) {
-            if (this.changeFor && this.changeFor <= this.cart.totalPurchasePrice) {
-                isValid = false;
+        if (isPlatformBrowser(this.platformId)) {
+            let isValid = true;
+            if (this.methodSelected.type == 3) {
+                if (this.changeFor && this.changeFor <= this.cart.totalPurchasePrice) {
+                    isValid = false;
+                }
             }
-        }
 
-        return isValid;
+            return isValid;
+        }
     }
 
     /**
@@ -581,57 +646,59 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     placeOrder(event) {
-        event.preventDefault();
-        $('#btn_place-order').button('loading');
-        this.stateProcessCheckout = true;
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            $('#btn_place-order').button('loading');
+            this.stateProcessCheckout = true;
 
-        if (!this.checkoutIsValid()) {
-            $('#btn_place-order').button('reset');
-            this.stateProcessCheckout = false;
-            return;
-        }
+            if (!this.checkoutIsValid()) {
+                $('#btn_place-order').button('reset');
+                this.stateProcessCheckout = false;
+                return;
+            }
 
-        if (!this.validChangeFor()) {
-            swal('Valor inválido', 'O valor para troco deve ser maior do que o valor total da compra', 'warning');
-            $('#btn_place-order').button('reset');
-            this.stateProcessCheckout = false;
-            return;
-        }
+            if (!this.validChangeFor()) {
+                swal('Valor inválido', 'O valor para troco deve ser maior do que o valor total da compra', 'warning');
+                $('#btn_place-order').button('reset');
+                this.stateProcessCheckout = false;
+                return;
+            }
 
-        /* Pagamento Offline */
-        if (this.paymentSelected.payment.type == 2) {
-            this.payWithOfflineMethod();
+            /* Pagamento Offline */
+            if (this.paymentSelected.payment.type == 2) {
+                this.payWithOfflineMethod();
+            }
+            /* Pagamento com cartão de crédito mundipagg */
+            else if (this.isMundipaggCreditCard()) {
+                this.payWithMundipaggCreditCard();
+            }
+            /* Pagamento com boleto mundipagg */
+            else if (this.isMundipaggBankslip()) {
+                this.payWithMundipaggBankslip();
+            }
+            /* Pagamento boleto pagseguro */
+            else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code == 202) {
+                this.payWithPagseguroBankSlip();
+            }
+            /* Pagamento cartão de crédito pagseguro */
+            else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code >= 100 && this.paymentSelected.pagseguro.code <= 199) {
+                this.payWithPagseguroCreditCard();
+            }
+            /* Pagamento boleto mercado pago */
+            else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'ticket') {
+                this.payWithMercadoPagoBankSlip();
+            }
+            /* Pagamento cartão de crédito mercado pago */
+            else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'credit_card') {
+                this.payWithMercadoPagoCreditCard();
+            }
+            else {
+                swal('Não foi possível realizar o pedido', 'Nenhuma forma de pagamento selecionada', 'error');
+                $('#btn_place-order').button('reset');
+                this.stateProcessCheckout = false;
+            }
+            // });
         }
-        /* Pagamento com cartão de crédito mundipagg */
-        else if (this.isMundipaggCreditCard()) {
-            this.payWithMundipaggCreditCard();
-        }
-        /* Pagamento com boleto mundipagg */
-        else if (this.isMundipaggBankslip()) {
-            this.payWithMundipaggBankslip();
-        }
-        /* Pagamento boleto pagseguro */
-        else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code == 202) {
-            this.payWithPagseguroBankSlip();
-        }
-        /* Pagamento cartão de crédito pagseguro */
-        else if (this.isPagSeguro() && this.paymentSelected.pagseguro.code >= 100 && this.paymentSelected.pagseguro.code <= 199) {
-            this.payWithPagseguroCreditCard();
-        }
-        /* Pagamento boleto mercado pago */
-        else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'ticket') {
-            this.payWithMercadoPagoBankSlip();
-        }
-        /* Pagamento cartão de crédito mercado pago */
-        else if (this.isMercadoPago() && this.paymentSelected.mercadopago.payment_type_id == 'credit_card') {
-            this.payWithMercadoPagoCreditCard();
-        }
-        else {
-            swal('Não foi possível realizar o pedido', 'Nenhuma forma de pagamento selecionada', 'error');
-            $('#btn_place-order').button('reset');
-            this.stateProcessCheckout = false;
-        }
-        // });
     }
 
     /**
@@ -688,17 +755,21 @@ export class CheckoutComponent implements OnInit {
     }
 
     private pickUpStoreTransaction(): Promise<string> {
-        return new Promise(resolve => {
-            this.paymentManager.pickUpStoreTransaction()
-                .subscribe(str => resolve(str));
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise(resolve => {
+                this.paymentManager.pickUpStoreTransaction()
+                    .subscribe(str => resolve(str));
+            });
+        }
     }
 
     private delivertPayment(): Promise<string> {
-        return new Promise(resolve => {
-            this.paymentManager.delivertPayment()
-                .subscribe(str => resolve(str))
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise(resolve => {
+                this.paymentManager.delivertPayment()
+                    .subscribe(str => resolve(str))
+            });
+        }
     }
 
     /**
@@ -733,10 +804,12 @@ export class CheckoutComponent implements OnInit {
     }
 
     private PagseguroBankSlip(hash): Promise<string> {
-        return new Promise(resolve => {
-            this.paymentManager.PagseguroBankSlip(hash)
-                .subscribe(str => resolve(str))
-        })
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise(resolve => {
+                this.paymentManager.PagseguroBankSlip(hash)
+                    .subscribe(str => resolve(str))
+            })
+        }
     }
 
     /**
@@ -825,10 +898,12 @@ export class CheckoutComponent implements OnInit {
     }
 
     private PagseguroCreditCard(hash, creditCard): Promise<string> {
-        return new Promise(resolve => {
-            this.paymentManager.PagseguroCreditCard(hash, creditCard)
-                .subscribe(str => resolve(str))
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise(resolve => {
+                this.paymentManager.PagseguroCreditCard(hash, creditCard)
+                    .subscribe(str => resolve(str))
+            });
+        }
     }
 
     /**
@@ -863,12 +938,14 @@ export class CheckoutComponent implements OnInit {
     }
 
     private bankSlipTransaction(): Promise<string> {
-        return new Promise(resolve => {
-            this.paymentManager.bankSlipTransaction()
-                .subscribe(str => {
-                    resolve(str);
-                });
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise(resolve => {
+                this.paymentManager.bankSlipTransaction()
+                    .subscribe(str => {
+                        resolve(str);
+                    });
+            });
+        }
     }
 
     /**
@@ -917,17 +994,19 @@ export class CheckoutComponent implements OnInit {
     }
 
     creditCardTransaction(creditCard: CreditCard): Promise<string> {
-        return new Promise(resolve => {
-            this.paymentManager.creditCardTransaction(creditCard)
-                .subscribe(str => {
-                    resolve(str);
-                }, err => {
-                    console.log(err);
-                    swal('Erro ao criar o pedido', err.error, 'error');
-                    $('#btn_place-order').button('reset');
-                    this.stateProcessCheckout = false;
-                });
-        })
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise(resolve => {
+                this.paymentManager.creditCardTransaction(creditCard)
+                    .subscribe(str => {
+                        resolve(str);
+                    }, err => {
+                        console.log(err);
+                        swal('Erro ao criar o pedido', err.error, 'error');
+                        $('#btn_place-order').button('reset');
+                        this.stateProcessCheckout = false;
+                    });
+            })
+        }
     }
 
     /**
@@ -938,44 +1017,48 @@ export class CheckoutComponent implements OnInit {
      * @memberof CheckoutComponent
      */
     private payWithMercadoPagoBankSlip() {
-        toastr['info']('Aguarde, validando seu pedido...');
-        this.validateOrder()
-            .then(() => {
-                debugger
-                toastr['success']('Pedido validado. Processando informações de pagamento..');
-                return this.MercadoPagoBankSlip();
-            })
-            .then(() => {
-                debugger
-                toastr['success']('Pagamento confirmado. Realizando pedido...');
-                return this.placeOrderApi();
-            })
-            .then(order => {
-                debugger
-                this.finish(order);
-            })
-            .catch(error => {
-                debugger
-                Mercadopago.clearSession();
-                console.log(error);
-                swal('Erro ao criar o pedido', error.text(), 'error');
-                $('#btn_place-order').button('reset');
-                this.stateProcessCheckout = false;
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            toastr['info']('Aguarde, validando seu pedido...');
+            this.validateOrder()
+                .then(() => {
+                    debugger
+                    toastr['success']('Pedido validado. Processando informações de pagamento..');
+                    return this.MercadoPagoBankSlip();
+                })
+                .then(() => {
+                    debugger
+                    toastr['success']('Pagamento confirmado. Realizando pedido...');
+                    return this.placeOrderApi();
+                })
+                .then(order => {
+                    debugger
+                    this.finish(order);
+                })
+                .catch(error => {
+                    debugger
+                    Mercadopago.clearSession();
+                    console.log(error);
+                    swal('Erro ao criar o pedido', error.text(), 'error');
+                    $('#btn_place-order').button('reset');
+                    this.stateProcessCheckout = false;
+                });
+        }
     }
 
 
     MercadoPagoBankSlip(): Promise<string> {
-        return new Promise(resolve => {
-            this.paymentManager.MercadoPagoBankSlip()
-                .subscribe(
-                    str => {
-                        resolve(str)
-                    },
-                    err => {
-                        console.log(err);
-                    })
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise(resolve => {
+                this.paymentManager.MercadoPagoBankSlip()
+                    .subscribe(
+                        str => {
+                            resolve(str)
+                        },
+                        err => {
+                            console.log(err);
+                        })
+            });
+        }
     }
 
     /**
@@ -1044,46 +1127,58 @@ export class CheckoutComponent implements OnInit {
     }
 
     MercadoPagoCreditCard(creditCard: MercadoPagoCreditCard): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this.paymentManager.MercadoPagoCreditCard(creditCard)
-                .subscribe(str => resolve(str), err => reject(err));
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                this.paymentManager.MercadoPagoCreditCard(creditCard)
+                    .subscribe(str => resolve(str), err => reject(err));
+            });
+        }
     }
 
     GetMercadoPagoPublicKey(): Promise<string> {
-        return new Promise(resolve => {
-            this.paymentManager.getMercadoPagoPublicKey()
-                .subscribe(str => resolve(str))
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise(resolve => {
+                this.paymentManager.getMercadoPagoPublicKey()
+                    .subscribe(str => resolve(str))
+            });
+        }
     }
 
 
     /* Order Methods */
     private validateOrder(): Promise<Cart> {
-        return new Promise((resolve, reject) => {
-            this.orderManager.validateOrder()
-                .subscribe(cart => {
-                    resolve(new Cart(cart));
-                }, error => reject(error));
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                this.orderManager.validateOrder()
+                    .subscribe(cart => {
+                        resolve(new Cart(cart));
+                    }, error => reject(error));
 
-        });
+            });
+        }
     }
 
     private placeOrderApi(): Promise<Order> {
-        return new Promise((resolve, reject) => {
-            this.orderManager.placeOrder()
-                .subscribe(order => {
-                    resolve(order);
-                }, error => reject(error));
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                this.orderManager.placeOrder()
+                    .subscribe(order => {
+                        resolve(order);
+                    }, error => reject(error));
+            });
+        }
     }
 
     isPackage(item: CartItem) {
-        return item.isPackageProduct ? 'Sim' : 'Não';
+        if (isPlatformBrowser(this.platformId)) {
+            return item.isPackageProduct ? 'Sim' : 'Não';
+        }
     }
 
     isStorePackageActive(): boolean {
-        return this.store.settings.find(s => s.type == 8).status;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.store.settings.find(s => s.type == 8).status;
+        }
     }
 
     /**
@@ -1092,6 +1187,8 @@ export class CheckoutComponent implements OnInit {
      * @memberof AppComponent
      */
     hasProcessCheckout(): boolean {
-        return this.stateProcessCheckout;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.stateProcessCheckout;
+        }
     }
 }

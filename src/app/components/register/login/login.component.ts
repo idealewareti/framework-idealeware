@@ -41,14 +41,16 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.step = this.route.queryParams['value'].step;
-        if (this.isNewCustomer())
-            this.parentRouter.navigateByUrl('/cadastro');
+        if (isPlatformBrowser(this.platformId)) {
+            this.step = this.route.queryParams['value'].step;
+            if (this.isNewCustomer())
+                this.parentRouter.navigateByUrl('/cadastro');
 
-        this.seoManager.setTags({
-            title: 'Login',
-            description: 'Login',
-        });
+            this.seoManager.setTags({
+                title: 'Login',
+                description: 'Login',
+            });
+        }
     }
 
     ngOnDestroy() {
@@ -61,42 +63,49 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     isNewCustomer() {
-        if (this.step == 'cadastro') return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.step == 'cadastro') return true;
+            else return false;
+        }
     }
 
     submit(event) {
-        event.preventDefault();
-        this.signIn();
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            this.signIn();
+        }
     }
 
     signIn() {
-        this.login = this.formLogin.getRawValue();
-        this.customerManager.signIn(this.login)
-            .subscribe(customer => {
-                toastr['success'](`Bem-${customer.gender == 'F' ? 'vinda' : 'vindo'}, ${customer.firstname_Companyname}`);
-                this.injectKondutoIdentifier(this.login.cpfEmail);
+        if (isPlatformBrowser(this.platformId)) {
+            this.login = this.formLogin.getRawValue();
+            this.customerManager.signIn(this.login)
+                .subscribe(customer => {
+                    toastr['success'](`Bem-${customer.gender == 'F' ? 'vinda' : 'vindo'}, ${customer.firstname_Companyname}`);
+                    this.injectKondutoIdentifier(this.login.cpfEmail);
 
-                if (this.step)
-                    this.parentRouter.navigateByUrl(this.step);
-                else
-                    this.parentRouter.navigateByUrl('/');
+                    if (this.step)
+                        this.parentRouter.navigateByUrl(this.step);
+                    else
+                        this.parentRouter.navigateByUrl('/');
 
-            }, err => {
-                if (isPlatformBrowser(this.platformId)) {
-                    swal('Não foi possível acessar sua conta', err.error, 'error');
-                }
-            });
+                }, err => {
+                    if (isPlatformBrowser(this.platformId)) {
+                        swal('Não foi possível acessar sua conta', err.error, 'error');
+                    }
+                });
+        }
     }
 
     private injectKondutoIdentifier(id: string): void {
-        if (!this.isKondutoActived()) {
-            return;
-        }
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.isKondutoActived()) {
+                return;
+            }
 
-        let script = this.renderer.createElement('script');
-        this.renderer.setAttribute(script, 'id', this.kondutoScriptId);
-        const content = `
+            let script = this.renderer.createElement('script');
+            this.renderer.setAttribute(script, 'id', this.kondutoScriptId);
+            const content = `
             var customerID = "${id}"; // define o ID do cliente 
             (function () {
                 var period = 300;
@@ -116,11 +125,14 @@ export class LoginComponent implements OnInit, OnDestroy {
             })(customerID);
         `
 
-        script.innerHTML = content;
-        this.renderer.appendChild(this.scriptContainer.nativeElement, script);
+            script.innerHTML = content;
+            this.renderer.appendChild(this.scriptContainer.nativeElement, script);
+        }
     }
 
     private isKondutoActived(): boolean {
-        return AppConfig.KONDUTO;
+        if (isPlatformBrowser(this.platformId)) {
+            return AppConfig.KONDUTO;
+        }
     }
 }

@@ -42,13 +42,15 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
     }
 
     getShowCases() {
-        this.cartShowcaseManager.getCartShowCase()
-            .subscribe(cartShowCase => {
-                this.cartShowCase = cartShowCase;
-                if (this.cartShowCase && this.cartShowCase.products.length > 0) {
-                    this.products = cartShowCase.products;
-                }
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.cartShowcaseManager.getCartShowCase()
+                .subscribe(cartShowCase => {
+                    this.cartShowCase = cartShowCase;
+                    if (this.cartShowCase && this.cartShowCase.products.length > 0) {
+                        this.products = cartShowCase.products;
+                    }
+                });
+        }
     }
 
     private buildCarousel() {
@@ -93,6 +95,8 @@ export class CartShowCaseComponent implements OnInit, OnDestroy {
     }
 
     getStore(): Store {
-        return this.store;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.store;
+        }
     }
 }

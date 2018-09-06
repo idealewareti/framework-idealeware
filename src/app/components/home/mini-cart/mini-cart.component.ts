@@ -30,23 +30,29 @@ export class MiniCartComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.mediaPath = `${this.store.link}/static/products/`;
-        this.modality = this.store.modality;
-        this.showValuesProduct = this.showValues(this.store);
-        this.getCart();
+        if (isPlatformBrowser(this.platformId)) {
+            this.mediaPath = `${this.store.link}/static/products/`;
+            this.modality = this.store.modality;
+            this.showValuesProduct = this.showValues(this.store);
+            this.getCart();
+        }
     }
 
     isCart(): boolean {
-        return this.cart != null;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cart != null;
+        }
     }
 
     getCart(): void {
-        if (!this.cartManager.haveCart()) {
-            this.cartManager.loadCart()
-                .subscribe(() => { });
+        if (isPlatformBrowser(this.platformId)) {
+            if (!this.cartManager.haveCart()) {
+                this.cartManager.loadCart()
+                    .subscribe(() => { });
+            }
+            this.cartManager.getCart()
+                .subscribe(cart => this.cart = cart);
         }
-        this.cartManager.getCart()
-            .subscribe(cart => this.cart = cart);
     }
 
     updateItem(quantity, item: CartItem): void {
@@ -60,8 +66,8 @@ export class MiniCartComponent implements OnInit {
     }
 
     deleteItem(event, item: CartItem): void {
-        event.preventDefault();
         if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
             let cartId: string = localStorage.getItem('cart_id');
             this.cartManager.deleteItem(item, cartId)
                 .subscribe(() => { }, e => swal("Falha ao remover o produto ao carrinho", e.text(), "warning"));
@@ -69,29 +75,39 @@ export class MiniCartComponent implements OnInit {
     }
 
     getDiscount(): number {
-        return (this.cart) ? this.cart.totalDiscountPrice : 0.0;
+        if (isPlatformBrowser(this.platformId)) {
+            return (this.cart) ? this.cart.totalDiscountPrice : 0.0;
+        }
     }
 
     getShipping(): number {
-        return (this.cart) ? this.cart.totalFreightPrice : 0.0;
+        if (isPlatformBrowser(this.platformId)) {
+            return (this.cart) ? this.cart.totalFreightPrice : 0.0;
+        }
     }
 
     getSubTotal(): number {
-        return (this.cart) ? this.cart.totalProductsPrice + this.cart.totalServicesPrice : 0.0;
+        if (isPlatformBrowser(this.platformId)) {
+            return (this.cart) ? this.cart.totalProductsPrice + this.cart.totalServicesPrice : 0.0;
+        }
     }
 
     getTotal(): number {
-        return (this.cart) ? this.cart.totalPurchasePrice : 0.0;
+        if (isPlatformBrowser(this.platformId)) {
+            return (this.cart) ? this.cart.totalPurchasePrice : 0.0;
+        }
     }
 
     getNumItemsInCart(): number {
-        if (this.cart) {
-            let numItems = 0;
-            numItems += (this.cart.products) ? this.cart.products.length : 0;
-            numItems += (this.cart.services) ? this.cart.services.length : 0;
-            return numItems;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.cart) {
+                let numItems = 0;
+                numItems += (this.cart.products) ? this.cart.products.length : 0;
+                numItems += (this.cart.services) ? this.cart.services.length : 0;
+                return numItems;
+            }
+            return 0;
         }
-        return 0;
     }
 
     isMobile(): boolean {
@@ -101,20 +117,26 @@ export class MiniCartComponent implements OnInit {
     }
 
     showValues(store): boolean {
-        if (this.store && this.modality == 1)
-            return true;
-        else if (this.store && this.modality == 0 && store.settings.find(s => s.type == 3 && s.status == true))
-            return true;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.store && this.modality == 1)
+                return true;
+            else if (this.store && this.modality == 0 && store.settings.find(s => s.type == 3 && s.status == true))
+                return true;
+        }
     }
 
     getRoute(item: CartItem): string {
-        return `/${AppCore.getNiceName(item.name)}-${item.sku.id}`;
+        if (isPlatformBrowser(this.platformId)) {
+            return `/${AppCore.getNiceName(item.name)}-${item.sku.id}`;
+        }
     }
 
     getPicture(sku: Sku): string {
-        if (this.store && sku.picture && sku.picture['showcase'])
-            return `${this.store.link}/static/products/${sku.picture.thumbnail}`;
-        return 'assets/images/no-image.jpg';
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.store && sku.picture && sku.picture['showcase'])
+                return `${this.store.link}/static/products/${sku.picture.thumbnail}`;
+            return 'assets/images/no-image.jpg';
+        }
 
     }
 }

@@ -78,12 +78,14 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.seoManager.setTags({
-            title: 'Cadastrar',
-            description: 'Cadastrar',
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            this.seoManager.setTags({
+                title: 'Cadastrar',
+                description: 'Cadastrar',
+            });
+        }
     }
-    
+
     ngDoCheck() {
         if (isPlatformBrowser(this.platformId)) {
             $('.date').mask('00/00/0000');
@@ -96,90 +98,99 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     }
 
     signUp(event) {
-        event.preventDefault();
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
 
-        if (this.invalidForm()) {
-            swal({
-                title: 'Falha ao cadastrar',
-                text: 'Os campos informados com * são obrigatórios',
-                type: "error",
-                confirmButtonText: "OK"
-            });
-
-            for (let i in this.myForm.controls) {
-                (<any>this.myForm.controls[i])._touched = true;
-            }
-        }
-        else {
-            this.customer.addresses[0].addressName = 'Endereço Padrão';
-            if (this.customer.type == 1) {
-                this.customer.birthdate = AppCore.ConvertTextToDate(this.customer.date);
-            }
-            this.signUpApi()
-                .then(() => {
-                    let cartId = localStorage.getItem('cart_id');
-                    // if (cartId)
-                    //     this.parentRouter.navigateByUrl(`/checkout`);
-                    // else {
-                        this.parentRouter.navigateByUrl(`/`);
-                    //}
-                })
-                .catch(err => {
-                    let title = '';
-                    let message = '';
-
-                    if (err.status == 0) {
-                        title = AppTexts.SIGNUP_ERROR_TITLE;
-                        message = AppTexts.SIGNUP_API_OFFLINE;
-                    }
-                    else {
-                        title = AppTexts.SIGNUP_ERROR_TITLE;
-                        if (new RegExp(/\[(.*?)\]/g).test(err)) {
-                            let response = err.match(/\[(.*?)\]/g)
-                            message = response[response.length - 1].replace('["', '').replace('"]', '');
-                        }
-                        else message = err;
-                    }
-
-                    swal({
-                        title: title,
-                        text: message,
-                        type: "error",
-                        confirmButtonText: "OK"
-                    });
+            if (this.invalidForm()) {
+                swal({
+                    title: 'Falha ao cadastrar',
+                    text: 'Os campos informados com * são obrigatórios',
+                    type: "error",
+                    confirmButtonText: "OK"
                 });
+
+                for (let i in this.myForm.controls) {
+                    (<any>this.myForm.controls[i])._touched = true;
+                }
+            }
+            else {
+                this.customer.addresses[0].addressName = 'Endereço Padrão';
+                if (this.customer.type == 1) {
+                    this.customer.birthdate = AppCore.ConvertTextToDate(this.customer.date);
+                }
+                this.signUpApi()
+                    .then(() => {
+                        let cartId = localStorage.getItem('cart_id');
+                        // if (cartId)
+                        //     this.parentRouter.navigateByUrl(`/checkout`);
+                        // else {
+                        this.parentRouter.navigateByUrl(`/`);
+                        //}
+                    })
+                    .catch(err => {
+                        let title = '';
+                        let message = '';
+
+                        if (err.status == 0) {
+                            title = AppTexts.SIGNUP_ERROR_TITLE;
+                            message = AppTexts.SIGNUP_API_OFFLINE;
+                        }
+                        else {
+                            title = AppTexts.SIGNUP_ERROR_TITLE;
+                            if (new RegExp(/\[(.*?)\]/g).test(err)) {
+                                let response = err.match(/\[(.*?)\]/g)
+                                message = response[response.length - 1].replace('["', '').replace('"]', '');
+                            }
+                            else message = err;
+                        }
+
+                        swal({
+                            title: title,
+                            text: message,
+                            type: "error",
+                            confirmButtonText: "OK"
+                        });
+                    });
+            }
         }
     }
 
     private signUpApi(): Promise<Customer> {
-        return new Promise((resolve, reject) => {
-            this.customerManager.signUp(this.customer)
-                .subscribe(() => {
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                this.customerManager.signUp(this.customer)
+                    .subscribe(() => {
 
-                    let login: Login = {
-                        cpfEmail: this.customer.email,
-                        password: this.customer.password
-                    };
-                    this.customerManager.signIn(login)
-                        .subscribe(loggedCustomer => {
-                            resolve(loggedCustomer);
-                        }, err => {
-                            reject(err);
-                        });
-                }, err => reject(err.error));
-        });
-
+                        let login: Login = {
+                            cpfEmail: this.customer.email,
+                            password: this.customer.password
+                        };
+                        this.customerManager.signIn(login)
+                            .subscribe(loggedCustomer => {
+                                resolve(loggedCustomer);
+                            }, err => {
+                                reject(err);
+                            });
+                    }, err => reject(err.error));
+            });
+        }
     }
 
     public errorMessage(message: string) {
-        return message;
+        if (isPlatformBrowser(this.platformId)) {
+            return message;
+        }
     }
 
     public validCPF(): boolean {
-        return Validations.validCPF(this.customer.cpf_Cnpj);
+        if (isPlatformBrowser(this.platformId)) {
+            return Validations.validCPF(this.customer.cpf_Cnpj);
+        }
     }
     public validCNPJ(): boolean {
-        return Validations.validCNPJ(this.customer.cpf_Cnpj);
+        if (isPlatformBrowser(this.platformId)) {
+            return Validations.validCNPJ(this.customer.cpf_Cnpj);
+        }
     }
 
 
@@ -189,32 +200,36 @@ export class SignUpComponent implements OnInit, AfterViewInit {
      * @memberOf SignUpComponent
      */
     public changeCustomerType(type: number, event = null) {
-        if (event)
-            event.preventDefault();
-        this.customer.type = type;
-        this.customer.cpf_Cnpj = '';
-        this.formHelper.markFormAsUntouched(this.myForm);
+        if (isPlatformBrowser(this.platformId)) {
+            if (event)
+                event.preventDefault();
+            this.customer.type = type;
+            this.customer.cpf_Cnpj = '';
+            this.formHelper.markFormAsUntouched(this.myForm);
+        }
     }
 
     public getDne(event) {
-        event.preventDefault();
-        if (this.customer.addresses[0] != null && this.customer.addresses[0].zipCode) {
-            toastr['info']('Localizando o endereço');
-            this.dneMananger.getAddress(this.customer.addresses[0].zipCode)
-                .subscribe(response => {
-                    this.customer.addresses[0].district = response.neighborhoods;
-                    this.customer.addresses[0].city = response.city;
-                    this.customer.addresses[0].addressLine1 = response.street;
-                    this.customer.addresses[0].state = response.state;
-                    if (response.street) {
-                        toastr['success']('Endereço encontrado');
-                    }
-                    else {
-                        toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
-                    }
-                }), () => {
-                    toastr['error']('Endereço não encontrado, preencha os campos manualmente');
-                };
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            if (this.customer.addresses[0] != null && this.customer.addresses[0].zipCode) {
+                toastr['info']('Localizando o endereço');
+                this.dneMananger.getAddress(this.customer.addresses[0].zipCode)
+                    .subscribe(response => {
+                        this.customer.addresses[0].district = response.neighborhoods;
+                        this.customer.addresses[0].city = response.city;
+                        this.customer.addresses[0].addressLine1 = response.street;
+                        this.customer.addresses[0].state = response.state;
+                        if (response.street) {
+                            toastr['success']('Endereço encontrado');
+                        }
+                        else {
+                            toastr['warning']('Endereço não encontrado, preencha os campos manualmente');
+                        }
+                    }), () => {
+                        toastr['error']('Endereço não encontrado, preencha os campos manualmente');
+                    };
+            }
         }
     }
 
@@ -226,32 +241,38 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     }
 
     hasError(key: string): boolean {
-        let error: boolean = (this.myForm.controls[key].touched && this.myForm.controls[key].invalid);
-        return error;
+        if (isPlatformBrowser(this.platformId)) {
+            let error: boolean = (this.myForm.controls[key].touched && this.myForm.controls[key].invalid);
+            return error;
+        }
     }
 
     invalidForm(): boolean {
-        if (this.myForm.invalid && this.customer.type == 1)
-            return true;
-        else if (this.myForm.invalid && this.customer.type == 1) {
-            let errors = [];
-            for (let i in this.myForm.controls) {
-                if ((<any>this.myForm.controls[i]).invalid)
-                    errors.push(i)
-            }
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.myForm.invalid && this.customer.type == 1)
+                return true;
+            else if (this.myForm.invalid && this.customer.type == 1) {
+                let errors = [];
+                for (let i in this.myForm.controls) {
+                    if ((<any>this.myForm.controls[i]).invalid)
+                        errors.push(i)
+                }
 
-            if (errors.length == 1 && errors[0] == 'birthdate')
-                return false;
-            else return true;
+                if (errors.length == 1 && errors[0] == 'birthdate')
+                    return false;
+                else return true;
+            }
+            else return false;
         }
-        else return false;
     }
 
     errorCPF_CNPJ(): boolean {
-        if (this.customer.type == 1 && (this.hasError('cpf_Cnpj') || (!this.validCPF() && this.validCPF() != null)))
-            return true;
-        else if (this.customer.type == 2 && (this.hasError('cpf_Cnpj') || (!this.validCNPJ() && this.validCNPJ() != null)))
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.customer.type == 1 && (this.hasError('cpf_Cnpj') || (!this.validCPF() && this.validCPF() != null)))
+                return true;
+            else if (this.customer.type == 2 && (this.hasError('cpf_Cnpj') || (!this.validCNPJ() && this.validCNPJ() != null)))
+                return true;
+            else return false;
+        }
     }
 }

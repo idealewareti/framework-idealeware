@@ -43,8 +43,10 @@ export class ProductRatingComponent implements AfterContentChecked {
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        if (changes['product'].currentValue != changes['product'].previousValue) {
-            this.GetProductRating();
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes['product'].currentValue != changes['product'].previousValue) {
+                this.GetProductRating();
+            }
         }
     }
 
@@ -56,20 +58,24 @@ export class ProductRatingComponent implements AfterContentChecked {
         }
     }
     private SumNote() {
-        this.productsRating.customers.forEach(p => {
-            this.totalNote += p.note;
-        });
-        if (this.totalNote > 0)
-            this.totalNote = Math.round(this.totalNote / this.productsRating.customers.length);
+        if (isPlatformBrowser(this.platformId)) {
+            this.productsRating.customers.forEach(p => {
+                this.totalNote += p.note;
+            });
+            if (this.totalNote > 0)
+                this.totalNote = Math.round(this.totalNote / this.productsRating.customers.length);
+        }
     }
 
     GetProductRating() {
-        this.service.getProductRating(this.product.id)
-            .subscribe(productsRating => {
-                this.productsRating = productsRating;
-                this.SumNote();
-                this.ratingUpdated.emit(productsRating);
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.service.getProductRating(this.product.id)
+                .subscribe(productsRating => {
+                    this.productsRating = productsRating;
+                    this.SumNote();
+                    this.ratingUpdated.emit(productsRating);
+                });
+        }
     }
 
     createRating(event) {
@@ -139,31 +145,43 @@ export class ProductRatingComponent implements AfterContentChecked {
     }
 
     addStar(event, star: number) {
-        event.preventDefault();
-        this.productsRatingCreate.customers.note = star;
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            this.productsRatingCreate.customers.note = star;
+        }
     }
 
     openLoginModal(event = null) {
-        if (event)
-            event.preventDefault();
-        this.loginModal = true;
+        if (isPlatformBrowser(this.platformId)) {
+            if (event)
+                event.preventDefault();
+            this.loginModal = true;
+        }
     }
 
     handleModalLogin(event: boolean) {
-        this.loginModal = event;
+        if (isPlatformBrowser(this.platformId)) {
+            this.loginModal = event;
+        }
     }
 
     handleLogin(event: Customer) {
-        if (event.id) {
-            this.isLogged = true;
-            this.submitRating();
+        if (isPlatformBrowser(this.platformId)) {
+            if (event.id) {
+                this.isLogged = true;
+                this.submitRating();
+            }
         }
     }
 
     hasError(key: string): boolean {
-        return (this.ratingForm.controls[key].touched && this.ratingForm.controls[key].invalid);
+        if (isPlatformBrowser(this.platformId)) {
+            return (this.ratingForm.controls[key].touched && this.ratingForm.controls[key].invalid);
+        }
     }
     isProductRating() {
-        return this.productsRating && this.productsRating.customers && this.productsRating.customers.length > 0;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.productsRating && this.productsRating.customers && this.productsRating.customers.length > 0;
+        }
     }
 }

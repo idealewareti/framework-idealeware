@@ -30,29 +30,37 @@ export class CheckoutAddressesComponent implements OnInit {
     ** Lifecycles
     */
     ngOnInit() {
-        this.setBillingAddress(this.getFirstOrDefault())
-            .then(cart => {
-                return this.setShippingAddress(this.getFirstOrDefault());
-            });
+        if (isPlatformBrowser(this.platformId)) {
+            this.setBillingAddress(this.getFirstOrDefault())
+                .then(cart => {
+                    return this.setShippingAddress(this.getFirstOrDefault());
+                });
+        }
     }
 
     /*
     ** Helpers
     */
     billingAddressOrDefault(): CustomerAddress {
-        return this.cart.billingAddress;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cart.billingAddress;
+        }
     }
 
     shippingAddressOrDefault(): CustomerAddress {
-        return this.cart.deliveryAddress;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.cart.deliveryAddress;
+        }
     }
 
     showMyAddresses(event, isBillingAddress: boolean = false) {
-        event.preventDefault();
-        if (isBillingAddress)
-            this.showBillingAddresses = !this.showBillingAddresses;
-        else
-            this.showShippingAddresses = !this.showShippingAddresses;
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            if (isBillingAddress)
+                this.showBillingAddresses = !this.showBillingAddresses;
+            else
+                this.showShippingAddresses = !this.showShippingAddresses;
+        }
     }
 
     //     /*
@@ -66,9 +74,11 @@ export class CheckoutAddressesComponent implements OnInit {
      * @memberof CheckoutAddressesComponent
      */
     getFirstOrDefault(): CustomerAddress {
-        if (this.addresses.findIndex(a => a.mainAddress == true) >= 0)
-            return this.addresses.find(a => a.mainAddress == true)
-        else return this.addresses[0];
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.addresses.findIndex(a => a.mainAddress == true) >= 0)
+                return this.addresses.find(a => a.mainAddress == true)
+            else return this.addresses[0];
+        }
     }
 
     //     /*

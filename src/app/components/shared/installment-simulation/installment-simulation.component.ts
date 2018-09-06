@@ -32,13 +32,17 @@ export class InstallmentSimulationComponent implements OnInit, OnChanges {
     ) { }
 
     ngOnInit() {
-        this.getSimulationSimple();
+        if (isPlatformBrowser(this.platformId)) {
+            this.getSimulationSimple();
+        }
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.sku) {
-            this.simulation.paymentMethods = [];
-            this.getSimulationSimple();
+        if (isPlatformBrowser(this.platformId)) {
+            if (changes.sku) {
+                this.simulation.paymentMethods = [];
+                this.getSimulationSimple();
+            }
         }
     }
 
@@ -82,61 +86,81 @@ export class InstallmentSimulationComponent implements OnInit, OnChanges {
     }
 
     hasSimulation(): boolean {
-        return this.manager.hasMundipaggCreditCard(this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            return this.manager.hasMundipaggCreditCard(this.payments);
+        }
     }
 
     nonEmptyMethod(): PaymentMethod[] {
-        return this.simulation.paymentMethods.filter(m => m.installment.length > 0);
+        if (isPlatformBrowser(this.platformId)) {
+            return this.simulation.paymentMethods.filter(m => m.installment.length > 0);
+        }
     }
 
     getMaxInstallment(gateway: Payment): string {
-        let method = (gateway.paymentMethods.length > 0) ? gateway.paymentMethods[0] : new PaymentMethod();
-        let maxInstallment: number = 0;
+        if (isPlatformBrowser(this.platformId)) {
+            let method = (gateway.paymentMethods.length > 0) ? gateway.paymentMethods[0] : new PaymentMethod();
+            let maxInstallment: number = 0;
 
-        if (this.isMundiPagg(gateway))
-            maxInstallment = method.installment[method.installment.length - 1].number;
-        else if (this.isMercadoPago(gateway))
-            maxInstallment = method.installment.length;
+            if (this.isMundiPagg(gateway))
+                maxInstallment = method.installment[method.installment.length - 1].number;
+            else if (this.isMercadoPago(gateway))
+                maxInstallment = method.installment.length;
 
-        else if (this.isPagseguro(gateway))
-            maxInstallment = method.installment[method.installment.length - 1].number;
+            else if (this.isPagseguro(gateway))
+                maxInstallment = method.installment[method.installment.length - 1].number;
 
-        return `Pague em até ${maxInstallment}x no cartão de crédito pagando com ${gateway.name}`;
+            return `Pague em até ${maxInstallment}x no cartão de crédito pagando com ${gateway.name}`;
+        }
     }
 
     selectGateway(gateway: Payment) {
-        this.gatewaySelected = gateway;
+        if (isPlatformBrowser(this.platformId)) {
+            this.gatewaySelected = gateway;
+        }
     }
 
     isSelected(gateway: Payment): boolean {
-        if (this.gatewaySelected && this.gatewaySelected.id == gateway.id)
-            return true;
-        else
-            return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.gatewaySelected && this.gatewaySelected.id == gateway.id)
+                return true;
+            else
+                return false;
+        }
     }
 
     defaultPayment(payments: Payment[]): Payment {
-        return payments.find(p => p.default == true);
+        if (isPlatformBrowser(this.platformId)) {
+            return payments.find(p => p.default == true);
+        }
     }
 
     getInstallments(payment: Payment): Installment[] {
-        if (payment.paymentMethods.length > 0)
-            return payment.paymentMethods[0].installment;
-        else return []
+        if (isPlatformBrowser(this.platformId)) {
+            if (payment.paymentMethods.length > 0)
+                return payment.paymentMethods[0].installment;
+            else return []
+        }
     }
 
     isMundiPagg(gateway: Payment): boolean {
-        if (this.manager.isMundiPagg(gateway))
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.manager.isMundiPagg(gateway))
+                return true;
+            else return false;
+        }
     }
 
     isMercadoPago(gateway: Payment): boolean {
-        return this.manager.isMercadoPago(gateway, this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            return this.manager.isMercadoPago(gateway, this.payments);
+        }
     }
 
     isPagseguro(gateway: Payment): boolean {
-        return this.manager.isPagSeguro(gateway, this.payments);
+        if (isPlatformBrowser(this.platformId)) {
+            return this.manager.isPagSeguro(gateway, this.payments);
+        }
     }
 
 }

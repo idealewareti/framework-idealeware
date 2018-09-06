@@ -38,32 +38,34 @@ export class AccountComponent implements OnInit {
 
 
     ngOnInit() {
-        this.router.events.subscribe(() => {
-            if (this.router.url.includes("/conta/")) {
-                let new_module = this.validModule(this.router.url);
+        if (isPlatformBrowser(this.platformId)) {
+            this.router.events.subscribe(() => {
+                if (this.router.url.includes("/conta/")) {
+                    let new_module = this.validModule(this.router.url);
 
-                if (new_module) {
-                    this.actual = new_module;
-                }
-                else {
-                    this.actual = { module: 'home', title: 'Minha Conta' };
-                }
+                    if (new_module) {
+                        this.actual = new_module;
+                    }
+                    else {
+                        this.actual = { module: 'home', title: 'Minha Conta' };
+                    }
 
-                this.seoManager.setTags({
-                    title: this.actual.title
-                });
-            }
-        });
-
-        this.storeManager.getStore()
-            .subscribe(store => {
-                this.store = store;
-                this.customerManager.getCustomer()
-                    .subscribe(customer => {
-                        if (!customer) this.router.navigateByUrl('/');
-                        this.customer = customer;
+                    this.seoManager.setTags({
+                        title: this.actual.title
                     });
+                }
             });
+
+            this.storeManager.getStore()
+                .subscribe(store => {
+                    this.store = store;
+                    this.customerManager.getCustomer()
+                        .subscribe(customer => {
+                            if (!customer) this.router.navigateByUrl('/');
+                            this.customer = customer;
+                        });
+                });
+        }
     }
 
     isMobile(): boolean {
@@ -74,11 +76,15 @@ export class AccountComponent implements OnInit {
     }
 
     private validModule(module: string) {
-        return this.modules.find(m => module.includes(m.module));
+        if (isPlatformBrowser(this.platformId)) {
+            return this.modules.find(m => module.includes(m.module));
+        }
     }
 
-    logout(){
-        this.customerManager.logOff();
-        this.router.navigate[''];
+    logout() {
+        if (isPlatformBrowser(this.platformId)) {
+            this.customerManager.logOff();
+            this.router.navigate[''];
+        }
     }
 }

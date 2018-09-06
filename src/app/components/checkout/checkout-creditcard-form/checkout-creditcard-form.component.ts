@@ -63,17 +63,19 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     ) { }
 
     ngOnInit(): void {
-        this.creditCardForm = this.formBuilder.group({
-            cardNumber: ['', Validators.required],
-            installment: ['', Validators.required],
-            holder: ['', Validators.required],
-            expMonth: ['', Validators.required],
-            expYear: ['', Validators.required],
-            cvv: ['', Validators.required],
-            taxId: ['', Validators.required],
-            birthDate: ['', Validators.required],
-            phone: ['', Validators.required]
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            this.creditCardForm = this.formBuilder.group({
+                cardNumber: ['', Validators.required],
+                installment: ['', Validators.required],
+                holder: ['', Validators.required],
+                expMonth: ['', Validators.required],
+                expYear: ['', Validators.required],
+                cvv: ['', Validators.required],
+                taxId: ['', Validators.required],
+                birthDate: ['', Validators.required],
+                phone: ['', Validators.required]
+            });
+        }
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -85,18 +87,20 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     }
 
     resetCard() {
-        console.log('cart resetado');
+        if (isPlatformBrowser(this.platformId)) {
+            console.log('cart resetado');
 
-        if (this.pagseguro)
-            this.pagseguro.optionSelected = new PagseguroOption();
-        else if (this.mundipagg)
-            this.mundipagg.methodSelected = new PaymentMethod();
-        else if (this.mercadopago)
-            this.mercadopago.methodSelected = new MercadoPagoPaymentMethod();
+            if (this.pagseguro)
+                this.pagseguro.optionSelected = new PagseguroOption();
+            else if (this.mundipagg)
+                this.mundipagg.methodSelected = new PaymentMethod();
+            else if (this.mercadopago)
+                this.mercadopago.methodSelected = new MercadoPagoPaymentMethod();
 
-        this.creditCard = new CreditCard();
-        this.bin = null;
-        this.creditCardUpdated.emit(this.creditCard);
+            this.creditCard = new CreditCard();
+            this.bin = null;
+            this.creditCardUpdated.emit(this.creditCard);
+        }
     }
 
     /**
@@ -106,26 +110,28 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     onChange(event = null) {
-        if (this.pagseguro) {
-            // Pagseguro
-            this.creditCard.payment = 'pagseguro';
-            this.creditCard.installmentValue = this.PagseguroGetInstallmentValue(this.creditCard.installmentCount);
-            this.creditCard.totalPurchasePrice = this.PagseguroGetTotalPurchasePrice(this.creditCard.installmentCount);
-        }
-        else if (this.mercadopago) {
-            // Mercado Pago
-            this.creditCard.payment = 'mercadopago';
-            this.creditCard.installmentValue = this.MercadoPagoGetInstallmentValue(this.creditCard.installmentCount);
-            this.creditCard.totalPurchasePrice = this.MercadopagoGetPurchasePrice(this.creditCard.installmentCount);
-        }
-        else if (this.mundipagg) {
-            // Mundipagg
-            this.creditCard.payment = 'mundipagg';
-            this.creditCard.installmentValue = this.MundipaggGetInstallmentValue(this.creditCard.installmentCount);
-            this.creditCard.totalPurchasePrice = this.MundipaggGetTotalPurchasePrice(this.creditCard.installmentCount);
-        }
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.pagseguro) {
+                // Pagseguro
+                this.creditCard.payment = 'pagseguro';
+                this.creditCard.installmentValue = this.PagseguroGetInstallmentValue(this.creditCard.installmentCount);
+                this.creditCard.totalPurchasePrice = this.PagseguroGetTotalPurchasePrice(this.creditCard.installmentCount);
+            }
+            else if (this.mercadopago) {
+                // Mercado Pago
+                this.creditCard.payment = 'mercadopago';
+                this.creditCard.installmentValue = this.MercadoPagoGetInstallmentValue(this.creditCard.installmentCount);
+                this.creditCard.totalPurchasePrice = this.MercadopagoGetPurchasePrice(this.creditCard.installmentCount);
+            }
+            else if (this.mundipagg) {
+                // Mundipagg
+                this.creditCard.payment = 'mundipagg';
+                this.creditCard.installmentValue = this.MundipaggGetInstallmentValue(this.creditCard.installmentCount);
+                this.creditCard.totalPurchasePrice = this.MundipaggGetTotalPurchasePrice(this.creditCard.installmentCount);
+            }
 
-        this.creditCardUpdated.emit(this.creditCard);
+            this.creditCardUpdated.emit(this.creditCard);
+        }
     }
 
     /**
@@ -136,7 +142,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     hasError(key: string): boolean {
-        return (this.creditCardForm.controls[key].touched && this.creditCardForm.controls[key].invalid);
+        if (isPlatformBrowser(this.platformId)) {
+            return (this.creditCardForm.controls[key].touched && this.creditCardForm.controls[key].invalid);
+        }
     }
 
     /**
@@ -147,7 +155,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     getBin(cardNumber: string) {
-        return cardNumber.replace(/[ .-]/g, '').slice(0, 6);
+        if (isPlatformBrowser(this.platformId)) {
+            return cardNumber.replace(/[ .-]/g, '').slice(0, 6);
+        }
     }
 
     /**
@@ -157,20 +167,22 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     getMinInstallments(): number {
-        let installmentLimitMin = Number.MAX_SAFE_INTEGER;
-        this.cart.products.forEach(product => {
-            if (product.installmentLimit != 0 && product.installmentLimit < installmentLimitMin)
-                installmentLimitMin = product.installmentLimit;
-        });
+        if (isPlatformBrowser(this.platformId)) {
+            let installmentLimitMin = Number.MAX_SAFE_INTEGER;
+            this.cart.products.forEach(product => {
+                if (product.installmentLimit != 0 && product.installmentLimit < installmentLimitMin)
+                    installmentLimitMin = product.installmentLimit;
+            });
 
-        if (this.payment.name != null && this.payment.name.toLowerCase() == "pagseguro") {
-            let pagseguroMin = Number.parseInt(this.payment.settings.find(a => a.name == "InstallmentLimit").value);
-            if (pagseguroMin < installmentLimitMin) {
-                installmentLimitMin = pagseguroMin;
+            if (this.payment.name != null && this.payment.name.toLowerCase() == "pagseguro") {
+                let pagseguroMin = Number.parseInt(this.payment.settings.find(a => a.name == "InstallmentLimit").value);
+                if (pagseguroMin < installmentLimitMin) {
+                    installmentLimitMin = pagseguroMin;
+                }
             }
-        }
 
-        return installmentLimitMin;
+            return installmentLimitMin;
+        }
     }
 
     /**
@@ -181,16 +193,18 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     onPaste(e: any, input) {
-        let content = e.clipboardData.getData('text/plain');
-        setTimeout(() => {
-            this.creditCard.creditCardNumber = "";
-            if (this.creditCardForm.controls['creditCardNumber']) {
-                this.creditCardForm.controls.creditCardNumber.setValue("");
-            }
-            if (isPlatformBrowser(this.platformId)) {
-                $('#cardNumber').val('');
-            }
-        }, 0);
+        if (isPlatformBrowser(this.platformId)) {
+            let content = e.clipboardData.getData('text/plain');
+            setTimeout(() => {
+                this.creditCard.creditCardNumber = "";
+                if (this.creditCardForm.controls['creditCardNumber']) {
+                    this.creditCardForm.controls.creditCardNumber.setValue("");
+                }
+                if (isPlatformBrowser(this.platformId)) {
+                    $('#cardNumber').val('');
+                }
+            }, 0);
+        }
     }
 
     /**
@@ -302,7 +316,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MercadoPagoCreditCardBrands(): MercadoPagoPaymentMethod[] {
-        return this.mercadopago.methods.filter(m => m.payment_type_id == 'credit_card');
+        if (isPlatformBrowser(this.platformId)) {
+            return this.mercadopago.methods.filter(m => m.payment_type_id == 'credit_card');
+        }
     }
 
     /**
@@ -314,9 +330,11 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MercadoPagoisBrandSelected(brand: string): boolean {
-        if (brand && this.mercadopago.methodSelected.id == brand)
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (brand && this.mercadopago.methodSelected.id == brand)
+                return true;
+            else return false;
+        }
     }
 
     /**
@@ -327,17 +345,19 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MercadoPagoDetectCard(cardnumber: string): Promise<MercadoPagoPaymentMethod> {
-        return new Promise((resolve, reject) => {
-            let bin = this.getBin(cardnumber);
-            Mercadopago.getPaymentMethod({ 'bin': bin }, (status, response) => {
-                if (status == 200) {
-                    resolve(new MercadoPagoPaymentMethod(response[0]));
-                }
-                else {
-                    reject('Cartão de Crédito não suportado');
-                }
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                let bin = this.getBin(cardnumber);
+                Mercadopago.getPaymentMethod({ 'bin': bin }, (status, response) => {
+                    if (status == 200) {
+                        resolve(new MercadoPagoPaymentMethod(response[0]));
+                    }
+                    else {
+                        reject('Cartão de Crédito não suportado');
+                    }
+                });
             });
-        });
+        }
     }
 
     /**
@@ -348,9 +368,11 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MercadoPagoGetInstallmentValue(installment: number): number {
-        if (installment && this.mercadopago.installmentResponse.payer_costs.length > 0)
-            return this.mercadopago.installmentResponse.payer_costs.find(c => c.installments == installment).installment_amount;
-        else return 0;
+        if (isPlatformBrowser(this.platformId)) {
+            if (installment && this.mercadopago.installmentResponse.payer_costs.length > 0)
+                return this.mercadopago.installmentResponse.payer_costs.find(c => c.installments == installment).installment_amount;
+            else return 0;
+        }
     }
 
     /**
@@ -361,16 +383,18 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MercadopagoGetPurchasePrice(installment: number): number {
-        if (installment) {
-            let message = this.mercadopago.installmentResponse.payer_costs.find(c => c.installments == installment).recommended_message;
-            message = message.match(/[(](.+)[)]/)[1]
-                .replace('R$ ', '')
-                .replace('.', '')
-                .replace(',', '.');
+        if (isPlatformBrowser(this.platformId)) {
+            if (installment) {
+                let message = this.mercadopago.installmentResponse.payer_costs.find(c => c.installments == installment).recommended_message;
+                message = message.match(/[(](.+)[)]/)[1]
+                    .replace('R$ ', '')
+                    .replace('.', '')
+                    .replace(',', '.');
 
-            return Number.parseFloat(message);
+                return Number.parseFloat(message);
+            }
+            else return 0;
         }
-        else return 0;
     }
 
     /**
@@ -402,12 +426,14 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MercadoPagoSetMinInstallments() {
-        let installmentLimitMin = this.getMinInstallments();
+        if (isPlatformBrowser(this.platformId)) {
+            let installmentLimitMin = this.getMinInstallments();
 
-        if (installmentLimitMin < Number.MAX_SAFE_INTEGER) {
-            let index = this.mercadopago.installmentResponse.payer_costs.findIndex(i => i.installments == installmentLimitMin);
-            if (index > -1)
-                this.mercadopago.installmentResponse.payer_costs.splice(index + 1, this.mercadopago.installmentResponse.payer_costs.length);
+            if (installmentLimitMin < Number.MAX_SAFE_INTEGER) {
+                let index = this.mercadopago.installmentResponse.payer_costs.findIndex(i => i.installments == installmentLimitMin);
+                if (index > -1)
+                    this.mercadopago.installmentResponse.payer_costs.splice(index + 1, this.mercadopago.installmentResponse.payer_costs.length);
+            }
         }
     }
 
@@ -422,18 +448,20 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroDetectBrand(cardnumber: string): Promise<PagseguroCardBrand> {
-        return new Promise((resolve, reject) => {
-            let bin: string = cardnumber.substring(0, 6);
-            PagSeguroDirectPayment.getBrand({
-                cardBin: bin,
-                success: (response) => {
-                    resolve(new PagseguroCardBrand(response.brand));
-                },
-                error: (response) => {
-                    reject('Cartão Inválido');
-                }
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                let bin: string = cardnumber.substring(0, 6);
+                PagSeguroDirectPayment.getBrand({
+                    cardBin: bin,
+                    success: (response) => {
+                        resolve(new PagseguroCardBrand(response.brand));
+                    },
+                    error: (response) => {
+                        reject('Cartão Inválido');
+                    }
+                });
             });
-        });
+        }
     }
 
     /**
@@ -443,12 +471,14 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroGetInstallmentFreeInterest(): number {
-        for (let i = 0; i < this.pagseguro.installments.length; i++) {
-            if (!this.pagseguro.installments[i].interestFree)
-                return i;
-        }
+        if (isPlatformBrowser(this.platformId)) {
+            for (let i = 0; i < this.pagseguro.installments.length; i++) {
+                if (!this.pagseguro.installments[i].interestFree)
+                    return i;
+            }
 
-        return 0;
+            return 0;
+        }
     }
 
     /**
@@ -458,7 +488,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroNoInterestInstallmentQuantity(): number {
-        return Number.parseInt(this.payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value)
+        if (isPlatformBrowser(this.platformId)) {
+            return Number.parseInt(this.payment.settings.find(s => s.name == ("NoInterestInstallmentQuantity")).value)
+        }
     }
 
     /**
@@ -468,34 +500,36 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroGetInstallments(): Promise<PagseguroInstallment[]> {
-        return new Promise((resolve, reject) => {
-            PagSeguroDirectPayment.getInstallments({
-                amount: this.cart.totalPurchasePrice,
-                brand: this.creditCard.creditCardBrand,
-                maxInstallmentNoInterest: this.PagseguroNoInterestInstallmentQuantity(),
-                success: response => {
-                    let installments = response.installments[this.creditCard.creditCardBrand].map(i => i = new PagseguroInstallment(i));
-                    let minInstalments = this.getMinInstallments();
-                    this.pagseguro.methods.forEach(m => {
-                        let option = m.options.filter(o => o.name == this.creditCard.creditCardBrand.toUpperCase())[0];
-                        if (option) {
-                            this.pagseguro.optionSelected = option;
-                            this.pagseguroUpdated.emit(option);
+        if (isPlatformBrowser(this.platformId)) {
+            return new Promise((resolve, reject) => {
+                PagSeguroDirectPayment.getInstallments({
+                    amount: this.cart.totalPurchasePrice,
+                    brand: this.creditCard.creditCardBrand,
+                    maxInstallmentNoInterest: this.PagseguroNoInterestInstallmentQuantity(),
+                    success: response => {
+                        let installments = response.installments[this.creditCard.creditCardBrand].map(i => i = new PagseguroInstallment(i));
+                        let minInstalments = this.getMinInstallments();
+                        this.pagseguro.methods.forEach(m => {
+                            let option = m.options.filter(o => o.name == this.creditCard.creditCardBrand.toUpperCase())[0];
+                            if (option) {
+                                this.pagseguro.optionSelected = option;
+                                this.pagseguroUpdated.emit(option);
+                            }
+                        });
+                        // this.loaderService.done();
+                        if (minInstalments < Number.MAX_SAFE_INTEGER) {
+                            installments.splice(minInstalments, installments.length);
                         }
-                    });
-                    // this.loaderService.done();
-                    if (minInstalments < Number.MAX_SAFE_INTEGER) {
-                        installments.splice(minInstalments, installments.length);
+                        resolve(installments)
+                    },
+                    error: response => {
+                        // this.loaderService.done();
+                        this.pagseguro.installments = [];
+                        reject(response);
                     }
-                    resolve(installments)
-                },
-                error: response => {
-                    // this.loaderService.done();
-                    this.pagseguro.installments = [];
-                    reject(response);
-                }
+                });
             });
-        });
+        }
     }
 
 
@@ -506,7 +540,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroListBrands(): PagseguroOption[] {
-        return this.pagseguro.methods.find(m => m.code == 1).options;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.pagseguro.methods.find(m => m.code == 1).options;
+        }
     }
 
     /**
@@ -517,7 +553,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroBrandImage(option: PagseguroOption): string {
-        return `${this.pagseguro_media}${option.images['SMALL'].path}`;
+        if (isPlatformBrowser(this.platformId)) {
+            return `${this.pagseguro_media}${option.images['SMALL'].path}`;
+        }
     }
 
     /**
@@ -528,9 +566,11 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroIsBrandSelected(option: PagseguroOption): boolean {
-        if (this.pagseguro.optionSelected.code == option.code)
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.pagseguro.optionSelected.code == option.code)
+                return true;
+            else return false;
+        }
     }
 
 
@@ -542,11 +582,13 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroGetInstallmentValue(quantity: number): number {
-        if (quantity) {
-            let installmentAmount: number = this.pagseguro.installments.find(i => i.quantity == quantity).installmentAmount;
-            return installmentAmount;
+        if (isPlatformBrowser(this.platformId)) {
+            if (quantity) {
+                let installmentAmount: number = this.pagseguro.installments.find(i => i.quantity == quantity).installmentAmount;
+                return installmentAmount;
+            }
+            else return 0;
         }
-        else return 0;
     }
 
     /**
@@ -557,11 +599,13 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     PagseguroGetTotalPurchasePrice(quantity: number): number {
-        if (quantity) {
-            let totalAmount: number = this.pagseguro.installments.find(i => i.quantity == quantity).totalAmount;
-            return totalAmount;
+        if (isPlatformBrowser(this.platformId)) {
+            if (quantity) {
+                let totalAmount: number = this.pagseguro.installments.find(i => i.quantity == quantity).totalAmount;
+                return totalAmount;
+            }
+            else return 0;
         }
-        else return 0;
     }
     /*
     ** MUNDIPAGG
@@ -574,8 +618,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     isMundipagg(): boolean {
-        return this.manager.isMundiPagg(this.payment);
-
+        if (isPlatformBrowser(this.platformId)) {
+            return this.manager.isMundiPagg(this.payment);
+        }
     }
 
     /**
@@ -585,7 +630,9 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MundipaggListBrands(): PaymentMethod[] {
-        return this.payment.paymentMethods;
+        if (isPlatformBrowser(this.platformId)) {
+            return this.payment.paymentMethods;
+        }
     }
 
     /**
@@ -596,9 +643,11 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MundipaggIsBrandSelected(method: PaymentMethod): boolean {
-        if (this.mundipagg.methodSelected && this.mundipagg.methodSelected.id == method.id)
-            return true;
-        else return false;
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.mundipagg.methodSelected && this.mundipagg.methodSelected.id == method.id)
+                return true;
+            else return false;
+        }
     }
 
     /**
@@ -609,14 +658,16 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MundipaggDetectCardBrand(cardnumber: string): string {
-        let brand: string = null;
-        for (let k in this.regexBrands) {
-            if (this.regexBrands[k].test(cardnumber.replace(/-/g, ''))) {
-                brand = k;
-                break;
+        if (isPlatformBrowser(this.platformId)) {
+            let brand: string = null;
+            for (let k in this.regexBrands) {
+                if (this.regexBrands[k].test(cardnumber.replace(/-/g, ''))) {
+                    brand = k;
+                    break;
+                }
             }
+            return brand;
         }
-        return brand;
     }
 
     /**
@@ -648,9 +699,11 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MundipaggListInstallments(): Installment[] {
-        if (this.mundipagg.methodSelected)
-            return this.mundipagg.methodSelected.installment;
-        else return [];
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.mundipagg.methodSelected)
+                return this.mundipagg.methodSelected.installment;
+            else return [];
+        }
     }
 
     /**
@@ -661,9 +714,11 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MundipaggInstallmentLabel(installment: Installment): string {
-        let price: string = installment.installmentPrice.toFixed(2).toString().replace('.', ',');
-        let total: string = installment.totalPrice.toFixed(2).toString().replace('.', ',');
-        return `${installment.number}x de R$ ${price} ${installment.description} (R$ ${total})`;
+        if (isPlatformBrowser(this.platformId)) {
+            let price: string = installment.installmentPrice.toFixed(2).toString().replace('.', ',');
+            let total: string = installment.totalPrice.toFixed(2).toString().replace('.', ',');
+            return `${installment.number}x de R$ ${price} ${installment.description} (R$ ${total})`;
+        }
     }
 
     /**
@@ -674,11 +729,13 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MundipaggGetInstallmentValue(quantity: number): number {
-        if (quantity) {
-            let installmentAmount: number = this.mundipagg.methodSelected.installment.find(i => i.number == quantity).installmentPrice;
-            return installmentAmount;
+        if (isPlatformBrowser(this.platformId)) {
+            if (quantity) {
+                let installmentAmount: number = this.mundipagg.methodSelected.installment.find(i => i.number == quantity).installmentPrice;
+                return installmentAmount;
+            }
+            else return 0;
         }
-        else return 0;
     }
 
     /**
@@ -689,10 +746,12 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
      * @memberof CheckoutCreditCardFormComponent
      */
     MundipaggGetTotalPurchasePrice(quantity: number): number {
-        if (quantity) {
-            let totalAmount: number = this.mundipagg.methodSelected.installment.find(i => i.number == quantity).totalPrice;
-            return totalAmount;
+        if (isPlatformBrowser(this.platformId)) {
+            if (quantity) {
+                let totalAmount: number = this.mundipagg.methodSelected.installment.find(i => i.number == quantity).totalPrice;
+                return totalAmount;
+            }
+            else return 0;
         }
-        else return 0;
     }
 }

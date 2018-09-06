@@ -2,7 +2,7 @@ import {
 	Component, OnInit, Inject, PLATFORM_ID,
 	AfterViewInit, ElementRef, Renderer2, ViewChild, ChangeDetectionStrategy
 } from '@angular/core';
-import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
+import { SafeResourceUrl, DomSanitizer, Meta } from '@angular/platform-browser';
 import { Store } from './models/store/store';
 import { Router, NavigationEnd, ActivationStart, NavigationStart } from '@angular/router';
 import { Institutional } from './models/institutional/institutional';
@@ -49,6 +49,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 		private customerManager: CustomerManager,
 		private kondutoManager: KondutoManager,
 		private renderer: Renderer2,
+		private meta: Meta,
 		@Inject(PLATFORM_ID) private platformId: Object
 	) {
 		// Antifraude precisa ser o primeiro a carregar para que as metas já venham contempladas
@@ -441,6 +442,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 			this.googleManager.getAll()
 				.subscribe(google => {
 					this.injectGoogleManagerScript(google.uaCode);
+					this.injectGoogleSiteVerification(google.siteVerification);
 				});
 		}
 	}
@@ -564,5 +566,16 @@ export class AppComponent implements OnInit, AfterViewInit {
 			document.head.appendChild(script);
 		}
 	}
+	/**
+	 * Injeta o script Google Site Verification
+	 * @param code 
+	 */
+	private injectGoogleSiteVerification(code :string) :void{
+		if(isPlatformBrowser(this.platformId)){
+			if(!code) return;
+			this.meta.addTag({name: 'google-site-verification', content: code});
+		}
+	}
+	
 
 }

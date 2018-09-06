@@ -48,27 +48,33 @@ export class AddressEditComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.tabId = this.route.params['value'].id;
-        if (this.tabId && this.tabId != 'novo') {
-            this.isEdit = true;
-            this.getAddress();
-        }
-        else {
-            this.isEdit = false;
+        if (isPlatformBrowser(this.platformId)) {
+            this.tabId = this.route.params['value'].id;
+            if (this.tabId && this.tabId != 'novo') {
+                this.isEdit = true;
+                this.getAddress();
+            }
+            else {
+                this.isEdit = false;
+            }
         }
     }
 
     submit(event) {
-        event.preventDefault();
-        if (this.isEdit) this.update();
-        else this.save();
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
+            if (this.isEdit) this.update();
+            else this.save();
+        }
     }
 
     private save() {
-        if (this.address.id) {
-            this.update();
-        } else {
-            this.insert();
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.address.id) {
+                this.update();
+            } else {
+                this.insert();
+            }
         }
     }
 
@@ -97,13 +103,15 @@ export class AddressEditComponent implements OnInit {
     }
 
     private getAddress() {
-        this.customerManager.getUser()
-            .subscribe(user => {
-                this.address = user.addresses.filter(a => a.id == this.tabId)[0]
-            }), error => {
-                swal(error);
-                this.parentRouter.navigateByUrl(`/conta/enderecos`)
-            };
+        if (isPlatformBrowser(this.platformId)) {
+            this.customerManager.getUser()
+                .subscribe(user => {
+                    this.address = user.addresses.filter(a => a.id == this.tabId)[0]
+                }), error => {
+                    swal(error);
+                    this.parentRouter.navigateByUrl(`/conta/enderecos`)
+                };
+        }
     }
 
     getDne(event) {
@@ -132,41 +140,47 @@ export class AddressEditComponent implements OnInit {
     }
 
     hasError(key: string): boolean {
-        let error: boolean = (this.myForm.controls[key].touched && this.myForm.controls[key].invalid);
-        return error;
+        if (isPlatformBrowser(this.platformId)) {
+            let error: boolean = (this.myForm.controls[key].touched && this.myForm.controls[key].invalid);
+            return error;
+        }
     }
 
     invalidForm(): boolean {
-        if (this.myForm.invalid) {
-            let errors = [];
-            for (let i in this.myForm.controls) {
-                if ((<any>this.myForm.controls[i]).invalid)
-                    errors.push(i)
-            }
+        if (isPlatformBrowser(this.platformId)) {
+            if (this.myForm.invalid) {
+                let errors = [];
+                for (let i in this.myForm.controls) {
+                    if ((<any>this.myForm.controls[i]).invalid)
+                        errors.push(i)
+                }
 
-            if (errors.length == 0)
-                return false;
-            else return true;
+                if (errors.length == 0)
+                    return false;
+                else return true;
+            }
+            else return false;
         }
-        else return false;
     }
 
     validadeSubmit(event) {
-        event.preventDefault();
+        if (isPlatformBrowser(this.platformId)) {
+            event.preventDefault();
 
-        if (this.invalidForm()) {
-            swal({
-                title: 'Falha ao cadastrar',
-                text: 'Os campos informados com * são obrigatórios',
-                type: "error",
-                confirmButtonText: "OK"
-            });
+            if (this.invalidForm()) {
+                swal({
+                    title: 'Falha ao cadastrar',
+                    text: 'Os campos informados com * são obrigatórios',
+                    type: "error",
+                    confirmButtonText: "OK"
+                });
 
-            for (let i in this.myForm.controls) {
-                (<any>this.myForm.controls[i])._touched = true;
+                for (let i in this.myForm.controls) {
+                    (<any>this.myForm.controls[i])._touched = true;
+                }
+            } else {
+                this.save();
             }
-        } else {
-            this.save();
         }
     }
 }
