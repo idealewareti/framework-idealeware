@@ -19,6 +19,7 @@ import { resolve } from 'url';
 declare var $: any;
 declare var swal: any;
 declare var toastr: any;
+declare const fbq: any;
 
 @Component({
     selector: 'signup-form',
@@ -84,6 +85,8 @@ export class SignUpComponent implements OnInit, AfterViewInit {
                 description: 'Cadastrar',
             });
         }
+        fbq('track', 'Lead');
+
     }
 
     ngDoCheck() {
@@ -125,6 +128,8 @@ export class SignUpComponent implements OnInit, AfterViewInit {
                         //     this.parentRouter.navigateByUrl(`/checkout`);
                         // else {
                         this.parentRouter.navigateByUrl(`/`);
+                        fbq('track', 'CompleteRegistration');
+
                         //}
                     })
                     .catch(err => {
