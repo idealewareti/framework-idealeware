@@ -5,6 +5,7 @@ import { ActivatedRoute } from "@angular/router";
 import { Order } from "../../../models/order/order";
 
 declare var dataLayer: any;
+declare const fbq: any;
 
 @Component({
     selector: 'checkout-finish',
@@ -52,6 +53,12 @@ export class CheckoutFinishComponent implements OnInit {
                         'products': products
                     }
                 }
+            });
+
+            fbq('track', 'Purchase', {
+                value: this.order.orderPrice,
+                currency: 'BRL',
+                content_ids: this.order.orderNumber,
             });
         }
 

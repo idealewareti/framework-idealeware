@@ -30,6 +30,7 @@ declare var toastr: any;
 declare var PagSeguroDirectPayment: any;
 declare var Mercadopago: any;
 declare var $: any;
+declare const fbq: any;
 
 @Component({
     selector: 'checkout',
@@ -81,6 +82,7 @@ export class CheckoutComponent implements OnInit {
             this.getCart();
             this.getPayments();
             this.getCustomer();
+            fbq('track', 'InitiateCheckout');
         }
     }
 

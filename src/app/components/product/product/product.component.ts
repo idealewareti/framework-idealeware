@@ -23,6 +23,7 @@ import { SeoManager } from '../../../managers/seo.manager';
 declare var $: any;
 declare var swal: any;
 declare var toastr: any;
+declare const fbq: any;
 
 @Component({
     selector: 'product',
@@ -146,6 +147,14 @@ export class ProductComponent implements OnInit, OnDestroy {
             this.cartManager.purchase(/*localStorage.getItem('cart_id'), */this.product, this.sku, this.quantity, this.feature)
                 .subscribe(cart => {
                     this.cartManager.addItem(cart.id, this.sku.id, this.quantity, this.feature).subscribe(cartAdd => {
+                        
+                        fbq('track', 'AddToCart', {
+                            value: this.sku.price,
+                            currency: 'BRL',
+                            content_ids: this.sku.id,
+                        });
+
+
                         toastr['success']('Produto adicionado ao carrinho');
                         if (this.services.length > 0)
                             this.services.forEach(service => {
