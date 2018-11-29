@@ -61,18 +61,20 @@ export class HttpClientHelper {
      * @memberof HttpClientHelper
      */
     get(url, params = []): Observable<any> {
-        return this.http.get(url, { headers: this.getHeaders(), params: this.getParams(params), responseType: 'json' }, );
+        url = url.includes("http") ? url : `https://${url}`;
+        return this.http.get(url, { headers: this.getHeaders(), params: this.getParams(params), responseType: 'json' });
     }
 
-     /**
-     * Executa uma requisição do tipo GET
-     * @param {any} url 
-     * @param {any} [params=[]] 
-     * @returns 
-     * @memberof HttpClientHelper
-     */
+    /**
+    * Executa uma requisição do tipo GET
+    * @param {any} url 
+    * @param {any} [params=[]] 
+    * @returns 
+    * @memberof HttpClientHelper
+    */
     getText(url, params = []): Observable<any> {
-        return this.http.get(url, { headers: this.getHeaders(), params: this.getParams(params), responseType: 'text' }, );
+        url = url.includes("http") ? url : `https://${url}`;
+        return this.http.get(url, { headers: this.getHeaders(), params: this.getParams(params), responseType: 'text' });
     }
 
     /**
@@ -83,6 +85,7 @@ export class HttpClientHelper {
      * @memberof HttpClient
      */
     post(url, data = null): Observable<any> {
+        url = url.includes("http") ? url : `https://${url}`;
         return this.http.post(url, data, { headers: this.getHeaders(), observe: 'response', responseType: 'json' });
     }
 
@@ -94,6 +97,7 @@ export class HttpClientHelper {
      * @memberof HttpClient
      */
     postText(url, data = null): Observable<any> {
+        url = url.includes("http") ? url : `https://${url}`;
         return this.http.post(url, data, { headers: this.getHeaders(), observe: 'response', responseType: 'text' });
     }
 
@@ -105,6 +109,7 @@ export class HttpClientHelper {
     * @memberof HttpClient
     */
     put(url, data = null): Observable<any> {
+        url = url.includes("http") ? url : `https://${url}`;
         return this.http.put(url, data, { headers: this.getHeaders(), responseType: 'json' });
     }
 
@@ -115,6 +120,7 @@ export class HttpClientHelper {
      * @memberof HttpClient
     */
     delete(url): Observable<any> {
+        url = url.includes("http") ? url : `https://${url}`;
         return this.http.delete(url, { headers: this.getHeaders(), responseType: 'json' });
     }
 }

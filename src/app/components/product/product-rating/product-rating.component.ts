@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentChecked, Input, Output, EventEmitter, SimpleChange, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, AfterContentChecked, Input, Output, EventEmitter, PLATFORM_ID, Inject, SimpleChanges } from '@angular/core';
 import { Product } from "../../../models/product/product";
 import { ProductRatingCreate } from "../../../models/product-rating/product-rating-create";
 import { CustomerService } from "../../../services/customer.service";
@@ -6,7 +6,6 @@ import { Customer } from "../../../models/customer/customer";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ProductRating } from '../../../models/product-rating/product-rating';
 import { ProductRatingService } from '../../../services/product-rating.service';
-import { Token } from '../../../models/customer/token';
 import { isPlatformBrowser } from '@angular/common';
 
 declare var swal: any;
@@ -42,11 +41,9 @@ export class ProductRatingComponent implements AfterContentChecked {
         });
     }
 
-    ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
-        if (isPlatformBrowser(this.platformId)) {
-            if (changes['product'].currentValue != changes['product'].previousValue) {
-                this.GetProductRating();
-            }
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.product) {
+            this.GetProductRating();
         }
     }
 
@@ -57,15 +54,6 @@ export class ProductRatingComponent implements AfterContentChecked {
             else this.isLogged = false;
         }
     }
-    private SumNote() {
-        if (isPlatformBrowser(this.platformId)) {
-            this.productsRating.customers.forEach(p => {
-                this.totalNote += p.note;
-            });
-            if (this.totalNote > 0)
-                this.totalNote = Math.round(this.totalNote / this.productsRating.customers.length);
-        }
-    }
 
     GetProductRating() {
         if (isPlatformBrowser(this.platformId)) {
@@ -74,6 +62,8 @@ export class ProductRatingComponent implements AfterContentChecked {
                     this.productsRating = productsRating;
                     this.SumNote();
                     this.ratingUpdated.emit(productsRating);
+                }, error => {
+                    throw new Error(`${error.error} Status: ${error.status}`);
                 });
         }
     }
@@ -106,7 +96,6 @@ export class ProductRatingComponent implements AfterContentChecked {
             }
         }
     }
-
 
     submitRating() {
         if (isPlatformBrowser(this.platformId)) {
@@ -179,9 +168,20 @@ export class ProductRatingComponent implements AfterContentChecked {
             return (this.ratingForm.controls[key].touched && this.ratingForm.controls[key].invalid);
         }
     }
+
     isProductRating() {
         if (isPlatformBrowser(this.platformId)) {
             return this.productsRating && this.productsRating.customers && this.productsRating.customers.length > 0;
+        }
+    }
+
+    private SumNote() {
+        if (isPlatformBrowser(this.platformId)) {
+            this.productsRating.customers.forEach(p => {
+                this.totalNote += p.note;
+            });
+            if (this.totalNote > 0)
+                this.totalNote = Math.round(this.totalNote / this.productsRating.customers.length);
         }
     }
 }

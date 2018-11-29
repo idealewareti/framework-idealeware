@@ -1,13 +1,13 @@
 import {
 	Component, OnInit, Inject, PLATFORM_ID,
-	AfterViewInit, ElementRef, Renderer2, ViewChild, ChangeDetectionStrategy
+	AfterViewInit, ElementRef, Renderer2, ViewChild
 } from '@angular/core';
 import { SafeResourceUrl, DomSanitizer, Meta } from '@angular/platform-browser';
 import { Store } from './models/store/store';
-import { Router, NavigationEnd, ActivationStart, NavigationStart } from '@angular/router';
+import { Router, NavigationEnd, ActivationStart } from '@angular/router';
 import { Institutional } from './models/institutional/institutional';
 import { AppCore } from './app.core';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, DOCUMENT, isPlatformServer } from '@angular/common';
 import { Payment } from './models/payment/payment';
 import { Customer } from './models/customer/customer';
 import { EnumStoreModality } from './enums/store-modality.enum';
@@ -19,6 +19,8 @@ import { StoreManager } from './managers/store.manager';
 import { KondutoManager } from './managers/konduto.manager';
 import { InstitutionalManager } from './managers/institutional.manager';
 import { GoogleManager } from './managers/google.manager';
+import { EventReplayer } from 'preboot';
+import { CartManager } from './managers/cart.manager';
 
 declare var $: any;
 declare var dataLayer: any;
@@ -29,6 +31,7 @@ declare var dataLayer: any;
 })
 export class AppComponent implements OnInit, AfterViewInit {
 
+	private isAbandonedCart: boolean = false;
 	private store: Store;
 	private facebookSafeUrl: SafeResourceUrl;
 	private institutionals: Institutional[] = [];
@@ -47,10 +50,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 		private paymentManager: PaymentManager,
 		private googleManager: GoogleManager,
 		private customerManager: CustomerManager,
+		private cartManager: CartManager,
 		private kondutoManager: KondutoManager,
 		private renderer: Renderer2,
 		private meta: Meta,
-		@Inject(PLATFORM_ID) private platformId: Object
+		private replayer: EventReplayer,
+		@Inject(PLATFORM_ID) private platformId: Object,
+		@Inject(DOCUMENT) private doc: any
 	) {
 		// Antifraude precisa ser o primeiro a carregar para que as metas já venham contempladas
 		if (this.isKondutoActived()) {
@@ -76,11 +82,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 				}
 
 				this.loadFacebookUrl();
+
+				this.injectStructuredData(store);
 			});
 	}
 
 	ngAfterViewInit(): void {
 		if (isPlatformBrowser(this.platformId)) {
+
+			this.loadAbandonedCartEvent();
 
 			this.checkRouter();
 
@@ -409,12 +419,12 @@ export class AppComponent implements OnInit, AfterViewInit {
      * @memberof AppComponent
      */
 	private loadPagesInstitutionals() {
-		if (isPlatformBrowser(this.platformId)) {
-			this.institutionalManager.getAll()
-				.subscribe(response => {
-					this.institutionals = response
-				});
-		}
+		this.institutionalManager.getAll()
+			.subscribe(response => {
+				this.institutionals = response
+			}, error => {
+				throw new Error(`${error.error} Status: ${error.status}`);
+			});
 	}
 
 	/**
@@ -423,14 +433,14 @@ export class AppComponent implements OnInit, AfterViewInit {
      * @memberof AppComponent
      */
 	private loadPayments() {
-		if (isPlatformBrowser(this.platformId)) {
-			this.paymentManager.getAll()
-				.subscribe(payments => {
-					this.payments = payments;
-					this.addPagseguro();
-					this.addMercadoPago();
-				});
-		}
+		this.paymentManager.getAll()
+			.subscribe(payments => {
+				this.payments = payments;
+				this.addPagseguro();
+				this.addMercadoPago();
+			}, error => {
+				throw new Error(`${error.error} Status: ${error.status}`);
+			});
 	}
 
 	/**
@@ -438,13 +448,13 @@ export class AppComponent implements OnInit, AfterViewInit {
 	 * @memberof AppComponent
 	 */
 	private loadGoogle() {
-		if (isPlatformBrowser(this.platformId)) {
-			this.googleManager.getAll()
-				.subscribe(google => {
-					this.injectGoogleManagerScript(google.uaCode);
-					this.injectGoogleSiteVerification(google.siteVerification);
-				});
-		}
+		this.googleManager.getAll()
+			.subscribe(google => {
+				this.injectGoogleManagerScript(google.uaCode);
+				this.injectGoogleSiteVerification(google.siteVerification);
+			}, error => {
+				throw new Error(`${error.error} Status: ${error.status}`);
+			});
 	}
 
 	/**
@@ -453,10 +463,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 	 * @memberof AppComponent
 	 */
 	private loadFacebookUrl() {
-		if (isPlatformBrowser(this.platformId)) {
-			let url = `https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F${AppConfig.FACEBOOK_PAGE}%2F&tabs&width=340&height=214&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=214403341930049`;
-			this.facebookSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-		}
+		let url = `https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F${AppConfig.FACEBOOK_PAGE}%2F&tabs&width=340&height=214&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=214403341930049`;
+		this.facebookSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
 	}
 
 	/**
@@ -470,6 +478,24 @@ export class AppComponent implements OnInit, AfterViewInit {
 			}, () => {
 				this.customer = null;
 			});
+	}
+
+	/**
+     * carrega evento do carrinho abandonado
+     * @memberof AppComponent
+     */
+	private loadAbandonedCartEvent() {
+		window.addEventListener("load", () => {
+			let url = location.pathname;
+
+			if (url.includes('carrinho')) {
+				let id = url.substr(url.length - 36);
+				if (AppCore.isGuid(id)) {
+					this.isAbandonedCart = true;
+					return;
+				}
+			}
+		}, false);
 	}
 
     /**
@@ -503,12 +529,20 @@ export class AppComponent implements OnInit, AfterViewInit {
 			this.keepHttps();
 			this.checkSessionId();
 
+			this.replayer.replayAll();
+
 			this.loadCustomer();
 
 			dataLayer.push({
 				'event': 'PageView',
 				'Page Path': evt.urlAfterRedirects
 			});
+
+			if (this.isStore()) {
+				if (this.getStore().modality === EnumStoreModality.Ecommerce) {
+					this.createAbandonedCart(this.isAbandonedCart);
+				}
+			}
 		});
 	}
 
@@ -552,7 +586,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 		if (isPlatformBrowser(this.platformId)) {
 			if (!code) return;
 			let script = this.renderer.createElement('script');
-			const content = `
+			let content = `
 			(function (w, d, s, l, i) {
 				w[l] = w[l] || []; w[l].push({
 					'gtm.start':
@@ -564,18 +598,59 @@ export class AppComponent implements OnInit, AfterViewInit {
 			`
 			script.innerHTML = content;
 			document.head.appendChild(script);
+
+			let noScript = this.renderer.createElement('noscript');
+			content = ` <iframe src="https://www.googletagmanager.com/ns.html?id=${code}"
+			height="0" width="0" style="display:none;visibility:hidden"></iframe>
+			`
+			noScript.innerHTML = content;
+			document.body.appendChild(noScript);
 		}
 	}
+
+	/**
+     * injeta dados estruturados na loja
+	 * @param {Store} store 
+     * @private
+     * @memberof AppComponent
+     */
+	private injectStructuredData(store: Store): void {
+		if (isPlatformServer(this.platformId)) {
+			if (!store) return;
+			let script = this.doc.createElement('script');
+			script.setAttribute('type', 'application/ld+json');
+			let content = `{
+				"@context": "http://schema.org",
+				"@type": "WebSite",
+				"name": "${store.companyName}",
+				"url": "${store.link}",
+				"potentialAction": {
+				  "@type": "SearchAction",
+				  "target": "${store.link}/buscar;q={search_term_string}",
+				  "query-input": "required name=search_term_string"
+				}
+			  }
+			`
+			script.innerHTML = content;
+			this.doc.body.appendChild(script);
+		}
+	}
+
 	/**
 	 * Injeta o script Google Site Verification
 	 * @param code 
 	 */
-	private injectGoogleSiteVerification(code :string) :void{
-		if(isPlatformBrowser(this.platformId)){
-			if(!code) return;
-			this.meta.addTag({name: 'google-site-verification', content: code});
+	private injectGoogleSiteVerification(code: string): void {
+		if (isPlatformBrowser(this.platformId)) {
+			if (!code) return;
+			this.meta.addTag({ name: 'google-site-verification', content: code });
 		}
 	}
-	
 
+	private createAbandonedCart(isAbandonedCart: boolean) {
+		this.cartManager.createAbandonedCart(isAbandonedCart)
+			.subscribe(() => {
+			}, (e) => {
+			});
+	}
 }

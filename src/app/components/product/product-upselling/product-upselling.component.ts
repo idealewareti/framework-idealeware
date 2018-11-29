@@ -22,7 +22,7 @@ export class ProductUpSellingComponent implements OnChanges {
     ) { }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (isPlatformBrowser(this.platformId)) {
+        if (isPlatformBrowser(this.platformId)) {            
             if (!changes['products'].firstChange)
                 this.destroyCarousel();
         }

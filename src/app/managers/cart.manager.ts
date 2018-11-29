@@ -10,8 +10,14 @@ import { isPlatformBrowser } from '@angular/common';
 import { AppCore } from '../app.core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { AppConfig } from '../app.config';
+import { AbandonedCart } from '../models/cart/abandoned-cart';
+import { CookieService } from 'ngx-cookie-service';
+import { GoogleTagsService } from '../services/google-tags.service';
 
 declare var dataLayer: any;
+declare var toastr: any;
 
 @Injectable({
     providedIn: 'root'
@@ -23,6 +29,8 @@ export class CartManager {
 
     constructor(
         private service: CartService,
+        private cookie: CookieService,
+        private googleTagsService: GoogleTagsService,
         @Inject(PLATFORM_ID) private platformId: Object) {
     }
 
@@ -50,13 +58,14 @@ export class CartManager {
                     .pipe(tap(cart => {
                         this.nextSubject(cart);
                         this.cart = cart;
-                    }));
-            else
+                    }, error => { throw new Error(`${error.error} Status: ${error.status}`) }));
+            else {
                 return this.service.getCart(AppCore.createGuid())
                     .pipe(tap(cart => {
                         this.nextSubject(cart);
                         this.cart = cart;
-                    }));
+                    }, error => { throw new Error(`${error.error} Status: ${error.status}`) }));
+            }
         }
     }
 
@@ -147,27 +156,15 @@ export class CartManager {
      */
     purchase(product: Product, sku: Sku, quantity: number, feature: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-
-            dataLayer.push({
-                'event': 'addToCart',
-                'ecommerce': {
-                    'currencyCode': 'BRL',
-                    'add': {
-                        'products': [{
-                            'name': product.name,
-                            'id': sku.code,
-                            'price': sku.price,
-                            'variant': sku.variations.map(v => v.option.name).join(", "),
-                        }]
-                    }
-                }
-            });
-
-            if (this.cart)
+            this.googleTagsService.addToCart(product, sku);
+            if (this.cart) {
+                this.cart.origin = this.getOrigin();
                 return this.addItem(this.cart.id, sku.id, quantity, feature)
                     .pipe(tap(cart => this.nextSubject(cart)))
+            }
             else {
                 this.cart = new Cart();
+                this.cart.origin = this.getOrigin();
                 let cartItem = new CartItem().createFromProduct(product, sku, feature, quantity);
                 this.cart.products.push(cartItem);
                 return this.createCart(this.cart).pipe(tap(cart => {
@@ -193,7 +190,8 @@ export class CartManager {
             let item = {
                 "skuId": skuId,
                 "quantity": quantity,
-                "feature": feature
+                "feature": feature,
+                "origin": this.getOrigin()
             };
             return this.service.sendToCart(item, cartId)
                 .pipe(tap(cart => this.nextSubject(cart)));
@@ -229,14 +227,14 @@ export class CartManager {
      */
     private createCart(cart: Cart): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        let session_id: string = this.getSessionId();
-        let zipCode: number = this.getZipcode();
-        let origin = this.getOrigin();
-        return this.service.createCart(cart, session_id, zipCode, origin)
-            .pipe(tap(cart => {
-                this.cart = cart;
-                this.nextSubject(cart);
-            }));
+            let session_id: string = this.getSessionId();
+            let zipCode: number = this.getZipcode();
+            let origin = this.getOrigin();
+            return this.service.createCart(cart, session_id, zipCode, origin)
+                .pipe(tap(cart => {
+                    this.cart = cart;
+                    this.nextSubject(cart);
+                }));
         }
     }
 
@@ -250,8 +248,8 @@ export class CartManager {
      */
     updateItem(item: CartItem, cartId: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        return this.service.updateItem(item, cartId)
-            .pipe(tap(cart => this.nextSubject(cart)));
+            return this.service.updateItem(item, cartId)
+                .pipe(tap(cart => this.nextSubject(cart)));
         }
     }
 
@@ -265,8 +263,8 @@ export class CartManager {
      */
     updateIsPackageItem(item: CartItem, cartId: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        return this.service.updateIsPackageItem(item, cartId)
-            .pipe(tap(cart => this.nextSubject(cart)));
+            return this.service.updateIsPackageItem(item, cartId)
+                .pipe(tap(cart => this.nextSubject(cart)));
         }
     }
 
@@ -280,8 +278,8 @@ export class CartManager {
      */
     updateItemService(item: Service, cartId: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        return this.service.updateItemService(item, cartId)
-            .pipe(tap(cart => this.nextSubject(cart)));
+            return this.service.updateItemService(item, cartId)
+                .pipe(tap(cart => this.nextSubject(cart)));
         }
     }
 
@@ -295,25 +293,10 @@ export class CartManager {
      */
     deleteItem(item: CartItem, cartId: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-
-        dataLayer.push({
-            'event': 'removeFromCart',
-            'ecommerce': {
-                'currencyCode': 'BRL',
-                'add': {
-                    'products': [{
-                        'name': item.name,
-                        'id': item.sku.code,
-                        'price': item.sku.price,
-                        'variant': item.sku.variations.map(v => v.option.name).join(", "),
-                    }]
-                }
-            }
-        });
-
-        return this.service.deleteItem(item, cartId)
-            .pipe(tap(cart => this.nextSubject(cart)))
-    }
+            this.googleTagsService.removeFromCart(item);
+            return this.service.deleteItem(item, cartId)
+                .pipe(tap(cart => this.nextSubject(cart)))
+        }
     }
 
     /**
@@ -326,8 +309,8 @@ export class CartManager {
      */
     deleteService(serviceId: string, cartId: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        return this.service.deleteService(serviceId, cartId)
-            .pipe(tap(cart => this.nextSubject(cart)))
+            return this.service.deleteService(serviceId, cartId)
+                .pipe(tap(cart => this.nextSubject(cart)))
         }
 
     }
@@ -337,8 +320,8 @@ export class CartManager {
      */
     removeCart() {
         if (isPlatformBrowser(this.platformId)) {
-        localStorage.removeItem('cart_id');
-        this.nextSubject(new Cart());
+            localStorage.removeItem('cart_id');
+            this.nextSubject(new Cart());
         }
     }
 
@@ -352,8 +335,8 @@ export class CartManager {
      */
     setShipping(shipping: Shipping, cartId: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        return this.service.setShipping(shipping, cartId)
-            .pipe(tap(cart => this.nextSubject(cart)))
+            return this.service.setShipping(shipping, cartId)
+                .pipe(tap(cart => this.nextSubject(cart)))
         }
     }
 
@@ -366,8 +349,8 @@ export class CartManager {
      */
     setCustomerToCart(): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        return this.service.setCustomerToCart(this.getCartId())
-            .pipe(tap(cart => this.setCartId(cart.id)));
+            return this.service.setCustomerToCart(this.getCartId())
+                .pipe(tap(cart => this.setCartId(cart.id)));
         }
     }
 
@@ -382,8 +365,8 @@ export class CartManager {
      */
     addDeliveryAddress(cartId: string, addressId: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        return this.service.addDeliveryAddress(cartId, addressId)
-            .pipe(tap(cart => this.nextSubject(cart)));
+            return this.service.addDeliveryAddress(cartId, addressId)
+                .pipe(tap(cart => this.nextSubject(cart)));
         }
     }
 
@@ -397,8 +380,8 @@ export class CartManager {
      */
     addBillingAddress(cartId: string, addressId: string): Observable<Cart> {
         if (isPlatformBrowser(this.platformId)) {
-        return this.service.addBillingAddress(cartId, addressId)
-            .pipe(tap(cart => this.nextSubject(cart)));
+            return this.service.addBillingAddress(cartId, addressId)
+                .pipe(tap(cart => this.nextSubject(cart)));
         }
     }
 
@@ -411,15 +394,33 @@ export class CartManager {
 
     getOrigin(): string {
         if (isPlatformBrowser(this.platformId)) {
-        if (this.isMobile())
-            return "mobile";
-        return "desktop";
+            if (this.isMobile())
+                return "mobile";
+            return "desktop";
         }
     }
 
     haveCart() {
         if (isPlatformBrowser(this.platformId)) {
-        return this.cart ? true : false;
+            return this.cart ? true : false;
+        }
+    }
+
+    /**
+     * criar carrinho abandonado
+     */
+    createAbandonedCart(isAbandonedCart: boolean): Observable<AbandonedCart> {
+        return this.service.createAbandonedCart(this.getCartId(),
+            AppConfig.DOMAIN,
+            this.cookie.get("customer_email"), isAbandonedCart);
+    }
+
+    /**
+     * Remove o carrinho abandonado
+     */
+    removeAbandonedCart() {
+        if (isPlatformBrowser(this.platformId)) {
+            return this.service.deleteAbandonedCart(this.getCartId(), AppConfig.DOMAIN);
         }
     }
 }

@@ -15,6 +15,7 @@ enableProdMode();
 // Express server
 const app = express();
 const PORT = AppConfig.PORT;
+const PATH = AppConfig.PATH;
 const TITLE = `store.${AppConfig.DOMAIN}`;
 process.title = TITLE;
 
@@ -47,10 +48,15 @@ app.engine('html', (_, options, callback) => {
 app.set('view engine', 'html');
 app.set('views', join(DIST_FOLDER, 'browser'));
 
-// Server static files from /browser
+// Server static files from /browser'
 app.get('*.*', express.static(join(DIST_FOLDER, 'browser'), {
     maxAge: '1y'
 }));
+
+//Check health store
+app.get('/health-check', function (req, res) {
+    res.status(200).send("health check application")
+});
 
 // All regular routes use the Universal engine
 app.get('*', (req, res) => {
@@ -58,6 +64,6 @@ app.get('*', (req, res) => {
 });
 
 // Start up the Node server
-app.listen(PORT, () => {
-    console.log(`${process.title} listening on http://localhost:${PORT}`);
+app.listen((process.env.PORT || PORT), PATH,() => {
+    console.log(`${process.title} listening on http://${PATH}:${PORT}`);
 });

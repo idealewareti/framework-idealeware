@@ -11,6 +11,13 @@ import { ProductAwaited } from "../models/product-awaited/product-awaited";
 import { ProductAwaitedService } from "../services/product-awaited.service";
 import { RelatedProductGroup } from "../models/related-products/related-product-group";
 import { RelatedProductsService } from "../services/related-products.service";
+import { tap } from "rxjs/operators";
+import { isPlatformBrowser } from "@angular/common";
+import { PLATFORM_ID } from "@angular/core";
+import { Inject } from "@angular/core";
+import { GoogleTagsService } from "../services/google-tags.service";
+
+declare var dataLayer: any;
 
 @Injectable({
     providedIn: 'root'
@@ -22,10 +29,19 @@ export class ProductManager {
         private serviceIntelipost: IntelipostService,
         private serviceAwaited: ProductAwaitedService,
         private relatedService: RelatedProductsService,
+        private googleTagsService: GoogleTagsService,
+        @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
     getProductBySku(skuId: string): Observable<Product> {
-        return this.service.getProductBySku(skuId);
+        if (isPlatformBrowser(this.platformId))
+            return this.service.getProductBySku(skuId)
+                .pipe(tap(product => {
+                    let sku = this.getSku(skuId, product);
+                    this.googleTagsService.viewItem(product, sku);
+                    if (sku.promotionalPrice)
+                        this.googleTagsService.viewPromotion(product, sku);
+                }));
     }
 
     getProductById(id: string): Observable<Product> {

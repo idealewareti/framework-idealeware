@@ -49,7 +49,11 @@ export class InstallmentSimulationComponent implements OnInit, OnChanges {
     getSimulationSimple() {
         if (isPlatformBrowser(this.platformId)) {
             this.manager.getInstallmentsSimulationSimpleBySkuId(this.sku.id)
-                .subscribe(installments => this.installments = installments);
+                .subscribe(installments =>
+                    this.installments = installments.installmentNumber > 1 ? installments : null
+                    , error => {
+                        throw new Error(`${error.error} Status: ${error.status}`);
+                    });
         }
     }
 
@@ -79,8 +83,8 @@ export class InstallmentSimulationComponent implements OnInit, OnChanges {
 
                     this.selectGateway(this.defaultPayment(this.payments));
                 }, error => {
-                    this.error = `Não foi possível obter o parcelamento (Erro: ${error.status})`;
                     this.payments = [];
+                    throw new Error(`${error.error} Status: ${error.status}`);
                 });
         }
     }

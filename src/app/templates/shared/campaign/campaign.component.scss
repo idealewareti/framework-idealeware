@@ -1,0 +1,25 @@
+.box-campaign{
+    display: block;
+    position: relative;
+    padding: 2px;
+}
+
+.tag-campaign{
+    position: absolute;
+    z-index: 1;
+}
+.tag-campaign-left{
+    left: 0;
+}
+
+.tag-campaign-right{
+    right: 0;
+}
+
+.tag-campaign-top{
+    top: 0;
+}
+
+.tag-campaign-bottom{
+    bottom: 0;
+}

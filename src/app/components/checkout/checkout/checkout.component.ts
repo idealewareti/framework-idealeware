@@ -1,4 +1,4 @@
-import { Component, OnInit, PLATFORM_ID, Inject, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, Inject, ElementRef, ViewChild, Renderer2, OnDestroy, AfterViewChecked, AfterViewInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 import { Cart } from '../../../models/cart/cart';
@@ -24,6 +24,7 @@ import { AppConfig } from '../../../app.config';
 import { CartItem } from '../../../models/cart/cart-item';
 import { OrderManager } from '../../../managers/order.manager';
 import { CustomerManager } from '../../../managers/customer.manager';
+import { GoogleTagsService } from '../../../services/google-tags.service';
 
 declare var swal: any;
 declare var toastr: any;
@@ -36,7 +37,7 @@ declare var $: any;
     templateUrl: '../../../templates/checkout/checkout/checkout.html',
     styleUrls: ['../../../templates/checkout/checkout/checkout.scss']
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
     customer: Customer;
     payments: Payment[];
     cart: Cart;
@@ -72,6 +73,7 @@ export class CheckoutComponent implements OnInit {
         private customerManager: CustomerManager,
         private parentRouter: Router,
         private renderer: Renderer2,
+        private googleTagsService: GoogleTagsService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
@@ -135,6 +137,11 @@ export class CheckoutComponent implements OnInit {
                 this.renderer.removeChild(this.scriptContainer, this.kondutoScript);
             }
         }
+    }
+
+    ngAfterViewInit(): void {
+        if (isPlatformBrowser(this.platformId))
+            this.googleTagsService.checkoutProgress(this.cart);
     }
 
     private injectKondutoIdentifier(id: string): void {
@@ -204,8 +211,8 @@ export class CheckoutComponent implements OnInit {
                     this.paymentManager.createPagSeguroSession()
                         .subscribe(sessionId => {
                             this.paymentManager.setPagSeguroSession(sessionId);
-                        }, err => {
-                            console.log(err);
+                        }, error => {
+                            throw new Error(`${error.error} Status: ${error.status}`);
                         });
                 else
                     this.paymentManager.createPagSeguroSessionSimulator()
@@ -261,10 +268,16 @@ export class CheckoutComponent implements OnInit {
     getTotal(): number {
         if (isPlatformBrowser(this.platformId)) {
             if (this.isMundipaggBankslip() && this.methodSelected && this.methodSelected.discount > 0) {
-                return this.cart.totalPurchasePrice - (this.cart.totalPurchasePrice * (this.methodSelected.discount / 100));
+                return this.calculateDiscount();
             }
             return this.cart.totalPurchasePrice;
         }
+    }
+
+    private calculateDiscount() {
+        let totalPrice = 0;
+        this.cart.products.forEach(product => totalPrice += product.totalPrice);
+        return this.cart.totalPurchasePrice - (totalPrice * (this.methodSelected.discount / 100));
     }
 
     /**
@@ -383,6 +396,7 @@ export class CheckoutComponent implements OnInit {
     handleShippingUpdated(shipping: Shipping) {
         if (isPlatformBrowser(this.platformId)) {
             this.shippingSelected = shipping;
+            this.googleTagsService.setCheckoutOption(shipping);
         }
     }
 

@@ -18,7 +18,7 @@ export class KondutoManager {
     readonly cartMetaContent = 'basket';
     readonly checkoutMetaContent = 'checkout';
     readonly productMetaContent = 'product';
-    readonly forgetPasswordMetaContent = 'password_reset';
+    readonly forgotPasswordMetaContent = 'password_reset';
     readonly signupMetaContent = 'account_creation';
     readonly categoryMetaContent = 'category';
     readonly searchMetaContent = 'search';
@@ -29,7 +29,7 @@ export class KondutoManager {
     readonly cartComponent = 'Basket';
     readonly checkoutComponent = 'Checkout';
     readonly productComponent = 'Product';
-    readonly forgetPasswordComponent = 'ForgetPassword';
+    readonly forgotPasswordComponent = 'forgotPassword';
     readonly signupComponent = 'SignUp';
     readonly cagetoryComponent = 'Category';
     readonly searchComponent = 'Search';
@@ -81,8 +81,8 @@ export class KondutoManager {
             return this.checkoutMetaContent;
         } else if (routeName.includes(this.productComponent)) {
             return this.productMetaContent;
-        } else if (routeName.includes(this.forgetPasswordComponent)) {
-            return this.forgetPasswordMetaContent;
+        } else if (routeName.includes(this.forgotPasswordComponent)) {
+            return this.forgotPasswordMetaContent;
         } else if (routeName.includes(this.signupComponent)) {
             return this.signupMetaContent;
         } else if (routeName.includes(this.cagetoryComponent)) {

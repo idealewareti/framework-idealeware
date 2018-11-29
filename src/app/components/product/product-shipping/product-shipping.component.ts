@@ -87,7 +87,9 @@ export class ProductShipping {
                 this.product.skuBase.price = this.validPromotionalPrice();
                 this.productShipping.Products = this.product.skuBase;
                 this.productShipping.Products.quantity = this.quantity;
-
+                this.productShipping.Products.additionalFreightPrice = this.product.additionalFreightPrice;
+                this.productShipping.Products.daysProcessing = this.product.daysProcessing;
+                
                 return this.productManager.getShippingProduct(this.productShipping)
                     .subscribe(intelipost => {
                         resolve(intelipost);

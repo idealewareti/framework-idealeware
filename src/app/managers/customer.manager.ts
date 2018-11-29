@@ -8,6 +8,7 @@ import { Token } from "../models/customer/token";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { CustomerAddress } from "../models/customer/customer-address";
 import { map } from "../../../node_modules/rxjs/operators";
+import { CookieService } from "ngx-cookie-service";
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +20,7 @@ export class CustomerManager {
     constructor(
         private service: CustomerService,
         private jwtService: JwtHelperService,
+        private cookie: CookieService,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { this.loadCustomer(); }
 
@@ -55,7 +57,7 @@ export class CustomerManager {
         if (this.isLoggedIn()) {
             this.customerSubject.next(null);
             localStorage.removeItem('customer');
-            localStorage.removeItem('customer_mail');
+            localStorage.removeItem('customer_email');
             localStorage.removeItem('auth');
             localStorage.removeItem('auth_create');
             localStorage.removeItem('auth_expires');
@@ -70,7 +72,7 @@ export class CustomerManager {
         if (this.isLoggedIn()) {
             let customer: Customer = new Customer();
             customer.firstname_Companyname = localStorage.getItem('customer');
-            customer.email = localStorage.getItem('customer_mail');
+            customer.email = localStorage.getItem('customer_email');
             this.customerSubject.next(customer);
         }
     }
@@ -85,12 +87,11 @@ export class CustomerManager {
     }
 
     /**
-     * Recupera Senha
-     * @param cpf_cnpj 
+     * Recupera Senha 
      * @param email 
      */
-    recoverPassword(cpf_cnpj, email) {
-        return this.service.recoverPassword(cpf_cnpj, email);
+    getTokenPassword(email: string): Observable<any> {
+        return this.service.getTokenPassword(email);
     }
 
     updateCustomer(customer: Customer): Promise<Customer> {
@@ -98,7 +99,7 @@ export class CustomerManager {
             if (this.isLoggedIn()) {
                 this.service.updateCustomer(customer).subscribe(updated_customer => {
                     localStorage.setItem('customer', updated_customer.firstname_Companyname);
-                    localStorage.setItem('customer_mail', updated_customer.email);
+                    localStorage.setItem('customer_email', updated_customer.email);
                     this.customerSubject.next(updated_customer);
                     resolve(updated_customer);
                 });
@@ -129,10 +130,11 @@ export class CustomerManager {
         if (isPlatformBrowser(this.platformId)) {
             this.customerSubject.next(token.customer);
             localStorage.setItem('customer', token.customer.firstname_Companyname);
-            localStorage.setItem('customer_mail', token.customer.email);
+            localStorage.setItem('customer_email', token.customer.email);
             localStorage.setItem('auth', token.accessToken);
             localStorage.setItem('auth_create', token.createdDate.toString());
             localStorage.setItem('auth_expires', token.expiresIn.toString());
+            this.cookie.set("customer_email", token.customer.email, this.getExpiredDate())
         }
     }
 
@@ -148,5 +150,19 @@ export class CustomerManager {
             }
             return token;
         }
+    }
+
+    recoverPassword(password: string, token: string) {
+        return this.service.recoverPassword(token, password);
+    }
+
+    validForgotPasswordToken(token: string): Observable<boolean> {
+        return this.service.validForgotPasswordToken(token);
+    }
+
+    private getExpiredDate(): Date {
+        let expiredDate = new Date();
+        expiredDate.setDate(expiredDate.getMonth() + 12);
+        return expiredDate;
     }
 }

@@ -44,7 +44,15 @@
             <div class="row" *ngFor="let option of branches">
                 <hr>
                 <div class="col-md-12">
-                    <strong>Retirar na Loja - </strong>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} {{option.city}}/{{option.state}}
+                    <strong>Retirar na Loja : </strong>{{option.name}} - 
+                    <strong>
+                        <span *ngIf="option.deliveryTime == 0">Pronta Entrega</span>
+                        <span *ngIf="option.deliveryTime != 0">Retirada em até {{option.deliveryTime}} dias úteis </span>
+                        <span *ngIf="option.value == 0"> - Grátis</span>
+                        <span *ngIf="option.value != 0"> - {{option.value | currencyFormat }}</span>
+                    </strong>
+                    <br>
+                    <span>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} - {{option.city}}/{{option.state}}</span>
                 </div>
             </div>
         </div>

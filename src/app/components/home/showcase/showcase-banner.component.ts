@@ -33,4 +33,11 @@ export class ShowcaseBannerComponent implements AfterViewChecked {
     getBannerUrl(banner: ShowCaseBanner): string {
         return `${this.store.link}/static/showcases/${banner.fullBanner}`;
     }
+
+    getBanners() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return this.banners.slice(0, 1);
+        }
+        return this.banners;
+    }
 }

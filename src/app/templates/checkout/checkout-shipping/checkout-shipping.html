@@ -18,8 +18,15 @@
             <div class="radio" If="branches.length > 0" *ngFor="let branch of allowPickUpStore()">
                 <label (click)="addShippingToCart($event, null, branch)">
                     <i class="fa" [ngClass]="{'fa-square-o': !checkOption(null, branch), 'fa-check-square-o': checkOption(null, branch)}"></i>
-                    Retirar na Loja: {{branch.name}}
-                    <br> {{branch.addressLine1}}, {{branch.number}} {{branch.addressline2}} {{branch.city}}/{{branch.state}}
+                    <strong> Retirar na Loja : </strong>{{branch.name}} - 
+            <strong>
+                <span *ngIf="branch.deliveryTime == 0">Pronta Entrega</span>
+                <span *ngIf="branch.deliveryTime != 0">Retirada em até {{branch.deliveryTime}} dias úteis </span>
+                <span *ngIf="branch.value == 0"> - Grátis</span>
+                <span *ngIf="branch.value != 0"> - {{branch.value | currencyFormat }}</span>
+            </strong>
+            <br>
+            <span>{{branch.addressLine1}}, {{branch.number}} {{branch.addressline2}} - {{branch.city}}/{{branch.state}}</span>
                 </label>
             </div>
         </div>

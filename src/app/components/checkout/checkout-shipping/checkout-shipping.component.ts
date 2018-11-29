@@ -87,7 +87,9 @@ export class CheckoutShippingComponent implements OnChanges {
                         });
                     else
                         swal({ title: 'Erro!', text: 'Não foi possível calcular o frete', type: 'error', confirmButtonText: 'OK' });
-                })
+                        
+                        throw new Error(`${err.error} Status: ${err.status}`);
+                    })
         })
     }
 
@@ -126,11 +128,11 @@ export class CheckoutShippingComponent implements OnChanges {
                     delivery.quotId = branch.id;
                     delivery.deliveryMethodId = branch.id;
                     delivery.deliveryMethodName = 'Retirar na Loja';
-                    delivery.shippingCost = 0.0;
+                    delivery.shippingCost = branch.value;
                     delivery.deliveryProviderName = branch.name;
-                    delivery.deliveryEstimateBusinessDays = branch.replenishmentTime;
-                    delivery.deliveryEstimatedDate = this.addToDate(new Date(), 'day', branch.replenishmentTime);
-                    delivery.deliveryEstimatedDateMax = this.addToDate(new Date(), 'day', branch.replenishmentTime);
+                    delivery.deliveryEstimateBusinessDays = branch.deliveryTime;
+                    delivery.deliveryEstimatedDate = this.addToDate(new Date(), 'day', branch.deliveryTime);
+                    delivery.deliveryEstimatedDateMax = this.addToDate(new Date(), 'day', branch.deliveryTime);
                     shipping.deliveryInformation = delivery;
                 }
 

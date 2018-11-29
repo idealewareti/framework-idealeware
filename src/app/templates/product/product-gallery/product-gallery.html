@@ -1,14 +1,19 @@
 <div *ngIf="!isMobile()" class="image-group">
     <div class="image" *ngIf="pictures.length > 0">
-        <img id="product-image-zoom" [attr.src]="getPictureUrl(coverImg)" [attr.data-zoom-image]="getFullPictureUrl(coverImg)">
+        <campaign [store]="store" [sku]="sku">
+            <img id="product-image-zoom" [attr.src]="getPictureUrl(coverImg)" [attr.data-zoom-image]="getFullPictureUrl(coverImg)">
+        </campaign>
     </div>
     <div class="image" *ngIf="pictures.length == 0">
-        <img id="product-image-zoom" src="/assets/images/no-image.jpg">
+        <campaign [store]="store" [sku]="sku">
+            <img id="product-image-zoom" src="/assets/images/no-image.jpg">
+        </campaign>
     </div>
     <ul *ngIf="pictures.length > 0 && isBrowser()">
         <ngx-slick id="image-thumb" class="carousel" #slickModal="slick-modal" [config]="slideConfig">
             <li ngxSlickItem *ngFor="let picture of pictures" class="slide image-thumb-item">
-                <a href="javascript:void(0)" (click)="setCoverImage(picture, $event)" [attr.data-image]="getPictureUrl(picture)" [attr.data-zoom-image]="getFullPictureUrl(picture)">
+                <a href="javascript:void(0)" (click)="setCoverImage(picture, $event)" [attr.data-image]="getPictureUrl(picture)"
+                    [attr.data-zoom-image]="getFullPictureUrl(picture)">
                     <img [attr.id]="picture.id" [attr.src]="getThumbnailUrl(picture)" class="img-responsive center-block align-middle" />
                 </a>
             </li>
@@ -19,7 +24,9 @@
 <div *ngIf="isMobile() && isBrowser()">
     <ngx-slick class="carousel image-group" #slickModal="slick-modal" [config]="slideConfigMobile">
         <div ngxSlickItem *ngFor="let picture of pictures" class="slide image text-center">
-            <img style="margin:0 auto" [attr.src]="getPictureUrl(picture)" class="img-responsive">
+            <campaign [store]="store" [sku]="sku">
+                <img style="margin:0 auto" [attr.src]="getPictureUrl(picture)" class="img-responsive">
+            </campaign>
         </div>
     </ngx-slick>
 </div>

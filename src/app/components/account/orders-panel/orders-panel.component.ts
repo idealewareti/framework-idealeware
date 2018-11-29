@@ -3,6 +3,9 @@ import { isPlatformBrowser } from '@angular/common';
 import { Order } from "../../../models/order/order";
 import { OrderStatusEnum } from "../../../enums/order-status.enum";
 import { OrderManager } from '../../../managers/order.manager';
+import { Router } from '@angular/router';
+
+declare var swal: any;
 
 @Component({
     selector: 'order-panel',
@@ -15,6 +18,7 @@ export class OrderPanelComponent {
 
     constructor(
         private orderManager: OrderManager,
+        private parentRouter: Router,
         @Inject(PLATFORM_ID) private platformId: Object) { }
 
     ngOnInit() {
@@ -35,6 +39,10 @@ export class OrderPanelComponent {
                         ]
                         order.labelStatus = labels.filter(s => s.id == order.status)[0].label;
                     })
+                }, error => {
+                    swal('Erro', 'Não foi possível obter os pedidos', 'error')
+                        .then(() => this.parentRouter.navigateByUrl('/'));
+                    throw new Error(`${error.error} Status: ${error.status}`);
                 });
         }
     }

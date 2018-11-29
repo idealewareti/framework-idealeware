@@ -18,6 +18,8 @@ import { ZipCodeMaskModule } from "../../directives/zipcode-mask/zipcode-mask.mo
 import { InstallmentSimulationModule } from "../shared/installment-simulation/installment-simulation.module";
 import { ProductResolver } from "../../resolvers/product.resolver";
 import { StoreResolver } from "../../resolvers/store.resolver";
+import { PaymentTicketModule } from "../shared/payment-ticket/payment-ticket.module";
+import { CampaignModule } from "../shared/campaign/campaign.module";
 
 @NgModule({
     declarations: [
@@ -47,7 +49,9 @@ import { StoreResolver } from "../../resolvers/store.resolver";
         ProductRatingModule,
         FormsModule,
         ReactiveFormsModule,
-        ZipCodeMaskModule
+        ZipCodeMaskModule,
+        PaymentTicketModule,
+        CampaignModule
     ]
 })
 export class ProductModule { }

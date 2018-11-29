@@ -15,12 +15,13 @@ const routes: Routes = [
     { path: 'contato', loadChildren: './components/institutional/institutional.module#InstitutionalModule' },
     { path: 'institucional/:id', loadChildren: './components/institutional/institutional.module#InstitutionalModule' },
 
-    { path: 'login', loadChildren: './components/register/login.module#LoginModule' },
-    { path: 'login/:step', loadChildren: './components/register/login.module#LoginModule' },
-    { path: 'cadastrar', loadChildren: './components/register/signup.module#SignUpModule' },
-    { path: 'recuperar-senha', loadChildren: './components/register/forget-password.module#ForgetPasswordModule' },
+    { path: 'login', loadChildren: './components/register/login/login.module#LoginModule' },
+    { path: 'login/:step', loadChildren: './components/register/login/login.module#LoginModule' },
+    { path: 'cadastrar', loadChildren: './components/register/signup/signup.module#SignUpModule' },
+    { path: 'recuperar-senha', loadChildren: './components/register/forgot-password/forgot-password.module#ForgotPasswordModule' },
 
     { path: 'carrinho', loadChildren: './components/cart/cart.module#CartModule' },
+    { path: 'carrinho/:id', loadChildren: './components/cart/cart.module#CartModule' },
 
     { path: 'checkout', loadChildren: './components/checkout/checkout.module#CheckoutModule' },
 

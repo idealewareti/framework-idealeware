@@ -1,16 +1,17 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { RelatedProductGroup } from "../../../models/related-products/related-product-group";
 import { EnVariationType } from "../../../enums/variationtype.enum";
 import { ProductReference } from "../../../models/related-products/product-reference";
 import { ProductService } from "../../../services/product.service";
 import { Product } from "../../../models/product/product";
+import { SimpleChanges } from '@angular/core';
 
 @Component({
     selector: 'related-products',
     templateUrl: '../../../templates/product/product-related/related-products.html',
     styleUrls: ['../../../templates/product/product-related/related-products.scss']
 })
-export class RelatedProductsComponent implements OnInit {
+export class RelatedProductsComponent{
 
     @Input() relatedProducts: RelatedProductGroup;
     @Output() productUpdated: EventEmitter<Product> = new EventEmitter<Product>();
@@ -19,8 +20,6 @@ export class RelatedProductsComponent implements OnInit {
     constructor(
         private service: ProductService,
     ) { }
-
-    ngOnInit() { }
 
     isColor(): boolean {
         if (this.relatedProducts.type == EnVariationType.Color)
@@ -45,4 +44,7 @@ export class RelatedProductsComponent implements OnInit {
         else return false;
     }
 
+    get hasrelatedProduct(){
+        return this.relatedProducts || false;
+    }
 }

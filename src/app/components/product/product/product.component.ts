@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Location, isPlatformBrowser } from '@angular/common';
+import { Location, isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { Product } from '../../../models/product/product';
 import { Sku } from '../../../models/product/sku';
 import { ProductPicture } from '../../../models/product/product-picture';
@@ -65,7 +65,8 @@ export class ProductComponent implements OnInit, OnDestroy {
         private router: Router,
         private location: Location,
         private sanitizer: DomSanitizer,
-        @Inject(PLATFORM_ID) private platformId: Object
+        @Inject(PLATFORM_ID) private platformId: Object,
+        @Inject(DOCUMENT) private doc: any
     ) {
         this.productAwaitedForm = new FormBuilder().group({
             name: ['', Validators.required],
@@ -191,20 +192,17 @@ export class ProductComponent implements OnInit, OnDestroy {
 
     setCurrentSku(skuId: string = null) {
         this.allOptionsSelected = true;
-        return new Promise((resolve) => {
-            if (skuId)
-                this.sku = this.manager.getSku(skuId, this.product);
-            else
-                this.sku = this.manager.getSku(this.id, this.product);
-            this.getImages();
-            this.getCoverImage();
+        if (skuId)
+            this.sku = this.manager.getSku(skuId, this.product);
+        else
+            this.sku = this.manager.getSku(this.id, this.product);
+        this.getImages();
+        this.getCoverImage();
 
-            if (!this.isCatalog() && this.isProductAvailable())
-                this.getInstallmentValue();
+        if (!this.isCatalog() && this.isProductAvailable())
+            this.getInstallmentValue();
 
-            resolve(this.product);
-        })
-
+        this.injectStructuredData(this.store, this.product, this.sku);
     }
 
     private loadProduct(product: Product) {
@@ -500,5 +498,50 @@ export class ProductComponent implements OnInit, OnDestroy {
             }
         }
         return false;
+    }
+
+    /**
+     * injeta dados estruturados na loja
+	 * @param {Store} store 
+     * @private
+     * @memberof ProductComponent
+     */
+    private injectStructuredData(store: Store, product: Product, sku: Sku): void {
+        if (!product) return;
+        let script = this.doc.createElement('script');
+        script.setAttribute('type', 'application/ld+json');
+
+        let content = `{
+            "@context":"http://schema.org/",
+            "@type":"Product",
+            "name":"${product.name}",
+            "image":"${this.getImageProduct(product)}",
+            "description":"${product.briefDescription}",
+            "url":"${store.link}/${AppCore.getNiceName(this.product.name)}-${sku.id}",
+            "sku":"${sku.code}",
+            "weight":"${sku.weight} kg",
+            "width":"${sku.width} cm",
+            "depth":"${sku.length} cm",
+            "height":"${sku.height} cm",
+                "offers":{
+                    "@type":"Offer",
+                    "priceCurrency":"BRL",
+                    "availability":"http://schema.org/${sku.available ? "InStock" : "OutOfStock"}",
+                    "itemCondition":"http://schema.org/NewCondition",
+                    "price":"${sku.price}"
+                },
+            "category":"${product.baseCategory.name}",
+            "brand":"${product.brand.name}"
+        }`
+        script.innerHTML = content;
+
+        var productNode = this.doc.getElementsByTagName("product")[0];
+        productNode.appendChild(script);
+
+        if (productNode.getElementsByTagName("script")[0]) {
+            productNode.removeChild(productNode.getElementsByTagName("script")[0]);
+        }
+
+        productNode.appendChild(script);
     }
 }

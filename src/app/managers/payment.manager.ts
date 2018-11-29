@@ -11,7 +11,7 @@ import { Sku } from "../models/product/sku";
 import { PaymentMethod } from "../models/payment/payment-method";
 import { PaymentSetting } from "../models/payment/payment-setting";
 import { PagSeguroSimulationResponse } from "../models/pagseguro/pagseguro-simulation";
-import { shareReplay } from "rxjs/operators";
+import { shareReplay, map } from "rxjs/operators";
 import { CartManager } from "./cart.manager";
 import { PagseguroCreditCard } from "../models/pagseguro/pagseguro-card";
 import { CreditCard } from "../models/payment/credit-card";
@@ -35,7 +35,7 @@ export class PaymentManager {
      * Seleciona todos pagamentos
      */
     getAll(): Observable<Payment[]> {
-        return this.service.getAll()
+        return this.service.getAll();
     }
 
     /**
@@ -428,5 +428,11 @@ export class PaymentManager {
             else
                 return true;
         }
+    }
+
+    getValueDiscountBankslip(): Observable<number> {
+        return this.getAll()
+            .pipe(map(payments => this.getMundipaggBankslip(payments).paymentMethods
+                .find(m => m.type === PaymentMethodTypeEnum.BankSlip).discount));
     }
 }

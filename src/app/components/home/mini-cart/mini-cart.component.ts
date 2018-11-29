@@ -10,6 +10,7 @@ import { CartManager } from '../../../managers/cart.manager';
 import { Cart } from '../../../models/cart/cart';
 
 declare var swal: any;
+declare var toastr: any;
 
 @Component({
     selector: 'mini-cart',
@@ -51,7 +52,8 @@ export class MiniCartComponent implements OnInit {
                     .subscribe(() => { });
             }
             this.cartManager.getCart()
-                .subscribe(cart => this.cart = cart);
+                .subscribe(cart => this.cart = cart
+                    , error => { throw new Error(`${error.error} Status: ${error.status}`) });
         }
     }
 

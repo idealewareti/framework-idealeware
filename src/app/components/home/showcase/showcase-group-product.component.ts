@@ -26,6 +26,8 @@ export class ShowcaseGroupProductComponent implements OnInit, AfterViewChecked {
             this.carouselManager.getCarouselProducts(this.group.id)
                 .subscribe(group => {
                     this.products = group.products;
+                },error => {
+                    throw new Error(`${error.error} Status: ${error.status}`);
                 });
         }
     }
@@ -66,5 +68,16 @@ export class ShowcaseGroupProductComponent implements OnInit, AfterViewChecked {
 
     trackById(index, item) {
         return item.id;
+    }
+
+    getProduct() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return this.products.slice(0, 4);
+        }
+        return this.products;
+    }
+
+    isPlatformBrowser() {
+        return isPlatformBrowser(this.platformId);
     }
 }

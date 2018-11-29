@@ -1,6 +1,6 @@
 <div id="main-banner" class="container">
     <div class="showcase-banners list-style-none">
-        <div *ngFor="let banner of banners">
+        <div *ngFor="let banner of getBanners()">
             <a *ngIf="banner.url" [attr.href]="banner.url" target="_blank">
                 <img [attr.src]="getBannerUrl(banner)" [attr.alt]="banner.name" class="img-responsive"/>
             </a>

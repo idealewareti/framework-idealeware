@@ -1,5 +1,7 @@
 import { Variation } from './variation';
 import { ProductPicture } from './product-picture';
+import { AxisX } from '../../enums/axis-x.enum';
+import { AxisY } from '../../enums/axis-y.enum';
 
 export class Sku {
       id: string;
@@ -25,6 +27,16 @@ export class Sku {
       name: string;
       quantity: number;
       isPackageProduct: boolean;
+      width: number;
+      height: number;
+      length: number;
+      weight: number;
+      additionalFreightPrice: number;
+      daysProcessing: number;
+      campaignName: string;
+      imageTag: string;
+      axisX: AxisX;
+      axisY: AxisY;
 
       constructor(sku = null) {
             if (sku) return this.CreateFromResponse(sku);

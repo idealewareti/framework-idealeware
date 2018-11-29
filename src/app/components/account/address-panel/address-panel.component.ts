@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, Inject, PLATFORM_ID  } from '@angular/core';
+import { Component, OnInit, Input, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CustomerAddress } from '../../../models/customer/customer-address';
 import { CustomerManager } from '../../../managers/customer.manager';
+import { Router } from '@angular/router';
 
 declare var swal: any;
 
@@ -16,6 +17,7 @@ export class AddressPanelComponent implements OnInit {
 
     constructor(
         private customerManager: CustomerManager,
+        private parentRouter: Router,
         @Inject(PLATFORM_ID) private platformId: Object) {
     }
 
@@ -24,8 +26,10 @@ export class AddressPanelComponent implements OnInit {
             this.customerManager.getUser()
                 .subscribe(customer => {
                     this.addresses = customer.addresses;
-                }), (err => {
-                    swal('Não foi possível acessar obter os endereços', err.error, "error");
+                }, error => {
+                    swal('Erro', 'Não foi possível obter os endereços', 'error')
+                        .then(() => this.parentRouter.navigateByUrl('/'));
+                    throw new Error(`${error.error} Status: ${error.status}`);
                 });
         }
     }

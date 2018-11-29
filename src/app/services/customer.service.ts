@@ -56,8 +56,18 @@ export class CustomerService {
         return this.client.put(url, customer);
     }
 
-    recoverPassword(cpf_cnpj: string, email: string): Observable<string> {
-        let url = `${environment.API_CUSTOMER}/customers/${cpf_cnpj}/${email}`;
-        return this.client.put(url, null);
+    getTokenPassword(email: string): Observable<string> {
+        let url = `${environment.API_CUSTOMER}/customers/token/${email}`;
+        return this.client.get(url);
+    }
+
+    recoverPassword(token: string, password: string) {
+        let url = `${environment.API_CUSTOMER}/customers/forgot-password/${password}/${token}`;
+        return this.client.put(url);
+    }
+
+    validForgotPasswordToken(token: string){
+        let url = `${environment.API_CUSTOMER}/customers/valid-forgot-password/${token}`;
+        return this.client.get(url);    
     }
 }

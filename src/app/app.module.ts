@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { PrebootModule } from 'preboot';
 import { NgModule, PLATFORM_ID, LOCALE_ID } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -15,6 +16,8 @@ import { AppRoutingModule } from './app.routing.module';
 import { GroupComponent } from './components/home/group/group.component';
 import { PopUpModule } from './components/home/pop-up/popup.module';
 import { GlobalErrorModule } from './error/global-error.module';
+import { RegisterModule } from './components/register/register.module';
+import { environment } from '../environments/environment';
 
 registerLocaleData(ptBr)
 
@@ -28,13 +31,13 @@ export function jwtOptionsFactory(platformId) {
 			return token;
 		},
 		whitelistedDomains: [
-			'api-pub-customer.prd.idealeware.com.br',
-			'api-pub-order.prd.idealeware.com.br',
-			'api-pub-cart.prd.idealeware.com.br',
-			'api-pub-payments.prd.idealeware.com.br',
-			'api-pub-budget.prd.idealeware.com.br',
-			'api-pub-authenticate.prd.idealeware.com.br',
-			'api-pub-productrating.prd.idealeware.com.br'
+			environment.API_CUSTOMER,
+			environment.API_ORDER,
+			environment.API_CART,
+			environment.API_PAYMENTS,
+			environment.API_BUDGET,
+			environment.API_AUTHENTICATE,
+			environment.API_PRODUCTRATING
 		],
 	};
 }
@@ -48,6 +51,7 @@ export function jwtOptionsFactory(platformId) {
 	],
 	imports: [
 		BrowserModule.withServerTransition({ appId: `${AppConfig.DOMAIN}-app` }),
+		PrebootModule.withConfig({ appRoot: 'app-root', replay: false }),
 		AppRoutingModule,
 		HttpClientModule,
 		TransferHttpCacheModule,
@@ -62,7 +66,8 @@ export function jwtOptionsFactory(platformId) {
 		ReactiveFormsModule,
 		MiniCartModule,
 		PopUpModule,
-		GlobalErrorModule
+		GlobalErrorModule,
+		RegisterModule
 	],
 	providers: [
 		{ provide: LOCALE_ID, useValue: "pt_BR" }

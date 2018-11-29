@@ -29,7 +29,15 @@
     <div class="list-group shipping-list" *ngIf="branches.length > 0">
         <a *ngFor="let option of allowPickUpStore()" (click)="addShippingBranchToCart(option)" [ngClass]="{'list-group-item-info': checkOption(null, option)}"
             class="list-group-item" href="javascript:void(0)">
-            <strong>Retirar na Loja - </strong>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} {{option.city}}/{{option.state}}
+            <strong>Retirar na Loja : </strong>{{option.name}} - 
+            <strong>
+                <span *ngIf="option.deliveryTime == 0">Pronta Entrega</span>
+                <span *ngIf="option.deliveryTime != 0">Retirada em até {{option.deliveryTime}} dias úteis </span>
+                <span *ngIf="option.value == 0"> - Grátis</span>
+                <span *ngIf="option.value != 0"> - {{option.value | currencyFormat }}</span>
+            </strong>
+            <br>
+            <span>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} - {{option.city}}/{{option.state}}</span>
         </a>
     </div>
 
@@ -61,7 +69,15 @@
     <div class="list-group shipping-list" *ngIf="branches.length > 0">
         <a *ngFor="let option of allowPickUpStore()" (click)="addShippingBranchToCart(option)" [ngClass]="{'list-group-item-info': checkOption(null, option)}"
             class="list-group-item" href="javascript:void(0)">
-            <strong>Retirar na Loja - </strong>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} {{option.city}}/{{option.state}}
+            <strong>Retirar na Loja : </strong>{{option.name}} - 
+            <strong>
+                <span *ngIf="option.deliveryTime == 0">Pronta Entrega</span>
+                <span *ngIf="option.deliveryTime != 0">Retirada em até {{option.deliveryTime}} dias úteis </span>
+                <span *ngIf="option.value == 0"> - Grátis</span>
+                <span *ngIf="option.value != 0"> - {{option.value | currencyFormat }}</span>
+            </strong>
+            <br>
+            <span>{{option.addressLine1}}, {{option.number}} {{option.addressline2}} - {{option.city}}/{{option.state}}</span>
         </a>
     </div>
 </div>

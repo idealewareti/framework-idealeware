@@ -438,19 +438,21 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
                         }
                     });
                 }, err => {
-                    let message: string = (err.status != 0) ? err.error : '';
                     this.pagseguro_error = 'Não foi possível obter as formas de pagamento do Pagseguro';
-                    swal({
-                        title: 'Erro ao criar a sessão no Pagseguro',
-                        text: message,
-                        type: 'error',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Tentar novamente'
-                    }).then(() => {
-                        this.createPagseguroSession();
-                    });
+                    throw new Error(`${err.error} Status: ${err.status}`);
+                    // let message: string = (err.status != 0) ? err.error : '';
+                    // this.pagseguro_error = 'Não foi possível obter as formas de pagamento do Pagseguro';
+                    // swal({
+                    //     title: 'Erro ao criar a sessão no Pagseguro',
+                    //     text: message,
+                    //     type: 'error',
+                    //     showCancelButton: true,
+                    //     confirmButtonColor: '#3085d6',
+                    //     cancelButtonColor: '#d33',
+                    //     confirmButtonText: 'Tentar novamente'
+                    // }).then(() => {
+                    //     this.createPagseguroSession();
+                    // });
                 });
         }
     }
@@ -564,7 +566,10 @@ export class CheckoutPaymentsComponent implements OnInit, OnChanges, AfterViewIn
                 .subscribe(value => {
                     this.mercadopago.public_key = value;
                     Mercadopago.setPublishableKey(this.mercadopago.public_key);
-                });
+                },error => {
+                    throw new Error(`${error.error} Status: ${error.status}`);
+                }
+            );
         }
     }
 

@@ -26,6 +26,8 @@ export class BrandNavComponent implements OnInit, AfterViewChecked {
         this.manager.getAll()
             .subscribe(brands => {
                 this.brands = brands;
+            },error => {
+                throw new Error(`${error.error} Status: ${error.status}`);
             });
     }
 
@@ -48,5 +50,12 @@ export class BrandNavComponent implements OnInit, AfterViewChecked {
 
     getPictureUrl(brand: Brand): string {
         return `${this.store.link}/static/brands/${brand.picture}`;
+    }
+
+    getBrands() {
+        if (!isPlatformBrowser(this.platformId)) {
+            return this.brands.slice(0, 5);
+        }
+        return this.brands;
     }
 }

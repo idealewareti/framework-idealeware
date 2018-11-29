@@ -1,5 +1,6 @@
-<ul [attr.id]="'group-' + group.id" class="showcase-items list-style-none" *ngIf="products" [ngClass]="{'owl-carousel owl-theme': products.length > 1}">
-    <li class="showcase-item" *ngFor="let product of products; trackBy: trackById" itemscope itemtype="http://schema.org/ItemList">
+<ul [attr.id]="'group-' + group.id" class="showcase-items list-style-none" *ngIf="products" [ngClass]="{'owl-carousel owl-theme': products.length > 1 && isPlatformBrowser()}">
+    <li class="showcase-item" *ngFor="let product of getProduct(); trackBy: trackById"
+        [ngClass]="{'col-xs-12 col-sm-12 col-md-3 col-lg-3': !isPlatformBrowser()}">
         <product-grid-item [store]="store" [product]="product"></product-grid-item>
     </li>
 </ul>

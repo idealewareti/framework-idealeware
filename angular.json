@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "default": {
+    "idealeware": {
       "root": "",
       "projectType": "application",
       "architect": {
@@ -66,24 +66,44 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "homologation": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.hmg.ts"
+                }
+              ]
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "default:build"
+            "browserTarget": "idealeware:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "default:build:production"
+              "browserTarget": "idealeware:build:production"
+            },
+            "homologation": {
+              "browserTarget": "idealeware:build:homologation"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "default:build"
+            "browserTarget": "idealeware:build"
           }
         },
         "test": {
@@ -154,12 +174,20 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "homologation": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.hmg.ts"
+                }
+              ]
             }
           }
         }
       }
     },
-    "default-e2e": {
+    "idealeware-e2e": {
       "root": "",
       "projectType": "application",
       "cli": {},
@@ -169,7 +197,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "default:serve"
+            "devServerTarget": "idealeware:serve"
           }
         },
         "lint": {

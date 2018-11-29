@@ -8,6 +8,7 @@ import { Shipping } from "../models/shipping/shipping";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
+import { AbandonedCart } from "../models/cart/abandoned-cart";
 
 @Injectable({
 	providedIn: 'root'
@@ -27,9 +28,9 @@ export class CartService {
 	createCart(cart: Cart, sessionId: string = null, zipCode: number = 0, origin: string = null): Observable<Cart> {
 		let item = {
 			"product": {
-				"skuId": cart.products[0].sku.id,
-				"quantity": cart.products[0].quantity,
-				"feature": cart.products[0].sku.feature
+				"skuId": cart.products[0] ? cart.products[0].sku.id : null,
+				"quantity": cart.products[0] ? cart.products[0].quantity : null,
+				"feature": cart.products[0] ? cart.products[0].sku.feature : null
 			},
 			"zipCode": zipCode,
 			"origin": origin,
@@ -104,6 +105,24 @@ export class CartService {
 
 	deleteCart(cartId: string): Observable<Cart> {
 		let url = `${environment.API_CART}/Cart/${cartId}`;
+		return this.client.delete(url);
+	}
+
+	createAbandonedCart(cartId: string, domain: string, customerEmail: string, isAbandonedCart: boolean): Observable<AbandonedCart> {
+		let createAbandonedCart = {
+			"cartId": cartId,
+			"domain": domain,
+			"customerEmail": customerEmail,
+			"isAbandonedCart": isAbandonedCart
+		};
+		
+		let url = `${environment.API_CART}/Cart/AbandonedCart`;
+		return this.client.post(url, createAbandonedCart)
+			.pipe(map(res => res.body));
+	}
+
+	deleteAbandonedCart(cartId: string, domain: string): Observable<{}> {
+		let url = `${environment.API_CART}/Cart/AbandonedCart/${cartId}/${domain}`;
 		return this.client.delete(url);
 	}
 }

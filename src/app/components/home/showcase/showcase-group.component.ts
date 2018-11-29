@@ -23,6 +23,8 @@ export class ShowcaseGroupComponent implements OnInit {
         this.carouselManager.getCarousels()
             .subscribe(carousel => {
                 this.groups = carousel;
+            },error => {
+                throw new Error(`${error.error} Status: ${error.status}`);
             });
     }
 

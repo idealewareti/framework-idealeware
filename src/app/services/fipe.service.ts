@@ -15,19 +15,19 @@ export class FipeService {
     constructor(private http: Http) { }
 
     getVehicleBrand(): Observable<VehicleBrand[]> {
-        const url = `${environment.API_FIPE}/marcas.json`;
+        const url = `https://${environment.API_FIPE}/marcas.json`;
         return this.http.get(url)
             .pipe(map(res => res.json()));
     }
 
     getVehicle(brandId: string): Observable<Vehicle[]> {
-        const url = `${environment.API_FIPE}/veiculos/${brandId}.json`;
+        const url = `https://${environment.API_FIPE}/veiculos/${brandId}.json`;
         return this.http.get(url)
             .pipe(map(res => res.json()));
     }
 
     getVehicleYear(brandId: string, vehicleId: string): Observable<VehicleYear[]> {
-        const url = `${environment.API_FIPE}/veiculo/${brandId}/${vehicleId}.json`;
+        const url = `https://${environment.API_FIPE}/veiculo/${brandId}/${vehicleId}.json`;
         return this.http.get(url)
             .pipe(map(res => res.json()));
     }

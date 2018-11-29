@@ -17,7 +17,8 @@ export class Branch {
     status: boolean;
     number: string;
     allowPickupStore: boolean;
-    replenishmentTime: number;
+    deliveryTime: number;
+    value: number;
 
     constructor(object = null) {
         if (object) return this.createFromResponse(object);

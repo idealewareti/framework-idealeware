@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from "@angular/router";
 
 import { Order } from "../../../models/order/order";
+import { CartManager } from '../../../managers/cart.manager';
 
 declare var dataLayer: any;
 
@@ -17,6 +18,7 @@ export class CheckoutFinishComponent implements OnInit {
 
     constructor(
         private activatedRoute: ActivatedRoute,
+        private cartManager: CartManager,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
@@ -53,8 +55,9 @@ export class CheckoutFinishComponent implements OnInit {
                     }
                 }
             });
-        }
 
+            this.removeAbandonedCart();
+        }
     }
 
     isBankSlip(): boolean {
@@ -74,4 +77,11 @@ export class CheckoutFinishComponent implements OnInit {
             return url;
         }
     }
+
+    private removeAbandonedCart() {
+		this.cartManager.removeAbandonedCart()
+			.subscribe(() => {
+			}, (e) => {
+			});
+	}
 }

@@ -31,8 +31,10 @@ export class ShowcaseComponent implements OnInit {
                 this.showCasemanager.getBannersFromStore()
                     .subscribe(showcase => {
                         this.initData(showcase);
+                    },error => {
+                        throw new Error(`${error.error} Status: ${error.status}`);
                     });
-            })
+            });
     }
 
     private initData(data: ShowCase): void {

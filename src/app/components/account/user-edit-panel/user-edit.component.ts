@@ -50,8 +50,10 @@ export class UserEditComponent implements OnInit {
                 .subscribe(user => {
                     this.customer = user;
                     this.birthdate = this.dateToText(this.customer.birthdate);
-                }), (error => {
-                    swal('Erro', 'Falha ao carregar o usuário', 'error');
+                }, error => {
+                    swal('Erro', 'Falha ao carregar o usuário', 'error')
+                        .then(() => this.parentRouter.navigateByUrl('/'));
+                    throw new Error(`${error.error} Status: ${error.status}`);
                 });
         }
     }

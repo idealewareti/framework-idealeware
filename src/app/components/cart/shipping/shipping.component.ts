@@ -160,7 +160,8 @@ export class ShippingCalcComponent implements OnInit {
             delivery.deliveryMethodName = 'Retirar na Loja';
             delivery.shippingCost = 0.0;
             delivery.deliveryProviderName = branch.name;
-            delivery.deliveryEstimateBusinessDays = branch.replenishmentTime;
+            delivery.deliveryEstimateBusinessDays = branch.deliveryTime;
+            delivery.shippingCost = branch.value;
 
             shipping.shippingType = EnumShippingType.PickuUpStore;
             shipping.branch = branch;

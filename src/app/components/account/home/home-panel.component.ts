@@ -1,4 +1,4 @@
-import { Component, OnInit , Inject, PLATFORM_ID} from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Customer } from "../../../models/customer/customer";
 import { Store } from "../../../models/store/store";
@@ -7,22 +7,30 @@ import { StoreManager } from '../../../managers/store.manager';
 import { OrderStatusEnum } from '../../../enums/order-status.enum';
 import { OrderManager } from '../../../managers/order.manager';
 import { CustomerManager } from '../../../managers/customer.manager';
+import { Router } from '@angular/router';
+
+declare var swal: any;
+
 
 @Component({
     selector: 'home-panel',
     templateUrl: '../../../templates/account/account-home/account-home.html',
     styleUrls: ['../../../templates/account/account-home/account-home.scss']
 })
+
 export class AccountHomeComponent implements OnInit {
     customer: Customer = new Customer();
     store: Store;
     lastOrder: Order = null;
     private logged: boolean;
 
+
+
     constructor(
         private customerManager: CustomerManager,
         private orderManager: OrderManager,
         private storeManager: StoreManager,
+        private parentRouter: Router,
         @Inject(PLATFORM_ID) private platformId: Object
     ) { }
 
@@ -44,6 +52,8 @@ export class AccountHomeComponent implements OnInit {
                                 { id: 13, label: 'Em Processamento' }
                             ]
                             this.lastOrder.labelStatus = labels.filter(s => s.id == this.lastOrder.status)[0].label;
+                        }, error => {
+                            throw new Error(`${error.error} Status: ${error.status}`);
                         });
                     return this.getCustomer();
                 });
@@ -62,6 +72,10 @@ export class AccountHomeComponent implements OnInit {
                             this.customer = customer;
                             this.logged = true;
                             resolve(customer)
+                        }, err => {
+                            swal('Erro', 'Falha ao carregar o usuário', 'error')
+                                .then(() => this.parentRouter.navigateByUrl('/'));
+                            throw new Error(`${err.error} Status: ${err.status}`);
                         }), (error) => {
                             this.logged = false;
                             reject(error);

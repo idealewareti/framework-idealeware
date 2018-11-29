@@ -70,6 +70,9 @@ export class CartComponent implements OnInit {
                         this.shipping = cart.shipping;
                         this.cartReady = true;
                         resolve(cart);
+                    }, error => {
+                        swal('Não foi possível recuperar o carrinho', 'error');
+                        throw new Error(`${error.error} Status: ${error.status}`);
                     });
             })
         }

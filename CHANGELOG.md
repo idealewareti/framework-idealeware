@@ -1,5 +1,23 @@
 # Changelog
 
+## 4.3.0
+- Carrinho abandonado 
+
+## 4.2.0
+- Google Tags 
+
+## 4.1.0
+- Adicionado módulo de campanha
+
+## 4.0.4
+- Correção comparar grid de produtos
+
+## 4.0.3
+- Melhoria funcionalidade de prazo e valor para retirada na loja de filiais
+
+## 4.0.2
+- Tratando possíveis erros de API para não ocasionar quebra na Loja
+
 ## 4.0.1
 -  Definições de responsabilidades - Server And Browser 
 

@@ -33,7 +33,9 @@ export class CategoryComponent implements OnInit {
         if (isPlatformBrowser(this.platformId)) {
           this.injectDropDownHover();
         }
-      });
+      }, error => {
+        throw new Error(`${error.error} Status: ${error.status}`);
+    });
   }
 
   getPictureCategory(category: Category): string {

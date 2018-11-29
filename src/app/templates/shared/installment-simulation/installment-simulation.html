@@ -1,5 +1,5 @@
 <div *ngIf="isSimpleSimulation">
-    <span *ngIf="installments.installmentNumber > 0" class="parcelamento">ou em até {{installments.installmentNumber}}x de {{installments.installmentValue | currencyFormat}}</span>
+    <span *ngIf="installments && installments.installmentNumber > 0" class="parcelamento">ou em até {{installments.installmentNumber}}x de {{installments.installmentValue | currencyFormat}}</span>
 </div>
 <div *ngIf="!isSimpleSimulation">
     <div class="form-group clearfix">

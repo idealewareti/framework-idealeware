@@ -1,11 +1,13 @@
 import { Injectable, ErrorHandler, Injector, InjectionToken } from "@angular/core";
 import { Router } from '@angular/router';
+import { NotFoundService } from "../services/not-found.service";
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
 
 	constructor(
-		private injector: Injector
+		private injector: Injector,
+		private notFoundService: NotFoundService
 	) { }
 
 	handleError(err: any): void {
@@ -16,9 +18,8 @@ export class GlobalErrorHandler implements ErrorHandler {
 
 		if (error.status) {
 			if (error.status >= 400 && error.status < 500)
-				router.navigateByUrl('not-found');
-			if (error.status >= 500 && error.status < 600)
-				router.navigateByUrl('internal-server-error');
+ 				if (this.notFoundService.isNotFound(router.url))
+	 					router.navigateByUrl('not-found');
 		}
 	}
 }
