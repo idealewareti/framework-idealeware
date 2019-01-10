@@ -107,8 +107,8 @@ export class PaymentManager {
      * @param methodId 
      * @param totalPurchasePrice 
      */
-    getMercadoPagoInstalments(methodId: string, totalPurchasePrice: number): Observable<MercadoPagoInstallmentResponse> {
-        return this.service.MercadoPagoGetInstalments(methodId, totalPurchasePrice);
+    getMercadoPagoInstalments(methodId: string, cartId: string): Observable<MercadoPagoInstallmentResponse> {
+        return this.service.MercadoPagoGetInstalments(methodId, cartId);
     }
 
     /*

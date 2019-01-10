@@ -4,6 +4,7 @@ import { HttpClientHelper } from '../helpers/http.helper';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +18,8 @@ export class ServiceService {
 
     public getService(services: Service[], cep: string): Observable<Service[]> {
         let url = `${environment.API_SERVICE}/services/${cep}`;
-        return this.client.post(url, services);
+        return this.client.post(url, services)
+            .pipe(map(res => res.body));
     }
 
 }

@@ -15,6 +15,7 @@ import { MundipaggPayment } from '../../../models/mundipagg/mundipagg';
 import { Installment } from '../../../models/payment/installment';
 import { isPlatformBrowser } from '@angular/common';
 import { Cart } from '../../../models/cart/cart';
+import { CartManager } from '../../../managers/cart.manager';
 
 declare var $: any;
 declare var Mercadopago: any;
@@ -59,7 +60,8 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     constructor(
         private manager: PaymentManager,
         private formBuilder: FormBuilder,
-        @Inject(PLATFORM_ID) private platformId: Object
+        @Inject(PLATFORM_ID) private platformId: Object,
+        private cartManager: CartManager
     ) { }
 
     ngOnInit(): void {
@@ -406,7 +408,7 @@ export class CheckoutCreditCardFormComponent implements OnInit, OnChanges {
     MercadoPagoGetInstallments(method: MercadoPagoPaymentMethod) {
         if (isPlatformBrowser(this.platformId)) {
             let totalPurchase: number = this.cart.totalPurchasePrice;
-            this.manager.getMercadoPagoInstalments(method.id, totalPurchase)
+            this.manager.getMercadoPagoInstalments(method.id, this.cartManager.getCartId())
                 .subscribe(response => {
                     this.mercadopago.installmentResponse = response;
                     this.getMinInstallments();

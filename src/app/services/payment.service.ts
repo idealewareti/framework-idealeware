@@ -130,8 +130,8 @@ export class PaymentService {
         return this.client.get(url);
     }
 
-    MercadoPagoGetInstalments(payment_method_id: string, amount: number): Observable<MercadoPagoInstallmentResponse> {
-        let url = `${environment.API_PAYMENTS}/payments/MercadoPago/Installments/${payment_method_id}/${amount}`;
+    MercadoPagoGetInstalments(payment_method_id: string, cartId: string): Observable<MercadoPagoInstallmentResponse> {
+        let url = `${environment.API_PAYMENTS}/payments/MercadoPago/Installments/v2/${payment_method_id}/${cartId}`;
         return this.client.get(url);
     }
 }
